@@ -1,0 +1,56 @@
+# Environment configuration
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+storage/logs/*
+!storage/logs/.gitkeep
+*.log
+
+# User uploads
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Temporary files
+tmp/
+temp/
+cache/
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Test and coverage output
+coverage/
+.phpunit.result.cache
+
+# Database exports and local backups
+*.sql.bak
+*.dump
+*.backup
+
+# Local server/runtime files
+*.pid
+
+# Sensitive local configuration
+config/local.php
+config/database.local.php
+
+# Archive files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
