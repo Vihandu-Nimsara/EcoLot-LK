@@ -1,0 +1,2 @@
+<?php
+// Collector dashboard placeholder.
