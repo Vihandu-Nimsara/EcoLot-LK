@@ -2,8 +2,17 @@
 
 class Controller
 {
-    public function view($view)
+    public function view($view, $data = [])
     {
-        require_once "../app/Views/" . $view . ".php";
+        extract($data);
+
+        ob_start();
+
+        require "../app/Views/" . $view . ".php";
+
+        $content = ob_get_clean();
+
+
+        require "../app/Views/municipal_officer/layouts/main.php";
     }
 }
