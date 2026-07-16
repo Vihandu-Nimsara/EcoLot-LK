@@ -1,34 +1,44 @@
 <section class="dashboard-page">
 
-    <div class="page-title">
-        <h1>Officer Dashboard</h1>
-        <p>Manage campaigns, schedules, requests, routes, collections, and E-Lots.</p>
-    </div>
-
     <div class="stats-grid">
         <div class="stat-card">
-            <span>Active Campaigns</span>
-            <h2>1</h2>
+            <div class="stat-icon campaign">📅</div>
+            <div class="stat-info">
+                <span>Active Campaigns</span>
+                <h2>1</h2>
+            </div>
         </div>
 
         <div class="stat-card">
-            <span>Pending Requests</span>
-            <h2>1</h2>
+            <div class="stat-icon request">📥</div>
+            <div class="stat-info">
+                <span>Pending Requests</span>
+                <h2>1</h2>
+            </div>
         </div>
 
         <div class="stat-card">
-            <span>Planned Routes</span>
-            <h2>1</h2>
+            <div class="stat-icon route">🚚</div>
+            <div class="stat-info">
+                <span>Planned Routes</span>
+                <h2>1</h2>
+            </div>
         </div>
 
         <div class="stat-card">
-            <span>Pending Verifications</span>
-            <h2>1</h2>
+            <div class="stat-icon verify">✓</div>
+            <div class="stat-info">
+                <span>Pending Verifications</span>
+                <h2>1</h2>
+            </div>
         </div>
 
         <div class="stat-card">
-            <span>Open E-Lots</span>
-            <h2>0</h2>
+            <div class="stat-icon lot">♻</div>
+            <div class="stat-info">
+                <span>Open E-Lots</span>
+                <h2>0</h2>
+            </div>
         </div>
     </div>
 
@@ -59,66 +69,50 @@
                     <tr>
                         <td>SCH0007</td>
                         <td>
-                            QA UI Check Monthly Campaign
-                            <br>
-                            8/2026
+                            QA UI Check Monthly Campaign<br>8/2026
                         </td>
                         <td>10500</td>
                         <td>Kollupitiya QA Zone</td>
                         <td>2026-07-16</td>
                         <td>3</td>
                         <td>45</td>
-                        <td>
-                            <span class="status open">OPEN</span>
-                        </td>
+                        <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
                         <td>SCH0008</td>
                         <td>
-                            QA UI Check Monthly Campaign
-                            <br>
-                            8/2026
+                            QA UI Check Monthly Campaign<br>8/2026
                         </td>
                         <td>10600</td>
                         <td>Narahenpita QA Zone</td>
                         <td>2026-07-19</td>
                         <td>2</td>
                         <td>55</td>
-                        <td>
-                            <span class="status open">OPEN</span>
-                        </td>
+                        <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
                         <td>SCH0009</td>
                         <td>
-                            QA UI Check Monthly Campaign
-                            <br>
-                            8/2026
+                            QA UI Check Monthly Campaign<br>8/2026
                         </td>
                         <td>10800</td>
                         <td>Rajagiriya QA Zone</td>
                         <td>2026-07-23</td>
                         <td>3</td>
                         <td>35</td>
-                        <td>
-                            <span class="status open">OPEN</span>
-                        </td>
+                        <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
                         <td>SCH0010</td>
                         <td>
-                            QA UI Check Monthly Campaign
-                            <br>
-                            8/2026
+                            QA UI Check Monthly Campaign<br>8/2026
                         </td>
                         <td>11100</td>
                         <td>Wellawatte QA Zone</td>
                         <td>2026-07-30</td>
                         <td>0</td>
                         <td>30</td>
-                        <td>
-                            <span class="status full">FULL</span>
-                        </td>
+                        <td><span class="status full">FULL</span></td>
                     </tr>
                 </tbody>
             </table>
