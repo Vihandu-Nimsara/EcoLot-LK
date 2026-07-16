@@ -1,9 +1,9 @@
 <?php
-declare(strict_types=1);
 
-namespace App\Core;
-
-// Base controller placeholder.
-abstract class Controller
+class Controller
 {
+    public function view($view)
+    {
+        require_once "../app/Views/" . $view . ".php";
+    }
 }

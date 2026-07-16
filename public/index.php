@@ -1,6 +1,25 @@
 <?php
-declare(strict_types=1);
 
-// Front controller.
-// Application bootstrapping and routing will be added in the next implementation step.
-echo 'EcoLot LK MVC starter is ready.';
+require_once "../app/Core/Controller.php";
+require_once "../app/Core/Router.php";
+
+
+$router = new Router();
+
+
+$router->get(
+    "/officer/dashboard",
+    "MunicipalOfficerController@dashboard"
+);
+
+
+$uri = $_SERVER['REQUEST_URI'];
+
+$uri = str_replace(
+    "/EcoLot-LK/public",
+    "",
+    $uri
+);
+
+
+$router->dispatch($uri);
