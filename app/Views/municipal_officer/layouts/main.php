@@ -29,6 +29,8 @@
 
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/header.css">
 
+    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/dashboard.css">
+
 
 </head>
 
