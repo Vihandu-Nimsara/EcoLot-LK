@@ -1,0 +1,39 @@
+* {
+    box-sizing:border-box;
+}
+
+
+body {
+
+    margin:0;
+
+    background:#F6FBF7;
+
+    color:#111827;
+
+    font-family:"Inter", sans-serif;
+
+}
+
+
+.app-layout {
+
+    display:flex;
+
+    min-height:100vh;
+
+}
+
+
+.main-content {
+
+    flex:1;
+
+}
+
+
+.page-content {
+
+    padding:40px;
+
+}

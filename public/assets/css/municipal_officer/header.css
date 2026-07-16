@@ -1,0 +1,144 @@
+.top-header {
+
+    height:80px;
+
+    background:#FFFFFF;
+
+    border-bottom:1px solid #E5E7EB;
+
+    padding:0 40px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+
+
+.header-left h1 {
+
+    margin:0;
+
+    font-family:"Exo 2";
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#134029;
+
+}
+
+
+
+.header-left p {
+
+    margin:5px 0 0;
+
+    font-size:14px;
+
+    color:#6B7280;
+
+}
+
+
+
+.header-right {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+
+.role-badge {
+
+
+    background:#ECFDF3;
+
+    color:#047857;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+
+
+.profile {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+
+.avatar {
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:50%;
+
+    background:#D0FAE4;
+
+    color:#0A5A3E;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:700;
+
+}
+
+
+
+.profile-info {
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+.name {
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#111827;
+
+}
+
+
+
+.role {
+
+    font-size:12px;
+
+    color:#6B7280;
+
+}
