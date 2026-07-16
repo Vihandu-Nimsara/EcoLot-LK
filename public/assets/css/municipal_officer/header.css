@@ -1,8 +1,13 @@
+/* =========================
+   Municipal Officer Header
+========================= */
+
+
 .top-header {
 
     height:80px;
 
-    background:#FFFFFF;
+    background:white;
 
     border-bottom:1px solid #E5E7EB;
 
@@ -10,25 +15,26 @@
 
     display:flex;
 
-    align-items:center;
-
     justify-content:space-between;
+
+    align-items:center;
 
 }
 
 
 
+/* Left */
+
+
 .header-left h1 {
 
-    margin:0;
+    font-size:32px;
 
-    font-family:"Exo 2";
-
-    font-size:28px;
+    color:#134029;
 
     font-weight:700;
 
-    color:#134029;
+    letter-spacing:-0.5px;
 
 }
 
@@ -36,14 +42,17 @@
 
 .header-left p {
 
-    margin:5px 0 0;
-
-    font-size:14px;
+    margin-top:6px;
 
     color:#6B7280;
 
+    font-size:14px;
+
 }
 
+
+
+/* Right */
 
 
 .header-right {
@@ -59,7 +68,6 @@
 
 
 .role-badge {
-
 
     background:#ECFDF3;
 
