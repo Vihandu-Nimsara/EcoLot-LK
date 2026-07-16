@@ -2,151 +2,83 @@
    Municipal Officer Header
 ========================= */
 
-
 .top-header {
-
-    height:80px;
-
-    background:white;
-
-    border-bottom:1px solid #E5E7EB;
-
-    padding:0 40px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
+    height: 80px;
+    background: white;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
-
 
 /* Left */
-
-
 .header-left h1 {
-
-    font-size:32px;
-
-    color:#134029;
-
-    font-weight:700;
-
-    letter-spacing:-0.5px;
-
+    font-size: 32px;
+    color: #134029;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
-
-
 
 .header-left p {
-
-    margin-top:6px;
-
-    color:#6B7280;
-
-    font-size:14px;
-
+    margin-top: 6px;
+    color: #6B7280;
+    font-size: 14px;
 }
-
-
 
 /* Right */
-
-
 .header-right {
-
-    display:flex;
-
-    align-items:center;
-
-    gap:20px;
-
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
-
-
 
 .role-badge {
-
-    background:#ECFDF3;
-
-    color:#047857;
-
-    padding:6px 14px;
-
-    border-radius:999px;
-
-    font-size:12px;
-
-    font-weight:600;
-
+    background: #ECFDF3;
+    color: #047857;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
 }
-
-
 
 .profile {
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-
-
 
 .avatar {
-
-    width:40px;
-
-    height:40px;
-
-    border-radius:50%;
-
-    background:#D0FAE4;
-
-    color:#0A5A3E;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-weight:700;
-
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #D0FAE4;
+    color: #0A5A3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
 }
-
-
 
 .profile-info {
-
-    display:flex;
-
-    flex-direction:column;
-
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
-
-
 
 .name {
-
-    font-size:14px;
-
-    font-weight:600;
-
-    color:#111827;
-
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
 }
 
-
-
 .role {
+    font-size: 12px;
+    color: #047857;
+    font-weight: 500;
+}
 
-    font-size:12px;
-
-    color:#6B7280;
-
+.organization {
+    font-size: 12px;
+    color: #6B7280;
 }
