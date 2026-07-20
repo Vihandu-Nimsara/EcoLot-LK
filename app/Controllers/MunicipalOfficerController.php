@@ -73,4 +73,14 @@ public function eLots()
     );
 }
 
+public function feedback()
+{
+    $this->view(
+        'municipal_officer/feedback',
+        [
+            'currentPage' => 'feedback'
+        ]
+    );
+}
+
 }
