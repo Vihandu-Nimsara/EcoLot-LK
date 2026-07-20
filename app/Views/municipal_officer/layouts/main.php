@@ -28,6 +28,9 @@
       <link rel="stylesheet"
       href="/EcoLot-LK/public/assets/css/municipal_officer/flagged-requests.css">
 
+    <link rel="stylesheet"
+      href="/EcoLot-LK/public/assets/css/municipal_officer/routes.css">
+
 
     <!-- Sidebar CSS -->
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/sidebar.css">
