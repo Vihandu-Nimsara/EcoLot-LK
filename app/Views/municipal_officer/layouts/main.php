@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/campaigns.css">
     <link rel="stylesheet"
       href="/EcoLot-LK/public/assets/css/municipal_officer/area-schedules.css">
+      <link rel="stylesheet"
+      href="/EcoLot-LK/public/assets/css/municipal_officer/flagged-requests.css">
 
 
     <!-- Sidebar CSS -->
