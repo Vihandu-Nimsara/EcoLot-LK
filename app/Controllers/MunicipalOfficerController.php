@@ -41,4 +41,15 @@ public function flaggedRequests()
         ]
     );
 }
+
+public function routes()
+{
+    $this->view(
+        'municipal_officer/routes',
+        [
+            'currentPage' => 'routes'
+        ]
+    );
+}
+
 }

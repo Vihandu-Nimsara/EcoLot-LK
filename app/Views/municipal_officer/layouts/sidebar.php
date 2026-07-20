@@ -29,7 +29,10 @@
    class="nav-item <?= ($currentPage ?? '') === 'flagged-requests' ? 'active' : '' ?>">
     Flagged Requests
 </a>
-        <a href="#" class="nav-item">Routes</a>
+        <a href="/EcoLot-LK/public/officer/routes"
+   class="nav-item <?= ($currentPage ?? '') === 'routes' ? 'active' : '' ?>">
+    Routes
+</a>
         <a href="#" class="nav-item">Collection Records</a>
         <a href="#" class="nav-item">E-Lots</a>
         <a href="#" class="nav-item">Feedback</a>
