@@ -31,4 +31,14 @@ public function areaSchedules()
         ]
     );
 }
+
+public function flaggedRequests()
+{
+    $this->view(
+        'municipal_officer/flagged-requests',
+        [
+            'currentPage' => 'flagged-requests'
+        ]
+    );
+}
 }

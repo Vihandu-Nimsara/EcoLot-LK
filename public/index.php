@@ -22,6 +22,11 @@ $router->get(
     "MunicipalOfficerController@areaSchedules"
 );
 
+$router->get(
+    "/officer/flagged-requests",
+    "MunicipalOfficerController@flaggedRequests"
+);
+
 
 $uri = $_SERVER['REQUEST_URI'];
 

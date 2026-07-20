@@ -25,7 +25,10 @@
    class="nav-item <?= ($currentPage ?? '') === 'area-schedules' ? 'active' : '' ?>">
     Area Schedules
 </a>
-        <a href="#" class="nav-item">Requests</a>
+        <a href="/EcoLot-LK/public/officer/flagged-requests"
+   class="nav-item <?= ($currentPage ?? '') === 'flagged-requests' ? 'active' : '' ?>">
+    Flagged Requests
+</a>
         <a href="#" class="nav-item">Routes</a>
         <a href="#" class="nav-item">Collection Records</a>
         <a href="#" class="nav-item">E-Lots</a>
