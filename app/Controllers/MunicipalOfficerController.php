@@ -21,4 +21,14 @@ class MunicipalOfficerController extends Controller
         ]
     );
 }
+
+public function areaSchedules()
+{
+    $this->view(
+        'municipal_officer/area-schedules',
+        [
+            'currentPage' => 'area-schedules'
+        ]
+    );
+}
 }
