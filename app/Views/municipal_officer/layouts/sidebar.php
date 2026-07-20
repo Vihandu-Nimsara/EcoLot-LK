@@ -13,8 +13,14 @@
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Campaigns</a>
+        <a href="/EcoLot-LK/public/officer/dashboard"
+   class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">
+    Dashboard
+</a>
+        <a href="/EcoLot-LK/public/officer/campaigns"
+   class="nav-item <?= ($currentPage ?? '') === 'campaigns' ? 'active' : '' ?>">
+    Campaigns
+</a>
         <a href="#" class="nav-item">Area Schedules</a>
         <a href="#" class="nav-item">Requests</a>
         <a href="#" class="nav-item">Routes</a>
