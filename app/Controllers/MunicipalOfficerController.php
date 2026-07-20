@@ -42,12 +42,23 @@ public function flaggedRequests()
     );
 }
 
+
 public function routes()
 {
     $this->view(
         'municipal_officer/routes',
         [
             'currentPage' => 'routes'
+        ]
+    );
+}
+
+public function collectionRecords()
+{
+    $this->view(
+        'municipal_officer/collection-records',
+        [
+            'currentPage' => 'collection-records'
         ]
     );
 }
