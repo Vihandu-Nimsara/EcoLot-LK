@@ -23,6 +23,8 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/style.css">
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/campaigns.css">
+    <link rel="stylesheet"
+      href="/EcoLot-LK/public/assets/css/municipal_officer/area-schedules.css">
 
 
     <!-- Sidebar CSS -->
