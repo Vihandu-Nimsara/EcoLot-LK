@@ -32,6 +32,11 @@ $router->get(
     "MunicipalOfficerController@routes"
 );
 
+$router->get(
+    "/officer/collection-records",
+    "MunicipalOfficerController@collectionRecords"
+);
+
 
 $uri = $_SERVER['REQUEST_URI'];
 
