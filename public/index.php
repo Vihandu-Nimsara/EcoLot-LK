@@ -12,6 +12,11 @@ $router->get(
     "MunicipalOfficerController@dashboard"
 );
 
+$router->get(
+    "/officer/campaigns",
+    "MunicipalOfficerController@campaigns"
+);
+
 
 $uri = $_SERVER['REQUEST_URI'];
 
