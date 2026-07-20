@@ -1,0 +1,238 @@
+.collection-records-page {
+    width: 100%;
+}
+
+
+/* Cards */
+
+.records-filter-card,
+.records-list-card {
+    background: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 20px;
+
+    padding: 28px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+
+.filter-heading h2,
+.records-list-heading h2 {
+    font-family: "Exo 2", sans-serif;
+
+    font-size: 22px;
+
+    color: #111827;
+}
+
+
+.filter-heading p,
+.records-list-heading p {
+    margin-top: 6px;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* Filters */
+
+.records-filter-form {
+    margin-top: 24px;
+}
+
+
+.records-filter-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+}
+
+
+.filter-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 24px;
+}
+
+
+/* Records List */
+
+.records-list-card {
+    margin-top: 30px;
+}
+
+
+.records-list-heading {
+    margin-bottom: 20px;
+}
+
+
+/* Table */
+
+.records-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 16px;
+}
+
+
+.records-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.records-table thead {
+    background: #ECFDF3;
+}
+
+
+.records-table th {
+    padding: 14px 12px;
+
+    text-align: left;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #047857;
+
+    white-space: nowrap;
+}
+
+
+.records-table td {
+    padding: 16px 12px;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    font-size: 13px;
+
+    color: #111827;
+
+    vertical-align: middle;
+}
+
+
+.records-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.records-table tbody tr:hover {
+    background: #F6FBF7;
+}
+
+
+/* Verification Status */
+
+.verification-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.verification-status.pending {
+    background: #FFEDD5;
+
+    color: #B45309;
+}
+
+
+.verification-status.verified {
+    background: #D0FAE4;
+
+    color: #047857;
+}
+
+
+/* Actions */
+
+.record-action-btn {
+    min-width: 92px;
+
+    height: 38px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.primary-action {
+    background: #159342;
+
+    border: 1px solid #159342;
+
+    color: #FFFFFF;
+}
+
+
+.primary-action:hover {
+    background: #0E7A37;
+}
+
+
+.secondary-action {
+    background: #FFFFFF;
+
+    border: 1px solid #159342;
+
+    color: #0A5A3E;
+}
+
+
+.secondary-action:hover {
+    background: #ECFDF3;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .records-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

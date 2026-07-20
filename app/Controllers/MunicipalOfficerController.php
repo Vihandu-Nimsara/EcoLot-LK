@@ -52,4 +52,14 @@ public function routes()
     );
 }
 
+public function collectionRecords()
+{
+    $this->view(
+        'municipal_officer/collection-records',
+        [
+            'currentPage' => 'collection-records'
+        ]
+    );
+}
+
 }
