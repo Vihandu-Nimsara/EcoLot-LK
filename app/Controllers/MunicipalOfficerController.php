@@ -42,6 +42,7 @@ public function flaggedRequests()
     );
 }
 
+
 public function routes()
 {
     $this->view(
