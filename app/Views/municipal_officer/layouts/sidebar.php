@@ -21,7 +21,10 @@
    class="nav-item <?= ($currentPage ?? '') === 'campaigns' ? 'active' : '' ?>">
     Campaigns
 </a>
-        <a href="#" class="nav-item">Area Schedules</a>
+        <a href="/EcoLot-LK/public/officer/area-schedules"
+   class="nav-item <?= ($currentPage ?? '') === 'area-schedules' ? 'active' : '' ?>">
+    Area Schedules
+</a>
         <a href="#" class="nav-item">Requests</a>
         <a href="#" class="nav-item">Routes</a>
         <a href="#" class="nav-item">Collection Records</a>
@@ -32,8 +35,11 @@
 
     <!-- Bottom User -->
     <div class="sidebar-bottom">
-        <div class="user-name">QA Municipal Officer</div>
-        <a href="#">Logout</a>
-    </div>
+
+    <a href="#" class="logout-link">
+        Logout
+    </a>
+
+</div>
 
 </aside>

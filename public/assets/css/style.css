@@ -56,11 +56,9 @@ p {
 
 
 .app-layout {
-
-    display:flex;
-
-    min-height:100vh;
-
+    display: flex;
+    min-height: 100vh;
+    align-items: flex-start;
 }
 
 
