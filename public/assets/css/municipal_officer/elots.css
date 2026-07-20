@@ -1,0 +1,282 @@
+.elots-page {
+    width: 100%;
+}
+
+
+/* =========================
+   Filter + List Cards
+========================= */
+
+.elot-filter-card,
+.elots-list-card {
+    background: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 20px;
+
+    padding: 28px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+
+.filter-heading h2,
+.elots-list-heading h2 {
+    font-family: "Exo 2", sans-serif;
+
+    font-size: 22px;
+
+    color: #111827;
+}
+
+
+.filter-heading p,
+.elots-list-heading p {
+    margin-top: 6px;
+
+    color: #6B7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================
+   Filter Form
+========================= */
+
+.elot-filter-form {
+    margin-top: 24px;
+}
+
+
+.elot-filter-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+}
+
+
+.filter-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 24px;
+}
+
+
+/* =========================
+   E-Lot List
+========================= */
+
+.elots-list-card {
+    margin-top: 30px;
+}
+
+
+.elots-list-heading {
+    margin-bottom: 20px;
+}
+
+
+/* =========================
+   Table
+========================= */
+
+.elots-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 16px;
+}
+
+
+.elots-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+
+.elots-table thead {
+    background: #ECFDF3;
+}
+
+
+.elots-table th {
+    padding: 14px 12px;
+
+    text-align: left;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #047857;
+
+    white-space: nowrap;
+}
+
+
+.elots-table td {
+    padding: 16px 12px;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    font-size: 13px;
+
+    color: #111827;
+
+    vertical-align: middle;
+}
+
+
+.elots-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.elots-table tbody tr:hover {
+    background: #F6FBF7;
+}
+
+
+/* =========================
+   Status Badges
+========================= */
+
+.elot-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.elot-status.open {
+    background: #DDE9FF;
+
+    color: #1D4ED8;
+}
+
+
+.elot-status.awarded {
+    background: #D0FAE4;
+
+    color: #047857;
+}
+
+
+.elot-status.completed {
+    background: #F3F4F6;
+
+    color: #6B7280;
+}
+
+
+/* =========================
+   Empty / Not Selected
+========================= */
+
+.not-assigned {
+    color: #6B7280;
+
+    font-style: italic;
+}
+
+
+/* =========================
+   Action Buttons
+========================= */
+
+.elot-action-btn {
+    min-width: 110px;
+
+    height: 38px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.primary-action {
+    background: #159342;
+
+    border: 1px solid #159342;
+
+    color: #FFFFFF;
+}
+
+
+.primary-action:hover {
+    background: #0E7A37;
+
+    border-color: #0E7A37;
+}
+
+
+.secondary-action {
+    background: #FFFFFF;
+
+    border: 1px solid #159342;
+
+    color: #0A5A3E;
+}
+
+
+.secondary-action:hover {
+    background: #ECFDF3;
+}
+
+
+/* Keep action column aligned */
+
+.elots-table th:last-child,
+.elots-table td:last-child {
+    width: 140px;
+
+    text-align: center;
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 900px) {
+
+    .elot-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

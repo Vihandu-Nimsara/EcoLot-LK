@@ -37,6 +37,11 @@ $router->get(
     "MunicipalOfficerController@collectionRecords"
 );
 
+$router->get(
+    "/officer/e-lots",
+    "MunicipalOfficerController@eLots"
+);
+
 
 $uri = $_SERVER['REQUEST_URI'];
 

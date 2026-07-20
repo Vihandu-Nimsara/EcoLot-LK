@@ -32,6 +32,8 @@
       href="/EcoLot-LK/public/assets/css/municipal_officer/routes.css">
     <link rel="stylesheet"
       href="/EcoLot-LK/public/assets/css/municipal_officer/collection-records.css">
+    <link rel="stylesheet"
+      href="/EcoLot-LK/public/assets/css/municipal_officer/elots.css">
 
 
     <!-- Sidebar CSS -->

@@ -63,4 +63,14 @@ public function collectionRecords()
     );
 }
 
+public function eLots()
+{
+    $this->view(
+        'municipal_officer/elots',
+        [
+            'currentPage' => 'e-lots'
+        ]
+    );
+}
+
 }
