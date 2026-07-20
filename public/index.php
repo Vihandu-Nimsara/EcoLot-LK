@@ -42,6 +42,11 @@ $router->get(
     "MunicipalOfficerController@eLots"
 );
 
+$router->get(
+    "/officer/feedback",
+    "MunicipalOfficerController@feedback"
+);
+
 
 $uri = $_SERVER['REQUEST_URI'];
 

@@ -41,7 +41,10 @@
    class="nav-item <?= ($currentPage ?? '') === 'e-lots' ? 'active' : '' ?>">
     E-Lots
 </a>
-        <a href="#" class="nav-item">Feedback</a>
+        <a href="/EcoLot-LK/public/officer/feedback"
+   class="nav-item <?= ($currentPage ?? '') === 'feedback' ? 'active' : '' ?>">
+    Feedback
+</a>
         <a href="#" class="nav-item">Reports</a>
     </nav>
 
