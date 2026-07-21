@@ -83,4 +83,14 @@ public function feedback()
     );
 }
 
+public function reports()
+{
+    $this->view(
+        'municipal_officer/reports',
+        [
+            'currentPage' => 'reports'
+        ]
+    );
+}
+
 }

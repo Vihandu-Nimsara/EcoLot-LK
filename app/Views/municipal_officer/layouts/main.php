@@ -36,6 +36,8 @@
       href="/EcoLot-LK/public/assets/css/municipal_officer/elots.css">
     <link rel="stylesheet"
       href="/EcoLot-LK/public/assets/css/municipal_officer/feedback.css">
+    <link rel="stylesheet"
+      href="/EcoLot-LK/public/assets/css/municipal_officer/reports.css">
 
     <!-- Sidebar CSS -->
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/sidebar.css">
