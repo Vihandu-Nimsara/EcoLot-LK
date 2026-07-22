@@ -1,15 +1,34 @@
-/* =========================
-   Municipal Officer Header
-========================= */
+/* ========
+    Header
+   ======== */
 
-.top-header {
+/* .top-header {
     height: 80px;
     background: white;
     border-bottom: 1px solid #E5E7EB;
-    padding: 0 40px;
+    padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+} */
+
+.top-header {
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    border-radius: 20px;
+    margin: 15px auto;
+    width: calc(100% - 40px);
+    height: auto;
+    min-height: 80px;
+    background: white;
+    padding: 15px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
 /* Left */
@@ -79,6 +98,8 @@
 }
 
 .organization {
+    margin-top: 4px;
     font-size: 12px;
     color: #6B7280;
+
 }

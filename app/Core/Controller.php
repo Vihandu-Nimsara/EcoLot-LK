@@ -12,6 +12,6 @@ class Controller
 
         $content = ob_get_clean();
 
-        require "../app/Views/municipal_officer/layouts/main.php";
+        require "../app/Views/recycler/layouts/main.php";
     }
 }

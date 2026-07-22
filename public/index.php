@@ -48,6 +48,29 @@ $router->get(
 );
 
 
+//Recycler routes
+
+$router->get(
+    "/recycler/dashboard",
+    "RecyclerController@dashboard"
+);
+
+$router->get(
+    "/recycler/eligible_e-lots",
+    "RecyclerController@Eligible_ELots"
+);
+
+$router->get(
+    "/recycler/my_bids",
+    "RecyclerController@My_Bids"
+);
+
+$router->get(
+    "/recycler/awarded_e-lots",
+    "RecyclerController@Awarded_ELots"
+);
+
+
 $uri = $_SERVER['REQUEST_URI'];
 
 $uri = str_replace(

@@ -1,0 +1,166 @@
+/* ================================
+   My Awarded E-Lots Page Styles
+   ================================ */
+
+.awarded-e-lots-page {
+    width: 100%;
+}
+
+
+.awarded-e-lot-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+
+.awarded-e-lot-header h2 {
+    font-family: "Exo 2", sans-serif;
+    font-size: 22px;
+    color: #111827;
+}
+
+
+.awarded-e-lot-header p {
+    margin-top: 6px;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+
+/* awarded-e-lot Section */
+
+.awarded-e-lot-card {
+    margin-top: 30px;
+}
+
+
+.awarded-e-lot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+.awarded-e-lot-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+.awarded-e-lot-filter label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+}
+
+
+.awarded-e-lot-filter select {
+    height: 40px;
+    min-width: 190px;
+
+    padding: 0 12px;
+
+    border: 1px solid #D9DCE1;
+    border-radius: 10px;
+
+    background: #FFFFFF;
+
+    font-family: "Inter", sans-serif;
+}
+
+
+/* Table */
+
+.awarded-e-lot-table-wrapper {
+    overflow-x: auto;
+
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+}
+
+
+.awarded-e-lot-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.awarded-e-lot-table thead {
+    background: #ECFDF3;
+}
+
+
+.awarded-e-lot-table th {
+    padding: 14px 12px;
+
+    text-align: left;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #047857;
+}
+
+
+.awarded-e-lot-table td {
+    padding: 16px 12px;
+
+    font-size: 13px;
+
+    color: #111827;
+
+    border-bottom: 1px solid #E5E7EB;
+}
+
+
+.awarded-e-lot-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.awarded-e-lot-table tbody tr:hover {
+    background: #F6FBF7;
+}
+
+
+/* Action Button */
+
+.edit-btn {
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 10px;
+
+    color: #0A5A3E;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.edit-btn:hover {
+    border-color: #159342;
+    color: #159342;
+}
+
+
+/* Responsive */
+
+@media (max-width: 900px) {
+
+    .awarded-e-lot-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+}
