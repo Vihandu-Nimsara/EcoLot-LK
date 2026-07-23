@@ -85,7 +85,7 @@
 }
 
 .stat-icon.awarded {
-    background: ;
+    background: #fce6a3;
 }
 
 .stat-info h2 {
@@ -165,13 +165,13 @@ tbody tr:hover {
 }
 
 .status.op {
-    background: #D0FAE4;
+    background: #D1FAE5;
     color: #047857;
 }
 
 .status.non-op {
-    background: #FFEDD5;
-    color: #B45309;
+    background: #FEE2E2;
+    color: #B42318;
 }
 
 /* Responsive */

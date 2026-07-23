@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        EcoLot LK - Municipal Officer
+        EcoLot LK - Recycler
     </title>
 
 
@@ -23,11 +23,11 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/style.css">
 
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/municipal_officer/campaigns.css">
+    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/dashboard.css">
     
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/eligible_e-lots.css">
     
-      <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/my_bids.css">
+    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/my_bids.css">
 
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/awarded_e-lots.css">
 
@@ -36,7 +36,6 @@
 
     <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/header.css">
 
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/dashboard.css">
 
 
 </head>
