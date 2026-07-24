@@ -52,26 +52,6 @@
 }
 
 
-.campaign-actions .secondary-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-
-    background: #FFFFFF;
-    color: #0A5A3E;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
-
-    padding: 10px 18px;
-
-    font-size: 14px;
-    font-weight: 600;
-}
-
-
 /* Table */
 
 .campaign-table-wrapper {
