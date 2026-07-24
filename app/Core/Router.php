@@ -19,15 +19,21 @@ class Router
 
             [$controller, $method] = explode('@', $action);
 
-
             require_once "../app/Controllers/".$controller.".php";
 
+            // Support both global controllers and namespaced controllers
+            if (class_exists($controller)) {
+                $controllerInstance = new $controller();
+            } else {
+                $namespacedClass = "\\App\\Controllers\\" . $controller;
+                if (class_exists($namespacedClass)) {
+                    $controllerInstance = new $namespacedClass();
+                } else {
+                    die("Controller class {$controller} not found.");
+                }
+            }
 
-            $controller = new $controller();
-
-
-            $controller->$method();
-
+            $controllerInstance->$method();
         }
         else
         {

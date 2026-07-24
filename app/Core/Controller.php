@@ -2,7 +2,7 @@
 
 class Controller
 {
-    public function view($view, $data = [])
+    public function view($view, $data = [], $layout = null)
     {
         extract($data);
 
@@ -12,6 +12,15 @@ class Controller
 
         $content = ob_get_clean();
 
-        require "../app/Views/municipal_officer/layouts/main.php";
+        // Dynamically select layout based on view prefix if not explicitly passed
+        if ($layout === null) {
+            if (strpos($view, 'public_user/') === 0) {
+                $layout = 'public_user/layouts/main';
+            } else {
+                $layout = 'municipal_officer/layouts/main';
+            }
+        }
+
+        require "../app/Views/" . $layout . ".php";
     }
 }

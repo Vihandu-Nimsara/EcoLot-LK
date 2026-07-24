@@ -6,60 +6,25 @@ require_once "../app/Core/Router.php";
 
 $router = new Router();
 
-
-$router->get(
-    "/officer/dashboard",
-    "MunicipalOfficerController@dashboard"
-);
-
-$router->get(
-    "/officer/campaigns",
-    "MunicipalOfficerController@campaigns"
-);
-
-$router->get(
-    "/officer/area-schedules",
-    "MunicipalOfficerController@areaSchedules"
-);
-
-$router->get(
-    "/officer/flagged-requests",
-    "MunicipalOfficerController@flaggedRequests"
-);
-
-$router->get(
-    "/officer/routes",
-    "MunicipalOfficerController@routes"
-);
-
-$router->get(
-    "/officer/collection-records",
-    "MunicipalOfficerController@collectionRecords"
-);
-
-$router->get(
-    "/officer/e-lots",
-    "MunicipalOfficerController@eLots"
-);
-
-$router->get(
-    "/officer/feedback",
-    "MunicipalOfficerController@feedback"
-);
-
-$router->get(
-    "/officer/reports",
-    "MunicipalOfficerController@reports"
-);
+require_once "../routes/web.php";
 
 
 $uri = $_SERVER['REQUEST_URI'];
 
-$uri = str_replace(
-    "/EcoLot-LK/public",
-    "",
-    $uri
-);
+// Remove query parameters from the request path
+$uri = parse_url($uri, PHP_URL_PATH);
 
+// Dynamically determine project base folder to prevent hardcoded directory mismatch
+$basePath = dirname($_SERVER['SCRIPT_NAME']);
+$basePath = str_replace('\\', '/', $basePath);
+if ($basePath !== '/') {
+    $basePath = rtrim($basePath, '/');
+}
+
+if ($basePath !== '' && $basePath !== '/') {
+    $uri = str_replace($basePath, '', $uri);
+} else {
+    $uri = str_replace("/EcoLot-LK/public", "", $uri);
+}
 
 $router->dispatch($uri);
