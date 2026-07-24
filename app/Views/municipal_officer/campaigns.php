@@ -1,28 +1,21 @@
 <section class="campaigns-page">
-
-    <div class="campaigns-card">
-
-        <div class="campaigns-heading">
+    <div class="page-toolbar">
+        <div>
             <h1>Campaigns</h1>
-
-            <p>
-                Create and manage monthly municipal e-waste collection campaigns.
-            </p>
-
-            <span>
-                EcoLot LK Municipal Council
-            </span>
+            <p>Create and manage monthly municipal e-waste collection campaigns.</p>
         </div>
 
-
-        <div class="campaign-actions">
-
+        <div class="toolbar-actions">
             <button class="primary-btn">
                 Create Campaign
             </button>
-
         </div>
+    </div>
 
+    <div class="campaigns-card">
+        <div class="campaigns-context">
+            EcoLot LK Municipal Council
+        </div>
 
         <div class="campaign-table-wrapper">
 

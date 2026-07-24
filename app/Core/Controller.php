@@ -10,7 +10,15 @@ class Controller
             : dirname(__DIR__, 2);
 
         $view = trim($view, '/');
+
+        if (!preg_match('#^[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)*$#', $view)) {
+            throw new InvalidArgumentException("Invalid view path [{$view}].");
+        }
+
         $viewFile = $rootPath . '/app/Views/' . $view . '.php';
+        $appConfig = require $rootPath . '/config/app.php';
+        $basePath = rtrim((string) ($appConfig['base_path'] ?? ''), '/');
+        $appName = (string) ($appConfig['name'] ?? 'Application');
 
         if (!is_file($viewFile)) {
             throw new RuntimeException("View [{$view}] was not found.");

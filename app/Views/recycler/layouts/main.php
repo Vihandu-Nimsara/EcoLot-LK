@@ -1,112 +1,56 @@
+<?php
+$assetBase = htmlspecialchars($basePath . '/assets', ENT_QUOTES, 'UTF-8');
+$pageStyles = [
+    'dashboard' => 'recycler/dashboard.css',
+    'eligible-e-lots' => 'recycler/eligible_e-lots.css',
+    'my-bids' => 'recycler/my_bids.css',
+    'awarded-e-lots' => 'recycler/awarded_e-lots.css',
+];
+$pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title><?= htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') ?> - Recycler</title>
 
-    <title>EcoLot LK - Recycler</title>
-
-
-    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap"
         rel="stylesheet"
     >
 
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/style.css">
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/sidebar.css">
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/header.css">
 
-    <!-- Global CSS -->
-    <link
-        rel="stylesheet"
-        href="/EcoLot-LK/public/assets/css/style.css"
-    >
-
-
-    <!-- Shared Recycler CSS -->
-    <link
-        rel="stylesheet"
-        href="/EcoLot-LK/public/assets/css/sidebar.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="/EcoLot-LK/public/assets/css/header.css"
-    >
-
-
-    <!-- Page Specific CSS -->
-
-    <?php if (($currentPage ?? '') === 'dashboard'): ?>
-
+    <?php if ($pageStyle !== null): ?>
         <link
             rel="stylesheet"
-            href="/EcoLot-LK/public/assets/css/recycler/dashboard.css"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>"
         >
-
-    <?php elseif (($currentPage ?? '') === 'eligible_e-lots'): ?>
-
-        <link
-            rel="stylesheet"
-            href="/EcoLot-LK/public/assets/css/recycler/eligible_e-lots.css"
-        >
-
-    <?php elseif (($currentPage ?? '') === 'my_bids'): ?>
-
-        <link
-            rel="stylesheet"
-            href="/EcoLot-LK/public/assets/css/recycler/my_bids.css"
-        >
-
-    <?php elseif (($currentPage ?? '') === 'awarded_e-lots'): ?>
-
-        <link
-            rel="stylesheet"
-            href="/EcoLot-LK/public/assets/css/recycler/awarded_e-lots.css"
-        >
-
     <?php endif; ?>
 
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/recycler/theme.css">
 </head>
 
+<body class="recycler-app">
+    <div class="app-layout">
+        <?php include __DIR__ . '/sidebar.php'; ?>
 
-<body>
+        <div class="main-content">
+            <?php include __DIR__ . '/header.php'; ?>
 
-<div class="app-layout">
-
-    <?php include __DIR__ . "/sidebar.php"; ?>
-
-
-    <div class="main-content">
-
-        <?php include __DIR__ . "/header.php"; ?>
-
-
-        <main class="page-content">
-
-            <?= $content ?>
-
-        </main>
-
+            <main class="page-content">
+                <?= $content ?>
+            </main>
+        </div>
     </div>
-
-</div>
-
 </body>
 
 </html>

@@ -478,7 +478,7 @@
             </div>
 
             <a
-                href="/EcoLot-LK/public/officer/feedback"
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/officer/feedback"
                 class="secondary-btn feedback-link">
                 View Feedback
             </a>

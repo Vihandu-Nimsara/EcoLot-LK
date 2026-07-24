@@ -1,28 +1,29 @@
 <aside class="sidebar">
+    <?php $baseUrl = htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8'); ?>
 
     <!-- Logo -->
     <div class="sidebar-logo">
         <div class="logo-box">
-            <img src="/EcoLot-LK/public/assets/images/ecolot-logo.png" alt="EcoLot LK Logo">
+            <img src="<?= $baseUrl ?>/assets/images/ecolot-logo.png" alt="EcoLot LK Logo">
         </div>
     </div>
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
-        <a href="/EcoLot-LK/public/recycler/dashboard"
+        <a href="<?= $baseUrl ?>/recycler/dashboard"
         class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">
         Dashboard
         </a>
-        <a href="/EcoLot-LK/public/recycler/eligible_e-lots"
-        class="nav-item <?= ($currentPage ?? '') === 'eligible_e-lots' ? 'active' : '' ?>">
+        <a href="<?= $baseUrl ?>/recycler/eligible-e-lots"
+        class="nav-item <?= ($currentPage ?? '') === 'eligible-e-lots' ? 'active' : '' ?>">
         Eligible E-Lots
         </a>
-        <a href="/EcoLot-LK/public/recycler/my_bids"
-        class="nav-item <?= ($currentPage ?? '') === 'my_bids' ? 'active' : '' ?>">
+        <a href="<?= $baseUrl ?>/recycler/my-bids"
+        class="nav-item <?= ($currentPage ?? '') === 'my-bids' ? 'active' : '' ?>">
         My Bids
         </a>
-        <a href="/EcoLot-LK/public/recycler/awarded_e-lots"
-        class="nav-item <?= ($currentPage ?? '') === 'awarded_e-lots' ? 'active' : '' ?>">
+        <a href="<?= $baseUrl ?>/recycler/awarded-e-lots"
+        class="nav-item <?= ($currentPage ?? '') === 'awarded-e-lots' ? 'active' : '' ?>">
         Awarded E-Lots
         </a>
     </nav>

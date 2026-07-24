@@ -27,4 +27,10 @@ return static function (Router $router, array $app): void {
         $router->get('/feedback', 'MunicipalOfficerController@feedback');
         $router->get('/reports', 'MunicipalOfficerController@reports');
     });
+
+    $router->group('/recycler', static function (Router $router): void {
+        $router->get('/eligible-e-lots', 'RecyclerController@eligibleELots');
+        $router->get('/my-bids', 'RecyclerController@myBids');
+        $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
+    });
 };

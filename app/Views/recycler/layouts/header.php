@@ -11,7 +11,6 @@
             <div class="profile-info">
                 <span class="name">Anjana Silva</span>
                 <span class="role">Recycler</span>
-                <span class="organization">GreenCycle Lanka Pvt Ltd</span>
             </div>
         </div>
     </div>

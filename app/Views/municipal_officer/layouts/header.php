@@ -1,7 +1,7 @@
 <header class="top-header">
 
     <div class="header-left">
-        <h1>Officer Dashboard</h1>
+        <h1>Officer Workspace</h1>
         <p>Manage campaigns, schedules, requests, routes, collections, and E-Lots.</p>
     </div>
 

@@ -1,0 +1,687 @@
+/* =====================================================
+   Municipal Officer UI Theme
+   Loaded after the active page stylesheet.
+===================================================== */
+
+.officer-app {
+    --officer-green-900: #073F2D;
+    --officer-green-800: #0A5A3E;
+    --officer-green-600: #159342;
+    --officer-green-100: #DDF7E7;
+    --officer-green-50: #F0FAF4;
+    --officer-bg: #F4F8F5;
+    --officer-surface: #FFFFFF;
+    --officer-border: #E1E9E4;
+    --officer-text: #17211B;
+    --officer-muted: #66736B;
+    --officer-shadow: 0 8px 24px rgba(15, 58, 39, 0.06);
+    background: var(--officer-bg);
+    color: var(--officer-text);
+}
+
+.officer-app .app-layout {
+    align-items: stretch;
+}
+
+.officer-app .main-content {
+    min-width: 0;
+    background: var(--officer-bg);
+}
+
+.officer-app .page-content {
+    width: 100%;
+    max-width: 1540px;
+    margin: 0 auto;
+    padding: 30px 32px 44px;
+}
+
+/* Sidebar */
+
+.officer-app .sidebar {
+    width: 244px;
+    min-height: 100vh;
+    height: 100vh;
+    padding: 22px 16px 18px;
+    background:
+        radial-gradient(circle at 16% 0%, rgba(66, 189, 111, 0.20), transparent 30%),
+        linear-gradient(180deg, #0A5A3E 0%, #073F2D 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-y: auto;
+}
+
+.officer-app .sidebar-logo {
+    display: block;
+    margin: 0 0 28px;
+}
+
+.officer-app .logo-box {
+    width: 100%;
+    max-width: none;
+    height: 58px;
+    padding: 7px 14px;
+    background: #F2FFF7;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+}
+
+.officer-app .logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.officer-app .sidebar-nav {
+    gap: 5px;
+}
+
+.officer-app .nav-item {
+    position: relative;
+    padding: 10px 13px;
+    color: rgba(241, 255, 246, 0.84);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 550;
+    line-height: 1.35;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.officer-app .nav-item:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.officer-app .nav-item.active {
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #159342, #37A95F);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.13);
+}
+
+.officer-app .nav-item.active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    width: 3px;
+    height: 18px;
+    background: #FFFFFF;
+    border-radius: 99px;
+    transform: translateY(-50%);
+}
+
+.officer-app .sidebar-bottom {
+    padding-top: 14px;
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.officer-app .logout-link {
+    padding: 10px 13px;
+    color: #FFC5C5;
+    border-radius: 10px;
+    font-size: 0.875rem;
+}
+
+/* Common header */
+
+.officer-app .top-header {
+    position: static;
+    z-index: 20;
+    width: calc(100% - 40px);
+    min-height: 86px;
+    height: auto;
+    margin: 15px auto;
+    padding: 16px 28px;
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid var(--officer-border);
+    border-radius: 18px;
+    box-shadow: 0 10px 26px rgba(15, 58, 39, 0.075);
+    backdrop-filter: blur(12px);
+}
+
+.officer-app .header-left h1 {
+    color: #103C28;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.officer-app .header-left p {
+    margin-top: 4px;
+    color: var(--officer-muted);
+    font-size: 0.875rem;
+}
+
+.officer-app .profile {
+    gap: 11px;
+    padding: 7px 10px 7px 8px;
+    background: var(--officer-green-50);
+    border: 1px solid #DCECE2;
+    border-radius: 13px;
+}
+
+.officer-app .avatar {
+    width: 38px;
+    height: 38px;
+    background: #D8F6E3;
+    border-radius: 11px;
+    color: var(--officer-green-800);
+    font-size: 0.8125rem;
+}
+
+.officer-app .profile-info {
+    gap: 1px;
+}
+
+.officer-app .name {
+    color: var(--officer-text);
+    font-size: 0.875rem;
+    font-weight: 650;
+}
+
+.officer-app .role,
+.officer-app .organization {
+    margin: 0;
+    color: var(--officer-green-800);
+    font-size: 0.75rem;
+}
+
+/* Page heading */
+
+.officer-app .page-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 0 0 22px;
+}
+
+.officer-app .page-toolbar h1 {
+    color: var(--officer-text);
+    font-size: clamp(1.625rem, 2.4vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+.officer-app .page-toolbar p {
+    max-width: 720px;
+    margin-top: 6px;
+    color: var(--officer-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+}
+
+.officer-app .toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Surfaces and section headings */
+
+.officer-app .campaigns-card,
+.officer-app .schedule-form-card,
+.officer-app .scheduled-areas-card,
+.officer-app .filter-card,
+.officer-app .flagged-list-card,
+.officer-app .route-filter-card,
+.officer-app .routes-list-card,
+.officer-app .records-filter-card,
+.officer-app .records-list-card,
+.officer-app .elot-filter-card,
+.officer-app .elots-list-card,
+.officer-app .feedback-list-card,
+.officer-app .report-filter-card,
+.officer-app .report-card,
+.officer-app .report-summary-card,
+.officer-app .table-card {
+    background: var(--officer-surface);
+    border: 1px solid var(--officer-border);
+    border-radius: 16px;
+    box-shadow: var(--officer-shadow);
+}
+
+.officer-app .campaigns-card,
+.officer-app .schedule-form-card,
+.officer-app .scheduled-areas-card,
+.officer-app .filter-card,
+.officer-app .flagged-list-card,
+.officer-app .route-filter-card,
+.officer-app .routes-list-card,
+.officer-app .records-filter-card,
+.officer-app .records-list-card,
+.officer-app .elot-filter-card,
+.officer-app .elots-list-card,
+.officer-app .feedback-list-card,
+.officer-app .report-filter-card,
+.officer-app .report-card {
+    padding: 24px;
+}
+
+.officer-app .card-heading h2,
+.officer-app .scheduled-areas-header h2,
+.officer-app .filter-heading h2,
+.officer-app .list-heading h2,
+.officer-app .routes-list-heading h2,
+.officer-app .records-list-heading h2,
+.officer-app .elots-list-heading h2,
+.officer-app .feedback-list-heading h2,
+.officer-app .report-card-heading h2,
+.officer-app .section-header h2 {
+    color: var(--officer-text);
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+.officer-app .card-heading p,
+.officer-app .scheduled-areas-header p,
+.officer-app .filter-heading p,
+.officer-app .list-heading p,
+.officer-app .routes-list-heading p,
+.officer-app .records-list-heading p,
+.officer-app .elots-list-heading p,
+.officer-app .feedback-list-heading p,
+.officer-app .report-card-heading p,
+.officer-app .section-header p {
+    margin-top: 5px;
+    color: var(--officer-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.officer-app .scheduled-areas-card,
+.officer-app .routes-list-card,
+.officer-app .records-list-card,
+.officer-app .elots-list-card,
+.officer-app .report-card {
+    margin-top: 24px;
+}
+
+/* Campaign page */
+
+.officer-app .campaigns-context {
+    display: inline-flex;
+    margin-bottom: 18px;
+    padding: 5px 9px;
+    color: var(--officer-green-800);
+    background: var(--officer-green-50);
+    border: 1px solid #DCECE2;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Forms */
+
+.officer-app .schedule-form,
+.officer-app .filter-form,
+.officer-app .route-filter-form,
+.officer-app .records-filter-form,
+.officer-app .elot-filter-form,
+.officer-app .report-filter-form {
+    margin-top: 20px;
+}
+
+.officer-app .form-grid,
+.officer-app .filter-grid,
+.officer-app .route-filter-grid,
+.officer-app .records-filter-grid,
+.officer-app .elot-filter-grid {
+    gap: 18px;
+}
+
+.officer-app .form-group {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.officer-app .form-group label,
+.officer-app .campaign-filter label,
+.officer-app .awarded-e-lot-filter label {
+    margin: 0 0 7px;
+    color: #34443A;
+    font-size: 0.8125rem;
+    font-weight: 650;
+}
+
+.officer-app .form-group input,
+.officer-app .form-group select,
+.officer-app .campaign-filter select {
+    width: 100%;
+    height: 44px;
+    padding: 0 13px;
+    color: var(--officer-text);
+    background: #FBFDFC;
+    border: 1px solid #D8E2DB;
+    border-radius: 9px;
+    font-family: "Inter", sans-serif;
+    font-size: 0.875rem;
+    transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.officer-app .form-group input:hover,
+.officer-app .form-group select:hover,
+.officer-app .campaign-filter select:hover {
+    border-color: #B8CABF;
+}
+
+.officer-app .form-group input:focus,
+.officer-app .form-group select:focus,
+.officer-app .campaign-filter select:focus {
+    outline: none;
+    background: #FFFFFF;
+    border-color: var(--officer-green-600);
+    box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
+}
+
+.officer-app .filter-actions,
+.officer-app .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Buttons */
+
+.officer-app .primary-btn,
+.officer-app .secondary-btn,
+.officer-app .edit-btn,
+.officer-app .review-btn,
+.officer-app .record-action-btn,
+.officer-app .route-action-btn,
+.officer-app .elot-action-btn,
+.officer-app .feedback-action-btn {
+    min-height: 38px;
+    padding: 8px 15px;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    font-weight: 650;
+    line-height: 1.2;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease,
+        box-shadow 150ms ease, transform 150ms ease;
+}
+
+.officer-app .primary-btn,
+.officer-app .primary-action {
+    color: #FFFFFF;
+    background: var(--officer-green-600);
+    border: 1px solid var(--officer-green-600);
+    box-shadow: 0 5px 12px rgba(21, 147, 66, 0.15);
+}
+
+.officer-app .primary-btn:hover,
+.officer-app .primary-action:hover {
+    background: #0E7A37;
+    border-color: #0E7A37;
+    transform: translateY(-1px);
+}
+
+.officer-app .secondary-btn,
+.officer-app .secondary-action,
+.officer-app .edit-btn,
+.officer-app .review-btn {
+    color: var(--officer-green-800);
+    background: #FFFFFF;
+    border: 1px solid #B8D6C3;
+}
+
+.officer-app .secondary-btn:hover,
+.officer-app .secondary-action:hover,
+.officer-app .edit-btn:hover,
+.officer-app .review-btn:hover {
+    color: var(--officer-green-800);
+    background: var(--officer-green-50);
+    border-color: #8AB99B;
+}
+
+/* Dashboard */
+
+.officer-app .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+    gap: 14px;
+    margin-top: 0;
+}
+
+.officer-app .stat-card {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 108px;
+    padding: 18px;
+    background: #FFFFFF;
+    border: 1px solid var(--officer-border);
+    border-radius: 15px;
+    box-shadow: var(--officer-shadow);
+}
+
+.officer-app .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 1.125rem;
+}
+
+.officer-app .stat-info {
+    min-width: 0;
+}
+
+.officer-app .stat-card span {
+    display: block;
+    color: var(--officer-muted);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+.officer-app .stat-card h2 {
+    margin-top: 5px;
+    color: var(--officer-green-800);
+    font-size: 1.875rem;
+    line-height: 1;
+}
+
+.officer-app .schedule-section {
+    margin-top: 28px;
+}
+
+.officer-app .section-header {
+    margin-bottom: 14px;
+}
+
+.officer-app .table-card {
+    padding: 0;
+    overflow-x: auto;
+}
+
+/* Tables */
+
+.officer-app .campaign-table-wrapper,
+.officer-app .schedule-table-wrapper,
+.officer-app .flagged-table-wrapper,
+.officer-app .routes-table-wrapper,
+.officer-app .records-table-wrapper,
+.officer-app .elots-table-wrapper,
+.officer-app .feedback-table-wrapper,
+.officer-app .report-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--officer-border);
+    border-radius: 12px;
+}
+
+.officer-app .page-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.officer-app .page-content thead {
+    background: #EEF9F2;
+}
+
+.officer-app .page-content th {
+    padding: 12px 13px;
+    color: #287049;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.025em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.officer-app .page-content td {
+    padding: 14px 13px;
+    color: #263029;
+    border-bottom: 1px solid #E8EEE9;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    vertical-align: middle;
+}
+
+.officer-app .page-content tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.officer-app .page-content tbody tr:hover {
+    background: #F8FCF9;
+}
+
+/* Tabs and badges */
+
+.officer-app .review-summary,
+.officer-app .feedback-status-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.officer-app .feedback-status-tabs {
+    margin-top: 0;
+}
+
+.officer-app .summary-tab,
+.officer-app .feedback-tab {
+    min-height: 38px;
+    padding: 7px 12px;
+    border-color: var(--officer-border);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+}
+
+.officer-app .summary-tab.active,
+.officer-app .feedback-tab.active {
+    color: #FFFFFF;
+    background: var(--officer-green-800);
+    border-color: var(--officer-green-800);
+}
+
+.officer-app .status,
+.officer-app .review-status,
+.officer-app .route-status,
+.officer-app .verification-status,
+.officer-app .elot-status,
+.officer-app .feedback-status,
+.officer-app .report-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+/* Reports */
+
+.officer-app .report-summary-grid {
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.officer-app .report-summary-card {
+    padding: 18px;
+}
+
+.officer-app .summary-label {
+    color: var(--officer-muted);
+    font-size: 0.8125rem;
+}
+
+.officer-app .summary-value {
+    margin-top: 7px;
+    color: var(--officer-green-800);
+    font-size: 1.625rem;
+}
+
+.officer-app .report-summary-card small {
+    margin-top: 5px;
+    color: var(--officer-muted);
+    font-size: 0.75rem;
+}
+
+.officer-app .status-summary-grid,
+.officer-app .feedback-summary-grid {
+    gap: 10px;
+}
+
+.officer-app .status-summary-item,
+.officer-app .feedback-summary-item {
+    padding: 14px;
+    background: #F7FBF8;
+    border-color: var(--officer-border);
+    border-radius: 11px;
+}
+
+.officer-app .status-summary-item strong,
+.officer-app .feedback-summary-item strong {
+    font-size: 1.25rem;
+}
+
+/* Responsive */
+
+@media (max-width: 1180px) {
+    .officer-app .sidebar {
+        width: 220px;
+    }
+
+    .officer-app .page-content,
+    .officer-app .top-header {
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+
+    .officer-app .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .officer-app .filter-grid,
+    .officer-app .route-filter-grid,
+    .officer-app .records-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .officer-app .page-toolbar,
+    .officer-app .scheduled-areas-header,
+    .officer-app .report-card-heading,
+    .officer-app .section-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .officer-app .toolbar-actions {
+        justify-content: flex-start;
+    }
+}
