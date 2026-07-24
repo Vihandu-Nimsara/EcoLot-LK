@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
-
-use App\Core\Controller;
-
-final class CollectorController extends Controller
+class CollectorController extends Controller
 {
+    public function dashboard(): void
+    {
+        $this->view('collector/dashboard', ['currentPage' => 'dashboard']);
+    }
 }

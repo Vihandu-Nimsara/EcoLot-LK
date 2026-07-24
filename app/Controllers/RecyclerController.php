@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
-
-use App\Core\Controller;
-
-final class RecyclerController extends Controller
+class RecyclerController extends Controller
 {
+    public function dashboard(): void
+    {
+        $this->view('recycler/dashboard', ['currentPage' => 'dashboard']);
+    }
 }

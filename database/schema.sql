@@ -1,2 +1,0 @@
--- EcoLot LK database schema placeholder.
--- Final SQL will be created from the approved ERD.

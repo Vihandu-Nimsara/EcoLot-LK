@@ -1,1 +1,0 @@
--- EcoLot LK demo seed data placeholder.
