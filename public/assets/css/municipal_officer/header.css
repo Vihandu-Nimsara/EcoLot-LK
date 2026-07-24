@@ -3,82 +3,102 @@
 ========================= */
 
 .top-header {
-    height: 80px;
-    background: white;
-    border-bottom: 1px solid #E5E7EB;
-    padding: 0 40px;
+    min-height: 92px;
+    padding: 16px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 28px;
+    background: #FFFFFF;
+    border-bottom: 3px solid #D0FAE4;
+    box-shadow: 0 5px 16px rgba(10, 90, 62, 0.08);
 }
 
 /* Left */
-.header-left h1 {
-    font-size: 32px;
-    color: #134029;
-    font-weight: 700;
-    letter-spacing: -0.5px;
+
+.top-header .header-left {
+    min-width: 0;
+    padding-left: 16px;
+    border-left: 4px solid #159342;
 }
 
-.header-left p {
-    margin-top: 6px;
+.top-header .header-left h1 {
+    font-size: 28px;
+    line-height: 1.15;
+    color: #134029;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.top-header .header-left p {
+    margin-top: 5px;
     color: #6B7280;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 /* Right */
-.header-right {
+
+.top-header .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
 }
 
-.role-badge {
-    background: #ECFDF3;
-    color: #047857;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.profile {
+.top-header .profile {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
+    padding: 9px 14px 9px 9px;
+    background: #F6FBF7;
+    border: 1px solid #DCEBE1;
+    border-radius: 14px;
 }
 
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #D0FAE4;
-    color: #0A5A3E;
+.top-header .avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #0A5A3E;
+    color: #FFFFFF;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 700;
 }
 
-.profile-info {
+.top-header .profile-info {
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.name {
-    font-size: 15px;
-    font-weight: 600;
+.top-header .name {
     color: #111827;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-.role {
-    font-size: 12px;
+.top-header .role {
     color: #047857;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-.organization {
-    font-size: 12px;
-    color: #6B7280;
+@media (max-width: 900px) {
+
+    .top-header {
+        min-height: 84px;
+        padding: 14px 24px;
+    }
+
+    .top-header .header-left h1 {
+        font-size: 24px;
+    }
+
+    .top-header .header-left p {
+        display: none;
+    }
+
 }

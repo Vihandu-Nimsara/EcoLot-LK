@@ -11,7 +11,6 @@
             <div class="profile-info">
                 <span class="name">QA Municipal Officer</span>
                 <span class="role">Municipal Officer</span>
-                <span class="organization">EcoLot LK Urban Council</span>
             </div>
         </div>
     </div>
