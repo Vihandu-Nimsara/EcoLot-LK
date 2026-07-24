@@ -33,12 +33,6 @@
 }
 
 
-.toolbar-actions {
-    display: flex;
-    gap: 10px;
-}
-
-
 /* Form Card */
 
 .schedule-form-card,
@@ -274,11 +268,6 @@
 
     .form-grid {
         grid-template-columns: 1fr;
-    }
-
-
-    .toolbar-actions {
-        flex-wrap: wrap;
     }
 
 }
