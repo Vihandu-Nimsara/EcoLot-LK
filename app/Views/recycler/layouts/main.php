@@ -5,53 +5,94 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>
-        EcoLot LK - Recycler
-    </title>
+    <title>EcoLot LK - Recycler</title>
 
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/style.css">
-
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/dashboard.css">
-    
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/eligible_e-lots.css">
-    
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/my_bids.css">
-
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/recycler/awarded_e-lots.css">
-
-    <!-- Sidebar CSS -->
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/sidebar.css">
-
-    <link rel="stylesheet" href="/EcoLot-LK/public/assets/css/header.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
 
 
+    <!-- Global CSS -->
+    <link
+        rel="stylesheet"
+        href="/EcoLot-LK/public/assets/css/style.css"
+    >
+
+
+    <!-- Shared Recycler CSS -->
+    <link
+        rel="stylesheet"
+        href="/EcoLot-LK/public/assets/css/sidebar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/EcoLot-LK/public/assets/css/header.css"
+    >
+
+
+    <!-- Page Specific CSS -->
+
+    <?php if (($currentPage ?? '') === 'dashboard'): ?>
+
+        <link
+            rel="stylesheet"
+            href="/EcoLot-LK/public/assets/css/recycler/dashboard.css"
+        >
+
+    <?php elseif (($currentPage ?? '') === 'eligible_e-lots'): ?>
+
+        <link
+            rel="stylesheet"
+            href="/EcoLot-LK/public/assets/css/recycler/eligible_e-lots.css"
+        >
+
+    <?php elseif (($currentPage ?? '') === 'my_bids'): ?>
+
+        <link
+            rel="stylesheet"
+            href="/EcoLot-LK/public/assets/css/recycler/my_bids.css"
+        >
+
+    <?php elseif (($currentPage ?? '') === 'awarded_e-lots'): ?>
+
+        <link
+            rel="stylesheet"
+            href="/EcoLot-LK/public/assets/css/recycler/awarded_e-lots.css"
+        >
+
+    <?php endif; ?>
 
 </head>
 
 
 <body>
 
-
 <div class="app-layout">
-
 
     <?php include __DIR__ . "/sidebar.php"; ?>
 
 
     <div class="main-content">
-
 
         <?php include __DIR__ . "/header.php"; ?>
 
@@ -62,13 +103,9 @@
 
         </main>
 
-
     </div>
 
-
 </div>
-
-
 
 </body>
 

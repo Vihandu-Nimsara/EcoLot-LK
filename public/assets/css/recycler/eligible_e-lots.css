@@ -1,166 +1,494 @@
-/* ================================
-   Eligible Open E-Lots Page Styles
-   ================================ */
+/* =========================================
+   Eligible Open E-Lots Page
+========================================= */
+
+.main-content,
+.page-content {
+    min-width: 0;
+}
+
+.main-content {
+    overflow-x: hidden;
+}
 
 .eligible-bid-page {
     width: 100%;
+    min-width: 0;
 }
 
 
-.bid-card {
+/* =========================================
+   Main Content Card
+========================================= */
+
+.eligible-bid-page .bid-card {
+    width: 100%;
+    min-width: 0;
+
+    margin-top: 30px;
+    padding: 30px;
+
     background: #FFFFFF;
+
     border: 1px solid #E5E7EB;
     border-radius: 20px;
-    padding: 30px;
+
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 
-.bid-header h2 {
-    font-family: "Exo 2", sans-serif;
-    font-size: 22px;
-    color: #111827;
-}
+/* =========================================
+   Section Header
+========================================= */
 
-
-.bid-header p {
-    margin-top: 6px;
-    color: #6B7280;
-    font-size: 14px;
-}
-
-
-/* Bid Section */
-
-.bid-card {
-    margin-top: 30px;
-}
-
-
-.bid-header {
+.eligible-bid-page .bid-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 20px;
 
+    gap: 20px;
     margin-bottom: 20px;
 }
 
+.eligible-bid-page .bid-header h2 {
+    margin: 0;
 
-.bid-filter {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    font-family: "Exo 2", sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+
+    color: #134029;
 }
 
+.eligible-bid-page .bid-header p {
+    margin-top: 6px;
 
-.bid-filter label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
     color: #6B7280;
 }
 
 
-.bid-filter select {
-    height: 40px;
-    min-width: 190px;
+/* =========================================
+   Filter
+========================================= */
+
+.eligible-bid-page .bid-filter {
+    display: flex;
+    flex-direction: column;
+
+    flex-shrink: 0;
+
+    gap: 6px;
+}
+
+.eligible-bid-page .bid-filter label {
+    font-size: 12px;
+    font-weight: 600;
+
+    color: #6B7280;
+}
+
+.eligible-bid-page .bid-filter select {
+    width: 190px;
+    height: 42px;
 
     padding: 0 12px;
+
+    background: #FFFFFF;
+    color: #111827;
 
     border: 1px solid #D9DCE1;
     border-radius: 10px;
 
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+}
+
+.eligible-bid-page .bid-filter select:focus {
+    outline: none;
+
+    border-color: #159342;
+
+    box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
+}
+
+
+/* =========================================
+   Dashboard-Style Table Card
+========================================= */
+
+.eligible-bid-page .bid-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 10px;
+
+    overflow: hidden;
+
     background: #FFFFFF;
 
-    font-family: "Inter", sans-serif;
-}
-
-
-/* Table */
-
-.bid-table-wrapper {
-    overflow-x: auto;
-
     border: 1px solid #E5E7EB;
-    border-radius: 16px;
+    border-radius: 24px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 
-.bid-table {
+/* =========================================
+   Table
+========================================= */
+
+.eligible-bid-page .bid-table {
     width: 100%;
+
+    table-layout: fixed;
     border-collapse: collapse;
 }
 
-
-.bid-table thead {
+.eligible-bid-page .bid-table thead {
     background: #ECFDF3;
 }
 
-
-.bid-table th {
-    padding: 14px 12px;
+.eligible-bid-page .bid-table th {
+    padding: 16px 8px;
 
     text-align: left;
+    vertical-align: middle;
 
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.2;
     font-weight: 600;
 
     color: #047857;
 }
 
+.eligible-bid-page .bid-table td {
+    padding: 18px 8px;
 
-.bid-table td {
-    padding: 16px 12px;
+    vertical-align: middle;
 
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.3;
 
     color: #111827;
+
+    overflow-wrap: anywhere;
 
     border-bottom: 1px solid #E5E7EB;
 }
 
-
-.bid-table tbody tr:last-child td {
+.eligible-bid-page .bid-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
-.bid-table tbody tr:hover {
+.eligible-bid-page .bid-table tbody tr:hover {
     background: #F6FBF7;
 }
 
 
-/* Action Button */
+/* =========================================
+   Column Widths
+========================================= */
 
-.edit-btn {
-    padding: 8px 14px;
+.eligible-bid-page .bid-table th:nth-child(1),
+.eligible-bid-page .bid-table td:nth-child(1) {
+    width: 10%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(2),
+.eligible-bid-page .bid-table td:nth-child(2) {
+    width: 14%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(3),
+.eligible-bid-page .bid-table td:nth-child(3) {
+    width: 13%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(4),
+.eligible-bid-page .bid-table td:nth-child(4) {
+    width: 12%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(5),
+.eligible-bid-page .bid-table td:nth-child(5) {
+    width: 5%;
+    text-align: center;
+}
+
+.eligible-bid-page .bid-table th:nth-child(6),
+.eligible-bid-page .bid-table td:nth-child(6) {
+    width: 6%;
+    text-align: center;
+}
+
+.eligible-bid-page .bid-table th:nth-child(7),
+.eligible-bid-page .bid-table td:nth-child(7) {
+    width: 7%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(8),
+.eligible-bid-page .bid-table td:nth-child(8) {
+    width: 6%;
+    text-align: center;
+}
+
+.eligible-bid-page .bid-table th:nth-child(9),
+.eligible-bid-page .bid-table td:nth-child(9) {
+    width: 12%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(10),
+.eligible-bid-page .bid-table td:nth-child(10) {
+    width: 9%;
+}
+
+.eligible-bid-page .bid-table th:nth-child(11),
+.eligible-bid-page .bid-table td:nth-child(11) {
+    width: 6%;
+}
+
+
+/* Weight */
+
+.eligible-bid-page .bid-table td:nth-child(7) {
+    white-space: nowrap;
+}
+
+
+/* Date */
+
+.eligible-bid-page .bid-table td:nth-child(9) {
+    font-size: 11px;
+}
+
+
+/* =========================================
+   Submitted Status
+========================================= */
+
+.eligible-bid-page .status.submitted,
+.eligible-bid-page .status.full {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 8px;
+
+    background: #D1FAE5;
+    color: #047857;
+
+    border-radius: 999px;
+
+    font-size: 9.5px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.eligible-bid-page .bid-amount {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 10.5px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   View / Bid Button
+========================================= */
+
+.eligible-bid-page .edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 9px;
 
     background: #FFFFFF;
 
     border: 1px solid #E5E7EB;
-
-    border-radius: 10px;
+    border-radius: 9px;
 
     color: #0A5A3E;
 
-    font-size: 13px;
+    font-size: 10.5px;
     font-weight: 600;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
-
-.edit-btn:hover {
+.eligible-bid-page .edit-btn:hover {
+    background: #159342;
     border-color: #159342;
-    color: #159342;
+
+    color: #FFFFFF;
 }
 
 
-/* Responsive */
+/* =========================================
+   Tablet
+========================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
 
-    .bid-header {
+    .eligible-bid-page .bid-card {
+        padding: 24px;
+    }
+
+    /* Hide Items column */
+    .eligible-bid-page .bid-table th:nth-child(5),
+    .eligible-bid-page .bid-table td:nth-child(5) {
+        display: none;
+    }
+}
+
+
+/* =========================================
+   Mobile
+========================================= */
+
+@media (max-width: 700px) {
+
+    .eligible-bid-page .bid-card {
+        padding: 18px;
+
+        border-radius: 16px;
+    }
+
+    .eligible-bid-page .bid-header {
         flex-direction: column;
         align-items: stretch;
     }
 
+    .eligible-bid-page .bid-filter select {
+        width: 100%;
+    }
+
+
+    /* Convert table into cards */
+
+    .eligible-bid-page .bid-table-wrapper {
+        padding: 0;
+
+        overflow: visible;
+
+        background: transparent;
+
+        border: none;
+        border-radius: 0;
+
+        box-shadow: none;
+    }
+
+    .eligible-bid-page .bid-table,
+    .eligible-bid-page .bid-table tbody,
+    .eligible-bid-page .bid-table tr,
+    .eligible-bid-page .bid-table td {
+        display: block;
+
+        width: 100%;
+    }
+
+    .eligible-bid-page .bid-table thead {
+        display: none;
+    }
+
+    .eligible-bid-page .bid-table tr {
+        margin-bottom: 14px;
+        padding: 14px;
+
+        background: #FFFFFF;
+
+        border: 1px solid #E5E7EB;
+        border-radius: 14px;
+    }
+
+    .eligible-bid-page .bid-table td {
+        display: grid;
+
+        grid-template-columns: 110px minmax(0, 1fr);
+
+        gap: 12px;
+
+        width: 100% !important;
+
+        padding: 8px 0;
+
+        text-align: left !important;
+
+        font-size: 12px;
+
+        border-bottom: 1px solid #F0F2F4;
+    }
+
+    .eligible-bid-page .bid-table td:last-child {
+        border-bottom: none;
+    }
+
+    .eligible-bid-page .bid-table td::before {
+        color: #047857;
+
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(1)::before {
+        content: "E-Lot Code";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(2)::before {
+        content: "Title";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(3)::before {
+        content: "Council";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(4)::before {
+        content: "Category";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(5)::before {
+        content: "Items";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(6)::before {
+        content: "Quantity";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(7)::before {
+        content: "Weight";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(8)::before {
+        content: "High Risk";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(9)::before {
+        content: "Bidding Ends";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(10)::before {
+        content: "My Bid";
+    }
+
+    .eligible-bid-page .bid-table td:nth-child(11)::before {
+        content: "Action";
+    }
+
+
+    /* Restore Items column on mobile card mode */
+
+    .eligible-bid-page .bid-table td:nth-child(5) {
+        display: grid;
+    }
 }

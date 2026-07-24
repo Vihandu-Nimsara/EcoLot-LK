@@ -59,54 +59,106 @@
     </div>
 
     <section class="schedule-section">
-        <div class="section-header">
-            <div>
-                <h2>Waste-handling Capabilities</h2>
-                <p>Categories currently assigned to your recycler profile.</p>
+
+        <div class="capability-card">
+
+            <!-- Card Header -->
+            <div class="section-header">
+
+                <div>
+                    <h2>Waste-handling Capabilities</h2>
+
+                    <p>
+                        Categories currently assigned to your recycler profile.
+                    </p>
+                </div>
+
             </div>
+
+
+            <!-- Table -->
+            <div class="capability-table-wrapper">
+
+                <table class="capability-table">
+
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Can Handle High Risk</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+                            <td>Demo Battery and Circuit Boards</td>
+
+                            <td>
+                                Yes
+                            </td>
+
+                            <td>
+                                <span class="status op">
+                                    OPERATIONAL
+                                </span>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>Demo Consumer Electronics</td>
+
+                            <td>
+                                Yes
+                            </td>
+
+                            <td>
+                                <span class="status op">
+                                    OPERATIONAL
+                                </span>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>DEMO-FIX Recycler Batteries</td>
+
+                            <td>
+                                Yes
+                            </td>
+
+                            <td>
+                                <span class="status op">
+                                    OPERATIONAL
+                                </span>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>DEMO-FIX Recycler Electronics</td>
+
+                            <td>
+                                Yes
+                            </td>
+
+                            <td>
+                                <span class="status non-op">
+                                    NON-OPERATIONAL
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
 
-        <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Can Handle High Risk</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Demo Battery and Circuit Boards</td>
-                        <td>
-                            Yes
-                        </td>
-                        <td><span class="status op">OPERATIONAL</span></td>
-                    </tr>
-                    <tr>
-                        <td>Demo Consumer Electronics</td>
-                        <td>
-                            Yes
-                        </td>
-                        <td><span class="status op">OPERATIONAL</span></td>
-                    </tr>
-                    <tr>
-                        <td>DEMO-FIX Recycler Batteries</td>
-                        <td>
-                            Yes
-                        </td>
-                        <td><span class="status op">OPERATIONAL</span></td>
-                    </tr>
-                    <tr>
-                        <td>DEMO-FIX Recycler Electronics</td>
-                        <td>
-                            Yes
-                        </td>
-                        <td><span class="status non-op">NON-OPERATIONAL</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </section>
 
 </section>
