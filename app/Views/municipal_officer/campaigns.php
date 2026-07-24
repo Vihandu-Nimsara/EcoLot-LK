@@ -21,11 +21,6 @@
                 Create Campaign
             </button>
 
-            <a href="/EcoLot-LK/public/officer/dashboard"
-               class="secondary-btn">
-                Back to Dashboard
-            </a>
-
         </div>
 
 
