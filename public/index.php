@@ -1,83 +1,30 @@
 <?php
+declare(strict_types=1);
 
-require_once "../app/Core/Controller.php";
-require_once "../app/Core/Router.php";
+define('APP_ROOT', dirname(__DIR__));
 
+$app = require APP_ROOT . '/config/app.php';
 
-$router = new Router();
+spl_autoload_register(static function (string $class): void {
+    $directories = [
+        APP_ROOT . '/app/Core/',
+        APP_ROOT . '/app/Controllers/',
+        APP_ROOT . '/app/Models/',
+    ];
 
+    foreach ($directories as $directory) {
+        $file = $directory . $class . '.php';
 
-$router->get(
-    "/officer/dashboard",
-    "MunicipalOfficerController@dashboard"
-);
+        if (is_file($file)) {
+            require_once $file;
+            return;
+        }
+    }
+});
 
-$router->get(
-    "/officer/campaigns",
-    "MunicipalOfficerController@campaigns"
-);
+$router = new Router((string) ($app['base_path'] ?? ''));
 
-$router->get(
-    "/officer/area-schedules",
-    "MunicipalOfficerController@areaSchedules"
-);
+$registerRoutes = require APP_ROOT . '/routes/web.php';
+$registerRoutes($router, $app);
 
-$router->get(
-    "/officer/flagged-requests",
-    "MunicipalOfficerController@flaggedRequests"
-);
-
-$router->get(
-    "/officer/routes",
-    "MunicipalOfficerController@routes"
-);
-
-$router->get(
-    "/officer/collection-records",
-    "MunicipalOfficerController@collectionRecords"
-);
-
-$router->get(
-    "/officer/e-lots",
-    "MunicipalOfficerController@eLots"
-);
-
-$router->get(
-    "/officer/feedback",
-    "MunicipalOfficerController@feedback"
-);
-
-
-//Recycler routes
-
-$router->get(
-    "/recycler/dashboard",
-    "RecyclerController@dashboard"
-);
-
-$router->get(
-    "/recycler/eligible_e-lots",
-    "RecyclerController@Eligible_ELots"
-);
-
-$router->get(
-    "/recycler/my_bids",
-    "RecyclerController@My_Bids"
-);
-
-$router->get(
-    "/recycler/awarded_e-lots",
-    "RecyclerController@Awarded_ELots"
-);
-
-
-$uri = $_SERVER['REQUEST_URI'];
-
-$uri = str_replace(
-    "/EcoLot-LK/public",
-    "",
-    $uri
-);
-
-
-$router->dispatch($uri);
+$router->dispatch();

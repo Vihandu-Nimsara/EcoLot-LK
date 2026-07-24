@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
-
-use App\Core\Controller;
-
-final class PublicUserController extends Controller
+class PublicUserController extends Controller
 {
+    public function dashboard(): void
+    {
+        $this->view('public_user/dashboard', ['currentPage' => 'dashboard']);
+    }
 }

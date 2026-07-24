@@ -45,8 +45,12 @@
    class="nav-item <?= ($currentPage ?? '') === 'feedback' ? 'active' : '' ?>">
     Feedback
 </a>
-        <a href="#" class="nav-item">Reports</a>
-    </nav>
+        <a href="/EcoLot-LK/public/officer/reports"
+   class="nav-item <?= ($currentPage ?? '') === 'reports' ? 'active' : '' ?>">
+    Reports
+</a>
+
+</nav>
 
     <!-- Bottom User -->
     <div class="sidebar-bottom">

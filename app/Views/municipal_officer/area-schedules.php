@@ -11,20 +11,6 @@
         </div>
 
 
-        <div class="toolbar-actions">
-
-            <a href="/EcoLot-LK/public/officer/campaigns"
-               class="secondary-btn">
-                Back to Campaigns
-            </a>
-
-            <a href="/EcoLot-LK/public/officer/dashboard"
-               class="secondary-btn">
-                Back to Dashboard
-            </a>
-
-        </div>
-
     </div>
 
 
