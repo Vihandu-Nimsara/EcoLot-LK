@@ -1,0 +1,105 @@
+/* ========
+    Header
+   ======== */
+
+/* .top-header {
+    height: 80px;
+    background: white;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} */
+
+.top-header {
+    position: sticky;
+    top: 20px;
+    z-index: 1000;
+    border-radius: 20px;
+    margin: 15px auto;
+    width: calc(100% - 40px);
+    height: auto;
+    min-height: 80px;
+    background: white;
+    padding: 15px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 
+                0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* Left */
+.header-left h1 {
+    font-size: 32px;
+    color: #134029;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.header-left p {
+    margin-top: 6px;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+/* Right */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.role-badge {
+    background: #ECFDF3;
+    color: #047857;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #D0FAE4;
+    color: #0A5A3E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.role {
+    font-size: 12px;
+    color: #047857;
+    font-weight: 500;
+}
+
+.organization {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #6B7280;
+
+}
