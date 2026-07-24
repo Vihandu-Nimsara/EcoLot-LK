@@ -1,2 +1,0 @@
-<?php
-// Recycler dashboard placeholder.

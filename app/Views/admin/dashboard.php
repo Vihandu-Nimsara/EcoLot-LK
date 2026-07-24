@@ -1,2 +1,0 @@
-<?php
-// Administrator dashboard placeholder.
