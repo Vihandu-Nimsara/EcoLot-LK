@@ -1,14 +1,12 @@
 <aside class="sidebar">
     <?php $baseUrl = htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8'); ?>
 
-    <!-- Logo -->
     <div class="sidebar-logo">
         <div class="logo-box">
             <img src="<?= $baseUrl ?>/assets/images/ecolot-logo.png" alt="EcoLot LK Logo">
         </div>
     </div>
 
-    <!-- Navigation -->
     <nav class="sidebar-nav">
         <a href="<?= $baseUrl ?>/recycler/dashboard"
         class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">
@@ -28,7 +26,6 @@
         </a>
     </nav>
 
-    <!-- Bottom User -->
 <div class="sidebar-bottom">
 
     <a href="#" class="logout-link">

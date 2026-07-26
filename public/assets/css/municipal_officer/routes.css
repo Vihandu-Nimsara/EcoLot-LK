@@ -2,11 +2,6 @@
     width: 100%;
 }
 
-
-/* =========================
-   Filter Card
-========================= */
-
 .route-filter-card,
 .routes-list-card {
     background: #FFFFFF;
@@ -20,7 +15,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
 .filter-heading h2,
 .routes-list-heading h2 {
     font-family: "Exo 2", sans-serif;
@@ -29,7 +23,6 @@
 
     color: #111827;
 }
-
 
 .filter-heading p,
 .routes-list-heading p {
@@ -40,15 +33,9 @@
     font-size: 14px;
 }
 
-
-/* =========================
-   Filter Form
-========================= */
-
 .route-filter-form {
     margin-top: 24px;
 }
-
 
 .route-filter-grid {
     display: grid;
@@ -57,7 +44,6 @@
 
     gap: 20px;
 }
-
 
 .filter-actions {
     display: flex;
@@ -69,24 +55,13 @@
     margin-top: 24px;
 }
 
-
-/* =========================
-   Routes List
-========================= */
-
 .routes-list-card {
     margin-top: 30px;
 }
 
-
 .routes-list-heading {
     margin-bottom: 20px;
 }
-
-
-/* =========================
-   Table
-========================= */
 
 .routes-table-wrapper {
     width: 100%;
@@ -98,18 +73,15 @@
     border-radius: 16px;
 }
 
-
 .routes-table {
     width: 100%;
 
     border-collapse: collapse;
 }
 
-
 .routes-table thead {
     background: #ECFDF3;
 }
-
 
 .routes-table th {
     padding: 14px 12px;
@@ -125,7 +97,6 @@
     white-space: nowrap;
 }
 
-
 .routes-table td {
     padding: 16px 12px;
 
@@ -138,18 +109,13 @@
     vertical-align: middle;
 }
 
-
 .routes-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
 .routes-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* Keep action column aligned */
 
 .routes-table th:last-child,
 .routes-table td:last-child {
@@ -157,11 +123,6 @@
 
     text-align: center;
 }
-
-
-/* =========================
-   Route Status Badges
-========================= */
 
 .route-status {
     display: inline-flex;
@@ -181,13 +142,11 @@
     white-space: nowrap;
 }
 
-
 .route-status.planned {
     background: #F3F4F6;
 
     color: #6B7280;
 }
-
 
 .route-status.assigned {
     background: #DDE9FF;
@@ -195,13 +154,11 @@
     color: #1D4ED8;
 }
 
-
 .route-status.in-progress {
     background: #FFEDD5;
 
     color: #B45309;
 }
-
 
 .route-status.completed {
     background: #D0FAE4;
@@ -209,21 +166,11 @@
     color: #047857;
 }
 
-
-/* =========================
-   Not Assigned Text
-========================= */
-
 .not-assigned {
     color: #6B7280;
 
     font-style: italic;
 }
-
-
-/* =========================
-   Route Action Buttons
-========================= */
 
 .route-action-btn {
     min-width: 92px;
@@ -245,9 +192,6 @@
     transition: 0.2s ease;
 }
 
-
-/* Assign */
-
 .primary-action {
     background: #159342;
 
@@ -256,15 +200,11 @@
     color: #FFFFFF;
 }
 
-
 .primary-action:hover {
     background: #0E7A37;
 
     border-color: #0E7A37;
 }
-
-
-/* Manage / View */
 
 .secondary-action {
     background: #FFFFFF;
@@ -274,15 +214,9 @@
     color: #0A5A3E;
 }
 
-
 .secondary-action:hover {
     background: #ECFDF3;
 }
-
-
-/* =========================
-   Responsive
-========================= */
 
 @media (max-width: 900px) {
 

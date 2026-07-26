@@ -6,16 +6,8 @@ return [
     'environment' => 'local',
     'debug' => true,
 
-    /*
-     * URL segment between the domain and public/index.php.
-     * Use an empty string when the public directory is the web root.
-     */
     'base_path' => '/EcoLot-LK/public',
 
-    /*
-     * Adding a new role here automatically registers its dashboard route.
-     * Role-specific pages can be added in routes/web.php.
-     */
     'roles' => [
         'admin' => [
             'route_prefix' => '/admin',

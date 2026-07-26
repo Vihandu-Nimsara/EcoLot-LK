@@ -1,6 +1,4 @@
-/* =========================================
-   My Bids Page
-========================================= */
+
 
 .main-content,
 .page-content {
@@ -16,11 +14,6 @@
     min-width: 0;
 }
 
-
-/* =========================================
-   Main Content Card
-========================================= */
-
 .my-bids-page .bid-card {
     width: 100%;
     min-width: 0;
@@ -35,11 +28,6 @@
 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-
-
-/* =========================================
-   Section Header
-========================================= */
 
 .my-bids-page .bid-header {
     display: flex;
@@ -66,11 +54,6 @@
     font-size: 14px;
     color: #6B7280;
 }
-
-
-/* =========================================
-   Filter
-========================================= */
 
 .my-bids-page .bid-filter {
     display: flex;
@@ -112,11 +95,6 @@
     box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
 }
 
-
-/* =========================================
-   Dashboard-Style Table Card
-========================================= */
-
 .my-bids-page .table-responsive {
     width: 100%;
     max-width: 100%;
@@ -132,11 +110,6 @@
 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-
-
-/* =========================================
-   Table
-========================================= */
 
 .my-bids-page .bids-table {
     width: 100%;
@@ -184,11 +157,6 @@
 .my-bids-page .bids-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* =========================================
-   Column Widths
-========================================= */
 
 .my-bids-page .bids-table th:nth-child(1),
 .my-bids-page .bids-table td:nth-child(1) {
@@ -241,32 +209,18 @@
     width: 7%;
 }
 
-
-/* Bid amount */
-
 .my-bids-page .bids-table td:nth-child(6) {
     white-space: nowrap;
 }
-
-
-/* Bidding Period */
 
 .my-bids-page .bids-table td:nth-child(9) {
     font-size: 10px;
     line-height: 1.2;
 }
 
-
-/* Submitted Date */
-
 .my-bids-page .bids-table td:nth-child(10) {
     font-size: 10px;
 }
-
-
-/* =========================================
-   Status Badges
-========================================= */
 
 .my-bids-page .badge {
     display: inline-flex;
@@ -288,58 +242,35 @@
     text-align: center;
 }
 
-
-/* Submitted */
-
 .my-bids-page .badge-submitted {
     background: #E0F2FE;
     color: #0369A1;
 }
-
-
-/* Open */
 
 .my-bids-page .badge-open {
     background: #D1FAE5;
     color: #047857;
 }
 
-
-/* Winning */
-
 .my-bids-page .badge-winning {
     background: #FEF3C7;
     color: #B45309;
 }
-
-
-/* Awarded */
 
 .my-bids-page .badge-awarded {
     background: #FEF3C7;
     color: #B45309;
 }
 
-
-/* Processing */
-
 .my-bids-page .badge-processing {
     background: #EDE9FE;
     color: #6D28D9;
 }
 
-
-/* Completed */
-
 .my-bids-page .badge-completed {
     background: #D1FAE5;
     color: #047857;
 }
-
-
-/* =========================================
-   Tablet
-========================================= */
 
 @media (max-width: 1100px) {
 
@@ -347,19 +278,11 @@
         padding: 24px;
     }
 
-
-    /* Hide Council on tablet */
-
     .my-bids-page .bids-table th:nth-child(4),
     .my-bids-page .bids-table td:nth-child(4) {
         display: none;
     }
 }
-
-
-/* =========================================
-   Mobile
-========================================= */
 
 @media (max-width: 700px) {
 
@@ -377,9 +300,6 @@
     .my-bids-page .bid-filter select {
         width: 100%;
     }
-
-
-    /* Convert table to cards */
 
     .my-bids-page .table-responsive {
         padding: 0;
@@ -486,13 +406,9 @@
         content: "Submitted At";
     }
 
-
-    /* Restore Council for mobile card layout */
-
     .my-bids-page .bids-table td:nth-child(4) {
         display: grid;
     }
-
 
     .my-bids-page .badge {
         width: fit-content;

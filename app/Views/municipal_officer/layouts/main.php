@@ -12,6 +12,7 @@ $pageStyles = [
     'reports' => 'municipal_officer/reports.css',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/municipal_officer/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +42,7 @@ $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
     <?php endif; ?>
 
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
-    <link rel="stylesheet" href="<?= $assetBase ?>/css/municipal_officer/theme.css">
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/municipal_officer/theme.css?v=<?= $themeVersion ?>">
 </head>
 
 <body class="officer-app">

@@ -1,11 +1,8 @@
-/* =========================
-   Campaigns Page
-========================= */
+
 
 .campaigns-page {
     width: 100%;
 }
-
 
 .campaigns-card {
     background: #FFFFFF;
@@ -15,9 +12,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
-/* Page Heading */
-
 .campaigns-heading h1 {
     font-family: "Exo 2", sans-serif;
     font-size: 36px;
@@ -25,13 +19,11 @@
     color: #111827;
 }
 
-
 .campaigns-heading p {
     margin-top: 8px;
     font-size: 14px;
     color: #6B7280;
 }
-
 
 .campaigns-heading span {
     display: block;
@@ -39,9 +31,6 @@
     font-size: 13px;
     color: #6B7280;
 }
-
-
-/* Actions */
 
 .campaign-actions {
     display: flex;
@@ -51,9 +40,6 @@
     margin-bottom: 20px;
 }
 
-
-/* Table */
-
 .campaign-table-wrapper {
     width: 100%;
     overflow-x: auto;
@@ -62,17 +48,14 @@
     border-radius: 16px;
 }
 
-
 .campaign-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-
 .campaign-table thead {
     background: #ECFDF3;
 }
-
 
 .campaign-table th {
     padding: 14px 16px;
@@ -85,7 +68,6 @@
     color: #047857;
 }
 
-
 .campaign-table td {
     padding: 16px;
 
@@ -96,26 +78,18 @@
     border-bottom: 1px solid #E5E7EB;
 }
 
-
 .campaign-table tbody tr:last-child td {
     border-bottom: none;
 }
-
 
 .campaign-table tbody tr:hover {
     background: #F6FBF7;
 }
 
-
-/* Status */
-
 .status.closed {
     background: #F3F4F6;
     color: #6B7280;
 }
-
-
-/* Edit Button */
 
 .edit-btn {
     background: #FFFFFF;
@@ -132,7 +106,6 @@
 
     font-weight: 600;
 }
-
 
 .edit-btn:hover {
     border-color: #159342;

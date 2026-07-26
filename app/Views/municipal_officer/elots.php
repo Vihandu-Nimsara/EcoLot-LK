@@ -28,19 +28,7 @@
 
     </div>
 
-
-    <section class="elot-filter-card">
-
-        <div class="filter-heading">
-
-            <h2>Filter E-Lots</h2>
-
-            <p>
-                Find E-Lots by status or e-waste category.
-            </p>
-
-        </div>
-
+    <section class="elot-filter-card compact-filter-card">
 
         <form class="elot-filter-form">
 
@@ -74,7 +62,6 @@
 
                 </div>
 
-
                 <div class="form-group">
 
                     <label for="category">
@@ -105,7 +92,6 @@
 
             </div>
 
-
             <div class="filter-actions">
 
                 <button
@@ -126,7 +112,6 @@
 
     </section>
 
-
     <section class="elots-list-card">
 
         <div class="elots-list-heading">
@@ -142,7 +127,6 @@
             </div>
 
         </div>
-
 
         <div class="elots-table-wrapper">
 
@@ -165,10 +149,7 @@
 
                 </thead>
 
-
                 <tbody>
-
-                    <!-- Open for Bidding -->
 
                     <tr>
 
@@ -228,9 +209,6 @@
 
                     </tr>
 
-
-                    <!-- Awarded -->
-
                     <tr>
 
                         <td>
@@ -284,9 +262,6 @@
                         </td>
 
                     </tr>
-
-
-                    <!-- Completed -->
 
                     <tr>
 

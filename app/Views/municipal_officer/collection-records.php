@@ -12,19 +12,7 @@
 
     </div>
 
-
-    <section class="records-filter-card">
-
-        <div class="filter-heading">
-
-            <h2>Filter Collection Records</h2>
-
-            <p>
-                Find collection records by campaign, collection schedule, or verification status.
-            </p>
-
-        </div>
-
+    <section class="records-filter-card compact-filter-card">
 
         <form class="records-filter-form">
 
@@ -50,7 +38,6 @@
 
                 </div>
 
-
                 <div class="form-group">
 
                     <label for="schedule">
@@ -74,7 +61,6 @@
                     </select>
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -102,7 +88,6 @@
 
             </div>
 
-
             <div class="filter-actions">
 
                 <button
@@ -123,7 +108,6 @@
 
     </section>
 
-
     <section class="records-list-card">
 
         <div class="records-list-heading">
@@ -140,7 +124,6 @@
 
         </div>
 
-
         <div class="records-table-wrapper">
 
             <table class="records-table">
@@ -148,14 +131,10 @@
                 <thead>
 
                     <tr>
-                        <th>Schedule</th>
-                        <th>Area</th>
+                        <th>Schedule &amp; Area</th>
                         <th>Collection Date</th>
-                        <th>Assigned Stops</th>
-                        <th>Collected</th>
-                        <th>Partial</th>
-                        <th>Pending</th>
-                        <th>Rejected / Failed</th>
+                        <th>Progress</th>
+                        <th>Outstanding</th>
                         <th>Total Weight</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -163,17 +142,13 @@
 
                 </thead>
 
-
                 <tbody>
 
                     <tr>
 
                         <td>
-                            SCH-0009
-                        </td>
-
-                        <td>
-                            Rajagiriya QA Zone
+                            <strong>SCH-0009</strong>
+                            <span class="table-subtext">Rajagiriya QA Zone</span>
                         </td>
 
                         <td>
@@ -181,23 +156,13 @@
                         </td>
 
                         <td>
-                            4
+                            <strong>3 collected</strong>
+                            <span class="table-subtext">4 assigned · 1 partial</span>
                         </td>
 
                         <td>
-                            3
-                        </td>
-
-                        <td>
-                            1
-                        </td>
-
-                        <td>
-                            0
-                        </td>
-
-                        <td>
-                            0
+                            <strong>0 pending</strong>
+                            <span class="table-subtext">0 failed</span>
                         </td>
 
                         <td>
@@ -224,15 +189,11 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
-                            SCH-0007
-                        </td>
-
-                        <td>
-                            Kollupitiya QA Zone
+                            <strong>SCH-0007</strong>
+                            <span class="table-subtext">Kollupitiya QA Zone</span>
                         </td>
 
                         <td>
@@ -240,23 +201,13 @@
                         </td>
 
                         <td>
-                            2
+                            <strong>2 collected</strong>
+                            <span class="table-subtext">2 assigned · 0 partial</span>
                         </td>
 
                         <td>
-                            2
-                        </td>
-
-                        <td>
-                            0
-                        </td>
-
-                        <td>
-                            0
-                        </td>
-
-                        <td>
-                            0
+                            <strong>0 pending</strong>
+                            <span class="table-subtext">0 failed</span>
                         </td>
 
                         <td>

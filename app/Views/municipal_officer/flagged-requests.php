@@ -12,24 +12,11 @@
 
     </div>
 
-
-    <section class="filter-card">
-
-        <div class="filter-heading">
-
-            <h2>Filter Flagged Requests</h2>
-
-            <p>
-                Narrow down hazardous requests by campaign, collection schedule, or review status.
-            </p>
-
-        </div>
-
+    <section class="filter-card compact-filter-card">
 
         <form class="filter-form">
 
             <div class="filter-grid">
-
 
                 <div class="form-group">
 
@@ -50,7 +37,6 @@
                     </select>
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -80,7 +66,6 @@
 
                 </div>
 
-
                 <div class="form-group">
 
                     <label for="review-status">
@@ -109,9 +94,7 @@
 
                 </div>
 
-
             </div>
-
 
             <div class="filter-actions">
 
@@ -120,7 +103,6 @@
                     class="secondary-btn">
                     Clear
                 </button>
-
 
                 <button
                     type="submit"
@@ -133,29 +115,6 @@
         </form>
 
     </section>
-
-
-    <section class="review-summary">
-
-        <button class="summary-tab active">
-            Pending Review
-            <span>2</span>
-        </button>
-
-
-        <button class="summary-tab">
-            Approved
-            <span>5</span>
-        </button>
-
-
-        <button class="summary-tab">
-            Rejected
-            <span>1</span>
-        </button>
-
-    </section>
-
 
     <section class="flagged-list-card">
 
@@ -175,12 +134,9 @@
 
         </div>
 
-
         <div class="flagged-table-wrapper">
 
-
             <table class="flagged-table">
-
 
                 <thead>
 
@@ -206,9 +162,7 @@
 
                 </thead>
 
-
                 <tbody>
-
 
                     <tr>
 
@@ -254,7 +208,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
@@ -299,15 +252,11 @@
 
                     </tr>
 
-
                 </tbody>
-
 
             </table>
 
-
         </div>
-
 
     </section>
 

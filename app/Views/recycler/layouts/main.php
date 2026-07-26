@@ -7,6 +7,7 @@ $pageStyles = [
     'awarded-e-lots' => 'recycler/awarded_e-lots.css',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/recycler/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +37,7 @@ $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
     <?php endif; ?>
 
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
-    <link rel="stylesheet" href="<?= $assetBase ?>/css/recycler/theme.css">
+    <link rel="stylesheet" href="<?= $assetBase ?>/css/recycler/theme.css?v=<?= $themeVersion ?>">
 </head>
 
 <body class="recycler-app">

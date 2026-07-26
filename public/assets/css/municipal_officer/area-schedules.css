@@ -1,13 +1,8 @@
-/* =========================
-   Area Collection Schedule
-========================= */
+
 
 .area-schedules-page {
     width: 100%;
 }
-
-
-/* Page Toolbar */
 
 .page-toolbar {
     display: flex;
@@ -17,7 +12,6 @@
     margin-bottom: 28px;
 }
 
-
 .page-toolbar h1 {
     font-family: "Exo 2", sans-serif;
     font-size: 36px;
@@ -25,15 +19,11 @@
     color: #111827;
 }
 
-
 .page-toolbar p {
     margin-top: 8px;
     font-size: 14px;
     color: #6B7280;
 }
-
-
-/* Form Card */
 
 .schedule-form-card,
 .scheduled-areas-card {
@@ -44,14 +34,12 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
 .card-heading h2,
 .scheduled-areas-header h2 {
     font-family: "Exo 2", sans-serif;
     font-size: 22px;
     color: #111827;
 }
-
 
 .card-heading p,
 .scheduled-areas-header p {
@@ -60,13 +48,9 @@
     font-size: 14px;
 }
 
-
-/* Form */
-
 .schedule-form {
     margin-top: 24px;
 }
-
 
 .form-grid {
     display: grid;
@@ -74,17 +58,14 @@
     gap: 20px;
 }
 
-
 .form-group {
     display: flex;
     flex-direction: column;
 }
 
-
 .form-group.full-width {
     margin-bottom: 20px;
 }
-
 
 .form-group label {
     margin-bottom: 8px;
@@ -92,7 +73,6 @@
     font-weight: 600;
     color: #111827;
 }
-
 
 .form-group input,
 .form-group select {
@@ -112,16 +92,12 @@
     color: #111827;
 }
 
-
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: #159342;
     box-shadow: 0 0 0 4px rgba(21, 147, 66, 0.15);
 }
-
-
-/* Form Actions */
 
 .form-actions {
     display: flex;
@@ -130,13 +106,9 @@
     margin-top: 28px;
 }
 
-
-/* Scheduled Area Section */
-
 .scheduled-areas-card {
     margin-top: 30px;
 }
-
 
 .scheduled-areas-header {
     display: flex;
@@ -147,20 +119,17 @@
     margin-bottom: 20px;
 }
 
-
 .campaign-filter {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-
 .campaign-filter label {
     font-size: 12px;
     font-weight: 600;
     color: #6B7280;
 }
-
 
 .campaign-filter select {
     height: 40px;
@@ -176,9 +145,6 @@
     font-family: "Inter", sans-serif;
 }
 
-
-/* Table */
-
 .schedule-table-wrapper {
     overflow-x: auto;
 
@@ -186,17 +152,14 @@
     border-radius: 16px;
 }
 
-
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-
 .schedule-table thead {
     background: #ECFDF3;
 }
-
 
 .schedule-table th {
     padding: 14px 12px;
@@ -209,7 +172,6 @@
     color: #047857;
 }
 
-
 .schedule-table td {
     padding: 16px 12px;
 
@@ -220,18 +182,13 @@
     border-bottom: 1px solid #E5E7EB;
 }
 
-
 .schedule-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
 .schedule-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* Action Button */
 
 .edit-btn {
     padding: 8px 14px;
@@ -248,14 +205,10 @@
     font-weight: 600;
 }
 
-
 .edit-btn:hover {
     border-color: #159342;
     color: #159342;
 }
-
-
-/* Responsive */
 
 @media (max-width: 900px) {
 
@@ -264,7 +217,6 @@
         flex-direction: column;
         align-items: stretch;
     }
-
 
     .form-grid {
         grid-template-columns: 1fr;

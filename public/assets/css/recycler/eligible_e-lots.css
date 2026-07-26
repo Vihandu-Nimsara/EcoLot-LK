@@ -1,6 +1,4 @@
-/* =========================================
-   Eligible Open E-Lots Page
-========================================= */
+
 
 .main-content,
 .page-content {
@@ -16,11 +14,6 @@
     min-width: 0;
 }
 
-
-/* =========================================
-   Main Content Card
-========================================= */
-
 .eligible-bid-page .bid-card {
     width: 100%;
     min-width: 0;
@@ -35,11 +28,6 @@
 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-
-
-/* =========================================
-   Section Header
-========================================= */
 
 .eligible-bid-page .bid-header {
     display: flex;
@@ -66,11 +54,6 @@
     font-size: 14px;
     color: #6B7280;
 }
-
-
-/* =========================================
-   Filter
-========================================= */
 
 .eligible-bid-page .bid-filter {
     display: flex;
@@ -112,11 +95,6 @@
     box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
 }
 
-
-/* =========================================
-   Dashboard-Style Table Card
-========================================= */
-
 .eligible-bid-page .bid-table-wrapper {
     width: 100%;
     max-width: 100%;
@@ -132,11 +110,6 @@
 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-
-
-/* =========================================
-   Table
-========================================= */
 
 .eligible-bid-page .bid-table {
     width: 100%;
@@ -184,11 +157,6 @@
 .eligible-bid-page .bid-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* =========================================
-   Column Widths
-========================================= */
 
 .eligible-bid-page .bid-table th:nth-child(1),
 .eligible-bid-page .bid-table td:nth-child(1) {
@@ -248,24 +216,13 @@
     width: 6%;
 }
 
-
-/* Weight */
-
 .eligible-bid-page .bid-table td:nth-child(7) {
     white-space: nowrap;
 }
 
-
-/* Date */
-
 .eligible-bid-page .bid-table td:nth-child(9) {
     font-size: 11px;
 }
-
-
-/* =========================================
-   Submitted Status
-========================================= */
 
 .eligible-bid-page .status.submitted,
 .eligible-bid-page .status.full {
@@ -295,11 +252,6 @@
 
     white-space: nowrap;
 }
-
-
-/* =========================================
-   View / Bid Button
-========================================= */
 
 .eligible-bid-page .edit-btn {
     display: inline-flex;
@@ -333,28 +285,17 @@
     color: #FFFFFF;
 }
 
-
-/* =========================================
-   Tablet
-========================================= */
-
 @media (max-width: 1100px) {
 
     .eligible-bid-page .bid-card {
         padding: 24px;
     }
 
-    /* Hide Items column */
     .eligible-bid-page .bid-table th:nth-child(5),
     .eligible-bid-page .bid-table td:nth-child(5) {
         display: none;
     }
 }
-
-
-/* =========================================
-   Mobile
-========================================= */
 
 @media (max-width: 700px) {
 
@@ -372,9 +313,6 @@
     .eligible-bid-page .bid-filter select {
         width: 100%;
     }
-
-
-    /* Convert table into cards */
 
     .eligible-bid-page .bid-table-wrapper {
         padding: 0;
@@ -484,9 +422,6 @@
     .eligible-bid-page .bid-table td:nth-child(11)::before {
         content: "Action";
     }
-
-
-    /* Restore Items column on mobile card mode */
 
     .eligible-bid-page .bid-table td:nth-child(5) {
         display: grid;

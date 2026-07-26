@@ -12,7 +12,6 @@
                 </p>
             </div>
 
-
             <div class="bid-filter">
 
                 <label for="my-bids-filter">
@@ -35,7 +34,6 @@
 
         </div>
 
-
         <div class="table-responsive">
 
             <table class="bids-table">
@@ -56,7 +54,6 @@
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -106,7 +103,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>#9</td>
@@ -152,7 +148,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 
@@ -200,7 +195,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>#11</td>
@@ -246,7 +240,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 
@@ -294,7 +287,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>#3</td>
@@ -341,7 +333,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>#4</td>
@@ -387,7 +378,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 
