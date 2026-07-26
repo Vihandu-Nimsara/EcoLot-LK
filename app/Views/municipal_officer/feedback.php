@@ -12,7 +12,6 @@
 
     </div>
 
-
     <section class="feedback-status-tabs">
 
         <button class="feedback-tab active">
@@ -42,7 +41,6 @@
 
     </section>
 
-
     <section class="feedback-list-card">
 
         <div class="feedback-list-heading">
@@ -56,7 +54,6 @@
             </div>
 
         </div>
-
 
         <div class="feedback-table-wrapper">
 
@@ -75,7 +72,6 @@
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -129,7 +125,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
@@ -180,7 +175,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
@@ -230,7 +224,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 

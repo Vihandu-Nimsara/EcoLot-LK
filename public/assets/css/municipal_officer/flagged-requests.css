@@ -2,9 +2,6 @@
     width: 100%;
 }
 
-
-/* Filter Card */
-
 .filter-card,
 .flagged-list-card {
     background: #FFFFFF;
@@ -18,7 +15,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
 .filter-heading h2,
 .list-heading h2 {
     font-family: "Exo 2", sans-serif;
@@ -27,7 +23,6 @@
 
     color: #111827;
 }
-
 
 .filter-heading p,
 .list-heading p {
@@ -38,13 +33,9 @@
     font-size: 14px;
 }
 
-
-/* Filter Form */
-
 .filter-form {
     margin-top: 24px;
 }
-
 
 .filter-grid {
     display: grid;
@@ -53,7 +44,6 @@
 
     gap: 20px;
 }
-
 
 .filter-actions {
     display: flex;
@@ -65,82 +55,13 @@
     margin-top: 24px;
 }
 
-
-/* Summary Tabs */
-
-.review-summary {
-    display: flex;
-
-    gap: 12px;
-
-    margin: 28px 0;
-}
-
-
-.summary-tab {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 10px 16px;
-
-    background: #FFFFFF;
-
-    border: 1px solid #E5E7EB;
-
-    border-radius: 10px;
-
-    color: #0A5A3E;
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-
-.summary-tab span {
-    min-width: 24px;
-
-    height: 24px;
-
-    border-radius: 999px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #ECFDF3;
-
-    color: #047857;
-}
-
-
-.summary-tab.active {
-    background: #0A5A3E;
-
-    color: #FFFFFF;
-
-    border-color: #0A5A3E;
-}
-
-
-/* List Card */
-
 .flagged-list-card {
     margin-top: 0;
 }
 
-
 .list-heading {
     margin-bottom: 20px;
 }
-
-
-/* Table */
 
 .flagged-table-wrapper {
     overflow-x: auto;
@@ -150,18 +71,15 @@
     border-radius: 16px;
 }
 
-
 .flagged-table {
     width: 100%;
 
     border-collapse: collapse;
 }
 
-
 .flagged-table thead {
     background: #ECFDF3;
 }
-
 
 .flagged-table th {
     padding: 14px 12px;
@@ -175,7 +93,6 @@
     color: #047857;
 }
 
-
 .flagged-table td {
     padding: 16px 12px;
 
@@ -188,19 +105,13 @@
     vertical-align: middle;
 }
 
-
 .flagged-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
 .flagged-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* Risk Badges */
-
 
 .review-status {
     display: inline-flex;
@@ -220,18 +131,11 @@
     white-space: nowrap;
 }
 
-
-
-
-
 .review-status.pending {
     background: #FFEDD5;
 
     color: #B45309;
 }
-
-
-/* Review Button */
 
 .review-btn {
     padding: 8px 14px;
@@ -249,25 +153,6 @@
     font-weight: 600;
 }
 
-
 .review-btn:hover {
     background: #ECFDF3;
-}
-
-
-/* Responsive */
-
-@media (max-width: 900px) {
-
-    .filter-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-
-    .review-summary {
-        flex-wrap: wrap;
-    }
-
 }

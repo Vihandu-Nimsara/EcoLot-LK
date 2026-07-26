@@ -16,7 +16,6 @@
 
             </div>
 
-
             <div class="awarded-e-lot-filter">
 
                 <label for="awarded-e-lot-filter">
@@ -39,7 +38,6 @@
 
         </div>
 
-
         <div class="table-responsive">
 
             <table class="awarded-table">
@@ -60,7 +58,6 @@
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -115,7 +112,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
@@ -166,7 +162,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 
@@ -219,7 +214,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>
@@ -270,7 +264,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 

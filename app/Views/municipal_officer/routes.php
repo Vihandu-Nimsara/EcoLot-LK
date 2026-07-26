@@ -12,19 +12,7 @@
 
     </div>
 
-
-    <section class="route-filter-card">
-
-        <div class="filter-heading">
-
-            <h2>Filter Collection Routes</h2>
-
-            <p>
-                Find routes by campaign, collection schedule, or route status.
-            </p>
-
-        </div>
-
+    <section class="route-filter-card compact-filter-card">
 
         <form class="route-filter-form">
 
@@ -49,7 +37,6 @@
                     </select>
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -78,7 +65,6 @@
                     </select>
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -114,7 +100,6 @@
 
             </div>
 
-
             <div class="filter-actions">
 
                 <button
@@ -135,7 +120,6 @@
 
     </section>
 
-
     <section class="routes-list-card">
 
         <div class="routes-list-heading">
@@ -151,7 +135,6 @@
             </div>
 
         </div>
-
 
         <div class="routes-table-wrapper">
 
@@ -173,10 +156,8 @@
 
                 </thead>
 
-
                 <tbody>
 
-                    <!-- Completed Route -->
                     <tr>
 
                         <td>
@@ -227,8 +208,6 @@
 
                     </tr>
 
-
-                    <!-- Assigned Route -->
                     <tr>
 
                         <td>
@@ -279,8 +258,6 @@
 
                     </tr>
 
-
-                    <!-- Planned Route -->
                     <tr>
 
                         <td>
@@ -337,8 +314,6 @@
 
                     </tr>
 
-
-                    <!-- In Progress Route -->
                     <tr>
 
                         <td>

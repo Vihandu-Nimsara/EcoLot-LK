@@ -12,7 +12,6 @@
                 </p>
             </div>
 
-
             <div class="bid-filter">
 
                 <label for="eligible-bid-filter">
@@ -34,7 +33,6 @@
             </div>
 
         </div>
-
 
         <div class="bid-table-wrapper">
 
@@ -58,10 +56,8 @@
 
                 </thead>
 
-
                 <tbody>
 
-                    <!-- Row 1 -->
                     <tr>
 
                         <td>DEMO-LOT-002</td>
@@ -117,8 +113,6 @@
 
                     </tr>
 
-
-                    <!-- Row 2 -->
                     <tr>
 
                         <td>DEMO-FIX-LOT-OPEN-002</td>
@@ -174,8 +168,6 @@
 
                     </tr>
 
-
-                    <!-- Row 3 -->
                     <tr>
 
                         <td>DEMO-LOT-001</td>
@@ -223,8 +215,6 @@
 
                     </tr>
 
-
-                    <!-- Row 4 -->
                     <tr>
 
                         <td>DEMO-FIX-LOT-OPEN-001</td>

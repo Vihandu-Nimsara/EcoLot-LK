@@ -22,23 +22,11 @@
 
     </div>
 
-
-    <section class="report-filter-card">
-
-    <div class="filter-heading">
-
-        <h2>Report Filter</h2>
-
-        <p>
-            Select a monthly campaign to view its municipal performance report.
-        </p>
-
-    </div>
-
+    <section class="report-filter-card compact-filter-card">
 
     <form class="report-filter-form">
 
-        <div class="report-filter-grid single-filter">
+        <div class="report-filter-grid">
 
             <div class="form-group">
 
@@ -66,7 +54,6 @@
 
         </div>
 
-
         <div class="filter-actions">
 
             <button
@@ -78,7 +65,7 @@
             <button
                 type="submit"
                 class="primary-btn">
-                Apply Filter
+                Apply Filters
             </button>
 
         </div>
@@ -86,7 +73,6 @@
     </form>
 
 </section>
-
 
     <section class="report-summary-grid">
 
@@ -106,7 +92,6 @@
 
     </article>
 
-
     <article class="report-summary-card">
 
         <span class="summary-label">
@@ -122,7 +107,6 @@
         </small>
 
     </article>
-
 
     <article class="report-summary-card">
 
@@ -140,7 +124,6 @@
 
     </article>
 
-
     <article class="report-summary-card">
 
         <span class="summary-label">
@@ -157,7 +140,6 @@
 
     </article>
 
-
     <article class="report-summary-card">
 
         <span class="summary-label">
@@ -173,7 +155,6 @@
         </small>
 
     </article>
-
 
     <article class="report-summary-card">
 
@@ -193,7 +174,6 @@
 
 </section>
 
-
     <section class="report-card">
 
         <div class="report-card-heading">
@@ -208,7 +188,6 @@
 
         </div>
 
-
         <div class="status-summary-grid">
 
             <article class="status-summary-item">
@@ -219,7 +198,6 @@
 
             </article>
 
-
             <article class="status-summary-item">
 
                 <span>Approved</span>
@@ -227,7 +205,6 @@
                 <strong>12</strong>
 
             </article>
-
 
             <article class="status-summary-item">
 
@@ -237,7 +214,6 @@
 
             </article>
 
-
             <article class="status-summary-item">
 
                 <span>Collected</span>
@@ -245,7 +221,6 @@
                 <strong>7</strong>
 
             </article>
-
 
             <article class="status-summary-item">
 
@@ -258,7 +233,6 @@
         </div>
 
     </section>
-
 
     <section class="report-card">
 
@@ -273,7 +247,6 @@
             </div>
 
         </div>
-
 
         <div class="report-table-wrapper">
 
@@ -293,7 +266,6 @@
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -316,7 +288,6 @@
                         <td>31.50 kg</td>
 
                     </tr>
-
 
                     <tr>
 
@@ -346,7 +317,6 @@
 
     </section>
 
-
     <section class="report-card">
 
         <div class="report-card-heading">
@@ -360,7 +330,6 @@
             </div>
 
         </div>
-
 
         <div class="report-table-wrapper">
 
@@ -378,7 +347,6 @@
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -406,7 +374,6 @@
 
                     </tr>
 
-
                     <tr>
 
                         <td>EL-002</td>
@@ -430,7 +397,6 @@
                         </td>
 
                     </tr>
-
 
                     <tr>
 
@@ -464,7 +430,6 @@
 
     </section>
 
-
     <section class="report-card feedback-summary-card">
 
         <div class="report-card-heading">
@@ -485,7 +450,6 @@
 
         </div>
 
-
         <div class="feedback-summary-grid">
 
             <article class="feedback-summary-item">
@@ -496,7 +460,6 @@
 
             </article>
 
-
             <article class="feedback-summary-item">
 
                 <span>In Review</span>
@@ -505,7 +468,6 @@
 
             </article>
 
-
             <article class="feedback-summary-item">
 
                 <span>Resolved</span>
@@ -513,7 +475,6 @@
                 <strong>8</strong>
 
             </article>
-
 
             <article class="feedback-summary-item">
 

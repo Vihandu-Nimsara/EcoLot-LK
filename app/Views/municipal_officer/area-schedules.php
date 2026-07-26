@@ -10,9 +10,7 @@
             </p>
         </div>
 
-
     </div>
-
 
     <section class="schedule-form-card">
 
@@ -24,9 +22,7 @@
             </p>
         </div>
 
-
         <form class="schedule-form">
-
 
             <div class="form-group full-width">
 
@@ -46,9 +42,7 @@
 
             </div>
 
-
             <div class="form-grid">
-
 
                 <div class="form-group">
 
@@ -78,7 +72,6 @@
 
                 </div>
 
-
                 <div class="form-group">
 
                     <label for="cutoff">
@@ -93,7 +86,6 @@
 
                 </div>
 
-
                 <div class="form-group">
 
                     <label for="collection_date">
@@ -107,7 +99,6 @@
                     >
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -124,7 +115,6 @@
                     >
 
                 </div>
-
 
                 <div class="form-group">
 
@@ -150,9 +140,7 @@
 
                 </div>
 
-
             </div>
-
 
             <div class="form-actions">
 
@@ -162,7 +150,6 @@
                     Cancel
                 </button>
 
-
                 <button
                     type="submit"
                     class="primary-btn">
@@ -171,18 +158,13 @@
 
             </div>
 
-
         </form>
 
     </section>
 
-
-
     <section class="scheduled-areas-card">
 
-
         <div class="scheduled-areas-header">
-
 
             <div>
 
@@ -195,7 +177,6 @@
                 </p>
 
             </div>
-
 
             <div class="campaign-filter">
 
@@ -217,16 +198,11 @@
 
             </div>
 
-
         </div>
-
-
 
         <div class="schedule-table-wrapper">
 
-
             <table class="schedule-table">
-
 
                 <thead>
 
@@ -256,10 +232,7 @@
 
                 </thead>
 
-
-
                 <tbody>
-
 
                     <tr>
 
@@ -297,8 +270,6 @@
 
                     </tr>
 
-
-
                     <tr>
 
                         <td>SCH-0009</td>
@@ -334,8 +305,6 @@
                         </td>
 
                     </tr>
-
-
 
                     <tr>
 
@@ -373,17 +342,12 @@
 
                     </tr>
 
-
                 </tbody>
-
 
             </table>
 
-
         </div>
 
-
     </section>
-
 
 </section>

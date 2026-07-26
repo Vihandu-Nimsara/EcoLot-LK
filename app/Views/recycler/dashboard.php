@@ -62,7 +62,6 @@
 
         <div class="capability-card">
 
-            <!-- Card Header -->
             <div class="section-header">
 
                 <div>
@@ -75,8 +74,6 @@
 
             </div>
 
-
-            <!-- Table -->
             <div class="capability-table-wrapper">
 
                 <table class="capability-table">
@@ -88,7 +85,6 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-
 
                     <tbody>
 
@@ -106,7 +102,6 @@
                             </td>
                         </tr>
 
-
                         <tr>
                             <td>Demo Consumer Electronics</td>
 
@@ -121,7 +116,6 @@
                             </td>
                         </tr>
 
-
                         <tr>
                             <td>DEMO-FIX Recycler Batteries</td>
 
@@ -135,7 +129,6 @@
                                 </span>
                             </td>
                         </tr>
-
 
                         <tr>
                             <td>DEMO-FIX Recycler Electronics</td>

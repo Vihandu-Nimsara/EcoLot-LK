@@ -1,7 +1,4 @@
-/* =====================================================
-   Recycler UI consistency layer
-   Loaded after the active Recycler page stylesheet.
-===================================================== */
+
 
 .recycler-app {
     --recycler-green-800: #0A5A3E;
@@ -79,6 +76,7 @@
 
 .recycler-app .logout-link {
     padding: 10px 13px;
+    color: rgba(241, 255, 246, 0.84);
     font-size: 0.875rem;
 }
 

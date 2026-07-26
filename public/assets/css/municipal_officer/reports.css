@@ -2,11 +2,6 @@
     width: 100%;
 }
 
-
-/* =========================
-   Filters
-========================= */
-
 .report-filter-card,
 .report-card {
     background: #FFFFFF;
@@ -20,7 +15,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
 .filter-heading h2,
 .report-card-heading h2 {
     font-family: "Exo 2", sans-serif;
@@ -29,7 +23,6 @@
 
     color: #111827;
 }
-
 
 .filter-heading p,
 .report-card-heading p {
@@ -40,21 +33,14 @@
     font-size: 14px;
 }
 
-
 .report-filter-form {
     margin-top: 24px;
 }
-
 
 .report-filter-grid {
     display: grid;
     gap: 20px;
 }
-
-.report-filter-grid.single-filter {
-    grid-template-columns: minmax(280px, 520px);
-}
-
 
 .filter-actions {
     display: flex;
@@ -66,11 +52,6 @@
     margin-top: 24px;
 }
 
-
-/* =========================
-   Summary Cards
-========================= */
-
 .report-summary-grid {
     display: grid;
 
@@ -80,7 +61,6 @@
 
     margin-top: 30px;
 }
-
 
 .report-summary-card {
     background: #FFFFFF;
@@ -94,7 +74,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-
 .summary-label {
     display: block;
 
@@ -102,7 +81,6 @@
 
     font-size: 13px;
 }
-
 
 .summary-value {
     display: block;
@@ -116,7 +94,6 @@
     color: #0A5A3E;
 }
 
-
 .report-summary-card small {
     display: block;
 
@@ -127,15 +104,9 @@
     font-size: 12px;
 }
 
-
-/* =========================
-   Report Sections
-========================= */
-
 .report-card {
     margin-top: 30px;
 }
-
 
 .report-card-heading {
     display: flex;
@@ -149,11 +120,6 @@
     margin-bottom: 20px;
 }
 
-
-/* =========================
-   Request Status Summary
-========================= */
-
 .status-summary-grid {
     display: grid;
 
@@ -161,7 +127,6 @@
 
     gap: 14px;
 }
-
 
 .status-summary-item,
 .feedback-summary-item {
@@ -174,14 +139,12 @@
     padding: 18px;
 }
 
-
 .status-summary-item span,
 .feedback-summary-item span {
     color: #6B7280;
 
     font-size: 12px;
 }
-
 
 .status-summary-item strong,
 .feedback-summary-item strong {
@@ -196,11 +159,6 @@
     color: #0A5A3E;
 }
 
-
-/* =========================
-   Tables
-========================= */
-
 .report-table-wrapper {
     width: 100%;
 
@@ -211,18 +169,15 @@
     border-radius: 16px;
 }
 
-
 .report-table {
     width: 100%;
 
     border-collapse: collapse;
 }
 
-
 .report-table thead {
     background: #ECFDF3;
 }
-
 
 .report-table th {
     padding: 14px 12px;
@@ -238,7 +193,6 @@
     white-space: nowrap;
 }
 
-
 .report-table td {
     padding: 16px 12px;
 
@@ -251,20 +205,13 @@
     vertical-align: middle;
 }
 
-
 .report-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
 .report-table tbody tr:hover {
     background: #F6FBF7;
 }
-
-
-/* =========================
-   E-Lot Status
-========================= */
 
 .report-status {
     display: inline-flex;
@@ -284,13 +231,11 @@
     white-space: nowrap;
 }
 
-
 .report-status.open {
     background: #DDE9FF;
 
     color: #1D4ED8;
 }
-
 
 .report-status.awarded {
     background: #D0FAE4;
@@ -298,17 +243,11 @@
     color: #047857;
 }
 
-
 .report-status.completed {
     background: #F3F4F6;
 
     color: #6B7280;
 }
-
-
-/* =========================
-   Feedback Summary
-========================= */
 
 .feedback-summary-grid {
     display: grid;
@@ -318,20 +257,13 @@
     gap: 14px;
 }
 
-
 .feedback-link {
     text-decoration: none;
 }
 
-
 .print-report-btn {
     white-space: nowrap;
 }
-
-
-/* =========================
-   Responsive
-========================= */
 
 @media (max-width: 1100px) {
 
@@ -339,13 +271,11 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-
     .status-summary-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 
 }
-
 
 @media (max-width: 800px) {
 
@@ -355,7 +285,6 @@
     .feedback-summary-grid {
         grid-template-columns: 1fr;
     }
-
 
     .report-card-heading {
         align-items: stretch;
