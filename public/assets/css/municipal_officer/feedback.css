@@ -1,0 +1,316 @@
+.feedback-page {
+    width: 100%;
+}
+
+
+/* =========================
+   Status Tabs
+========================= */
+
+.feedback-status-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+
+.feedback-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    min-height: 40px;
+
+    padding: 8px 14px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #D9DCE1;
+    border-radius: 999px;
+
+    color: #374151;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.feedback-tab span {
+    min-width: 24px;
+    height: 24px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    background: #ECFDF3;
+
+    color: #047857;
+
+    font-size: 11px;
+}
+
+
+.feedback-tab.active {
+    background: #0A5A3E;
+    border-color: #0A5A3E;
+    color: #FFFFFF;
+}
+
+
+.feedback-tab.active span {
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+}
+
+
+/* =========================
+   List Card
+========================= */
+
+.feedback-list-card {
+    background: #FFFFFF;
+
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+
+    padding: 28px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+
+.feedback-list-heading {
+    margin-bottom: 20px;
+}
+
+
+.feedback-list-heading h2 {
+    font-family: "Exo 2", sans-serif;
+    font-size: 22px;
+    color: #111827;
+}
+
+
+.feedback-list-heading p {
+    margin-top: 6px;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+
+/* =========================
+   Table
+========================= */
+
+.feedback-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+}
+
+
+.feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.feedback-table thead {
+    background: #ECFDF3;
+}
+
+
+.feedback-table th {
+    padding: 14px 12px;
+
+    text-align: left;
+
+    color: #047857;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.feedback-table td {
+    padding: 16px 12px;
+
+    border-bottom: 1px solid #E5E7EB;
+
+    color: #111827;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+}
+
+
+.feedback-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.feedback-table tbody tr:hover {
+    background: #F6FBF7;
+}
+
+
+/* =========================
+   Submitted User
+========================= */
+
+.user-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.user-name {
+    font-weight: 600;
+    color: #111827;
+}
+
+
+.user-email {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+
+/* =========================
+   Request Link
+========================= */
+
+.request-link {
+    color: #0A5A3E;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+
+.request-link:hover {
+    color: #159342;
+    text-decoration: underline;
+}
+
+
+/* =========================
+   Status Badges
+========================= */
+
+.feedback-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.feedback-status.open {
+    background: #FFEDD5;
+    color: #B45309;
+}
+
+
+.feedback-status.in-review {
+    background: #DDE9FF;
+    color: #1D4ED8;
+}
+
+
+.feedback-status.resolved {
+    background: #D0FAE4;
+    color: #047857;
+}
+
+
+.feedback-status.closed {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+
+/* =========================
+   Actions
+========================= */
+
+.feedback-action-btn {
+    min-width: 92px;
+    height: 38px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.primary-action {
+    background: #159342;
+    border: 1px solid #159342;
+    color: #FFFFFF;
+}
+
+
+.primary-action:hover {
+    background: #0E7A37;
+}
+
+
+.secondary-action {
+    background: #FFFFFF;
+    border: 1px solid #159342;
+    color: #0A5A3E;
+}
+
+
+.secondary-action:hover {
+    background: #ECFDF3;
+}
+
+
+.feedback-table th:last-child,
+.feedback-table td:last-child {
+    width: 120px;
+    text-align: center;
+}
+
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 900px) {
+
+    .feedback-status-tabs {
+        gap: 8px;
+    }
+
+}

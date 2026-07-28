@@ -1,0 +1,136 @@
+/* =========================
+   EcoLot LK Global Styles
+========================= */
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+
+    margin:0;
+    padding:0;
+
+    min-height:100%;
+
+}
+
+
+body {
+
+    background:#F6FBF7;
+
+    color:#111827;
+
+    font-family:"Inter", sans-serif;
+
+}
+
+
+h1,
+h2,
+h3,
+h4 {
+
+    font-family:"Exo 2", sans-serif;
+
+    margin:0;
+
+}
+
+
+p {
+
+    margin:0;
+
+}
+
+
+
+/* =========================
+   Application Layout
+========================= */
+
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+    align-items: flex-start;
+}
+
+
+.main-content {
+
+    flex:1;
+
+    background:#F6FBF7;
+
+}
+
+
+
+.page-content {
+
+    padding:40px;
+
+}
+
+
+
+/* =========================
+   Buttons
+========================= */
+
+
+button {
+
+    font-family:"Inter", sans-serif;
+
+    cursor:pointer;
+
+}
+
+
+.primary-btn {
+
+    background:#159342;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+}
+
+
+.primary-btn:hover {
+
+    background:#0E7A37;
+
+}
+
+
+
+.secondary-btn {
+
+    background:white;
+
+    color:#159342;
+
+    border:1px solid #159342;
+
+    padding:10px 20px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+}
