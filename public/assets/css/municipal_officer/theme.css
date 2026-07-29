@@ -32,6 +32,20 @@
     padding: 16px 32px 44px;
 }
 
+.officer-app :is(
+    .dashboard-page,
+    .campaigns-page,
+    .area-schedules-page,
+    .flagged-requests-page,
+    .routes-page,
+    .collection-records-page,
+    .elots-page,
+    .feedback-page,
+    .reports-page
+) {
+    width: 100%;
+}
+
 .officer-app .sidebar {
     width: 244px;
     min-height: 100vh;
@@ -196,8 +210,22 @@
     letter-spacing: -0.025em;
 }
 
+.officer-app .campaigns-heading h1 {
+    color: var(--officer-text);
+    font-size: clamp(1.625rem, 2.4vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
 .officer-app .page-toolbar p {
     max-width: 720px;
+    margin-top: 6px;
+    color: var(--officer-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+}
+
+.officer-app .campaigns-heading p {
     margin-top: 6px;
     color: var(--officer-muted);
     font-size: 0.9375rem;
@@ -290,6 +318,17 @@
     margin-top: 24px;
 }
 
+.officer-app :is(
+    .scheduled-areas-header,
+    .list-heading,
+    .routes-list-heading,
+    .records-list-heading,
+    .elots-list-heading,
+    .feedback-list-heading
+) {
+    margin-bottom: 20px;
+}
+
 .officer-app .compact-filter-card {
     padding: 16px 20px;
 }
@@ -370,8 +409,14 @@
 .officer-app .filter-grid,
 .officer-app .route-filter-grid,
 .officer-app .records-filter-grid,
-.officer-app .elot-filter-grid {
+.officer-app .elot-filter-grid,
+.officer-app .report-filter-grid {
+    display: grid;
     gap: 18px;
+}
+
+.officer-app .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .officer-app .form-group {
@@ -599,11 +644,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 20px 0;
-}
-
-.officer-app .feedback-status-tabs {
     margin-top: 0;
+    margin-bottom: 20px;
 }
 
 .officer-app .feedback-tab {
@@ -700,6 +742,7 @@
 }
 
 @media (max-width: 900px) {
+    .officer-app .form-grid,
     .officer-app .filter-grid,
     .officer-app .route-filter-grid,
     .officer-app .records-filter-grid {
@@ -715,6 +758,38 @@
     }
 
     .officer-app .toolbar-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 700px) {
+    .officer-app .sidebar {
+        display: none;
+    }
+
+    .officer-app .top-header {
+        width: calc(100% - 24px);
+        margin: 12px auto 8px;
+        padding: 14px 16px;
+    }
+
+    .officer-app .page-content {
+        padding: 16px 12px 32px;
+    }
+
+    .officer-app .compact-filter-card :is(
+        .filter-form,
+        .route-filter-form,
+        .records-filter-form,
+        .elot-filter-form,
+        .report-filter-form
+    ) {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .officer-app .compact-filter-card .filter-actions {
+        flex-wrap: wrap;
         justify-content: flex-start;
     }
 }
