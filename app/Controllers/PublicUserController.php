@@ -5,26 +5,26 @@ class PublicUserController extends Controller
 {
     public function dashboard(): void
     {
-        $this->view('public_user/dashboard', ['currentPage' => 'dashboard']);
+        $this->view('public_user/pickup-dashboard', ['currentPage' => 'dashboard']);
     }
 
     public function myRequests(): void
     {
-        $this->view('public_user/my-requests', ['currentPage' => 'my-requests']);
+        $this->view('public_user/pickup-request-history', ['currentPage' => 'my-requests']);
     }
 
     public function newRequest(): void
     {
-        $this->view('public_user/new-request', ['currentPage' => 'new-request']);
+        $this->view('public_user/pickup-request-form', ['currentPage' => 'new-request']);
     }
 
     public function feedback(): void
     {
-        $this->view('public_user/feedback', ['currentPage' => 'feedback']);
+        $this->view('public_user/feedback-form', ['currentPage' => 'feedback']);
     }
 
     public function profile(): void
     {
-        $this->view('public_user/profile', ['currentPage' => 'profile']);
+        $this->view('public_user/account-profile', ['currentPage' => 'profile']);
     }
 }

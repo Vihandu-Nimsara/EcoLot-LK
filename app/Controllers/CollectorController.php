@@ -5,11 +5,11 @@ class CollectorController extends Controller
 {
     public function dashboard(): void
     {
-        $this->view('collector/dashboard', ['currentPage' => 'dashboard']);
+        $this->view('collector/assigned-routes', ['currentPage' => 'dashboard']);
     }
 
     public function myRequests(): void
     {
-        $this->view('collector/crud_dashboard', ['currentPage' => 'my-requests']);
+        $this->view('collector/assigned-requests', ['currentPage' => 'my-requests']);
     }
 }

@@ -1,0 +1,178 @@
+.updated-status {
+    padding: 5px 10px;
+    color: #66736B;
+    background: #EDF2EE;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.route-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.assigned-route-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 22px;
+}
+
+.route-summary {
+    min-width: 0;
+}
+
+.route-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.route-title-row h2 {
+    font-size: 1rem;
+}
+
+.route-summary p {
+    margin-top: 6px;
+    color: #66736B;
+    font-size: 0.875rem;
+}
+
+.route-status {
+    padding: 4px 9px;
+    color: #66736B;
+    background: #EDF2EE;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.route-status.in-progress {
+    color: #047857;
+    background: #D0FAE4;
+}
+
+.hazard-indicator {
+    display: none;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    background: #B42318;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.hazard-indicator.active {
+    display: inline-flex;
+}
+
+.route-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.urgent-notice {
+    margin-top: 18px;
+    padding: 16px 18px;
+    color: #F1FFF6;
+    background: #073F2D;
+    border-radius: 14px;
+}
+
+.urgent-notice strong {
+    color: #FFD38A;
+    font-size: 0.8125rem;
+}
+
+.urgent-notice p {
+    margin-top: 5px;
+    font-size: 0.8125rem;
+}
+
+.collector-modal-overlay {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(7, 31, 21, 0.48);
+    backdrop-filter: blur(4px);
+}
+
+.collector-modal-card {
+    position: relative;
+    width: min(100%, 390px);
+    padding: 24px;
+    background: #FFFFFF;
+    border-radius: 18px;
+    box-shadow: 0 20px 48px rgba(7, 31, 21, 0.2);
+}
+
+.collector-modal-card h2 {
+    padding-right: 32px;
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    padding: 0;
+    color: #66736B;
+    background: none;
+    border: 0;
+    font-size: 1.5rem;
+}
+
+.route-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.route-details div {
+    padding: 12px;
+    background: #F8FBF9;
+    border: 1px solid #E1E9E4;
+    border-radius: 9px;
+}
+
+.route-details dt {
+    color: #66736B;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.route-details dd {
+    margin: 5px 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.collector-modal-card .danger-btn {
+    width: 100%;
+}
+
+@media (max-width: 700px) {
+    .assigned-route-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .route-actions {
+        flex-wrap: wrap;
+    }
+}
