@@ -7,4 +7,9 @@ class CollectorController extends Controller
     {
         $this->view('collector/dashboard', ['currentPage' => 'dashboard']);
     }
+
+    public function myRequests(): void
+    {
+        $this->view('collector/crud_dashboard', ['currentPage' => 'my-requests']);
+    }
 }
