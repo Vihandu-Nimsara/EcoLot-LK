@@ -41,4 +41,8 @@ return static function (Router $router, array $app): void {
         $router->get('/feedback', 'PublicUserController@feedback');
         $router->get('/profile', 'PublicUserController@profile');
     });
+
+    $router->group('/collector', static function (Router $router): void {
+        $router->get('/my-requests', 'CollectorController@myRequests');
+    });
 };
