@@ -33,4 +33,12 @@ return static function (Router $router, array $app): void {
         $router->get('/my-bids', 'RecyclerController@myBids');
         $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
     });
+
+    $router->group('/user', static function (Router $router): void {
+        $router->get('/dashboard', 'PublicUserController@dashboard');
+        $router->get('/my-requests', 'PublicUserController@myRequests');
+        $router->get('/new-request', 'PublicUserController@newRequest');
+        $router->get('/feedback', 'PublicUserController@feedback');
+        $router->get('/profile', 'PublicUserController@profile');
+    });
 };
