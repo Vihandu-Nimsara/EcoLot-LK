@@ -1,0 +1,45 @@
+.account-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 20px;
+}
+
+.profile-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-avatar {
+    display: flex;
+    width: 72px;
+    height: 72px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: #0A5A3E;
+    background: #DDF7E7;
+    border-radius: 18px;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.security-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.locked-details-note {
+    margin-top: 12px;
+    color: #66736B;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .account-profile-grid {
+        grid-template-columns: 1fr;
+    }
+}

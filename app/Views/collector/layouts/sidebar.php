@@ -1,16 +1,27 @@
 <?php $baseUrl = htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8'); ?>
-<aside class="sidebar">
+<aside class="sidebar" id="collector-sidebar">
     <div class="sidebar-logo">
-        <img src="<?= $baseUrl ?>/assets/images/ecolot-logo.png" alt="EcoLot LK Logo">
-        <div><h2>EcoLot LK</h2><p>MUNICIPAL PORTAL</p></div>
+        <div class="logo-box">
+            <img src="<?= $baseUrl ?>/assets/images/ecolot-logo.png" alt="EcoLot LK Logo">
+        </div>
     </div>
+
     <nav class="sidebar-nav">
-        <a href="<?= $baseUrl ?>/collector/dashboard" class="<?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">🚏 My Routes</a>
-        <a href="<?= $baseUrl ?>/collector/my-requests" class="<?= ($currentPage ?? '') === 'my-requests' ? 'active' : '' ?>">📄 My Requests</a>
+        <a
+            href="<?= $baseUrl ?>/collector/dashboard"
+            class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>"
+        >Assigned Routes</a>
+        <a
+            href="<?= $baseUrl ?>/collector/my-requests"
+            class="nav-item <?= ($currentPage ?? '') === 'my-requests' ? 'active' : '' ?>"
+        >Assigned Requests</a>
     </nav>
-    <div class="sidebar-user">
-        <p class="user-name">Kasun Perera</p>
-        <p class="user-id">ID: LK-COL-082</p>
+
+    <div class="sidebar-bottom">
+        <div class="sidebar-identity">
+            <strong>Kasun Perera</strong>
+            <span>LK-COL-082</span>
+        </div>
+        <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
     </div>
-    <a href="<?= $baseUrl ?>/login" class="signout">↪ Sign Out</a>
 </aside>
