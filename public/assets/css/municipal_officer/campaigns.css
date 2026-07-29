@@ -1,113 +1,18 @@
-
-
-.campaigns-page {
-    width: 100%;
-}
-
-.campaigns-card {
-    background: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.campaigns-heading h1 {
-    font-family: "Exo 2", sans-serif;
-    font-size: 36px;
-    font-weight: 700;
-    color: #111827;
-}
-
-.campaigns-heading p {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #6B7280;
-}
-
 .campaigns-heading span {
     display: block;
     margin-top: 24px;
-    font-size: 13px;
     color: #6B7280;
+    font-size: 0.8125rem;
 }
 
 .campaign-actions {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 24px;
-    margin-bottom: 20px;
-}
-
-.campaign-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 16px;
-}
-
-.campaign-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.campaign-table thead {
-    background: #ECFDF3;
-}
-
-.campaign-table th {
-    padding: 14px 16px;
-
-    text-align: left;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    color: #047857;
-}
-
-.campaign-table td {
-    padding: 16px;
-
-    font-size: 14px;
-
-    color: #111827;
-
-    border-bottom: 1px solid #E5E7EB;
-}
-
-.campaign-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.campaign-table tbody tr:hover {
-    background: #F6FBF7;
+    margin: 24px 0 20px;
 }
 
 .status.closed {
-    background: #F3F4F6;
     color: #6B7280;
-}
-
-.edit-btn {
-    background: #FFFFFF;
-
-    color: #0A5A3E;
-
-    border: 1px solid #E5E7EB;
-
-    border-radius: 10px;
-
-    padding: 8px 14px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-.edit-btn:hover {
-    border-color: #159342;
-    color: #159342;
+    background: #F3F4F6;
 }
