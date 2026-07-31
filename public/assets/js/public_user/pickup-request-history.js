@@ -1,52 +1,114 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const detailsModal = document.querySelector('[data-details-modal]');
-    const deleteModal = document.querySelector('[data-delete-modal]');
-    const requestCode = document.querySelector('[data-request-code]');
-    let pendingDeleteId = null;
+  const deleteModal = document.getElementById('deleteModal');
+  const viewModal = document.getElementById('viewModal');
+  const editModal = document.getElementById('editModal');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-    const setModalOpen = (modal, isOpen) => {
-        if (!modal) return;
-        modal.hidden = !isOpen;
-    };
+  // Open Delete Modal
+  function openDeleteModal(requestId) {
+    if (confirmDeleteBtn) {
+      confirmDeleteBtn.href = `delete-request.php?id=${requestId}`;
+    }
+    if (deleteModal) {
+      deleteModal.removeAttribute('hidden');
+      deleteModal.classList.add('active');
+    }
+  }
 
-    document.querySelectorAll('[data-view-request]').forEach((button) => {
-        button.addEventListener('click', () => {
-            if (requestCode) requestCode.textContent = button.dataset.viewRequest;
-            setModalOpen(detailsModal, true);
-        });
-    });
+  // Close Delete Modal
+  function closeDeleteModal() {
+    if (deleteModal) {
+      deleteModal.classList.remove('active');
+      deleteModal.setAttribute('hidden', '');
+    }
+  }
 
-    document.querySelectorAll('[data-delete-request]').forEach((button) => {
-        button.addEventListener('click', () => {
-            pendingDeleteId = button.dataset.deleteRequest;
-            setModalOpen(deleteModal, true);
-        });
-    });
+  // Open View Details Modal
+  function openViewModal(requestId) {
+    const viewReqIdElem = document.getElementById('viewRequestId');
+    if (viewReqIdElem) {
+      viewReqIdElem.innerText = requestId;
+    }
+    if (viewModal) {
+      viewModal.removeAttribute('hidden');
+      viewModal.classList.add('active');
+    }
+  }
 
-    document.querySelectorAll('[data-close-details-modal]').forEach((button) => {
-        button.addEventListener('click', () => setModalOpen(detailsModal, false));
-    });
+  // Close View Details Modal
+  function closeViewModal() {
+    if (viewModal) {
+      viewModal.classList.remove('active');
+      viewModal.setAttribute('hidden', '');
+    }
+  }
 
-    document.querySelector('[data-close-delete-modal]')?.addEventListener('click', () => {
-        pendingDeleteId = null;
-        setModalOpen(deleteModal, false);
-    });
+  // Open Edit Modal
+  function openEditModal(requestId) {
+    const editReqIdElem = document.getElementById('editRequestId');
+    if (editReqIdElem) {
+      editReqIdElem.innerText = requestId;
+    }
+    if (editModal) {
+      editModal.removeAttribute('hidden');
+      editModal.classList.add('active');
+    }
+  }
 
-    document.querySelector('[data-confirm-delete]')?.addEventListener('click', () => {
-        pendingDeleteId = null;
-        setModalOpen(deleteModal, false);
-    });
+  // Close Edit Modal
+  function closeEditModal() {
+    if (editModal) {
+      editModal.classList.remove('active');
+      editModal.setAttribute('hidden', '');
+    }
+  }
 
-    [detailsModal, deleteModal].forEach((modal) => {
-        modal?.addEventListener('click', (event) => {
-            if (event.target === modal) setModalOpen(modal, false);
-        });
-    });
+  // Event Delegation for Table Action Buttons & Request ID Links
+  document.addEventListener('click', (event) => {
+    // Check for View Actions
+    const viewBtn = event.target.closest('[data-view-request]');
+    if (viewBtn) {
+      const reqId = viewBtn.getAttribute('data-view-request');
+      openViewModal(reqId);
+      return;
+    }
 
-    document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape') return;
-        setModalOpen(detailsModal, false);
-        setModalOpen(deleteModal, false);
-        pendingDeleteId = null;
-    });
+    // Check for Edit Actions
+    const editBtn = event.target.closest('[data-edit-request]');
+    if (editBtn) {
+      const reqId = editBtn.getAttribute('data-edit-request');
+      openEditModal(reqId);
+      return;
+    }
+
+    // Check for Delete Actions
+    const deleteBtn = event.target.closest('[data-delete-request]');
+    if (deleteBtn) {
+      const reqId = deleteBtn.getAttribute('data-delete-request');
+      openDeleteModal(reqId);
+      return;
+    }
+
+    // Modal Close Buttons
+    if (event.target.closest('[data-close-delete-modal]')) {
+      closeDeleteModal();
+    }
+    if (event.target.closest('[data-close-view-modal]')) {
+      closeViewModal();
+    }
+    if (event.target.closest('[data-close-edit-modal]')) {
+      closeEditModal();
+    }
+
+    // Close on Outside Click Overlay
+    if (event.target === deleteModal) {
+      closeDeleteModal();
+    }
+    if (event.target === viewModal) {
+      closeViewModal();
+    }
+    if (event.target === editModal) {
+      closeEditModal();
+    }
+  });
 });

@@ -1,111 +1,230 @@
-<section class="pickup-history-page">
-    <div class="page-toolbar">
-        <div>
-            <h1>Pickup Request History</h1>
-            <p>View and track all your submitted e-waste pickup requests.</p>
-        </div>
-        <a href="<?= $basePath ?>/user/new-request" class="primary-btn">New Pickup Request</a>
-    </div>
+<div class="content">
+    <p class="breadcrumb"><a href="<?= $basePath ?>/user/dashboard">Dashboard</a> &nbsp;›&nbsp; My Requests</p>
+    <h1 class="title">My Requests</h1>
+    <p class="subtitle">View and track all your pickup requests.</p>
 
-    <section class="surface-card">
-        <div class="request-filter-tabs" role="tablist" aria-label="Request status">
-            <button type="button" class="request-filter-tab active">All</button>
-            <button type="button" class="request-filter-tab">Pending</button>
-            <button type="button" class="request-filter-tab">Completed</button>
-            <button type="button" class="request-filter-tab">Cancelled</button>
+    <div class="card">
+        <div class="tabs">
+            <div class="tab active">All</div>
+            <div class="tab">Pending</div>
+            <div class="tab">Completed</div>
+            <div class="tab">Cancelled</div>
         </div>
 
-        <div class="data-table-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Request ID</th>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Estimated Weight</th>
-                        <th>Quantity</th>
-                        <th>Condition</th>
-                        <th>Status</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <button
-                                type="button"
-                                class="request-id-link"
-                                data-view-request="REQ-2024-00012"
-                            >REQ-2024-00012</button>
-                        </td>
-                        <td>May 20, 2024</td>
-                        <td>IT Equipment</td>
-                        <td>8.5 kg</td>
-                        <td>3</td>
-                        <td>Working</td>
-                        <td><span class="status-badge pending">Pending</span></td>
-                        <td>
-                            <div class="request-actions">
-                                <button type="button" class="icon-action view" data-view-request="REQ-2024-00012">View</button>
-                                <button type="button" class="icon-action edit" data-view-request="REQ-2024-00012">Edit</button>
-                                <button type="button" class="icon-action delete" data-delete-request="REQ-2024-00012">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Estimated Weight</th>
+                    <th>Quantity</th>
+                    <th>Condition</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample Row 1 -->
+                <tr>
+                    <td>
+                        <a href="javascript:void(0)" class="view-link" data-view-request="REQ-2024-00012">REQ-2024-00012</a>
+                    </td>
+                    <td>May 20, 2024</td>
+                    <td>IT equipment</td>
+                    <td>8.5 kg</td>
+                    <td>3</td>
+                    <td>Working</td>
+                    <td><span class="badge badge-pending"><span class="dot"></span>Pending</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- View Icon -->
+                            <button type="button" class="action-btn view-btn" title="View Request" data-view-request="REQ-2024-00012">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                            <!-- Edit Icon -->
+                            <button type="button" class="action-btn edit-btn" title="Edit Request" data-edit-request="REQ-2024-00012">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <!-- Delete Icon -->
+                            <button type="button" class="action-btn delete-btn" title="Delete Request" data-delete-request="REQ-2024-00012">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-        <div class="pagination-bar">
-            <span>Showing 1 to 1 of 12 requests</span>
-            <div class="pagination-controls">
-                <button type="button" aria-label="Previous page">‹</button>
+        <div class="pagination">
+            <span>Showing 1 to 5 of 12 requests</span>
+            <div class="pagenums">
+                <button type="button">‹</button>
                 <button type="button" class="active">1</button>
                 <button type="button">2</button>
                 <button type="button">3</button>
-                <button type="button" aria-label="Next page">›</button>
+                <button type="button">›</button>
             </div>
         </div>
-    </section>
-</section>
-
-<div class="request-modal-overlay" data-delete-modal hidden>
-    <section class="request-modal-card confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
-        <div class="danger-symbol">!</div>
-        <h2 id="delete-modal-title">Delete Request?</h2>
-        <p>This prototype does not delete data. Confirming will only close this message.</p>
-        <div class="modal-actions">
-            <button type="button" class="secondary-btn" data-close-delete-modal>Cancel</button>
-            <button type="button" class="danger-btn" data-confirm-delete>Delete</button>
-        </div>
-    </section>
+    </div>
 </div>
 
-<div class="request-modal-overlay" data-details-modal hidden>
-    <section class="request-modal-card details-modal" role="dialog" aria-modal="true" aria-labelledby="details-modal-title">
-        <div class="modal-heading">
-            <div>
-                <h2 id="details-modal-title">Request Details</h2>
-                <span class="request-code" data-request-code>REQ-2024-00012</span>
-            </div>
-            <button type="button" class="modal-close" aria-label="Close details" data-close-details-modal>×</button>
+<!-- Center Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay" hidden>
+    <div class="modal-box">
+        <div class="modal-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
         </div>
-
-        <div class="request-details-grid">
-            <div class="request-detail"><span>Status</span><strong><span class="status-badge pending">Pending</span></strong></div>
-            <div class="request-detail"><span>Submitted Date</span><strong>May 20, 2024</strong></div>
-            <div class="request-detail"><span>Collection Date</span><strong>May 25, 2024</strong></div>
-            <div class="request-detail"><span>Postal Code Area</span><strong>10230 (Maharagama)</strong></div>
-            <div class="request-detail full-width"><span>Pickup Address</span><strong>No. 45, High Level Road, Maharagama</strong></div>
-            <div class="request-detail"><span>Category</span><strong>IT &amp; Telecommunication Equipment</strong></div>
-            <div class="request-detail"><span>Estimated Weight</span><strong>8.5 kg</strong></div>
-            <div class="request-detail"><span>Quantity</span><strong>3 items</strong></div>
-            <div class="request-detail"><span>Condition</span><strong>Working / Repairable</strong></div>
-            <div class="request-detail full-width"><span>Description</span><strong>2 old laptops and 1 monitor with power cables.</strong></div>
-        </div>
-
+        <h3 class="modal-title">Delete Request?</h3>
+        <p class="modal-desc">Are you sure you want to delete this record? This action cannot be undone.</p>
         <div class="modal-actions">
-            <button type="button" class="secondary-btn" data-close-details-modal>Close</button>
+            <button type="button" class="btn-modal btn-cancel" data-close-delete-modal>Cancel</button>
+            <a id="confirmDeleteBtn" href="#" class="btn-modal btn-confirm-delete">Delete</a>
         </div>
-    </section>
+    </div>
+</div>
+
+<!-- View Details Modal -->
+<div id="viewModal" class="modal-overlay" hidden>
+    <div class="modal-box view-modal-box">
+        <div class="view-modal-header">
+            <div>
+                <h3 class="modal-title" style="text-align: left; margin: 0;">Request Details</h3>
+                <span id="viewRequestId" class="view-req-badge">REQ-2024-00012</span>
+            </div>
+            <button type="button" class="close-modal-btn" data-close-view-modal>&times;</button>
+        </div>
+
+        <div class="view-details-grid">
+            <div class="detail-group">
+                <label>Status</label>
+                <div><span id="viewStatus" class="badge badge-pending"><span class="dot"></span>Pending</span></div>
+            </div>
+
+            <div class="detail-group">
+                <label>Submitted Date</label>
+                <p id="viewCreatedDate">May 20, 2024</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Selected Collection Date</label>
+                <p id="viewCollectionDate">May 25, 2024</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Postal Code Area</label>
+                <p id="viewPostalCode">10230 (Maharagama)</p>
+            </div>
+
+            <div class="detail-group full-width">
+                <label>Pickup Address</label>
+                <p id="viewAddress">No. 45, High Level Road, Maharagama</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Selected E-Waste Categories</label>
+                <p id="viewCategories">IT & Telecommunication Equipment</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Estimated Weight</label>
+                <p id="viewWeight">8.5 kg</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Quantity</label>
+                <p id="viewQuantity">3 items</p>
+            </div>
+
+            <div class="detail-group">
+                <label>Item Condition</label>
+                <p id="viewCondition">Working / Repairable</p>
+            </div>
+
+            <div class="detail-group full-width">
+                <label>Other E-Waste Items / Description</label>
+                <p id="viewOtherEwaste">2x Old Dell Laptops, 1x HP Monitor with power cables.</p>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 24px;">
+            <button type="button" class="btn-modal btn-cancel" data-close-view-modal>Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Request Modal -->
+<div id="editModal" class="modal-overlay" hidden>
+    <div class="modal-box view-modal-box">
+        <div class="view-modal-header">
+            <div>
+                <h3 class="modal-title" style="text-align: left; margin: 0;">Edit Pickup Request</h3>
+                <span id="editRequestId" class="view-req-badge">REQ-2024-00012</span>
+            </div>
+            <button type="button" class="close-modal-btn" data-close-edit-modal>&times;</button>
+        </div>
+
+        <form id="editRequestForm" onsubmit="event.preventDefault();">
+            <div class="view-details-grid">
+                <div class="detail-group">
+                    <label>Postal Code Area</label>
+                    <input type="text" class="form-input-readonly" value="10230 (Maharagama)" readonly>
+                </div>
+
+                <div class="detail-group full-width">
+                    <label>Pickup Address</label>
+                    <input type="text" class="form-input-readonly" value="No. 45, High Level Road, Maharagama" readonly>
+                </div>
+
+                <div class="detail-group full-width">
+                    <label>E-Waste Categories</label>
+                    <div class="category-checklist">
+                        <label><input type="checkbox" checked> IT &amp; Telecommunication Equipment</label>
+                        <label><input type="checkbox"> Large Home Appliances</label>
+                        <label><input type="checkbox"> Small Home Appliances</label>
+                        <label><input type="checkbox"> Consumer Electronics</label>
+                    </div>
+                </div>
+
+                <div class="detail-group full-width">
+                    <label>Other E-Waste Items / Description</label>
+                    <textarea class="form-input-editable" rows="3">2x Old Dell Laptops, 1x HP Monitor with power cables.</textarea>
+                </div>
+
+                <div class="detail-group">
+                    <label>Quantity</label>
+                    <input type="number" class="form-input-editable" value="3" min="1">
+                </div>
+
+                <div class="detail-group">
+                    <label>Condition</label>
+                    <select class="form-input-editable">
+                        <option value="Working" selected>Working / Repairable</option>
+                        <option value="Damaged">Severely Damaged</option>
+                        <option value="Scrap">Scrap / Components</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 24px;">
+                <button type="button" class="btn-modal btn-cancel" data-close-edit-modal>Cancel</button>
+                <button type="submit" class="btn-modal btn-confirm-delete" style="background: var(--green);" data-close-edit-modal>Save Changes</button>
+            </div>
+        </form>
+    </div>
 </div>
