@@ -45,4 +45,12 @@ return static function (Router $router, array $app): void {
     $router->group('/collector', static function (Router $router): void {
         $router->get('/my-requests', 'CollectorController@myRequests');
     });
+
+    $router->group('/admin', static function (Router $router): void {
+        $router->get('/users', 'AdminController@Users');
+        $router->get('/recycler-verification', 'AdminController@recyclerVerification');
+        $router->get('/categories-items', 'AdminController@categoriesAndItems');
+        $router->get('/risk-rules', 'AdminController@riskRules');
+        $router->get('/reports', 'AdminController@reports');
+    });
 };

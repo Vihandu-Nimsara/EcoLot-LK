@@ -1,0 +1,73 @@
+.users-page {
+    color: var(--admin-text);
+}
+
+.form-section {
+    margin-top: 24px;
+}
+
+.form-section h3,
+.users-list-card > h3 {
+    color: var(--admin-text);
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.create-user-btn {
+    margin-top: 16px;
+}
+
+.users-list-card > h3 {
+    margin-bottom: 18px;
+}
+
+.users-table {
+    min-width: 980px;
+}
+
+.users-table time {
+    display: block;
+    max-width: 100px;
+}
+
+.status-form {
+    display: grid;
+    width: 150px;
+    gap: 6px;
+}
+
+.status-form select {
+    min-height: 36px;
+    padding: 0 10px;
+}
+
+.status-form button {
+    min-height: 34px;
+    padding: 7px 12px;
+}
+
+.current-admin {
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .dashboard-link {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .privileged-user-form {
+        padding: 16px;
+    }
+
+    .filter-tabs {
+        gap: 6px;
+    }
+
+    .filter-tab {
+        padding-inline: 11px;
+    }
+}

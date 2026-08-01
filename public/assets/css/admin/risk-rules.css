@@ -1,0 +1,49 @@
+.risk-rules-page,
+.risk-rule-form {
+    width: 100%;
+    min-width: 0;
+}
+
+.risk-table {
+    min-width: 1180px;
+    table-layout: fixed;
+}
+
+.risk-table :is(th, td):nth-child(1) {
+    width: 7%;
+}
+
+.risk-table :is(th, td):nth-child(2) {
+    width: 12%;
+}
+
+.risk-table :is(th, td):nth-child(3) {
+    width: 18%;
+}
+
+.risk-table :is(th, td):nth-child(4) {
+    width: 25%;
+}
+
+.risk-table :is(th, td):nth-child(5) {
+    width: 9%;
+    text-align: center;
+}
+
+.risk-table :is(th, td):nth-child(6) {
+    width: 11%;
+}
+
+.risk-table :is(th, td):nth-child(7) {
+    width: 18%;
+}
+
+.risk-table :is(td):nth-child(1) {
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .rules-list-card {
+        margin-top: 20px;
+    }
+}

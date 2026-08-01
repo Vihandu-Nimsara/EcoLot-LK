@@ -1,0 +1,418 @@
+.admin-reports-page {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* =========================================================
+   SYSTEM OVERVIEW
+========================================================= */
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+
+.overview-card {
+    display: flex;
+    min-height: 112px;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.overview-info {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 9px;
+}
+
+
+.overview-info span {
+    color: var(--admin-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+
+.overview-info strong {
+    color: var(--admin-green-800);
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(1.625rem, 2.5vw, 1.875rem);
+    font-weight: 700;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   OVERVIEW ICONS
+========================================================= */
+
+.overview-icon {
+    display: flex;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    font-family:
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Noto Color Emoji",
+        sans-serif;
+
+    font-size: 1.25rem;
+    line-height: 1;
+
+    user-select: none;
+}
+
+
+.overview-users {
+    background: #E0F2FE;
+}
+
+
+.overview-requests {
+    background: #EDE9FE;
+}
+
+
+.overview-completed {
+    background: #D1FAE5;
+}
+
+
+.overview-pickups {
+    background: #FEF3C7;
+}
+
+
+.overview-verified {
+    background: #ECFDF3;
+}
+
+
+.overview-elots {
+    background: #F1E5FA;
+}
+
+
+.overview-bids {
+    background: #FFEDD5;
+}
+
+
+.overview-winning {
+    background: #FCE7A3;
+}
+
+
+/* =========================================================
+   REPORT CARD HEADERS
+========================================================= */
+
+.report-card-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+/* =========================================================
+   TABLE BASE
+========================================================= */
+
+.report-table {
+    table-layout: fixed;
+}
+
+
+.nowrap-cell {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE MINIMUM WIDTHS
+========================================================= */
+
+.request-status-table,
+.monthly-table,
+.elot-status-table,
+.recycler-summary-table {
+    min-width: 560px;
+}
+
+
+.collected-category-table {
+    min-width: 720px;
+}
+
+
+.recent-bids-table {
+    min-width: 1000px;
+}
+
+
+.top-recyclers-table {
+    min-width: 850px;
+}
+
+
+.audit-table {
+    min-width: 1050px;
+}
+
+
+/* =========================================================
+   TWO-COLUMN REPORT TABLES
+========================================================= */
+
+.request-status-table :is(th, td):first-child,
+.monthly-table :is(th, td):first-child,
+.elot-status-table :is(th, td):first-child,
+.recycler-summary-table :is(th, td):first-child {
+    width: 45%;
+}
+
+
+.request-status-table :is(th, td):last-child,
+.monthly-table :is(th, td):last-child,
+.elot-status-table :is(th, td):last-child,
+.recycler-summary-table :is(th, td):last-child {
+    width: 55%;
+}
+
+
+/* =========================================================
+   COLLECTED CATEGORY TABLE
+========================================================= */
+
+.collected-category-table :is(th, td):nth-child(1) {
+    width: 40%;
+}
+
+
+.collected-category-table :is(th, td):nth-child(2),
+.collected-category-table :is(th, td):nth-child(3),
+.collected-category-table :is(th, td):nth-child(4) {
+    width: 20%;
+}
+
+
+/* =========================================================
+   RECENT BIDS TABLE
+========================================================= */
+
+.recent-bids-table :is(th, td):nth-child(1) {
+    width: 14%;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(2) {
+    width: 20%;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(3) {
+    width: 15%;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(4) {
+    width: 13%;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(5) {
+    width: 7%;
+    text-align: center;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(6) {
+    width: 15%;
+}
+
+
+.recent-bids-table :is(th, td):nth-child(7) {
+    width: 16%;
+}
+
+
+/* =========================================================
+   TOP RECYCLERS TABLE
+========================================================= */
+
+.top-recyclers-table :is(th, td):nth-child(1) {
+    width: 30%;
+}
+
+
+.top-recyclers-table :is(th, td):nth-child(2) {
+    width: 18%;
+}
+
+
+.top-recyclers-table :is(th, td):nth-child(3),
+.top-recyclers-table :is(th, td):nth-child(4) {
+    width: 14%;
+}
+
+
+.top-recyclers-table :is(th, td):nth-child(5) {
+    width: 24%;
+}
+
+
+/* =========================================================
+   AUDIT LOG TABLE
+========================================================= */
+
+.audit-table :is(th, td):nth-child(1) {
+    width: 8%;
+}
+
+
+.audit-table :is(th, td):nth-child(2) {
+    width: 14%;
+}
+
+
+.audit-table :is(th, td):nth-child(3) {
+    width: 15%;
+}
+
+
+.audit-table :is(th, td):nth-child(4) {
+    width: 19%;
+}
+
+
+.audit-table :is(th, td):nth-child(5) {
+    width: 29%;
+}
+
+
+.audit-table :is(th, td):nth-child(6) {
+    width: 15%;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .overview-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .reports-header-actions {
+        width: 100%;
+    }
+
+
+    .reports-header-actions > * {
+        flex: 1 1 calc(50% - 5px);
+    }
+
+
+    .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+
+    .overview-card {
+        min-height: 100px;
+        gap: 12px;
+    }
+
+
+    .overview-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius: 11px;
+
+        font-size: 1.1rem;
+    }
+
+
+    .report-card {
+        margin-top: 20px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .reports-header-actions > * {
+        flex-basis: 100%;
+    }
+
+
+    .overview-card {
+        min-height: 92px;
+    }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    body.admin-app .sidebar,
+    body.admin-app .top-header,
+    body.admin-app .reports-header-actions {
+        display: none;
+    }
+
+
+    body.admin-app .page-content {
+        max-width: none;
+        padding: 0;
+    }
+
+
+    body.admin-app .admin-reports-page {
+        color: #000000;
+    }
+
+
+    body.admin-app :is(
+        .overview-section,
+        .report-card,
+        .overview-card,
+        .report-table-wrapper
+    ) {
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+}
