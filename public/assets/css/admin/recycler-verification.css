@@ -1,520 +1,93 @@
-/* =========================================================
-   EcoLot LK
-   Admin - Recycler Verification
-========================================================= */
-
-
-/* =========================================================
-   PAGE
-========================================================= */
-
 .recycler-verification-page {
     width: 100%;
     min-width: 0;
 }
 
-
-/* =========================================================
-   PAGE HEADER
-========================================================= */
-
-.verification-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    gap: 24px;
-    margin-bottom: 30px;
-}
-
-
-.page-eyebrow {
-    display: block;
-    margin-bottom: 6px;
-
-    color: #047857;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-
-.verification-header h1 {
-    margin: 0;
-
-    font-family: "Exo 2", sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
-
-    color: #134029;
-}
-
-
-.verification-header p {
-    margin-top: 8px;
-
-    color: #6B7280;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-
-/* Header Action */
-
-.page-header-actions {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-
-.header-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 38px;
-    padding: 8px 14px;
-
-    background: #FFFFFF;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
-
-    color: #0A5A3E;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-
-.header-action-btn:hover {
-    background: #159342;
-    border-color: #159342;
-    color: #FFFFFF;
-}
-
-
-/* =========================================================
-   MAIN CARD
-========================================================= */
-
-.verification-card {
-    width: 100%;
-    min-width: 0;
-
-    padding: 30px;
-
-    background: #FFFFFF;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 20px;
-
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-
-/* =========================================================
-   FILTERS
-========================================================= */
-
 .verification-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-
-    margin-bottom: 16px;
+    margin-bottom: 0;
 }
-
-
-.filter-tab {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 34px;
-    padding: 8px 14px;
-
-    background: #F3F4F6;
-    color: #374151;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 999px;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-
-.filter-tab:hover {
-    background: #ECFDF3;
-    border-color: #159342;
-    color: #0A5A3E;
-}
-
-
-.filter-tab.active {
-    background: #159342;
-    border-color: #159342;
-    color: #FFFFFF;
-}
-
-
-.current-filter-text {
-    margin-bottom: 20px;
-
-    color: #6B7280;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
 
 .current-filter-text span {
-    color: #374151;
+    color: var(--admin-text);
     font-weight: 600;
 }
 
-
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
-.empty-state-card {
-    padding: 18px 16px;
-
-    background: #F9FAFB;
-
-    border: 1px dashed #C7E7D2;
-    border-radius: 14px;
-
-    color: #6B7280;
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   PROFILES LIST
-========================================================= */
-
 .profiles-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 18px;
+    margin-top: 20px;
 }
-
-
-.profile-card {
-    width: 100%;
-
-    padding: 22px;
-
-    background: #FFFFFF;
-
-    border: 1px solid #E5E7EB;
-    border-radius: 18px;
-
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
 
 .profile-card-top {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-
+    justify-content: space-between;
     gap: 16px;
-
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
-
 
 .profile-main-info h3 {
     margin: 0;
-
-    font-family: "Exo 2", sans-serif;
-    font-size: 22px;
+    color: var(--admin-text);
+    font-size: 1.375rem;
     font-weight: 700;
-    line-height: 1.25;
-
-    color: #134029;
 }
-
 
 .profile-main-info p {
     margin-top: 6px;
-
-    color: #6B7280;
-    font-size: 14px;
-    line-height: 1.4;
+    color: var(--admin-muted);
+    font-size: 0.875rem;
 }
-
 
 .profile-status-wrap {
+    display: flex;
     flex-shrink: 0;
+    align-items: center;
 }
-
-
-/* =========================================================
-   DETAIL GRID
-========================================================= */
 
 .profile-details-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 16px 20px;
 }
 
-
 .detail-item {
-    min-width: 0;
-
     display: flex;
+    min-width: 0;
     flex-direction: column;
     gap: 4px;
 }
-
 
 .detail-item-full {
     grid-column: 1 / -1;
 }
 
-
 .detail-label {
-    color: #6B7280;
-    font-size: 12px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
     font-weight: 600;
 }
-
 
 .detail-value {
-    color: #111827;
-    font-size: 14px;
-    line-height: 1.4;
-
-    word-break: break-word;
+    color: var(--admin-text);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
 }
-
-
-/* =========================================================
-   STATUS BADGES
-========================================================= */
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 6px 12px;
-
-    border-radius: 999px;
-
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1;
-
-    white-space: nowrap;
-}
-
-
-.status-pending {
-    background: #FEF3C7;
-    color: #B45309;
-}
-
-
-.status-verified {
-    background: #D1FAE5;
-    color: #047857;
-}
-
-
-.status-rejected {
-    background: #FEE2E2;
-    color: #B42318;
-}
-
-
-/* =========================================================
-   ACTIONS
-========================================================= */
 
 .profile-actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
     gap: 10px;
-
     margin-top: 20px;
 }
 
-
-.action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 38px;
-    padding: 8px 14px;
-
-    border-radius: 10px;
-
-    font-size: 13px;
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-
-/* View Details */
-
-.secondary-btn-style {
-    background: #FFFFFF;
-    color: #0A5A3E;
-
-    border: 1px solid #E5E7EB;
-}
-
-
-.secondary-btn-style:hover {
-    background: #159342;
-    border-color: #159342;
-    color: #FFFFFF;
-}
-
-
-/* Approve */
-
-.approve-btn {
-    background: #159342;
-    color: #FFFFFF;
-
-    border: 1px solid #159342;
-}
-
-
-.approve-btn:hover {
-    background: #0E7A37;
-    border-color: #0E7A37;
-}
-
-
-/* Reject */
-
-.reject-btn {
-    background: #FFFFFF;
-    color: #B42318;
-
-    border: 1px solid #F3C6C6;
-}
-
-
-.reject-btn:hover {
-    background: #B42318;
-    border-color: #B42318;
-    color: #FFFFFF;
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 1100px) {
-
-    .verification-card {
-        padding: 24px;
-    }
-
-    .verification-header h1 {
-        font-size: 28px;
-    }
-
-    .profile-card {
-        padding: 20px;
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
 @media (max-width: 700px) {
-
-    .verification-header {
-        flex-direction: column;
-        align-items: stretch;
-
-        margin-bottom: 24px;
-    }
-
-    .verification-header h1 {
-        font-size: 25px;
-    }
-
-    .page-header-actions {
-        width: 100%;
-    }
-
-    .header-action-btn {
-        width: 100%;
-    }
-
-    .verification-card {
-        padding: 18px;
-        border-radius: 16px;
-    }
-
-    .verification-filters {
-        gap: 8px;
-    }
-
-    .filter-tab {
-        font-size: 12px;
-        padding: 8px 12px;
-    }
-
-    .profile-card {
-        padding: 16px;
-        border-radius: 14px;
-    }
-
     .profile-card-top {
-        flex-direction: column;
         align-items: flex-start;
-
+        flex-direction: column;
         margin-bottom: 16px;
-    }
-
-    .profile-main-info h3 {
-        font-size: 20px;
     }
 
     .profile-details-grid {
@@ -527,12 +100,11 @@
     }
 
     .profile-actions {
-        flex-direction: column;
         align-items: stretch;
+        flex-direction: column;
     }
 
     .action-btn {
         width: 100%;
     }
-
 }

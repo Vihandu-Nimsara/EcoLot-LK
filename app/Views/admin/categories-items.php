@@ -240,10 +240,6 @@ $items = [
 
         <div>
 
-            <span class="page-eyebrow">
-                Administration
-            </span>
-
             <h1>
                 Category & Item Management
             </h1>
@@ -251,25 +247,6 @@ $items = [
             <p>
                 Maintain the E-Waste categories and accepted item catalogue.
             </p>
-
-        </div>
-
-
-        <div class="page-header-actions">
-
-            <a
-                href="/EcoLot-LK/public/admin/risk-rules"
-                class="header-action-btn"
-            >
-                Risk Rules
-            </a>
-
-            <a
-                href="/EcoLot-LK/public/admin/dashboard"
-                class="header-action-btn"
-            >
-                Dashboard
-            </a>
 
         </div>
 

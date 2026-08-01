@@ -1,14 +1,13 @@
 <section class="users-page">
-    <div class="users-card users-hero">
-        <div class="users-title-row">
-            <div>
-                <span class="eyebrow">Administration</span>
-                <h2>User Management</h2>
-                <p>Create privileged accounts and manage existing system users.</p>
-            </div>
 
-            <a class="dashboard-link" href="dashboard">Dashboard</a>
+    <div class="users-title-row">
+        <div>
+            <h2>User Management</h2>
+            <p>Create privileged accounts and manage existing system users.</p>
         </div>
+    </div>
+    
+    <div class="users-card users-hero">
 
         <nav class="filter-tabs" aria-label="Filter users">
             <button class="filter-tab active" type="button" aria-pressed="true">All</button>

@@ -364,10 +364,6 @@ $recentAuditLogs = [
 
         <div class="reports-heading">
 
-            <span class="page-eyebrow">
-                Administration
-            </span>
-
             <h1>
                 Admin Reports & Analytics
             </h1>
@@ -380,31 +376,6 @@ $recentAuditLogs = [
 
 
         <div class="reports-header-actions">
-
-            <a
-                href="/EcoLot-LK/public/admin/dashboard"
-                class="header-action-btn"
-            >
-                Dashboard
-            </a>
-
-
-            <a
-                href="/EcoLot-LK/public/admin/users"
-                class="header-action-btn"
-            >
-                Users
-            </a>
-
-
-            <a
-                href="/EcoLot-LK/public/admin/recycler-verification"
-                class="header-action-btn"
-            >
-                Recycler Verification
-            </a>
-
-
             <button
                 type="button"
                 class="print-report-btn"
@@ -440,54 +411,124 @@ $recentAuditLogs = [
 
         <div class="overview-grid">
 
-
+            <!-- Total Users -->
             <article class="overview-card">
-                <span>Total Users</span>
-                <strong><?= $totalUsers ?></strong>
+
+                <div class="overview-icon overview-users" aria-hidden="true">
+                    👥
+                </div>
+
+                <div class="overview-info">
+                    <span>Total Users</span>
+                    <strong><?= htmlspecialchars((string)$totalUsers) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Total Requests -->
             <article class="overview-card">
-                <span>Total Requests</span>
-                <strong><?= $totalRequests ?></strong>
+
+                <div class="overview-icon overview-requests" aria-hidden="true">
+                    📋
+                </div>
+
+                <div class="overview-info">
+                    <span>Total Requests</span>
+                    <strong><?= htmlspecialchars((string)$totalRequests) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Completed Requests -->
             <article class="overview-card">
-                <span>Completed Requests</span>
-                <strong><?= $completedRequests ?></strong>
+
+                <div class="overview-icon overview-completed" aria-hidden="true">
+                    ✅
+                </div>
+
+                <div class="overview-info">
+                    <span>Completed Requests</span>
+                    <strong><?= htmlspecialchars((string)$completedRequests) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Pickup Records -->
             <article class="overview-card">
-                <span>Pickup Records</span>
-                <strong><?= $pickupRecords ?></strong>
+
+                <div class="overview-icon overview-pickups" aria-hidden="true">
+                    🚛
+                </div>
+
+                <div class="overview-info">
+                    <span>Pickup Records</span>
+                    <strong><?= htmlspecialchars((string)$pickupRecords) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Verified Pickups -->
             <article class="overview-card">
-                <span>Verified Pickups</span>
-                <strong><?= $verifiedPickups ?></strong>
+
+                <div class="overview-icon overview-verified" aria-hidden="true">
+                    🛡️
+                </div>
+
+                <div class="overview-info">
+                    <span>Verified Pickups</span>
+                    <strong><?= htmlspecialchars((string)$verifiedPickups) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Total E-Lots -->
             <article class="overview-card">
-                <span>Total E-Lots</span>
-                <strong><?= $totalELots ?></strong>
+
+                <div class="overview-icon overview-elots" aria-hidden="true">
+                    📦
+                </div>
+
+                <div class="overview-info">
+                    <span>Total E-Lots</span>
+                    <strong><?= htmlspecialchars((string)$totalELots) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Total Bids -->
             <article class="overview-card">
-                <span>Total Bids</span>
-                <strong><?= $totalBids ?></strong>
+
+                <div class="overview-icon overview-bids" aria-hidden="true">
+                    🏷️
+                </div>
+
+                <div class="overview-info">
+                    <span>Total Bids</span>
+                    <strong><?= htmlspecialchars((string)$totalBids) ?></strong>
+                </div>
+
             </article>
 
 
+            <!-- Winning Bids -->
             <article class="overview-card">
-                <span>Winning Bids</span>
-                <strong><?= $winningBids ?></strong>
-            </article>
 
+                <div class="overview-icon overview-winning" aria-hidden="true">
+                    🏆
+                </div>
+
+                <div class="overview-info">
+                    <span>Winning Bids</span>
+                    <strong><?= htmlspecialchars((string)$winningBids) ?></strong>
+                </div>
+
+            </article>
 
         </div>
 

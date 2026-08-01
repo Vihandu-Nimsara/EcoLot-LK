@@ -5,10 +5,6 @@
     ========================================== -->
     <div class="risk-page-intro">
 
-        <span class="page-eyebrow">
-            Administration
-        </span>
-
         <h1>
             Risk Rule Management
         </h1>
