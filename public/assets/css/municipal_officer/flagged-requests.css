@@ -2,7 +2,121 @@
     margin-top: 0;
 }
 
+.officer-app .flagged-requests-page .compact-filter-card .filter-form {
+    justify-content: flex-start;
+}
+
+.officer-app .flagged-requests-page .compact-filter-card .filter-grid {
+    flex: 0 1 auto;
+    grid-template-columns: repeat(3, 220px);
+    gap: 12px;
+}
+
+.officer-app .flagged-requests-page .compact-filter-card .form-group select {
+    height: 38px;
+    padding-right: 30px;
+}
+
+.flagged-table td:nth-child(3) strong {
+    color: #173E2C;
+    font-size: 0.8125rem;
+}
+
 .review-status.pending {
     color: #B45309;
     background: #FFEDD5;
+}
+
+.review-status.approved {
+    color: #047857;
+    background: #D0FAE4;
+}
+
+.review-status.rejected {
+    color: #B42318;
+    background: #FEE4E2;
+}
+
+.review-dialog-card {
+    --officer-dialog-width: 650px;
+}
+
+.review-request-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.review-request-summary > div {
+    padding: 12px;
+    background: #F5FAF7;
+    border: 1px solid #DFEAE2;
+    border-radius: 10px;
+}
+
+.review-request-summary span {
+    display: block;
+    margin-bottom: 4px;
+    color: #66736B;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+.review-request-summary strong {
+    color: #203329;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+.review-request-summary .review-summary-wide {
+    grid-column: 1 / -1;
+}
+
+.review-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.review-form textarea {
+    width: 100%;
+    min-height: 104px;
+    padding: 11px 13px;
+    color: #17211B;
+    background: #FBFDFC;
+    border: 1px solid #D8E2DB;
+    border-radius: 9px;
+    resize: vertical;
+}
+
+.review-form textarea:focus {
+    outline: none;
+    background: #FFFFFF;
+    border-color: #159342;
+    box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
+}
+
+.review-form small {
+    margin-top: 6px;
+    color: #66736B;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .officer-app .flagged-requests-page .compact-filter-card .filter-grid {
+        flex: 1;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .review-request-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .review-request-summary .review-summary-wide {
+        grid-column: auto;
+    }
 }

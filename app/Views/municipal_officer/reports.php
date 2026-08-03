@@ -14,7 +14,8 @@
 
             <button
                 type="button"
-                class="secondary-btn print-report-btn">
+                class="secondary-btn print-report-btn"
+                data-print-report>
                 Print Report
             </button>
 
@@ -24,7 +25,7 @@
 
     <section class="report-filter-card compact-filter-card">
 
-    <form class="report-filter-form">
+    <form class="report-filter-form" data-report-filter-form>
 
         <div class="report-filter-grid">
 
@@ -40,12 +41,12 @@
                         All Campaigns
                     </option>
 
-                    <option value="1">
-                        July 2026 Campaign
+                    <option value="july-2026">
+                        July E-Waste Collection Campaign — 7/2026
                     </option>
 
-                    <option value="2">
-                        August 2026 Campaign
+                    <option value="august-2026">
+                        Colombo Municipal E-Waste Campaign — 8/2026
                     </option>
 
                 </select>
@@ -82,7 +83,7 @@
             Scheduled Areas
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="scheduledAreas">
             3
         </strong>
 
@@ -98,7 +99,7 @@
             Open Schedules
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="openSchedules">
             3
         </strong>
 
@@ -114,7 +115,7 @@
             Submitted Requests
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="submittedRequests">
             18
         </strong>
 
@@ -130,7 +131,7 @@
             Verified Collections
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="verifiedCollections">
             12
         </strong>
 
@@ -146,7 +147,7 @@
             Active E-Lots
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="activeElots">
             2
         </strong>
 
@@ -162,7 +163,7 @@
             Total Collected Weight
         </span>
 
-        <strong class="summary-value">
+        <strong class="summary-value" data-report-metric="totalWeight">
             49.50 kg
         </strong>
 
@@ -194,7 +195,7 @@
 
                 <span>Submitted</span>
 
-                <strong>18</strong>
+                <strong data-request-metric="submitted">18</strong>
 
             </article>
 
@@ -202,7 +203,7 @@
 
                 <span>Approved</span>
 
-                <strong>12</strong>
+                <strong data-request-metric="approved">12</strong>
 
             </article>
 
@@ -210,7 +211,7 @@
 
                 <span>Assigned</span>
 
-                <strong>9</strong>
+                <strong data-request-metric="assigned">9</strong>
 
             </article>
 
@@ -218,7 +219,7 @@
 
                 <span>Collected</span>
 
-                <strong>7</strong>
+                <strong data-request-metric="collected">7</strong>
 
             </article>
 
@@ -226,7 +227,7 @@
 
                 <span>Rejected</span>
 
-                <strong>2</strong>
+                <strong data-request-metric="rejected">2</strong>
 
             </article>
 
@@ -267,11 +268,11 @@
 
                 </thead>
 
-                <tbody>
+                <tbody data-report-performance-body>
 
                     <tr>
 
-                        <td>SCH-0009</td>
+                        <td>SCH-0004</td>
 
                         <td>Rajagiriya</td>
 
@@ -291,7 +292,7 @@
 
                     <tr>
 
-                        <td>SCH-0007</td>
+                        <td>SCH-0003</td>
 
                         <td>Kollupitiya</td>
 
@@ -348,7 +349,7 @@
 
                 </thead>
 
-                <tbody>
+                <tbody data-report-elots-body>
 
                     <tr>
 
@@ -456,7 +457,7 @@
 
                 <span>Open</span>
 
-                <strong>3</strong>
+                <strong data-feedback-metric="open">3</strong>
 
             </article>
 
@@ -464,7 +465,7 @@
 
                 <span>In Review</span>
 
-                <strong>2</strong>
+                <strong data-feedback-metric="inReview">2</strong>
 
             </article>
 
@@ -472,7 +473,7 @@
 
                 <span>Resolved</span>
 
-                <strong>8</strong>
+                <strong data-feedback-metric="resolved">8</strong>
 
             </article>
 
@@ -480,7 +481,7 @@
 
                 <span>Closed</span>
 
-                <strong>4</strong>
+                <strong data-feedback-metric="closed">4</strong>
 
             </article>
 

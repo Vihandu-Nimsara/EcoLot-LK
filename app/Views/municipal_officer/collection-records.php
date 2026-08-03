@@ -14,7 +14,7 @@
 
     <section class="records-filter-card compact-filter-card">
 
-        <form class="records-filter-form">
+        <form class="records-filter-form" data-records-filter-form>
 
             <div class="records-filter-grid">
 
@@ -30,8 +30,8 @@
                             All Campaigns
                         </option>
 
-                        <option value="1">
-                            July 2026 Campaign
+                        <option value="campaign-2">
+                            July E-Waste Collection Campaign — 7/2026
                         </option>
 
                     </select>
@@ -50,12 +50,12 @@
                             All Schedules
                         </option>
 
-                        <option value="SCH-0009">
-                            SCH-0009 - Rajagiriya - 23 Jul 2026
+                        <option value="SCH-0004">
+                            SCH-0004 — Rajagiriya — 23 Jul 2026
                         </option>
 
-                        <option value="SCH-0007">
-                            SCH-0007 - Kollupitiya - 16 Jul 2026
+                        <option value="SCH-0003">
+                            SCH-0003 — Kollupitiya — 16 Jul 2026
                         </option>
 
                     </select>
@@ -120,6 +120,8 @@
                     Each row summarizes collection records submitted for one area collection schedule.
                 </p>
 
+                <span class="record-result-count officer-result-count" data-record-result-count role="status" aria-live="polite">2 records shown</span>
+
             </div>
 
         </div>
@@ -142,12 +144,17 @@
 
                 </thead>
 
-                <tbody>
+                <tbody data-records-table-body>
 
-                    <tr>
+                    <tr
+                        data-record-id="CR-0009"
+                        data-campaign="campaign-2"
+                        data-schedule="SCH-0004"
+                        data-verification-status="PENDING"
+                    >
 
                         <td>
-                            <strong>SCH-0009</strong>
+                            <strong>SCH-0004</strong>
                             <span class="table-subtext">Rajagiriya</span>
                         </td>
 
@@ -189,10 +196,15 @@
 
                     </tr>
 
-                    <tr>
+                    <tr
+                        data-record-id="CR-0007"
+                        data-campaign="campaign-2"
+                        data-schedule="SCH-0003"
+                        data-verification-status="VERIFIED"
+                    >
 
                         <td>
-                            <strong>SCH-0007</strong>
+                            <strong>SCH-0003</strong>
                             <span class="table-subtext">Kollupitiya</span>
                         </td>
 
@@ -240,6 +252,96 @@
 
         </div>
 
+        <div class="records-empty-state officer-empty-state" data-records-empty-state hidden>
+            No collection records match the selected filters.
+        </div>
+
     </section>
 
 </section>
+
+<div class="record-dialog officer-dialog" data-record-dialog hidden>
+    <section
+        class="record-dialog-card officer-dialog-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="record-dialog-title"
+    >
+        <div class="record-dialog-header officer-dialog-header">
+            <div>
+                <span class="dialog-eyebrow" data-record-dialog-eyebrow>Collection record</span>
+                <h2 id="record-dialog-title" data-record-dialog-title>Review Collection Records</h2>
+                <p data-record-dialog-description>Check the submitted collection details before verification.</p>
+            </div>
+
+            <button
+                type="button"
+                class="record-dialog-close officer-dialog-close"
+                aria-label="Close collection record details"
+                data-close-record-dialog
+            >×</button>
+        </div>
+
+        <div class="record-summary-grid">
+            <div><span>Schedule</span><strong data-record-schedule></strong></div>
+            <div><span>Area</span><strong data-record-area></strong></div>
+            <div><span>Collection Date</span><strong data-record-date></strong></div>
+            <div><span>Total Weight</span><strong data-record-weight></strong></div>
+        </div>
+
+        <div class="record-submissions-section">
+            <div class="record-submissions-heading">
+                <h3>Collector Submissions</h3>
+                <span data-submission-count></span>
+            </div>
+
+            <div class="record-submissions-table-wrapper">
+                <table class="record-submissions-table">
+                    <thead>
+                        <tr>
+                            <th>Request</th>
+                            <th>Resident</th>
+                            <th>Weight</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody data-record-submissions></tbody>
+                </table>
+            </div>
+        </div>
+
+        <form class="record-review-form" data-record-review-form>
+            <div class="record-review-grid">
+                <div class="form-group">
+                    <label for="record-verification-status">Verification Status</label>
+                    <select id="record-verification-status" name="status" required>
+                        <option value="PENDING">PENDING VERIFICATION</option>
+                        <option value="VERIFIED">VERIFIED</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="record-verification-note">Verification Note</label>
+                    <textarea
+                        id="record-verification-note"
+                        name="note"
+                        rows="3"
+                        maxlength="240"
+                        placeholder="Add a short verification note"
+                    ></textarea>
+                </div>
+            </div>
+
+            <p class="record-form-error officer-form-error" role="alert" data-record-form-error hidden></p>
+
+            <div class="record-dialog-actions officer-dialog-actions">
+                <button type="button" class="secondary-btn" data-close-record-dialog>Cancel</button>
+                <button type="submit" class="primary-btn" data-record-submit>Save Verification</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="record-toast officer-toast" role="status" aria-live="polite" data-record-toast hidden>
+    Collection record verification saved in this browser.
+</div>

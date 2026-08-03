@@ -62,6 +62,32 @@
     white-space: nowrap;
 }
 
+.report-table-empty {
+    padding: 26px 16px !important;
+    color: #66736B;
+    text-align: center;
+}
+
+@media print {
+    .officer-app .sidebar,
+    .officer-app .top-header,
+    .reports-page .page-toolbar .toolbar-actions,
+    .reports-page .report-filter-card,
+    .reports-page .feedback-link {
+        display: none !important;
+    }
+
+    .officer-app .page-content {
+        max-width: none;
+        padding: 0;
+    }
+
+    .reports-page :is(.report-summary-card, .report-card) {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+}
+
 @media (max-width: 1100px) {
     .report-summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));

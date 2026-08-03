@@ -41,7 +41,10 @@
 }
 
 .request-link {
+    padding: 0;
     color: #0A5A3E;
+    background: transparent;
+    border: 0;
     font-weight: 600;
     text-decoration: none;
 }
@@ -78,4 +81,88 @@
 .feedback-table :is(th, td):last-child {
     width: 120px;
     text-align: center;
+}
+
+.related-request-preview[hidden] {
+    display: none;
+}
+
+.feedback-dialog-card {
+    --officer-dialog-width: 680px;
+}
+
+.feedback-summary-grid-dialog {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.feedback-summary-grid-dialog > div,
+.related-request-preview > div {
+    padding: 11px;
+    background: #F5FAF7;
+    border: 1px solid #DFEAE2;
+    border-radius: 10px;
+}
+
+.feedback-summary-grid-dialog span,
+.related-request-preview span,
+.feedback-message-card > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #66736B;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+.feedback-summary-grid-dialog strong,
+.related-request-preview strong {
+    color: #203329;
+    font-size: 0.8125rem;
+}
+
+.feedback-message-card {
+    margin-top: 16px;
+    padding: 14px;
+    background: #FAFCFA;
+    border: 1px solid #E1E9E4;
+    border-radius: 11px;
+}
+
+.feedback-message-card strong {
+    color: #203329;
+}
+
+.feedback-message-card p {
+    margin-top: 8px;
+    color: #526159;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.related-request-preview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.feedback-review-form {
+    display: grid;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.feedback-review-form textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+@media (max-width: 700px) {
+    .feedback-summary-grid-dialog,
+    .related-request-preview {
+        grid-template-columns: 1fr;
+    }
 }

@@ -37,7 +37,7 @@
             <div class="stat-icon lot">♻</div>
             <div class="stat-info">
                 <span>Open E-Lots</span>
-                <h2>0</h2>
+            <h2>1</h2>
             </div>
         </div>
     </div>
@@ -73,49 +73,49 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>SCH0007</td>
+                        <td>SCH-0007</td>
                         <td>
                             Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10500</td>
                         <td>Kollupitiya</td>
-                        <td>2026-08-16</td>
+                        <td>16 Aug 2026</td>
                         <td>3</td>
                         <td>45</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0008</td>
+                        <td>SCH-0008</td>
                         <td>
                             Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10600</td>
                         <td>Narahenpita</td>
-                        <td>2026-08-19</td>
+                        <td>19 Aug 2026</td>
                         <td>2</td>
                         <td>55</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0009</td>
+                        <td>SCH-0009</td>
                         <td>
                             Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10800</td>
                         <td>Rajagiriya</td>
-                        <td>2026-08-23</td>
+                        <td>23 Aug 2026</td>
                         <td>3</td>
                         <td>35</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0010</td>
+                        <td>SCH-0010</td>
                         <td>
                             Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>11100</td>
                         <td>Wellawatte</td>
-                        <td>2026-08-30</td>
+                        <td>30 Aug 2026</td>
                         <td>0</td>
                         <td>30</td>
                         <td><span class="status open">OPEN</span></td>

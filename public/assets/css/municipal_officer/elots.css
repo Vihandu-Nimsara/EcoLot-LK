@@ -26,3 +26,143 @@
     width: 140px;
     text-align: center;
 }
+
+.elot-create-form[hidden],
+.verified-pool-section[hidden],
+.elot-manage-form[hidden],
+[data-manage-status-field][hidden],
+.elot-winner-summary[hidden],
+.bid-selector[hidden],
+.verified-item-option[hidden] {
+    display: none;
+}
+
+.elot-dialog-card {
+    --officer-dialog-width: 760px;
+}
+
+.elot-create-form,
+.elot-manage-form,
+.verified-pool-section {
+    display: grid;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.elot-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.elot-title-field {
+    grid-column: 1 / -1;
+}
+
+.verified-item-selector,
+.bid-selector {
+    padding: 14px;
+    border: 1px solid #DFEAE2;
+    border-radius: 12px;
+}
+
+.verified-item-selector legend,
+.bid-selector legend {
+    padding: 0 6px;
+    color: #203329;
+    font-weight: 700;
+}
+
+.verified-item-selector > p {
+    margin-bottom: 10px;
+    color: #66736B;
+    font-size: 0.75rem;
+}
+
+.verified-item-option,
+.bid-option {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #E8EFEA;
+}
+
+.verified-item-option:last-child,
+.bid-option:last-child {
+    border-bottom: 0;
+}
+
+.verified-item-option input,
+.bid-option input {
+    width: 17px;
+    height: 17px;
+}
+
+.verified-item-option span,
+.bid-option span {
+    color: #66736B;
+    font-size: 0.75rem;
+}
+
+.verified-pool-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #E1E9E4;
+    border-radius: 11px;
+}
+
+.officer-app .verified-pool-table {
+    min-width: 620px;
+}
+
+.officer-app .verified-pool-table :is(th, td) {
+    padding: 11px 12px;
+    font-size: 0.75rem;
+}
+
+.pool-availability {
+    color: #047857;
+    font-weight: 700;
+}
+
+.elot-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.elot-summary-grid > div,
+.elot-winner-summary {
+    padding: 11px;
+    background: #F5FAF7;
+    border: 1px solid #DFEAE2;
+    border-radius: 10px;
+}
+
+.elot-summary-grid span,
+.elot-winner-summary span {
+    display: block;
+    margin-bottom: 4px;
+    color: #66736B;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+.elot-summary-grid strong,
+.elot-winner-summary strong {
+    color: #203329;
+    font-size: 0.8125rem;
+}
+
+@media (max-width: 700px) {
+    .elot-form-grid,
+    .elot-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .elot-title-field {
+        grid-column: auto;
+    }
+}
