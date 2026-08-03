@@ -36,7 +36,7 @@
                     </option>
 
                     <option value="1">
-                        July 2026 Collection Campaign
+                        Colombo Municipal E-Waste Campaign — 8/2026
                     </option>
                 </select>
 
@@ -66,6 +66,10 @@
 
                         <option value="10600">
                             Narahenpita
+                        </option>
+
+                        <option value="10500">
+                            Kollupitiya
                         </option>
 
                     </select>
@@ -128,10 +132,6 @@
                             OPEN
                         </option>
 
-                        <option value="FULL">
-                            FULL
-                        </option>
-
                         <option value="CLOSED">
                             CLOSED
                         </option>
@@ -191,7 +191,7 @@
                     </option>
 
                     <option>
-                        July 2026 Campaign
+                        Colombo Municipal E-Waste Campaign — 8/2026
                     </option>
 
                 </select>
@@ -238,15 +238,15 @@
 
                         <td>SCH-0010</td>
 
-                        <td>July 2026 Campaign</td>
+                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
 
-                        <td>Wellawatte QA Zone</td>
+                        <td>Wellawatte</td>
 
                         <td>11100</td>
 
-                        <td>30 Jul 2026</td>
+                        <td>30 Aug 2026</td>
 
-                        <td>20 Jul 2026</td>
+                        <td>20 Aug 2026</td>
 
                         <td>0</td>
 
@@ -254,8 +254,8 @@
 
                         <td>
 
-                            <span class="status full">
-                                FULL
+                            <span class="status open">
+                                OPEN
                             </span>
 
                         </td>
@@ -274,15 +274,15 @@
 
                         <td>SCH-0009</td>
 
-                        <td>July 2026 Campaign</td>
+                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
 
-                        <td>Rajagiriya QA Zone</td>
+                        <td>Rajagiriya</td>
 
                         <td>10800</td>
 
-                        <td>23 Jul 2026</td>
+                        <td>23 Aug 2026</td>
 
-                        <td>20 Jul 2026</td>
+                        <td>13 Aug 2026</td>
 
                         <td>3</td>
 
@@ -310,19 +310,55 @@
 
                         <td>SCH-0008</td>
 
-                        <td>July 2026 Campaign</td>
+                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
 
-                        <td>Narahenpita QA Zone</td>
+                        <td>Narahenpita</td>
 
                         <td>10600</td>
 
-                        <td>19 Jul 2026</td>
+                        <td>19 Aug 2026</td>
 
-                        <td>20 Jul 2026</td>
+                        <td>10 Aug 2026</td>
 
                         <td>2</td>
 
                         <td>55</td>
+
+                        <td>
+
+                            <span class="status open">
+                                OPEN
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <button class="edit-btn">
+                                Edit
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>SCH-0007</td>
+
+                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
+
+                        <td>Kollupitiya</td>
+
+                        <td>10500</td>
+
+                        <td>16 Aug 2026</td>
+
+                        <td>10 Aug 2026</td>
+
+                        <td>3</td>
+
+                        <td>45</td>
 
                         <td>
 

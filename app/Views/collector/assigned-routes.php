@@ -9,10 +9,10 @@
 
     <div class="route-list">
         <?php foreach ([
-            ['id' => 'kol', 'zone' => 'Kollupitiya QA Zone', 'address' => 'Galle Road — Liberty Plaza Sector', 'status' => 'Scheduled', 'class' => '', 'weight' => '18.4 kg', 'time' => '8:42 AM'],
-            ['id' => 'nar', 'zone' => 'Narahenpita QA Zone', 'address' => 'Kirimandala Mawatha — Hospital District', 'status' => 'Afternoon', 'class' => '', 'weight' => '22.1 kg', 'time' => '9:15 AM'],
-            ['id' => 'raj', 'zone' => 'Rajagiriya QA Zone', 'address' => 'Parliament Road — Ethul Kotte Junction', 'status' => 'In Progress', 'class' => 'in-progress', 'weight' => '15.7 kg', 'time' => '10:03 AM'],
-            ['id' => 'wel', 'zone' => 'Wellawatta QA Zone', 'address' => 'W. A. Silva Mawatha — Canal Side', 'status' => 'Scheduled', 'class' => '', 'weight' => '9.9 kg', 'time' => '10:40 AM'],
+            ['id' => 'kol', 'zone' => 'Kollupitiya', 'address' => 'Galle Road — Liberty Plaza Sector', 'status' => 'Scheduled', 'class' => '', 'weight' => '18.4 kg', 'time' => '8:42 AM'],
+            ['id' => 'nar', 'zone' => 'Narahenpita', 'address' => 'Kirimandala Mawatha — Hospital District', 'status' => 'Afternoon', 'class' => '', 'weight' => '22.1 kg', 'time' => '9:15 AM'],
+            ['id' => 'raj', 'zone' => 'Rajagiriya', 'address' => 'Parliament Road — Ethul Kotte Junction', 'status' => 'In Progress', 'class' => 'in-progress', 'weight' => '15.7 kg', 'time' => '10:03 AM'],
+            ['id' => 'wel', 'zone' => 'Wellawatte', 'address' => 'W. A. Silva Mawatha — Canal Side', 'status' => 'Scheduled', 'class' => '', 'weight' => '9.9 kg', 'time' => '10:40 AM'],
         ] as $route): ?>
             <article
                 class="assigned-route-card"

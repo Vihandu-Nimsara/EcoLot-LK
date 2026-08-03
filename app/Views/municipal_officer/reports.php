@@ -273,7 +273,7 @@
 
                         <td>SCH-0009</td>
 
-                        <td>Rajagiriya QA Zone</td>
+                        <td>Rajagiriya</td>
 
                         <td>23 Jul 2026</td>
 
@@ -293,7 +293,7 @@
 
                         <td>SCH-0007</td>
 
-                        <td>Kollupitiya QA Zone</td>
+                        <td>Kollupitiya</td>
 
                         <td>16 Jul 2026</td>
 
@@ -393,7 +393,7 @@
                         </td>
 
                         <td>
-                            QA Green Recycler Pvt Ltd
+                            GreenCycle Lanka (Pvt) Ltd
                         </td>
 
                     </tr>
@@ -417,7 +417,7 @@
                         </td>
 
                         <td>
-                            QA Circular Metals Ltd
+                            Ceylon Circular Metals (Pvt) Ltd
                         </td>
 
                     </tr>

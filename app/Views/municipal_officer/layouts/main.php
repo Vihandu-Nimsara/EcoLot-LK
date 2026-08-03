@@ -11,7 +11,11 @@ $pageStyles = [
     'feedback' => 'municipal_officer/feedback.css',
     'reports' => 'municipal_officer/reports.css',
 ];
+$pageScripts = [
+    'campaigns' => 'municipal_officer/campaigns.js',
+];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$pageScript = $pageScripts[$currentPage ?? ''] ?? null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/municipal_officer/theme.css');
 ?>
 <!DOCTYPE html>
@@ -57,6 +61,10 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/mun
             </main>
         </div>
     </div>
+
+    <?php if ($pageScript !== null): ?>
+        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>"></script>
+    <?php endif; ?>
 </body>
 
 </html>

@@ -248,7 +248,7 @@
                         </td>
 
                         <td>
-                            QA Green Recycler Pvt Ltd
+                            GreenCycle Lanka (Pvt) Ltd
                         </td>
 
                         <td>
@@ -302,7 +302,7 @@
                         </td>
 
                         <td>
-                            QA Circular Metals Ltd
+                            Ceylon Circular Metals (Pvt) Ltd
                         </td>
 
                         <td>

@@ -169,7 +169,7 @@
                         </td>
 
                         <td>
-                            Kollupitiya QA Zone
+                            Kollupitiya
                         </td>
 
                         <td>
@@ -181,11 +181,11 @@
                         </td>
 
                         <td>
-                            QA Collector 02
+                            Nuwan Silva
                         </td>
 
                         <td>
-                            QA-EC-1002
+                            EC-1002
                         </td>
 
                         <td>
@@ -219,7 +219,7 @@
                         </td>
 
                         <td>
-                            Rajagiriya QA Zone
+                            Rajagiriya
                         </td>
 
                         <td>
@@ -231,11 +231,11 @@
                         </td>
 
                         <td>
-                            QA Collector 01
+                            Sunil Perera
                         </td>
 
                         <td>
-                            QA-EC-1001
+                            EC-1001
                         </td>
 
                         <td>
@@ -269,7 +269,7 @@
                         </td>
 
                         <td>
-                            Wellawatte QA Zone
+                            Wellawatte
                         </td>
 
                         <td>
@@ -325,7 +325,7 @@
                         </td>
 
                         <td>
-                            Moratuwa QA Zone
+                            Moratuwa
                         </td>
 
                         <td>
@@ -337,11 +337,11 @@
                         </td>
 
                         <td>
-                            QA Collector 03
+                            Chamara Fernando
                         </td>
 
                         <td>
-                            QA-EC-1003
+                            EC-1003
                         </td>
 
                         <td>

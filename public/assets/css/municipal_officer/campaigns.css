@@ -16,3 +16,170 @@
     color: #6B7280;
     background: #F3F4F6;
 }
+
+.create-campaign-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.create-campaign-trigger span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    color: #0E7A37;
+    background: #FFFFFF;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.campaign-dialog[hidden],
+.campaign-toast[hidden] {
+    display: none;
+}
+
+.campaign-dialog {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(7, 45, 32, 0.48);
+    backdrop-filter: blur(4px);
+}
+
+.campaign-dialog-card {
+    width: min(100%, 560px);
+    max-height: calc(100vh - 48px);
+    padding: 26px;
+    overflow-y: auto;
+    background: #FFFFFF;
+    border: 1px solid #DCE9E0;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(7, 63, 45, 0.22);
+}
+
+.campaign-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E6EEE8;
+}
+
+.dialog-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: #159342;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.campaign-dialog-header h2 {
+    color: #17211B;
+    font-size: 1.5rem;
+}
+
+.campaign-dialog-header p {
+    max-width: 430px;
+    margin-top: 6px;
+    color: #66736B;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.campaign-dialog-close {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #526159;
+    background: #F3F7F4;
+    border: 1px solid #DFE8E2;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.campaign-dialog-close:hover {
+    color: #0A5A3E;
+    background: #EAF7EF;
+    border-color: #B8D6C3;
+}
+
+.campaign-create-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.campaign-status-note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    color: #526159;
+    background: #F5FAF7;
+    border: 1px solid #DFEAE2;
+    border-radius: 11px;
+}
+
+.campaign-status-note p {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+}
+
+.campaign-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.campaign-toast {
+    position: fixed;
+    z-index: 1100;
+    right: 24px;
+    bottom: 24px;
+    max-width: min(360px, calc(100vw - 48px));
+    padding: 13px 16px;
+    color: #FFFFFF;
+    background: #0A5A3E;
+    border-radius: 11px;
+    box-shadow: 0 12px 30px rgba(7, 63, 45, 0.22);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .campaign-dialog {
+        align-items: end;
+        padding: 12px;
+    }
+
+    .campaign-dialog-card {
+        max-height: calc(100vh - 24px);
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .campaign-dialog-actions {
+        flex-direction: column-reverse;
+    }
+
+    .campaign-dialog-actions button {
+        width: 100%;
+    }
+}

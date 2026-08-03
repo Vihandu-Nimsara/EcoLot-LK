@@ -171,7 +171,7 @@
                         </td>
 
                         <td>
-                            QA Public User
+                            Kasun Perera
                         </td>
 
                         <td>
@@ -215,7 +215,7 @@
                         </td>
 
                         <td>
-                            QA Public User
+                            Dilini Silva
                         </td>
 
                         <td>

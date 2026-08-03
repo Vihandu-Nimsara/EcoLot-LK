@@ -148,7 +148,7 @@
 
                         <td>
                             <strong>SCH-0009</strong>
-                            <span class="table-subtext">Rajagiriya QA Zone</span>
+                            <span class="table-subtext">Rajagiriya</span>
                         </td>
 
                         <td>
@@ -193,7 +193,7 @@
 
                         <td>
                             <strong>SCH-0007</strong>
-                            <span class="table-subtext">Kollupitiya QA Zone</span>
+                            <span class="table-subtext">Kollupitiya</span>
                         </td>
 
                         <td>

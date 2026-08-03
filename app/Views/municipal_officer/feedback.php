@@ -84,7 +84,7 @@
                         <td>
                             <div class="user-cell">
                                 <span class="user-name">
-                                    QA Public User 01
+                                    Kasun Perera
                                 </span>
 
                                 <span class="user-email">
@@ -134,7 +134,7 @@
                         <td>
                             <div class="user-cell">
                                 <span class="user-name">
-                                    QA Public User 02
+                                    Dilini Silva
                                 </span>
 
                                 <span class="user-email">
@@ -184,7 +184,7 @@
                         <td>
                             <div class="user-cell">
                                 <span class="user-name">
-                                    QA Public User 03
+                                    Amal Fernando
                                 </span>
 
                                 <span class="user-email">
@@ -234,7 +234,7 @@
                         <td>
                             <div class="user-cell">
                                 <span class="user-name">
-                                    QA Public User 04
+                                    Ishara Jayasinghe
                                 </span>
 
                                 <span class="user-email">
