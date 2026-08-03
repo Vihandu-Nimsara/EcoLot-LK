@@ -38,9 +38,7 @@
             createdBy: cells[4].textContent.trim(),
             createdDate: row.dataset.createdDate || cells[5].textContent.trim(),
         };
-    });
-
-    const initialCampaigns = readInitialCampaigns();
+    }).filter(isValidCampaign);
 
     const isValidCampaign = (campaign) => (
         Number.isInteger(campaign?.id)
@@ -50,6 +48,8 @@
         && typeof campaign?.createdBy === 'string'
         && /^\d{4}-\d{2}-\d{2}$/.test(campaign?.createdDate)
     );
+
+    const initialCampaigns = readInitialCampaigns();
 
     const loadCampaigns = () => {
         try {

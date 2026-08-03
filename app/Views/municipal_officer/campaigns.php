@@ -23,7 +23,7 @@
             <table class="campaign-table">
 
                 <thead>
-                    <tr data-campaign-period="2026-08" data-created-date="2026-07-09">
+                    <tr>
                         <th>Campaign ID</th>
                         <th>Name</th>
                         <th>Month / Year</th>
@@ -36,7 +36,7 @@
 
                 <tbody data-campaign-table-body>
 
-                    <tr>
+                    <tr data-campaign-period="2026-08" data-created-date="2026-07-09">
                         <td>#1</td>
 
                         <td>
