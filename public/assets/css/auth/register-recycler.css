@@ -1,0 +1,96 @@
+.desktop-required-message {
+    display: none;
+}
+
+.recycler-registration-page .registration-form {
+    padding-top: 20px;
+    padding-bottom: 24px;
+    border-radius: 9px;
+}
+
+.recycler-registration-page .form-group {
+    margin-bottom: 14px;
+}
+
+.recycler-registration-page .form-group input,
+.recycler-registration-page .form-group select {
+    height: 52px;
+}
+
+.recycler-registration-page .form-submit-area {
+    margin-top: 18px;
+}
+
+@media (max-width: 899px) {
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    .recycler-registration-page {
+        min-height: 100vh;
+        padding: 24px;
+    }
+
+    .recycler-registration-card {
+        display: none;
+    }
+
+    .desktop-required-message {
+        display: flex;
+        width: min(560px, 100%);
+        flex-direction: column;
+        align-items: center;
+        padding: 42px 28px;
+        background: #FFFFFF;
+        border: 1px solid #E2F2E8;
+        border-radius: 20px;
+        box-shadow: var(--eco-card-shadow);
+        text-align: center;
+    }
+
+    .desktop-message-logo {
+        width: 82px;
+        height: 64px;
+        object-fit: contain;
+    }
+
+    .desktop-required-message h1 {
+        margin: 20px 0 12px;
+        color: var(--eco-green-900);
+        font-family: "Exo 2", sans-serif;
+        font-size: clamp(1.75rem, 6vw, 2.25rem);
+        line-height: 1.12;
+    }
+
+    .desktop-required-message p {
+        max-width: 420px;
+        margin: 0;
+        color: var(--eco-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .desktop-message-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px 20px;
+        margin-top: 28px;
+    }
+
+    .desktop-message-links a {
+        color: var(--eco-green-800);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-underline-offset: 3px;
+    }
+
+    .desktop-message-links .message-primary-link {
+        padding: 11px 18px;
+        color: #FFFFFF;
+        background: var(--eco-green-600);
+        border-radius: 999px;
+        text-decoration: none;
+    }
+}
