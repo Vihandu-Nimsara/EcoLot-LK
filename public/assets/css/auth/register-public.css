@@ -1,0 +1,12 @@
+/* Public registration retains the shared desktop, tablet, mobile, and small-mobile layout. */
+
+.public-registration-page .registration-form {
+    border-radius: 9px;
+}
+
+@media (max-width: 420px) {
+    .public-registration-page .workflow-link,
+    .public-registration-page .login-text {
+        font-size: 0.78rem;
+    }
+}

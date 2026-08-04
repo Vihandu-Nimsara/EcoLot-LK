@@ -5,6 +5,8 @@ return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
     $router->get('/login', 'AuthController@login');
     $router->get('/register', 'AuthController@register');
+    $router->get('/register/public', 'AuthController@registerPublic');
+    $router->get('/register/recycler', 'AuthController@registerRecycler');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Your Profile | EcoLot LK</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Registration CSS -->
+    <link
+        rel="stylesheet"
+        href="registration-test.css"
+    >
+</head>
+
+
+<body>
+
+<main class="registration-page">
+
+    <section class="registration-card">
+
+
+        <!-- =================================================
+             LEFT SIDE — FORM CONTENT
+        ================================================== -->
+
+        <div class="registration-form-panel">
+
+            <header class="registration-heading">
+
+                <h1>
+                    Create Your Profile
+                </h1>
+
+            </header>
+
+
+            <!-- Registration type tabs -->
+
+            <div
+                class="profile-tabs"
+                role="tablist"
+                aria-label="Choose registration type"
+            >
+
+                <button
+                    type="button"
+                    id="public-user-tab"
+                    class="profile-tab active"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="public-user-panel"
+                    data-profile-tab="public"
+                >
+                    Public User
+                </button>
+
+
+                <button
+                    type="button"
+                    id="company-tab"
+                    class="profile-tab"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="company-panel"
+                    data-profile-tab="company"
+                    tabindex="-1"
+                >
+                    Recycling Company
+                </button>
+
+            </div>
+
+
+            <!-- Registration form -->
+
+            <form
+                class="registration-form"
+                action=""
+                method="POST"
+            >
+
+                <input
+                    type="hidden"
+                    id="profile-type"
+                    name="profile_type"
+                    value="public"
+                >
+
+
+                <!-- =========================================
+                     PUBLIC USER FORM
+                ========================================== -->
+
+                <div
+                    id="public-user-panel"
+                    class="form-panel active"
+                    role="tabpanel"
+                    aria-labelledby="public-user-tab"
+                    data-profile-panel="public"
+                >
+
+                    <div class="form-group">
+
+                        <label for="full-name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="full-name"
+                            name="full_name"
+                            placeholder="your name"
+                            autocomplete="name"
+                            data-required="true"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="public-email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="public-email"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            data-required="true"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="public-password">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="public-password"
+                            name="password"
+                            placeholder="create a password"
+                            autocomplete="new-password"
+                            data-required="true"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="postal-code">
+                            Postal Code
+                        </label>
+
+                        <input
+                            type="text"
+                            id="postal-code"
+                            name="postal_code"
+                            placeholder="enter your postal code"
+                            autocomplete="postal-code"
+                            data-required="true"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     RECYCLING COMPANY FORM
+                ========================================== -->
+
+                <div
+                    id="company-panel"
+                    class="form-panel"
+                    role="tabpanel"
+                    aria-labelledby="company-tab"
+                    data-profile-panel="company"
+                    hidden
+                >
+
+                    <div class="form-group">
+
+                        <label for="company-name">
+                            Company Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="company-name"
+                            name="company_name"
+                            placeholder="your company name"
+                            autocomplete="organization"
+                            data-required="true"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="contact-person">
+                            Contact Person
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contact-person"
+                            name="contact_person"
+                            placeholder="contact person's name"
+                            autocomplete="name"
+                            data-required="true"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="company-email">
+                            Business Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="company-email"
+                            name="company_email"
+                            placeholder="company@example.com"
+                            autocomplete="email"
+                            data-required="true"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="company-password">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="company-password"
+                            name="company_password"
+                            placeholder="create a password"
+                            autocomplete="new-password"
+                            data-required="true"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="license-number">
+                            Licence Number
+                        </label>
+
+                        <input
+                            type="text"
+                            id="license-number"
+                            name="license_number"
+                            placeholder="enter licence number"
+                            data-required="true"
+                            disabled
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="company-district">
+                            District
+                        </label>
+
+                        <select
+                            id="company-district"
+                            name="district"
+                            data-required="true"
+                            disabled
+                        >
+
+                            <option value="">
+                                Select district
+                            </option>
+
+                            <option value="Colombo">
+                                Colombo
+                            </option>
+
+                            <option value="Gampaha">
+                                Gampaha
+                            </option>
+
+                            <option value="Kalutara">
+                                Kalutara
+                            </option>
+
+                            <option value="Kandy">
+                                Kandy
+                            </option>
+
+                            <option value="Galle">
+                                Galle
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     SUBMIT AREA
+                ========================================== -->
+
+                <div class="form-submit-area">
+
+                    <button
+                        type="submit"
+                        class="create-profile-btn"
+                    >
+                        Create profile
+                    </button>
+
+
+                    <p class="login-text">
+
+                        I have an account already,
+
+                        <a href="/EcoLot-LK/public/login">
+                            login
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT SIDE — LEAF BACKGROUND LAYER
+        ================================================== -->
+
+        <div
+            class="leaf-artwork"
+            aria-hidden="true"
+        >
+
+            <img
+                src="registration-leaf.svg"
+                alt=""
+                class="registration-leaf-image"
+                draggable="false"
+            >
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT SIDE — BRAND CONTENT
+        ================================================== -->
+
+        <aside class="registration-brand-panel">
+
+            <div class="brand-content">
+
+                <div class="brand-logo-row">
+
+                    <img
+                        src="logo.png"
+                        alt="EcoLot LK"
+                        class="brand-logo"
+                    >
+
+
+                    <span class="brand-name">
+                        EcoLotLK
+                    </span>
+
+                </div>
+
+
+                <h2>
+                    Welcome To
+                    <br>
+                    <span class="brand-name">
+                        EcoLotLK
+                    </span>
+                </h2>
+
+
+                <p>
+                    Be a part of EcoLot LK! Create your account
+                    to start your journey with us...
+                </p>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+<script>
+    const tabButtons = document.querySelectorAll("[data-profile-tab]");
+    const formPanels = document.querySelectorAll("[data-profile-panel]");
+    const profileTypeInput = document.getElementById("profile-type");
+
+    function activateRegistrationType(selectedType) {
+        tabButtons.forEach((button) => {
+            const isActive =
+                button.dataset.profileTab === selectedType;
+
+            button.classList.toggle("active", isActive);
+
+            button.setAttribute(
+                "aria-selected",
+                String(isActive)
+            );
+
+            button.tabIndex = isActive ? 0 : -1;
+        });
+
+
+        formPanels.forEach((panel) => {
+            const isActive =
+                panel.dataset.profilePanel === selectedType;
+
+            panel.classList.toggle("active", isActive);
+            panel.hidden = !isActive;
+
+            panel
+                .querySelectorAll("input, select, textarea")
+                .forEach((field) => {
+                    field.disabled = !isActive;
+
+                    field.required =
+                        isActive &&
+                        field.dataset.required === "true";
+                });
+        });
+
+
+        profileTypeInput.value = selectedType;
+    }
+
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            activateRegistrationType(
+                button.dataset.profileTab
+            );
+        });
+
+
+        button.addEventListener("keydown", (event) => {
+            if (
+                event.key !== "ArrowLeft" &&
+                event.key !== "ArrowRight"
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const buttons = Array.from(tabButtons);
+            const currentIndex = buttons.indexOf(button);
+
+            const nextIndex =
+                event.key === "ArrowRight"
+                    ? (currentIndex + 1) % buttons.length
+                    : (
+                        currentIndex - 1 + buttons.length
+                    ) % buttons.length;
+
+            const nextButton = buttons[nextIndex];
+
+            nextButton.focus();
+
+            activateRegistrationType(
+                nextButton.dataset.profileTab
+            );
+        });
+    });
+</script>
+
+</body>
+
+</html>
