@@ -11,3 +11,117 @@
 .record-action-btn {
     min-width: 92px;
 }
+
+.record-dialog-card {
+    --officer-dialog-width: 720px;
+}
+
+.record-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.record-summary-grid > div {
+    padding: 11px;
+    background: #F5FAF7;
+    border: 1px solid #DFEAE2;
+    border-radius: 10px;
+}
+
+.record-summary-grid span {
+    display: block;
+    margin-bottom: 4px;
+    color: #66736B;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    text-transform: uppercase;
+}
+
+.record-summary-grid strong {
+    color: #203329;
+    font-size: 0.8125rem;
+}
+
+.record-submissions-section {
+    margin-top: 22px;
+}
+
+.record-submissions-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.record-submissions-heading h3 {
+    color: #203329;
+    font-size: 1rem;
+}
+
+.record-submissions-heading span {
+    color: #66736B;
+    font-size: 0.75rem;
+}
+
+.record-submissions-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #E1E9E4;
+    border-radius: 11px;
+}
+
+.officer-app .record-submissions-table {
+    min-width: 560px;
+}
+
+.officer-app .record-submissions-table :is(th, td) {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+}
+
+.submission-result {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+}
+
+.submission-result.collected {
+    color: #047857;
+    background: #D0FAE4;
+}
+
+.submission-result.partial {
+    color: #B45309;
+    background: #FFEDD5;
+}
+
+.record-review-form,
+.record-review-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.record-review-form {
+    margin-top: 22px;
+}
+
+.record-review-form textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+@media (max-width: 700px) {
+    .record-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 420px) {
+    .record-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

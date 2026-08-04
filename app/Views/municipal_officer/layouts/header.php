@@ -7,9 +7,9 @@
 
     <div class="header-right">
         <div class="profile">
-            <div class="avatar">QA</div>
+            <div class="avatar">NP</div>
             <div class="profile-info">
-                <span class="name">QA Municipal Officer</span>
+                <span class="name">Nadeesha Perera</span>
                 <span class="role">Municipal Officer</span>
             </div>
         </div>

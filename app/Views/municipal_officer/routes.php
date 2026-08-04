@@ -14,7 +14,7 @@
 
     <section class="route-filter-card compact-filter-card">
 
-        <form class="route-filter-form">
+        <form class="route-filter-form" data-route-filter-form>
 
             <div class="route-filter-grid">
 
@@ -30,8 +30,12 @@
                             All Campaigns
                         </option>
 
-                        <option value="1">
-                            July 2026 Campaign
+                        <option value="campaign-2">
+                            July E-Waste Collection Campaign — 7/2026
+                        </option>
+
+                        <option value="campaign-1">
+                            Colombo Municipal E-Waste Campaign — 8/2026
                         </option>
 
                     </select>
@@ -50,16 +54,20 @@
                             All Schedules
                         </option>
 
-                        <option value="SCH-0010">
-                            SCH-0010 - Wellawatte - 30 Jul 2026
-                        </option>
-
-                        <option value="SCH-0009">
-                            SCH-0009 - Rajagiriya - 23 Jul 2026
-                        </option>
-
                         <option value="SCH-0008">
-                            SCH-0008 - Narahenpita - 19 Jul 2026
+                            SCH-0008 — Narahenpita — 19 Aug 2026
+                        </option>
+
+                        <option value="SCH-0011">
+                            SCH-0011 — Moratuwa — 02 Aug 2026
+                        </option>
+
+                        <option value="SCH-0004">
+                            SCH-0004 — Rajagiriya — 23 Jul 2026
+                        </option>
+
+                        <option value="SCH-0003">
+                            SCH-0003 — Kollupitiya — 16 Jul 2026
                         </option>
 
                     </select>
@@ -132,6 +140,8 @@
                     Each area collection schedule has one automatically generated route.
                 </p>
 
+                <span class="route-result-count officer-result-count" data-route-result-count role="status" aria-live="polite">4 routes shown</span>
+
             </div>
 
         </div>
@@ -156,20 +166,25 @@
 
                 </thead>
 
-                <tbody>
+                <tbody data-routes-table-body>
 
-                    <tr>
+                    <tr
+                        data-route-id="RT-001"
+                        data-campaign="campaign-2"
+                        data-schedule="SCH-0003"
+                        data-route-status="COMPLETED"
+                    >
 
                         <td>
                             RT-001
                         </td>
 
                         <td>
-                            SCH-0007
+                            SCH-0003
                         </td>
 
                         <td>
-                            Kollupitiya QA Zone
+                            Kollupitiya
                         </td>
 
                         <td>
@@ -181,11 +196,11 @@
                         </td>
 
                         <td>
-                            QA Collector 02
+                            Nuwan Silva
                         </td>
 
                         <td>
-                            QA-EC-1002
+                            EC-1002
                         </td>
 
                         <td>
@@ -208,18 +223,23 @@
 
                     </tr>
 
-                    <tr>
+                    <tr
+                        data-route-id="RT-002"
+                        data-campaign="campaign-2"
+                        data-schedule="SCH-0004"
+                        data-route-status="COMPLETED"
+                    >
 
                         <td>
                             RT-002
                         </td>
 
                         <td>
-                            SCH-0009
+                            SCH-0004
                         </td>
 
                         <td>
-                            Rajagiriya QA Zone
+                            Rajagiriya
                         </td>
 
                         <td>
@@ -231,17 +251,17 @@
                         </td>
 
                         <td>
-                            QA Collector 01
+                            Sunil Perera
                         </td>
 
                         <td>
-                            QA-EC-1001
+                            EC-1001
                         </td>
 
                         <td>
 
-                            <span class="route-status assigned">
-                                ASSIGNED
+                            <span class="route-status completed">
+                                COMPLETED
                             </span>
 
                         </td>
@@ -251,33 +271,38 @@
                             <button
                                 type="button"
                                 class="route-action-btn secondary-action">
-                                Manage
+                                View
                             </button>
 
                         </td>
 
                     </tr>
 
-                    <tr>
+                    <tr
+                        data-route-id="RT-003"
+                        data-campaign="campaign-1"
+                        data-schedule="SCH-0008"
+                        data-route-status="PLANNED"
+                    >
 
                         <td>
                             RT-003
                         </td>
 
                         <td>
-                            SCH-0010
+                            SCH-0008
                         </td>
 
                         <td>
-                            Wellawatte QA Zone
+                            Narahenpita
                         </td>
 
                         <td>
-                            30 Jul 2026
+                            19 Aug 2026
                         </td>
 
                         <td>
-                            0
+                            2
                         </td>
 
                         <td>
@@ -314,7 +339,12 @@
 
                     </tr>
 
-                    <tr>
+                    <tr
+                        data-route-id="RT-004"
+                        data-campaign="campaign-1"
+                        data-schedule="SCH-0011"
+                        data-route-status="IN_PROGRESS"
+                    >
 
                         <td>
                             RT-004
@@ -325,7 +355,7 @@
                         </td>
 
                         <td>
-                            Moratuwa QA Zone
+                            Moratuwa
                         </td>
 
                         <td>
@@ -337,11 +367,11 @@
                         </td>
 
                         <td>
-                            QA Collector 03
+                            Chamara Fernando
                         </td>
 
                         <td>
-                            QA-EC-1003
+                            EC-1003
                         </td>
 
                         <td>
@@ -357,7 +387,7 @@
                             <button
                                 type="button"
                                 class="route-action-btn secondary-action">
-                                View
+                                Manage
                             </button>
 
                         </td>
@@ -370,6 +400,88 @@
 
         </div>
 
+        <div class="routes-empty-state officer-empty-state" data-routes-empty-state hidden>
+            No collection routes match the selected filters.
+        </div>
+
     </section>
 
 </section>
+
+<div class="route-dialog officer-dialog" data-route-dialog hidden>
+    <section
+        class="route-dialog-card officer-dialog-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="route-dialog-title"
+    >
+        <div class="route-dialog-header officer-dialog-header">
+            <div>
+                <span class="dialog-eyebrow" data-route-dialog-eyebrow>Collection route</span>
+                <h2 id="route-dialog-title" data-route-dialog-title>Manage Route</h2>
+                <p data-route-dialog-description>Assign collection resources and update route progress.</p>
+            </div>
+
+            <button
+                type="button"
+                class="route-dialog-close officer-dialog-close"
+                aria-label="Close route details"
+                data-close-route-dialog
+            >×</button>
+        </div>
+
+        <div class="route-summary-grid">
+            <div><span>Schedule</span><strong data-route-schedule></strong></div>
+            <div><span>Area</span><strong data-route-area></strong></div>
+            <div><span>Collection Date</span><strong data-route-date></strong></div>
+            <div><span>Stops</span><strong data-route-stops></strong></div>
+        </div>
+
+        <form class="route-manage-form" data-route-manage-form>
+            <div class="route-resource-grid">
+                <div class="form-group">
+                    <label for="route-collector">Collector</label>
+                    <select id="route-collector" name="collector">
+                        <option value="">Select collector</option>
+                        <option value="Nuwan Silva">Nuwan Silva</option>
+                        <option value="Sunil Perera">Sunil Perera</option>
+                        <option value="Chamara Fernando">Chamara Fernando</option>
+                        <option value="Malini Jayawardena">Malini Jayawardena</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="route-vehicle">Vehicle</label>
+                    <select id="route-vehicle" name="vehicle">
+                        <option value="">Select vehicle</option>
+                        <option value="EC-1001">EC-1001</option>
+                        <option value="EC-1002">EC-1002</option>
+                        <option value="EC-1003">EC-1003</option>
+                        <option value="EC-1004">EC-1004</option>
+                    </select>
+                </div>
+
+                <div class="form-group route-status-field">
+                    <label for="route-manage-status">Route Status</label>
+                    <select id="route-manage-status" name="status" required>
+                        <option value="PLANNED">PLANNED</option>
+                        <option value="ASSIGNED">ASSIGNED</option>
+                        <option value="IN_PROGRESS">IN PROGRESS</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                </div>
+            </div>
+
+            <p class="route-form-error officer-form-error" role="alert" data-route-form-error hidden></p>
+
+            <div class="route-dialog-actions officer-dialog-actions">
+                <button type="button" class="secondary-btn" data-close-route-dialog>Cancel</button>
+                <button type="submit" class="primary-btn" data-route-submit>Save Changes</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="route-toast officer-toast" role="status" aria-live="polite" data-route-toast hidden>
+    Route changes saved in this browser.
+</div>

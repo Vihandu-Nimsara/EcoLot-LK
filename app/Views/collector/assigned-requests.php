@@ -63,10 +63,10 @@
             </div>
 
             <?php foreach ([
-                ['id' => 'kol', 'code' => '#QA-KOL', 'zone' => 'Kollupitiya QA Zone'],
-                ['id' => 'nar', 'code' => '#QA-NAR', 'zone' => 'Narahenpita QA Zone'],
-                ['id' => 'raj', 'code' => '#QA-RAJ', 'zone' => 'Rajagiriya QA Zone'],
-                ['id' => 'wel', 'code' => '#QA-WEL', 'zone' => 'Wellawatta QA Zone'],
+                ['id' => 'kol', 'code' => '#COL-KOL', 'zone' => 'Kollupitiya'],
+                ['id' => 'nar', 'code' => '#COL-NAR', 'zone' => 'Narahenpita'],
+                ['id' => 'raj', 'code' => '#COL-RAJ', 'zone' => 'Rajagiriya'],
+                ['id' => 'wel', 'code' => '#COL-WEL', 'zone' => 'Wellawatte'],
             ] as $request): ?>
                 <article class="quick-status-row" data-request-id="<?= $request['id'] ?>" data-request-row>
                     <div>

@@ -11,7 +11,24 @@ $pageStyles = [
     'feedback' => 'municipal_officer/feedback.css',
     'reports' => 'municipal_officer/reports.css',
 ];
+$pageScripts = [
+    'campaigns' => 'municipal_officer/campaigns.js',
+    'area-schedules' => 'municipal_officer/area-schedules.js',
+    'flagged-requests' => 'municipal_officer/flagged-requests.js',
+    'routes' => 'municipal_officer/routes.js',
+    'collection-records' => 'municipal_officer/collection-records.js',
+    'e-lots' => 'municipal_officer/elots.js',
+    'feedback' => 'municipal_officer/feedback.js',
+    'reports' => 'municipal_officer/reports.js',
+];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$pageScript = $pageScripts[$currentPage ?? ''] ?? null;
+$pageStyleVersion = $pageStyle !== null
+    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/' . $pageStyle)
+    : null;
+$pageScriptVersion = $pageScript !== null
+    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/js/' . $pageScript)
+    : null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/municipal_officer/theme.css');
 ?>
 <!DOCTYPE html>
@@ -37,7 +54,7 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/mun
     <?php if ($pageStyle !== null): ?>
         <link
             rel="stylesheet"
-            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>?v=<?= $pageStyleVersion ?>"
         >
     <?php endif; ?>
 
@@ -57,6 +74,12 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/mun
             </main>
         </div>
     </div>
+
+    <?php if ($pageScript !== null): ?>
+        <script
+            src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>?v=<?= $pageScriptVersion ?>"
+        ></script>
+    <?php endif; ?>
 </body>
 
 </html>
