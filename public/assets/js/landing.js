@@ -23,39 +23,3 @@ if (menuToggle && mainNavigation) {
         if (window.innerWidth > 760) closeMenu();
     });
 }
-
-const benefitTabs = Array.from(document.querySelectorAll('[data-benefit-tab]'));
-const benefitPanels = Array.from(document.querySelectorAll('[data-benefit-panel]'));
-
-const activateBenefit = (tab) => {
-    const target = tab.dataset.benefitTab;
-
-    benefitTabs.forEach((candidate) => {
-        const isActive = candidate === tab;
-        candidate.classList.toggle('is-active', isActive);
-        candidate.setAttribute('aria-selected', String(isActive));
-        candidate.setAttribute('tabindex', isActive ? '0' : '-1');
-    });
-
-    benefitPanels.forEach((panel) => {
-        panel.hidden = panel.dataset.benefitPanel !== target;
-    });
-};
-
-benefitTabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => activateBenefit(tab));
-    tab.addEventListener('keydown', (event) => {
-        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-
-        event.preventDefault();
-        let nextIndex = index;
-        if (event.key === 'ArrowRight') nextIndex = (index + 1) % benefitTabs.length;
-        if (event.key === 'ArrowLeft') nextIndex = (index - 1 + benefitTabs.length) % benefitTabs.length;
-        if (event.key === 'Home') nextIndex = 0;
-        if (event.key === 'End') nextIndex = benefitTabs.length - 1;
-
-        const nextTab = benefitTabs[nextIndex];
-        activateBenefit(nextTab);
-        nextTab.focus();
-    });
-});
