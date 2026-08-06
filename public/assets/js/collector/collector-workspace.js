@@ -7,14 +7,14 @@ let selectedRouteId = null;
 
 function readCollectorState(key) {
     try {
-        return JSON.parse(localStorage.getItem(key) || '{}');
+        return JSON.parse(sessionStorage.getItem(key) || '{}');
     } catch {
         return {};
     }
 }
 
 function writeCollectorState(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    sessionStorage.setItem(key, JSON.stringify(value));
 }
 
 function updateHazard(id, isHazardous) {
@@ -85,6 +85,7 @@ function openRouteDetails(id) {
 function showCollectorMessage(message) {
     const output = document.querySelector('[data-record-message]');
     if (output) output.textContent = message;
+    alert(message);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCollectorState();
 
             if (button.dataset.sendUpdate) {
-                showCollectorMessage(`Update sent for ${id.toUpperCase()}.`);
+                showCollectorMessage('Mistaken!! There is no hazard.');
             }
         });
     });
