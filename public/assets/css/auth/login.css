@@ -1,0 +1,422 @@
+:root {
+    --eco-green-900: #0B4D30;
+    --eco-green-800: #116238;
+    --eco-green-600: #169B4B;
+    --eco-green-500: #22A95A;
+    --eco-page-background: #EFFFF5;
+    --eco-text: #171717;
+    --eco-muted: #707070;
+    --eco-input-background: #F4F4F4;
+    --eco-input-border: #B9B9B9;
+    --eco-card-shadow: 0 28px 48px rgba(25, 71, 47, 0.20), 0 12px 24px rgba(25, 71, 47, 0.09);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--eco-text);
+    background: radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.96), var(--eco-page-background) 75%);
+    font-family: "Inter", sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+.login-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 78px 24px;
+}
+
+.login-card {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 60%) minmax(0, 40%);
+    grid-template-rows: 516px;
+    width: min(826px, 100%);
+    height: 516px;
+    min-height: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 57%, #F9FFFB 78%, #FFFFFF 100%);
+    border: 1px solid #E2F2E8;
+    border-radius: 20px;
+    box-shadow: var(--eco-card-shadow);
+}
+
+.login-form-panel {
+    position: relative;
+    z-index: 2;
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    padding: 62px 45px 44px;
+}
+
+.login-heading,
+.login-form {
+    width: 100%;
+    max-width: 334px;
+}
+
+.login-heading h1 {
+    margin: 0 0 29px 56px;
+    color: var(--eco-green-900);
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(2.25rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
+}
+
+.form-group {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 39px;
+}
+
+.form-group label {
+    color: var(--eco-text);
+    font-size: 1.08rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.form-group input {
+    width: 100%;
+    height: 51px;
+    padding: 0 15px;
+    color: #252525;
+    background: var(--eco-input-background);
+    border: 1px solid var(--eco-input-border);
+    border-radius: 9px;
+    outline: none;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #727272;
+}
+
+.form-group input:focus {
+    background: #FFFFFF;
+    border-color: var(--eco-green-500);
+    box-shadow: 0 0 0 4px rgba(34, 169, 90, 0.12);
+}
+
+.remember-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: -72px 0 0 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.remember-option input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--eco-green-600);
+}
+
+.remember-option,
+.login-submit-area {
+    transform: translateY(-26px);
+}
+
+.remember-option input:focus-visible {
+    outline: 3px solid rgba(22, 155, 75, 0.20);
+    outline-offset: 2px;
+}
+
+.login-submit-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.login-button {
+    display: inline-flex;
+    min-width: 116px;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    color: #FFFFFF;
+    background: var(--eco-green-600);
+    border: 1px solid var(--eco-green-600);
+    border-radius: 16px;
+    font-family: "Exo 2", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.login-button:hover {
+    background: var(--eco-green-800);
+    border-color: var(--eco-green-800);
+    box-shadow: 0 9px 20px rgba(22, 155, 75, 0.20);
+    transform: translateY(-1px);
+}
+
+.login-button:active {
+    transform: translateY(1px);
+}
+
+.login-button:focus-visible {
+    outline: 3px solid rgba(22, 155, 75, 0.20);
+    outline-offset: 3px;
+}
+
+.signup-text {
+    margin: 7px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.signup-text a {
+    color: var(--eco-green-800);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.signup-text a:hover {
+    color: var(--eco-green-600);
+}
+
+.leaf-artwork {
+    position: relative;
+    z-index: 0;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.login-leaf-image {
+    position: absolute;
+    top: -80px;
+    right: -150px;
+    display: block;
+    width: 200%;
+    height: auto;
+    max-width: none;
+    object-fit: fill;
+    object-position: top right;
+    user-select: none;
+}
+
+.login-brand-panel {
+    position: relative;
+    z-index: 2;
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 82px 24px 40px;
+}
+
+.brand-content {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.brand-logo {
+    display: block;
+    width: min(250px, 82%);
+    height: auto;
+    object-fit: contain;
+}
+
+.brand-content h2 {
+    margin: 14px 0 0;
+    color: var(--eco-green-900);
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.08;
+    text-align: center;
+}
+
+.brand-content p {
+    width: min(240px, 100%);
+    margin: 27px 0 0;
+    color: var(--eco-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: left;
+}
+
+@media (max-width: 1000px) {
+    .login-page {
+        padding: 48px 20px;
+    }
+
+    .login-card {
+        grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+    }
+
+    .login-form-panel {
+        padding: 52px 36px 42px;
+    }
+
+    .login-heading,
+    .login-form {
+        max-width: 100%;
+    }
+
+    .login-brand-panel {
+        padding: 74px 22px 38px;
+    }
+}
+
+@media (max-width: 760px) {
+    .login-page {
+        align-items: flex-start;
+        padding: 18px 12px;
+    }
+
+    .login-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 400px;
+        width: min(620px, 100%);
+        height: auto;
+        min-height: 0;
+        border-radius: 18px;
+    }
+
+    .login-form-panel {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 38px 22px 42px;
+    }
+
+    .login-heading h1 {
+        margin: 0 0 32px;
+        font-size: 2.1rem;
+    }
+
+    .form-group input {
+        height: 55px;
+    }
+
+    .remember-option {
+        margin-top: -39px;
+    }
+
+    .remember-option,
+    .login-submit-area {
+        transform: none;
+    }
+
+    .login-submit-area {
+        margin-top: 18px;
+    }
+
+    .signup-text {
+        margin-top: 10px;
+    }
+
+    .login-button {
+        width: 100%;
+        border-radius: 999px;
+    }
+
+    .leaf-artwork,
+    .login-brand-panel {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .leaf-artwork {
+        height: 400px;
+    }
+
+    .login-brand-panel {
+        min-height: 400px;
+        padding: 56px 24px 42px;
+    }
+
+    .login-leaf-image {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+    }
+
+    .brand-logo {
+        width: min(250px, 72%);
+    }
+
+    .brand-content h2 {
+        margin-top: 32px;
+    }
+
+    .brand-content p {
+        margin-top: 22px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .login-card {
+        grid-template-rows: auto 370px;
+    }
+
+    .login-form-panel {
+        padding: 32px 17px 36px;
+    }
+
+    .login-heading h1 {
+        font-size: 1.9rem;
+    }
+
+    .form-group label {
+        font-size: 1rem;
+    }
+
+    .leaf-artwork {
+        height: 370px;
+    }
+
+    .login-brand-panel {
+        min-height: 370px;
+        padding-inline: 18px;
+    }
+
+    .brand-content h2 {
+        font-size: 1.75rem;
+    }
+}
