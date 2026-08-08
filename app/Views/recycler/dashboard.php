@@ -1,29 +1,29 @@
 <section class="dashboard-page">
 
     <div class="stats-grid">
-        <div class="stat-card">
+        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/eligible-e-lots">
             <div class="stat-icon eligible_e-lot">♻</div>
             <div class="stat-info">
                 <span>Eligible Open E-Lots</span>
                 <h2>4</h2>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/my-bids">
             <div class="stat-icon bids">🙋‍♂️</div>
             <div class="stat-info">
                 <span>My Bids</span>
                 <h2>8</h2>
             </div>
-        </div>
+        </a>
 
-        <div class="stat-card">
+        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lots">
             <div class="stat-icon awarded">🏆</div>
             <div class="stat-info">
                 <span>Awarded E-Lots</span>
                 <h2>5</h2>
             </div>
-        </div>
+        </a>
 
         <div class="stat-card">
             <div class="stat-icon awaiting">⏳</div>
@@ -57,6 +57,12 @@
             </div>
         </div>
     </div>
+
+    <section class="compliance-summary" aria-label="Compliance summary">
+        <div><span>Verification</span><strong>Verified</strong></div>
+        <div><span>Licence</span><strong>Active until 2027-06-30</strong></div>
+        <a href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/profile">View My Profile</a>
+    </section>
 
     <section class="schedule-section">
 

@@ -1,0 +1,112 @@
+.recycler-details-page {
+    width: 100%;
+    min-width: 0;
+}
+
+.details-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.details-header h1 {
+    margin: 0;
+    color: var(--admin-text);
+    font-size: clamp(1.625rem, 2.4vw, 1.875rem);
+}
+
+.details-header p,
+.details-section-header p {
+    margin-top: 6px;
+    color: var(--admin-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.details-card {
+    margin-top: 20px;
+    padding: 24px;
+    background: var(--admin-surface);
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    box-shadow: var(--admin-shadow);
+}
+
+.details-section-header {
+    margin-bottom: 18px;
+}
+
+.details-section-header h2 {
+    margin: 0;
+    color: var(--admin-text);
+    font-size: 1.25rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.details-item {
+    min-width: 0;
+    padding: 15px;
+    background: #F8FBF9;
+    border: 1px solid var(--admin-border-soft);
+    border-radius: 12px;
+}
+
+.details-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.details-value {
+    color: var(--admin-text);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+}
+
+.details-actions,
+.compliance-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.capabilities-table {
+    min-width: 760px;
+}
+
+@media (max-width: 900px) {
+    .details-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .details-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .details-card {
+        padding: 18px;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-actions > *,
+    .compliance-actions > * {
+        flex: 1 1 100%;
+    }
+}

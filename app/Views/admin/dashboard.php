@@ -299,6 +299,16 @@
                 </a>
 
 
+                <a
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/risk-rules"
+                    class="quick-action-item"
+                >
+                    <span class="quick-action-icon action-risk" aria-hidden="true">⚠️</span>
+                    <span class="quick-action-content"><strong>Manage Risk Rules</strong><small>Maintain collection classification guidance.</small></span>
+                    <span class="quick-action-arrow" aria-hidden="true">→</span>
+                </a>
+
+
                 <!-- Reports -->
                 <a
                     href="/EcoLot-LK/public/admin/reports"

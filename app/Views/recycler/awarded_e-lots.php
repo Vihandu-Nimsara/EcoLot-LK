@@ -102,10 +102,10 @@
                         <td class="text-center">
 
                             <a
-                                href="#"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lot/DEMO-FIX-LOT-AWARDED-001"
                                 class="btn-action"
                             >
-                                View / Update
+                                View Details
                             </a>
 
                         </td>
@@ -153,10 +153,10 @@
                         <td class="text-center">
 
                             <a
-                                href="#"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lot/DEMO-FIX-LOT-PROCESSING-001"
                                 class="btn-action"
                             >
-                                View / Update
+                                View Details
                             </a>
 
                         </td>
@@ -204,10 +204,10 @@
                         <td class="text-center">
 
                             <a
-                                href="#"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lot/DEMO-FIX-LOT-COMPLETED-001"
                                 class="btn-action"
                             >
-                                View / Update
+                                View Details
                             </a>
 
                         </td>
@@ -255,10 +255,10 @@
                         <td class="text-center">
 
                             <a
-                                href="#"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lot/DEMO-LOT-003"
                                 class="btn-action"
                             >
-                                View / Update
+                                View Details
                             </a>
 
                         </td>
@@ -306,10 +306,10 @@
                         <td class="text-center">
 
                             <a
-                                href="#"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lot/DEMO-LOT-004"
                                 class="btn-action"
                             >
-                                View / Update
+                                View Details
                             </a>
 
                         </td>

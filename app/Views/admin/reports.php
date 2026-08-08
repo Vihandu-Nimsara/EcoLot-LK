@@ -346,6 +346,33 @@ $recentAuditLogs = [
         'action' => 'UPDATE_USER_STATUS',
         'description' => 'Updated User ID 6 status to ACTIVE.',
         'created_at' => '2026-07-08 14:08:23'
+    ],
+
+    [
+        'log_id' => 4,
+        'user' => 'Demo Admin',
+        'role' => 'ADMIN',
+        'action' => 'RECYCLER_VERIFICATION_DECISION',
+        'description' => 'Recorded a frontend demo recycler verification decision.',
+        'created_at' => '2026-07-11 09:15:00'
+    ],
+
+    [
+        'log_id' => 5,
+        'user' => 'Anjana Silva',
+        'role' => 'AUTHORIZED_RECYCLER',
+        'action' => 'BID_SUBMISSION',
+        'description' => 'Submitted a frontend demo bid for DEMO-FIX-LOT-OPEN-001.',
+        'created_at' => '2026-07-11 10:05:00'
+    ],
+
+    [
+        'log_id' => 6,
+        'user' => 'Demo Municipal Officer',
+        'role' => 'MUNICIPAL_OFFICER',
+        'action' => 'WINNING_BID_SELECTION',
+        'description' => 'Selected a winning bid in the frontend demo workflow.',
+        'created_at' => '2026-07-11 11:20:00'
     ]
 
 ];

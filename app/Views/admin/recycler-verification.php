@@ -196,6 +196,8 @@ $totalCount = count($allRecyclerProfiles);
 
     </div>
 
+    <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
+
 
 
     <!-- =====================================================
@@ -425,12 +427,12 @@ $totalCount = count($allRecyclerProfiles);
                         <td>
                             <div class="table-actions">
 
-                            <button
-                                type="button"
+                            <a
                                 class="action-btn secondary-btn-style"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= rawurlencode((string) $recyclerId) ?>"
                             >
                                 View Details
-                            </button>
+                            </a>
 
 
                             <?php if ($status === 'PENDING'): ?>
@@ -438,6 +440,8 @@ $totalCount = count($allRecyclerProfiles);
                                 <button
                                     type="button"
                                     class="action-btn approve-btn"
+                                    data-admin-dialog="approve-recycler"
+                                    data-name="<?= htmlspecialchars($companyName) ?>"
                                 >
                                     Approve
                                 </button>
@@ -446,6 +450,8 @@ $totalCount = count($allRecyclerProfiles);
                                 <button
                                     type="button"
                                     class="action-btn reject-btn"
+                                    data-admin-dialog="reject-recycler"
+                                    data-name="<?= htmlspecialchars($companyName) ?>"
                                 >
                                     Reject
                                 </button>
@@ -458,6 +464,8 @@ $totalCount = count($allRecyclerProfiles);
                                 <button
                                     type="button"
                                     class="action-btn approve-btn"
+                                    data-admin-dialog="reconsider-recycler"
+                                    data-name="<?= htmlspecialchars($companyName) ?>"
                                 >
                                     Reconsider
                                 </button>

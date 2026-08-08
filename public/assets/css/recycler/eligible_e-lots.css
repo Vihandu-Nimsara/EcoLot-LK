@@ -8,7 +8,7 @@
 .eligible-bid-page .bid-table :is(th, td):nth-child(8) { width: 6%; text-align: center; }
 .eligible-bid-page .bid-table :is(th, td):nth-child(9) { width: 12%; }
 .eligible-bid-page .bid-table :is(th, td):nth-child(10) { width: 9%; }
-.eligible-bid-page .bid-table :is(th, td):nth-child(11) { width: 6%; }
+.eligible-bid-page .bid-table :is(th, td):nth-child(11) { width: 10%; }
 
 .eligible-bid-page .bid-table td:nth-child(7),
 .eligible-bid-page .bid-amount {

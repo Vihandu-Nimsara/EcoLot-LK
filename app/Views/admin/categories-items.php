@@ -252,6 +252,8 @@ $items = [
 
     </div>
 
+    <p class="page-notice" data-page-notice tabindex="-1" hidden>Demo only — catalogue changes will be connected during backend implementation.</p>
+
 
 
     <!-- =====================================================
@@ -280,7 +282,7 @@ $items = [
             </div>
 
 
-            <form method="POST" class="admin-form">
+            <form method="POST" class="admin-form" data-demo-form>
 
                 <div class="form-grid">
 
@@ -362,7 +364,7 @@ $items = [
             </div>
 
 
-            <form method="POST" class="admin-form">
+            <form method="POST" class="admin-form" data-demo-form>
 
                 <div class="form-grid">
 
@@ -618,6 +620,7 @@ $items = [
                                 <form
                                     method="POST"
                                     class="category-update-form"
+                                    data-demo-form
                                 >
 
                                     <input
@@ -655,8 +658,11 @@ $items = [
 
 
                                     <button
-                                        type="submit"
+                                        type="button"
                                         class="table-action-btn"
+                                        data-admin-dialog="category-status"
+                                        data-action="Update Status"
+                                        data-name="<?= htmlspecialchars($category['name']) ?>"
                                     >
                                         Update
                                     </button>

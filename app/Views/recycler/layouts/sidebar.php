@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" id="recycler-sidebar" aria-label="Recycler navigation">
     <?php $baseUrl = htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8'); ?>
 
     <div class="sidebar-logo">
@@ -24,13 +24,21 @@
         class="nav-item <?= ($currentPage ?? '') === 'awarded-e-lots' ? 'active' : '' ?>">
         Awarded E-Lots
         </a>
+        <a href="<?= $baseUrl ?>/recycler/profile"
+        class="nav-item <?= ($currentPage ?? '') === 'profile' ? 'active' : '' ?>">
+        My Profile
+        </a>
+        <a href="<?= $baseUrl ?>/recycler/reports"
+        class="nav-item <?= ($currentPage ?? '') === 'reports' ? 'active' : '' ?>">
+        Reports
+        </a>
     </nav>
 
 <div class="sidebar-bottom">
 
-    <a href="#" class="logout-link">
+    <button type="button" class="logout-link" data-recycler-dialog="logout">
         Logout
-    </a>
+    </button>
 
 </div>
 

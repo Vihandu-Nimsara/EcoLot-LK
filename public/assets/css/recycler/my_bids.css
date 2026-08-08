@@ -8,6 +8,7 @@
 .my-bids-page .bids-table :is(th, td):nth-child(8) { width: 10%; }
 .my-bids-page .bids-table :is(th, td):nth-child(9) { width: 10%; }
 .my-bids-page .bids-table :is(th, td):nth-child(10) { width: 7%; }
+.my-bids-page .bids-table :is(th, td):nth-child(11) { width: 13%; }
 
 .my-bids-page .bids-table td:nth-child(6) {
     white-space: nowrap;
@@ -52,6 +53,7 @@
     .my-bids-page .bids-table td:nth-child(8)::before { content: "E-Lot Status"; }
     .my-bids-page .bids-table td:nth-child(9)::before { content: "Bidding Period"; }
     .my-bids-page .bids-table td:nth-child(10)::before { content: "Submitted At"; }
+    .my-bids-page .bids-table td:nth-child(11)::before { content: "Actions"; }
 
     .my-bids-page .bids-table td:nth-child(4) {
         display: grid;

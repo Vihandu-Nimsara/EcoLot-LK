@@ -102,12 +102,10 @@
 
                         <td>
 
-                            <button
-                                type="button"
-                                class="edit-btn"
-                            >
-                                View/Bid
-                            </button>
+                            <div class="row-actions">
+                                <a class="edit-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/e-lot/DEMO-LOT-002">View Details</a>
+                                <button class="edit-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="DEMO-LOT-002">Place Bid</button>
+                            </div>
 
                         </td>
 
@@ -157,12 +155,10 @@
 
                         <td>
 
-                            <button
-                                type="button"
-                                class="edit-btn"
-                            >
-                                View/Bid
-                            </button>
+                            <div class="row-actions">
+                                <a class="edit-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/e-lot/DEMO-FIX-LOT-OPEN-002">View Details</a>
+                                <button class="edit-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="DEMO-FIX-LOT-OPEN-002">Place Bid</button>
+                            </div>
 
                         </td>
 
@@ -204,12 +200,10 @@
 
                         <td>
 
-                            <button
-                                type="button"
-                                class="edit-btn"
-                            >
-                                View/Bid
-                            </button>
+                            <div class="row-actions">
+                                <a class="edit-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/e-lot/DEMO-LOT-001">View Details</a>
+                                <button class="edit-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="DEMO-LOT-001">Place Bid</button>
+                            </div>
 
                         </td>
 
@@ -259,12 +253,10 @@
 
                         <td>
 
-                            <button
-                                type="button"
-                                class="edit-btn"
-                            >
-                                View/Bid
-                            </button>
+                            <div class="row-actions">
+                                <a class="edit-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/e-lot/DEMO-FIX-LOT-OPEN-001">View Details</a>
+                                <button class="edit-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="DEMO-FIX-LOT-OPEN-001">Place Bid</button>
+                            </div>
 
                         </td>
 
