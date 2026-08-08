@@ -262,13 +262,34 @@ $totalCount = count($allRecyclerProfiles);
 
 
         <!-- =================================================
-             RECYCLER PROFILE CARDS
+             RECYCLER VERIFICATION TABLE
         ================================================== -->
 
         <?php if (!empty($filteredRecyclerProfiles)): ?>
 
 
-            <div class="profiles-list">
+            <div class="report-table-wrapper recycler-verification-table-wrapper">
+
+
+                <table class="report-table recycler-verification-table">
+
+
+                    <thead>
+
+                        <tr>
+                            <th scope="col">Company</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Licence</th>
+                            <th scope="col">District</th>
+                            <th scope="col">Submitted At</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
 
 
                 <?php foreach ($filteredRecyclerProfiles as $profile): ?>
@@ -359,154 +380,50 @@ $totalCount = count($allRecyclerProfiles);
                     ?>
 
 
-                    <article class="profile-card">
+                    <tr>
 
+                        <td>
+                            <strong class="table-primary-text">
+                                <?= htmlspecialchars($companyName) ?>
+                            </strong>
+                            <span class="table-secondary-text">
+                                Recycler ID: #<?= htmlspecialchars((string)$recyclerId) ?>
+                            </span>
+                        </td>
 
-                        <!-- ===============================
-                             PROFILE TOP
-                        ================================ -->
+                        <td>
+                            <span class="table-contact-name">
+                                <?= htmlspecialchars($contactPerson) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                <?= htmlspecialchars($email) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                <?= htmlspecialchars($phone) ?>
+                            </span>
+                        </td>
 
-                        <div class="profile-card-top">
+                        <td>
+                            <span class="table-primary-text">
+                                <?= htmlspecialchars($licenseNo) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                Expires: <?= htmlspecialchars($licenseExpiry) ?>
+                            </span>
+                        </td>
 
-                            <div class="profile-main-info">
+                        <td><?= htmlspecialchars($district) ?></td>
 
-                                <h3>
-                                    <?= htmlspecialchars($companyName) ?>
-                                </h3>
+                        <td><?= htmlspecialchars($submittedAt) ?></td>
 
-                                <p>
+                        <td>
+                            <span class="status-badge <?= $statusClass ?>">
+                                <?= htmlspecialchars($statusLabel) ?>
+                            </span>
+                        </td>
 
-                                    Recycler ID:
-
-                                    <strong>
-                                        #<?= htmlspecialchars((string)$recyclerId) ?>
-                                    </strong>
-
-                                </p>
-
-                            </div>
-
-
-                            <div class="profile-status-wrap">
-
-                                <span class="status-badge <?= $statusClass ?>">
-
-                                    <?= htmlspecialchars($statusLabel) ?>
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- ===============================
-                             PROFILE DETAILS
-                        ================================ -->
-
-                        <div class="profile-details-grid">
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Contact Person
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($contactPerson) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Email
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($email) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Phone
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($phone) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    District
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($district) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Licence Number
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($licenseNo) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Licence Expiry
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($licenseExpiry) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item detail-item-full">
-
-                                <span class="detail-label">
-                                    Submitted At
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($submittedAt) ?>
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- ===============================
-                             DEMO ACTION BUTTONS
-                        ================================ -->
-
-                        <div class="profile-actions">
+                        <td>
+                            <div class="table-actions">
 
                             <button
                                 type="button"
@@ -547,13 +464,19 @@ $totalCount = count($allRecyclerProfiles);
 
                             <?php endif; ?>
 
-                        </div>
+                            </div>
+                        </td>
 
-
-                    </article>
+                    </tr>
 
 
                 <?php endforeach; ?>
+
+
+                    </tbody>
+
+
+                </table>
 
 
             </div>

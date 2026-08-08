@@ -12,99 +12,41 @@
     font-weight: 600;
 }
 
-.profiles-list {
-    display: grid;
-    gap: 18px;
+.recycler-verification-table-wrapper {
     margin-top: 20px;
 }
 
-.profile-card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 20px;
+.recycler-verification-table {
+    min-width: 1040px;
 }
 
-.profile-main-info h3 {
-    margin: 0;
+.table-primary-text,
+.table-contact-name,
+.table-secondary-text {
+    display: block;
+}
+
+.table-primary-text,
+.table-contact-name {
     color: var(--admin-text);
-    font-size: 1.375rem;
-    font-weight: 700;
-}
-
-.profile-main-info p {
-    margin-top: 6px;
-    color: var(--admin-muted);
-    font-size: 0.875rem;
-}
-
-.profile-status-wrap {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-}
-
-.profile-details-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px 20px;
-}
-
-.detail-item {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.detail-item-full {
-    grid-column: 1 / -1;
-}
-
-.detail-label {
-    color: var(--admin-muted);
-    font-size: 0.75rem;
     font-weight: 600;
 }
 
-.detail-value {
-    color: var(--admin-text);
-    font-size: 0.875rem;
-    overflow-wrap: anywhere;
+.table-secondary-text {
+    margin-top: 4px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
 }
 
-.profile-actions {
+.table-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px;
 }
 
-@media (max-width: 700px) {
-    .profile-card-top {
-        align-items: flex-start;
-        flex-direction: column;
-        margin-bottom: 16px;
-    }
-
-    .profile-details-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    .detail-item-full {
-        grid-column: auto;
-    }
-
-    .profile-actions {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .action-btn {
-        width: 100%;
-    }
+.table-actions .action-btn {
+    min-height: 34px;
+    padding: 7px 11px;
+    white-space: nowrap;
 }
