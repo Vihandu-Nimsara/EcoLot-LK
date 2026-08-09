@@ -281,6 +281,34 @@
     background: #F6FBF7;
 }
 
+.recycler-app .table-primary-text,
+.recycler-app .table-secondary-text {
+    display: block;
+}
+
+.recycler-app .table-secondary-text {
+    margin-top: 4px;
+    color: #64748B;
+    font-size: .78rem;
+}
+
+.recycler-app .primary-row-action {
+    color: #fff;
+    border-color: var(--recycler-green-600);
+    background: var(--recycler-green-600);
+}
+
+.recycler-app .primary-row-action:hover {
+    color: #fff;
+    background: #047857;
+}
+
+.recycler-app .secondary-row-action {
+    color: #047857;
+    border-color: #86D2A0;
+    background: #fff;
+}
+
 .recycler-app .badge,
 .recycler-app .eligible-bid-page .status {
     display: inline-flex;

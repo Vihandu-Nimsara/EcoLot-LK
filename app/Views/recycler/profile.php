@@ -1,3 +1,8 @@
+<?php $capabilities = [
+    ['category' => 'Demo Consumer Electronics', 'status' => 'Approved', 'class' => 'badge-completed'],
+    ['category' => 'Demo Battery and Circuit Boards', 'status' => 'Approved', 'class' => 'badge-completed'],
+    ['category' => 'Medical E-Waste', 'status' => 'Pending', 'class' => 'badge-pending'],
+]; ?>
 <section class="workflow-page">
     <div class="workflow-header">
         <div>
@@ -44,13 +49,10 @@
         <div class="workflow-table-wrapper">
             <table class="workflow-table">
                 <thead><tr><th>Waste Category</th><th>Capability Status</th><th>Action</th></tr></thead>
-                <tbody>
-                    <tr><td>Demo Consumer Electronics</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Consumer Electronics">Request Change</button></td></tr>
-                    <tr><td>Demo Battery and Circuit Boards</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Battery and Circuit Boards">Request Change</button></td></tr>
-                    <tr><td>Medical E-Waste</td><td><span class="badge badge-pending">Pending</span></td><td><span class="muted-action">Awaiting review</span></td></tr>
-                </tbody>
+                <tbody><?php foreach ($capabilities as $capability): ?><tr><td><?= htmlspecialchars($capability['category']) ?></td><td><span class="badge <?= htmlspecialchars($capability['class']) ?>"><?= htmlspecialchars($capability['status']) ?></span></td><td><?php if ($capability['status'] === 'Pending'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="<?= htmlspecialchars($capability['category']) ?>">Request Change</button><?php endif; ?></td></tr><?php endforeach; ?></tbody>
             </table>
         </div>
+        <?php if ($capabilities === []): ?><div class="empty-state">No handling capabilities are recorded.</div><?php endif; ?>
         <div class="form-actions">
             <button class="secondary-workflow-btn" type="button" data-recycler-dialog="capability-request" data-category="">Request Capability Change</button>
         </div>

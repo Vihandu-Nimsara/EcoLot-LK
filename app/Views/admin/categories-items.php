@@ -286,7 +286,7 @@ $items = [
 
         <div class="management-section">
             <div class="section-heading"><h2>Create E-Waste Item</h2><p>Add an item and configure its default collection behaviour.</p></div>
-            <button type="button" class="primary-action-btn" data-admin-dialog="create-item">Create Item</button>
+            <button type="button" class="primary-action-btn" data-admin-dialog="create-item" data-category-options="<?= htmlspecialchars(json_encode(array_column($categories, 'name'), JSON_THROW_ON_ERROR), ENT_QUOTES, 'UTF-8') ?>">Create Item</button>
         </div>
 
 

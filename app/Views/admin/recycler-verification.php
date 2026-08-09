@@ -129,21 +129,6 @@ if (empty($allRecyclerProfiles)) {
 
 $filteredRecyclerProfiles = $allRecyclerProfiles;
 
-if ($currentFilter !== 'ALL') {
-
-    $filteredRecyclerProfiles = array_filter(
-        $allRecyclerProfiles,
-        function ($profile) use ($currentFilter) {
-
-            $profileStatus = strtoupper(
-                $profile['status'] ?? 'PENDING'
-            );
-
-            return $profileStatus === $currentFilter;
-        }
-    );
-}
-
 
 /* =========================================================
    FILTER COUNTS
@@ -212,7 +197,7 @@ $totalCount = count($allRecyclerProfiles);
         ================================================== -->
 
         <form class="light-filter" data-client-filter data-rows="[data-recycler-row]" data-empty="[data-recycler-filter-empty]" data-result="[data-recycler-filter-result]">
-            <div class="quick-filters" role="group" aria-label="Filter recyclers by verification status"><button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All (<?= $totalCount ?>)</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="PENDING">Pending (<?= $pendingCount ?>)</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="VERIFIED">Verified (<?= $verifiedCount ?>)</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="REJECTED">Rejected (<?= $rejectedCount ?>)</button></div>
+            <div class="quick-filters" role="group" aria-label="Filter recyclers by verification status"><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'ALL' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="">All (<?= $totalCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'PENDING' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="PENDING">Pending (<?= $pendingCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'VERIFIED' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="VERIFIED">Verified (<?= $verifiedCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'REJECTED' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="REJECTED">Rejected (<?= $rejectedCount ?>)</button></div>
             <div class="light-filter-controls"><div class="filter-field"><label for="recycler-search">Search recyclers</label><input id="recycler-search" name="search" type="search" placeholder="Company, contact or SWML number"></div></div>
         </form>
         <p class="filter-result" data-recycler-filter-result role="status" aria-live="polite"></p>
@@ -239,7 +224,7 @@ $totalCount = count($allRecyclerProfiles);
                             <th scope="col">Contact</th>
                             <th scope="col">Licence</th>
                             <th scope="col">District</th>
-                            <th scope="col">Submitted At</th>
+                            <th scope="col">Submitted</th>
                             <th scope="col">Status</th>
                             <th scope="col">Actions</th>
                         </tr>

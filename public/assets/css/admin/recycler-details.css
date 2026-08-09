@@ -3,6 +3,21 @@
     min-width: 0;
 }
 
+.recycler-details-page button:disabled {
+    cursor: not-allowed;
+    opacity: .48;
+}
+
+.requirement-unmet {
+    color: #B42318;
+}
+
+.verification-blocked-note {
+    margin: 8px 0 0;
+    color: #B42318;
+    font-size: .8rem;
+}
+
 .details-header {
     display: flex;
     align-items: flex-end;

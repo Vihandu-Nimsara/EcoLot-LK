@@ -1,29 +1,29 @@
 <section class="dashboard-page">
 
     <div class="stats-grid">
-        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/eligible-e-lots">
+        <article class="stat-card">
             <div class="stat-icon eligible_e-lot">♻</div>
             <div class="stat-info">
                 <span>Eligible Open E-Lots</span>
                 <h2>4</h2>
             </div>
-        </a>
+        </article>
 
-        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/my-bids">
+        <article class="stat-card">
             <div class="stat-icon bids">🙋‍♂️</div>
             <div class="stat-info">
                 <span>My Bids</span>
                 <h2>8</h2>
             </div>
-        </a>
+        </article>
 
-        <a class="stat-card stat-card-link" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/awarded-e-lots">
+        <article class="stat-card">
             <div class="stat-icon awarded">🏆</div>
             <div class="stat-info">
                 <span>Awarded E-Lots</span>
                 <h2>5</h2>
             </div>
-        </a>
+        </article>
 
         <div class="stat-card">
             <div class="stat-icon awaiting">⏳</div>
@@ -99,7 +99,7 @@
 
                             <td>
                                 <span class="status op">
-                                    APPROVED
+                                    Approved
                                 </span>
                             </td>
                         </tr>
@@ -109,12 +109,12 @@
 
                             <td>
                                 <span class="status op">
-                                    APPROVED
+                                    Approved
                                 </span>
                             </td>
                         </tr>
 
-                        <tr><td>Medical E-Waste</td><td><span class="status non-op">PENDING</span></td></tr>
+                        <tr><td>Medical E-Waste</td><td><span class="status non-op">Pending</span></td></tr>
 
                     </tbody>
 

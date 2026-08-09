@@ -2,7 +2,11 @@
     color: var(--admin-text);
 }
 
-.users-page .user-status.status-inactive { color: #7a2e0e; background: #fff4ed; border-color: #ffd6ae; }
+.users-page .user-status.status-inactive {
+    color: #7a2e0e;
+    background: #fff4ed;
+    border-color: #ffd6ae;
+}
 
 .form-section {
     margin-top: 24px;
@@ -39,7 +43,19 @@
 }
 
 .users-table {
-    min-width: 1120px;
+    min-width: 900px;
+}
+
+.users-table .row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.users-table .row-actions :is(a, button) {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: .75rem;
 }
 
 .users-table time {
@@ -79,6 +95,7 @@
     .users-title-row > .create-user-btn {
         width: 100%;
     }
+
     .privileged-user-form {
         padding: 16px;
     }

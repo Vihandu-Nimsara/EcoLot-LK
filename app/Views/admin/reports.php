@@ -10,15 +10,15 @@
    System Overview
 ========================= */
 
-$totalUsers = 18;
+$totalUsers = 5;
 $totalRequests = 10;
 $completedRequests = 8;
 $pickupRecords = 9;
 $verifiedPickups = 9;
 
-$totalELots = 10;
-$totalBids = 12;
-$winningBids = 6;
+$totalELots = 9;
+$totalBids = 8;
+$winningBids = 5;
 
 
 /* =========================
@@ -119,7 +119,7 @@ $eLotStatusSummary = [
 
     [
         'status' => 'COMPLETED',
-        'total' => 2
+        'total' => 1
     ]
 
 ];
@@ -217,7 +217,7 @@ $recentELotBidSummary = [
         'category' => 'Demo Consumer Electronics',
         'status' => 'AWARDED',
         'bids' => 2,
-        'highest_bid' => 128000.00,
+        'highest_bid' => 126000.00,
         'average_bid' => 122250.00
     ],
 
@@ -406,7 +406,7 @@ $recentAuditLogs = [
             <button
                 type="button"
                 class="print-report-btn"
-                onclick="window.print()"
+                data-print-report
             >
                 Print Report
             </button>

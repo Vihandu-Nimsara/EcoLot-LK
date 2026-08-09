@@ -54,6 +54,7 @@
                             <label class="check-option"><input type="checkbox" name="activities[]" value="<?= htmlspecialchars($activity, ENT_QUOTES, 'UTF-8') ?>"><span><?= htmlspecialchars($activity, ENT_QUOTES, 'UTF-8') ?></span></label>
                         <?php endforeach; ?>
                     </div>
+                    <p class="registration-group-error" data-activities-error role="alert" hidden>Select at least one licence activity.</p>
                 </fieldset>
 
                 <fieldset class="registration-section">
@@ -64,6 +65,7 @@
                             <label class="check-option"><input type="checkbox" name="requested_capabilities[]" value="<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>"><span><?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?></span></label>
                         <?php endforeach; ?>
                     </div>
+                    <p class="registration-group-error" data-capabilities-error role="alert" hidden>Select at least one requested capability.</p>
                 </fieldset>
 
                 <div class="form-submit-area">
