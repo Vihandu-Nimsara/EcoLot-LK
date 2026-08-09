@@ -36,6 +36,17 @@
     font-family: "Exo 2", sans-serif;
 }
 
+.admin-app .dialog-context-note {
+    margin: 0;
+    padding: 11px 12px;
+    color: var(--admin-muted);
+    background: #f7faf8;
+    border: 1px solid var(--admin-border-soft);
+    border-radius: 9px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
 
 /* =========================================================
    ADMIN SHELL

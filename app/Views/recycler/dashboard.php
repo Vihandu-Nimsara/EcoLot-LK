@@ -60,7 +60,8 @@
 
     <section class="compliance-summary" aria-label="Compliance summary">
         <div><span>Verification</span><strong>Verified</strong></div>
-        <div><span>Licence</span><strong>Active until 2027-06-30</strong></div>
+        <div><span>CEA Licence Record</span><strong>Verified until 2027-06-30</strong></div>
+        <div><span>Approved Capabilities</span><strong>2</strong></div>
         <a href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/profile">View My Profile</a>
     </section>
 
@@ -74,7 +75,7 @@
                     <h2>Waste-handling Capabilities</h2>
 
                     <p>
-                        Categories currently assigned to your recycler profile.
+                        EcoLot categories approved for your recycler profile.
                     </p>
                 </div>
 

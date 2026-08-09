@@ -14,6 +14,17 @@
     overflow-x: hidden;
 }
 
+.recycler-app .dialog-context-note {
+    margin: 0;
+    padding: 11px 12px;
+    color: var(--recycler-muted);
+    background: #f7faf8;
+    border: 1px solid var(--recycler-border);
+    border-radius: 9px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
 .recycler-app .sidebar {
     width: 244px;
     padding: 22px 16px 18px;

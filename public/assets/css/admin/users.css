@@ -17,6 +17,21 @@
     margin-top: 16px;
 }
 
+.users-title-row > .create-user-btn {
+    margin-top: 0;
+}
+
+.staff-guidance {
+    margin: 20px 0 0;
+    padding: 13px 15px;
+    color: var(--admin-muted);
+    background: #f7faf8;
+    border: 1px solid var(--admin-border-soft);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
 .users-list-card > h3 {
     margin-bottom: 18px;
 }
@@ -59,6 +74,9 @@
 }
 
 @media (max-width: 520px) {
+    .users-title-row > .create-user-btn {
+        width: 100%;
+    }
     .privileged-user-form {
         padding: 16px;
     }

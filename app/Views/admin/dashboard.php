@@ -202,7 +202,7 @@
 
                 <!-- Create User -->
                 <a
-                    href="/EcoLot-LK/public/admin/users"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/users"
                     class="quick-action-item"
                 >
 
@@ -235,7 +235,7 @@
 
                 <!-- Recycler Applications -->
                 <a
-                    href="/EcoLot-LK/public/admin/recycler-verification?status=PENDING"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=PENDING"
                     class="quick-action-item"
                 >
 
@@ -268,7 +268,7 @@
 
                 <!-- Categories and Items -->
                 <a
-                    href="/EcoLot-LK/public/admin/categories-items"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/categories-items"
                     class="quick-action-item"
                 >
 
@@ -311,7 +311,7 @@
 
                 <!-- Reports -->
                 <a
-                    href="/EcoLot-LK/public/admin/reports"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/reports"
                     class="quick-action-item"
                 >
 

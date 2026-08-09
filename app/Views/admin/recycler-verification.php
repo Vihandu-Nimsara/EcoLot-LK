@@ -214,7 +214,7 @@ $totalCount = count($allRecyclerProfiles);
         <div class="verification-filters">
 
             <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=PENDING"
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=PENDING"
                 class="filter-tab <?= $currentFilter === 'PENDING' ? 'active' : '' ?>"
             >
                 Pending (<?= $pendingCount ?>)
@@ -222,7 +222,7 @@ $totalCount = count($allRecyclerProfiles);
 
 
             <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=VERIFIED"
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=VERIFIED"
                 class="filter-tab <?= $currentFilter === 'VERIFIED' ? 'active' : '' ?>"
             >
                 Verified (<?= $verifiedCount ?>)
@@ -230,7 +230,7 @@ $totalCount = count($allRecyclerProfiles);
 
 
             <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=REJECTED"
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=REJECTED"
                 class="filter-tab <?= $currentFilter === 'REJECTED' ? 'active' : '' ?>"
             >
                 Rejected (<?= $rejectedCount ?>)
@@ -238,7 +238,7 @@ $totalCount = count($allRecyclerProfiles);
 
 
             <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=ALL"
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=ALL"
                 class="filter-tab <?= $currentFilter === 'ALL' ? 'active' : '' ?>"
             >
                 All (<?= $totalCount ?>)
@@ -433,44 +433,6 @@ $totalCount = count($allRecyclerProfiles);
                             >
                                 View Details
                             </a>
-
-
-                            <?php if ($status === 'PENDING'): ?>
-
-                                <button
-                                    type="button"
-                                    class="action-btn approve-btn"
-                                    data-admin-dialog="approve-recycler"
-                                    data-name="<?= htmlspecialchars($companyName) ?>"
-                                >
-                                    Approve
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="action-btn reject-btn"
-                                    data-admin-dialog="reject-recycler"
-                                    data-name="<?= htmlspecialchars($companyName) ?>"
-                                >
-                                    Reject
-                                </button>
-
-                            <?php endif; ?>
-
-
-                            <?php if ($status === 'REJECTED'): ?>
-
-                                <button
-                                    type="button"
-                                    class="action-btn approve-btn"
-                                    data-admin-dialog="reconsider-recycler"
-                                    data-name="<?= htmlspecialchars($companyName) ?>"
-                                >
-                                    Reconsider
-                                </button>
-
-                            <?php endif; ?>
 
                             </div>
                         </td>

@@ -44,7 +44,7 @@ $lot = $lots[$lotCode] ?? $lots['DEMO-LOT-001'];
     </section>
 
     <section class="workflow-card">
-        <div class="workflow-section-header"><h2>Recycler Eligibility</h2><p>This E-Lot matches your approved licence and <?= htmlspecialchars($lot['category']) ?> capability.</p></div>
+        <div class="workflow-section-header"><h2>Recycler Eligibility</h2><p>This E-Lot matches your verified CEA licence record and approved <?= htmlspecialchars($lot['category']) ?> capability.</p></div>
         <span class="badge badge-completed">Eligible</span>
     </section>
 
