@@ -6,7 +6,7 @@
         <article class="summary-card"><span>Active Bids</span><strong>3</strong></article>
         <article class="summary-card"><span>Won Bids</span><strong>5</strong></article>
         <article class="summary-card"><span>Lost Bids</span><strong>0</strong></article>
-        <article class="summary-card"><span>Awarded E-Lots</span><strong>2</strong></article>
+        <article class="summary-card"><span>Awarded E-Lots</span><strong>5</strong></article>
         <article class="summary-card"><span>Processing</span><strong>2</strong></article>
         <article class="summary-card"><span>Completed</span><strong>1</strong></article>
     </div>

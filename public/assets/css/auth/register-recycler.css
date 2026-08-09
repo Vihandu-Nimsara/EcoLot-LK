@@ -2,6 +2,12 @@
     align-items: flex-start;
 }
 
+.registration-result { max-width: 680px; margin: auto 0; padding: 28px; color: #173d2b; background: #f4fbf6; border: 1px solid #cfe4d7; border-radius: 18px; }
+.registration-result h1 { margin-bottom: 10px; }
+.registration-result h2 { margin: 24px 0 10px; font-size: 1.1rem; }
+.registration-result ol { display: grid; gap: 8px; margin: 0 0 26px 22px; }
+.registration-result .create-profile-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+
 .recycler-registration-page .recycler-registration-card {
     grid-template-columns: minmax(0, 68%) minmax(280px, 32%);
     grid-template-rows: auto;

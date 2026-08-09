@@ -1,17 +1,20 @@
 <?php
 $lots = [
-    'DEMO-LOT-001' => ['title' => 'Demo Open Lot - Laptops from Nugegoda', 'council' => 'Demo Colombo Metro Council', 'category' => 'Demo Consumer Electronics', 'items' => 1, 'quantity' => 14, 'weight' => '91.00 kg', 'deadline' => '2026-07-24 15:37:55', 'location' => 'Nugegoda Collection Centre', 'item' => 'Demo Laptops'],
-    'DEMO-LOT-002' => ['title' => 'Demo Open Lot - Phones and Routers', 'council' => 'Demo Colombo Metro Council', 'category' => 'Demo Consumer Electronics', 'items' => 1, 'quantity' => 45, 'weight' => '18.00 kg', 'deadline' => '2026-07-20 15:37:55', 'location' => 'Colombo Collection Centre', 'item' => 'Demo Phones and Routers'],
-    'DEMO-FIX-LOT-OPEN-001' => ['title' => 'DEMO-FIX Open Lot - Laptops and Monitors', 'council' => 'DEMO-FIX Recycler Dashboard Council', 'category' => 'DEMO-FIX Recycler Electronics', 'items' => 1, 'quantity' => 12, 'weight' => '84.00 kg', 'deadline' => '2026-07-24 16:03:03', 'location' => 'Council Collection Centre', 'item' => 'Laptops and Monitors'],
-    'DEMO-FIX-LOT-OPEN-002' => ['title' => 'DEMO-FIX Open Lot - Mobile Phones and Routers', 'council' => 'DEMO-FIX Recycler Dashboard Council', 'category' => 'DEMO-FIX Recycler Electronics', 'items' => 1, 'quantity' => 50, 'weight' => '26.00 kg', 'deadline' => '2026-07-20 16:03:03', 'location' => 'Council Collection Centre', 'item' => 'Mobile Phones and Routers'],
+    'DEMO-LOT-001' => ['title' => 'Demo Open Lot - Laptops from Nugegoda', 'council' => 'Demo Colombo Metro Council', 'category' => 'Demo Consumer Electronics', 'items' => 1, 'quantity' => 14, 'weight' => '91.00 kg', 'deadline' => '2026-08-24 15:37', 'location' => 'Nugegoda Collection Centre', 'item' => 'Demo Laptops', 'bid' => false],
+    'DEMO-LOT-002' => ['title' => 'Demo Open Lot - Phones and Routers', 'council' => 'Demo Colombo Metro Council', 'category' => 'Demo Consumer Electronics', 'items' => 1, 'quantity' => 45, 'weight' => '18.00 kg', 'deadline' => '2026-08-20 15:37', 'location' => 'Colombo Collection Centre', 'item' => 'Demo Phones and Routers', 'bid' => true, 'amount' => '48,200.00'],
+    'DEMO-FIX-LOT-OPEN-001' => ['title' => 'Open Lot - Laptops and Monitors', 'council' => 'Colombo Metro Council', 'category' => 'Office E-Waste', 'items' => 1, 'quantity' => 12, 'weight' => '84.00 kg', 'deadline' => '2026-08-25 16:03', 'location' => 'Council Collection Centre', 'item' => 'Laptops and Monitors', 'bid' => true, 'amount' => '94,500.00'],
+    'DEMO-FIX-LOT-OPEN-002' => ['title' => 'Open Lot - Mobile Phones and Routers', 'council' => 'Colombo Metro Council', 'category' => 'Demo Consumer Electronics', 'items' => 1, 'quantity' => 50, 'weight' => '26.00 kg', 'deadline' => '2026-08-22 16:03', 'location' => 'Council Collection Centre', 'item' => 'Mobile Phones and Routers', 'bid' => true, 'amount' => '38,200.00'],
 ];
 $lotCode = (string) $eLotId;
-$lot = $lots[$lotCode] ?? $lots['DEMO-LOT-001'];
+$lot = $lots[$lotCode] ?? null;
 ?>
 <section class="workflow-page">
+<?php if ($lot === null): ?>
+    <div class="workflow-header"><div><h1>E-Lot not found</h1><p>No eligible E-Lot matches the requested code.</p></div><a class="secondary-workflow-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/eligible-e-lots">Back to Eligible E-Lots</a></div>
+<?php else: ?>
     <div class="workflow-header">
         <div><h1>E-Lot Details</h1><p>Review the waste composition, handling information and bidding deadline.</p></div>
-        <div class="workflow-actions"><a class="secondary-workflow-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/eligible-e-lots">Back to Eligible E-Lots</a><button class="primary-workflow-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="<?= htmlspecialchars($lotCode) ?>">Place Bid</button></div>
+        <div class="workflow-actions"><a class="secondary-workflow-btn" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/eligible-e-lots">Back to Eligible E-Lots</a><?php if ($lot['bid']): ?><button class="primary-workflow-btn" type="button" data-recycler-dialog="view-bid" data-elot-code="<?= htmlspecialchars($lotCode) ?>" data-bid-amount="<?= htmlspecialchars($lot['amount']) ?>" data-bid-status="Submitted" data-deadline="<?= htmlspecialchars($lot['deadline']) ?>">View Bid</button><?php else: ?><button class="primary-workflow-btn" type="button" data-recycler-dialog="place-bid" data-elot-code="<?= htmlspecialchars($lotCode) ?>">Place Bid</button><?php endif; ?></div>
     </div>
 
     <section class="workflow-card">
@@ -48,4 +51,4 @@ $lot = $lots[$lotCode] ?? $lots['DEMO-LOT-001'];
         <span class="badge badge-completed">Eligible</span>
     </section>
 
-</section>
+<?php endif; ?></section>

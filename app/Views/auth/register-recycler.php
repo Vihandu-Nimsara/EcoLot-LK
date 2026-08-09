@@ -20,7 +20,7 @@
                 <p>Submit your company and existing CEA licence information for EcoLot verification.</p>
             </header>
 
-            <form class="registration-form" action="<?= htmlspecialchars($basePath . '/register/recycler', ENT_QUOTES, 'UTF-8') ?>" method="post" enctype="multipart/form-data" data-recycler-registration>
+            <form class="registration-form" action="<?= htmlspecialchars($basePath . '/register/recycler', ENT_QUOTES, 'UTF-8') ?>" method="post" enctype="multipart/form-data" data-recycler-registration novalidate>
                 <fieldset class="registration-section">
                     <legend><span>A</span> Company / Account Information</legend>
                     <div class="recycler-form-grid">
@@ -73,6 +73,13 @@
                     <p class="login-text">Already have an account? <a href="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>">Log in</a></p>
                 </div>
             </form>
+            <section class="registration-result" data-registration-result hidden tabindex="-1">
+                <h1>Registration Submitted</h1>
+                <p>Your recycler registration will require Administrator verification. This demonstration does not create or persist an account.</p>
+                <h2>What happens next</h2>
+                <ol><li>Company information reviewed</li><li>CEA licence record reviewed</li><li>Requested capabilities reviewed</li><li>Recycler account verified</li></ol>
+                <a class="create-profile-btn" href="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>">Back to Login</a>
+            </section>
         </div>
 
         <div class="leaf-artwork" aria-hidden="true"><img src="<?= htmlspecialchars($basePath . '/assets/images/registration-leaf.svg', ENT_QUOTES, 'UTF-8') ?>" alt="" class="registration-leaf-image" draggable="false"></div>

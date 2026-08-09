@@ -19,6 +19,7 @@
             <div class="detail-item"><span class="detail-label">Business Email</span><strong class="detail-value">anjana@greencycle.lk</strong></div>
             <div class="detail-item"><span class="detail-label">Phone</span><strong class="detail-value">077 234 5678</strong></div>
             <div class="detail-item"><span class="detail-label">Business Address</span><strong class="detail-value">45 Green Park, Colombo 05</strong></div>
+            <div class="detail-item"><span class="detail-label">District</span><strong class="detail-value">Colombo</strong></div>
             <div class="detail-item"><span class="detail-label">Verification</span><span class="badge badge-completed">Verified</span></div>
         </div>
     </section>
@@ -31,7 +32,7 @@
             <div class="detail-item"><span class="detail-label">Expiry Date</span><strong class="detail-value">2027-06-30</strong></div>
             <div class="detail-item"><span class="detail-label">Licence Verification Status</span><span class="badge badge-completed">Verified</span></div>
             <div class="detail-item"><span class="detail-label">Activities Recorded</span><strong class="detail-value">Recovery, Recycling, Storage</strong></div>
-            <div class="detail-item"><span class="detail-label">Licence Document</span><strong class="detail-value">PDF evidence submitted</strong></div>
+            <div class="detail-item"><span class="detail-label">Licence Document</span><strong class="detail-value">Submitted document preview unavailable in this frontend demo</strong></div>
         </div>
         <div class="form-actions">
             <button class="secondary-workflow-btn" type="button" data-recycler-dialog="licence-request">Submit Licence Update</button>
@@ -42,11 +43,11 @@
         <div class="workflow-section-header"><h2>Waste-Handling Capabilities</h2><p>Approved categories affect eligibility; all changes require Administrator review.</p></div>
         <div class="workflow-table-wrapper">
             <table class="workflow-table">
-                <thead><tr><th>Waste Category</th><th>High Risk</th><th>Capability Status</th><th>Action</th></tr></thead>
+                <thead><tr><th>Waste Category</th><th>Capability Status</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td>Demo Consumer Electronics</td><td>Yes</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Consumer Electronics">Request Change</button></td></tr>
-                    <tr><td>Demo Battery and Circuit Boards</td><td>Yes</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Battery and Circuit Boards">Request Change</button></td></tr>
-                    <tr><td>Medical E-Waste</td><td>Yes</td><td><span class="badge badge-pending">Pending</span></td><td><span class="muted-action">Awaiting review</span></td></tr>
+                    <tr><td>Demo Consumer Electronics</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Consumer Electronics">Request Change</button></td></tr>
+                    <tr><td>Demo Battery and Circuit Boards</td><td><span class="badge badge-completed">Approved</span></td><td><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="Demo Battery and Circuit Boards">Request Change</button></td></tr>
+                    <tr><td>Medical E-Waste</td><td><span class="badge badge-pending">Pending</span></td><td><span class="muted-action">Awaiting review</span></td></tr>
                 </tbody>
             </table>
         </div>

@@ -26,6 +26,33 @@
     font-family: "Inter", sans-serif;
 }
 
+/* Role-scoped copy of the Officer compact filter presentation. */
+.admin-app .compact-filter-card { margin-bottom: 20px; padding: 16px 20px; background: #fff; border: 1px solid #dfe8e2; border-radius: 16px; }
+.admin-app .compact-filter-form { display: flex; align-items: flex-end; gap: 14px; }
+.admin-app .compact-filter-grid { display: grid; flex: 1 1 auto; grid-template-columns: minmax(240px, 1.5fr) repeat(3, minmax(155px, 1fr)); gap: 14px; }
+.admin-app .filter-field { display: flex; min-width: 0; flex-direction: column; gap: 7px; }
+.admin-app .filter-field label { color: #34443a; font-size: .8125rem; font-weight: 650; }
+.admin-app .filter-field :is(input, select) { width: 100%; height: 44px; padding: 0 13px; color: #17211b; background: #fbfdfc; border: 1px solid #d8e2db; border-radius: 9px; font: inherit; font-size: .875rem; }
+.admin-app .filter-field :is(input, select):focus { outline: 0; background: #fff; border-color: #159342; box-shadow: 0 0 0 3px rgba(21,147,66,.12); }
+.admin-app .filter-actions { display: flex; flex: 0 0 auto; gap: 8px; }
+.admin-app .filter-actions button { min-width: 112px; min-height: 44px; padding: 8px 12px; border-radius: 9px; font: inherit; font-size: .8125rem; font-weight: 600; cursor: pointer; }
+.admin-app .apply-filter { color: #fff; background: #159342; border: 1px solid #159342; }
+.admin-app .clear-filter { color: #0a5a3e; background: #fff; border: 1px solid #dfe8e2; }
+.admin-app .filter-result { margin: -7px 0 16px; color: #66736b; font-size: .8125rem; }
+.admin-app .filtered-empty-state { margin-top: 16px; padding: 28px 18px; color: #66736b; background: #f8fbf9; border: 1px dashed #cbdad0; border-radius: 12px; text-align: center; }
+.admin-app .filtered-empty-state[hidden] { display: none; }
+.admin-app .light-filter { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; padding: 12px 14px; background: #fff; border: 1px solid #dfe8e2; border-radius: 14px; }
+.admin-app .quick-filters { display: flex; flex-wrap: wrap; gap: 7px; }
+.admin-app .quick-filter { min-height: 36px; padding: 7px 12px; color: #3f5046; background: #f7faf8; border: 1px solid #d8e2db; border-radius: 999px; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.admin-app .quick-filter[aria-pressed="true"] { color: #fff; background: #159342; border-color: #159342; box-shadow: 0 3px 8px rgba(21,147,66,.18); }
+.admin-app .light-filter-controls { display: flex; align-items: end; gap: 10px; margin-left: auto; }
+.admin-app .light-filter .filter-field input { width: min(290px, 32vw); }
+.admin-app .light-filter .filter-field select { min-width: 150px; }
+@media (max-width: 900px) { .admin-app .compact-filter-form { align-items: stretch; flex-direction: column; } .admin-app .compact-filter-grid { width: 100%; grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 700px) { .admin-app .light-filter { align-items: stretch; flex-direction: column; } .admin-app .light-filter-controls { width: 100%; margin-left: 0; } .admin-app .light-filter-controls .filter-field { flex: 1; } .admin-app .light-filter .filter-field :is(input,select) { width: 100%; min-width: 0; } }
+@media (max-width: 600px) { .admin-app .compact-filter-grid, .admin-app .filter-actions { grid-template-columns: 1fr; flex-direction: column; } .admin-app .filter-actions button { width: 100%; } .admin-app .quick-filter { min-height: 38px; } }
+@media (max-width: 520px) { .admin-app .light-filter-controls { align-items: stretch; flex-direction: column; } }
+
 
 .admin-app [hidden] {
     display: none !important;

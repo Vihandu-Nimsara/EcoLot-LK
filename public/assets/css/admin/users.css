@@ -2,6 +2,8 @@
     color: var(--admin-text);
 }
 
+.users-page .user-status.status-inactive { color: #7a2e0e; background: #fff4ed; border-color: #ffd6ae; }
+
 .form-section {
     margin-top: 24px;
 }

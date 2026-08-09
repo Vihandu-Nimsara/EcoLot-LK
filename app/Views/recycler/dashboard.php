@@ -88,7 +88,6 @@
                     <thead>
                         <tr>
                             <th>Category</th>
-                            <th>Can Handle High Risk</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -99,12 +98,8 @@
                             <td>Demo Battery and Circuit Boards</td>
 
                             <td>
-                                Yes
-                            </td>
-
-                            <td>
                                 <span class="status op">
-                                    OPERATIONAL
+                                    APPROVED
                                 </span>
                             </td>
                         </tr>
@@ -113,43 +108,13 @@
                             <td>Demo Consumer Electronics</td>
 
                             <td>
-                                Yes
-                            </td>
-
-                            <td>
                                 <span class="status op">
-                                    OPERATIONAL
+                                    APPROVED
                                 </span>
                             </td>
                         </tr>
 
-                        <tr>
-                            <td>DEMO-FIX Recycler Batteries</td>
-
-                            <td>
-                                Yes
-                            </td>
-
-                            <td>
-                                <span class="status op">
-                                    OPERATIONAL
-                                </span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>DEMO-FIX Recycler Electronics</td>
-
-                            <td>
-                                Yes
-                            </td>
-
-                            <td>
-                                <span class="status non-op">
-                                    NON-OPERATIONAL
-                                </span>
-                            </td>
-                        </tr>
+                        <tr><td>Medical E-Waste</td><td><span class="status non-op">PENDING</span></td></tr>
 
                     </tbody>
 

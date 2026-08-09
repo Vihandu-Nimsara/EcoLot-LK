@@ -14,6 +14,40 @@
     const notice = dialog?.querySelector("[data-dialog-notice]");
     let activeTrigger = null;
 
+    function initialiseFilters() {
+        document.querySelectorAll("[data-client-filter]").forEach((filterForm) => {
+            const rows = Array.from(document.querySelectorAll(filterForm.dataset.rows || ""));
+            const empty = document.querySelector(filterForm.dataset.empty || "");
+            const result = document.querySelector(filterForm.dataset.result || "");
+            const apply = () => {
+                const search = String(filterForm.elements.search?.value || "").trim().toLowerCase();
+                const quickFilters = Array.from(filterForm.querySelectorAll("[data-filter-name][aria-pressed='true']"));
+                let visible = 0;
+                rows.forEach((row) => {
+                    const textMatch = !search || String(row.dataset.search || "").toLowerCase().includes(search);
+                    const selectMatch = Array.from(filterForm.querySelectorAll("select[name]")).every((select) => !select.value || row.dataset[select.name] === select.value);
+                    const quickMatch = quickFilters.every((button) => !button.dataset.filterValue || row.dataset[button.dataset.filterName] === button.dataset.filterValue);
+                    const filtersMatch = selectMatch && quickMatch;
+                    row.hidden = !(textMatch && filtersMatch);
+                    if (!row.hidden) visible += 1;
+                });
+                if (empty) empty.hidden = visible !== 0;
+                if (result) result.textContent = `${visible} ${visible === 1 ? "record" : "records"} shown`;
+            };
+            filterForm.addEventListener("submit", (event) => { event.preventDefault(); apply(); });
+            filterForm.addEventListener("input", apply);
+            filterForm.addEventListener("change", apply);
+            filterForm.addEventListener("reset", () => requestAnimationFrame(apply));
+            filterForm.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-filter-name]");
+                if (!button) return;
+                filterForm.querySelectorAll(`[data-filter-name="${button.dataset.filterName}"]`).forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+                apply();
+            });
+            apply();
+        });
+    }
+
     const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
     }[character]));
@@ -38,14 +72,14 @@
             "reconsider-recycler": { eyebrow: "Verification decision", title: "Reconsider Application?", description: "Return this application to the review workflow.", confirm: "Reconsider", fields: `<p>Reconsider <strong>${name}</strong>? This frontend action will not change the record.</p>` },
             "account-status": { eyebrow: "Account status", title: `${action} Account?`, description: "Confirm the selected staff account status change.", confirm: action, danger: action.toLowerCase().includes("deactivate"), fields: `<p>${action} the account for <strong>${name}</strong>? No account data will be changed.</p>` },
             "create-staff": { eyebrow: "Staff account", title: "Create Staff User", description: "Create a Municipal Officer, Collector, or Administrator account preview.", confirm: "Review Staff Account", fields: field("Full Name", '<input autocomplete="name" required>') + field("Email", '<input type="email" autocomplete="email" required>') + field("Phone", '<input type="tel" autocomplete="tel" required>') + field("Role", '<select required><option value="">Select role</option><option>Municipal Officer</option><option>Collector</option><option>Administrator</option></select>') + field("Council", '<select required><option value="">Select council</option><option>Colombo Municipal Council</option><option>Kandy Municipal Council</option></select>') + field("Employee Number", '<input required>') },
-            "edit-staff": { eyebrow: "Staff account", title: "Edit Staff User", description: "Update the compact staff identity fields.", confirm: "Review Changes", fields: field("Full Name", `<input value="${name}" required>`) + field("Email", `<input type="email" value="${escapeHtml(trigger.dataset.email || "officer@ecolot.lk")}" required>`) + field("Phone", `<input type="tel" value="${escapeHtml(trigger.dataset.phone || "0771111111")}" required>`) + field("Role", '<select required><option>Municipal Officer</option><option>Collector</option><option>Administrator</option></select>') },
+            "edit-staff": { eyebrow: "Staff account", title: "Edit Staff User", description: "Update the compact staff identity fields.", confirm: "Review Changes", fields: field("Full Name", `<input value="${name}" required>`) + field("Email", `<input type="email" value="${escapeHtml(trigger.dataset.email || "")}" required>`) + field("Phone", `<input type="tel" value="${escapeHtml(trigger.dataset.phone || "")}" required>`) + field("Role", `<select required><option${trigger.dataset.role === "Municipal Officer" ? " selected" : ""}>Municipal Officer</option><option${trigger.dataset.role === "Collector" ? " selected" : ""}>Collector</option><option${trigger.dataset.role === "Administrator" ? " selected" : ""}>Administrator</option></select>`) },
             "review-licence": { eyebrow: "CEA licence review", title: "Review Licence", description: "Review EcoLot's record of this CEA-issued Scheduled Waste Management Licence.", confirm: "Update Verification Status", fields: `<div class="dialog-summary"><div><span>SWML Number</span><strong>${escapeHtml(trigger.dataset.swml)}</strong></div><div><span>Expiry Date</span><strong>${escapeHtml(trigger.dataset.expiry)}</strong></div><div><span>Current Status</span><strong>${escapeHtml(trigger.dataset.status)}</strong></div><div><span>Activities</span><strong>Recovery, Recycling, Storage</strong></div></div>` + field("Verification Decision", '<select required><option value="">Select decision</option><option>Verify Licence Record</option><option>Reject Licence Record</option><option>Mark Licence Expired</option></select>') + field("Review Reason / Note", '<textarea rows="3" required placeholder="Required for rejection; add a concise review note"></textarea>') + '<p class="dialog-context-note">The submitted PDF evidence is recorded for review. EcoLot does not issue or revoke the actual CEA licence.</p>' },
             "review-capability": { eyebrow: "Capability review", title: `Review ${name}`, description: "Review this waste-handling capability independently from the final recycler decision.", confirm: "Update Capability Review", fields: `<div class="dialog-summary"><div><span>Category</span><strong>${name}</strong></div><div><span>Current Status</span><strong>${escapeHtml(trigger.dataset.status)}</strong></div></div>` + (trigger.dataset.status === "Pending" ? field("Decision", '<select required><option value="">Select decision</option><option>Approve</option><option>Reject</option></select>') : trigger.dataset.status === "Approved" ? field("Decision", '<select required><option value="">Select decision</option><option>Keep Approved</option><option>Mark Inactive</option></select>') : field("Decision", '<select required><option value="">Select decision</option><option>Keep Rejected</option><option>Reconsider</option></select>')) + field("Reason / Review Note", '<textarea rows="3" required placeholder="Add a short review reason"></textarea>') },
             "create-category": { eyebrow: "Categories & items", title: "Create Category", description: "Add a compact E-Waste category definition.", confirm: "Review Category", fields: field("Category Name", '<input required placeholder="Enter category name">') + field("Description", '<textarea rows="4" required placeholder="Enter category description"></textarea>') },
             "create-item": { eyebrow: "Categories & items", title: "Create E-Waste Item", description: "Add an item and its default collection guidance.", confirm: "Review Item", fields: field("Category", '<select required><option value="">Select category</option><option>Automobile E-Waste</option><option>Demo Consumer Electronics</option><option>Domestic E-Waste</option><option>Industrial E-Waste</option><option>Medical E-Waste</option><option>Office E-Waste</option></select>') + field("Item Name", '<input required placeholder="Enter item name">') + field("Collection Status", '<select required><option>Accepted</option><option>Review Required</option><option>Do Not Collect</option></select>') + field("Default Risk Level", '<select required><option>Low</option><option>Medium</option><option>High</option></select>') },
             "create-rule": { eyebrow: "Risk rules", title: "Create Risk Rule", description: "Define compact collection guidance for future backend integration.", confirm: "Create Rule", fields: field("Category", '<select required><option value="">Select category</option><option>Battery and Circuit Boards</option><option>Medical E-Waste</option><option>Do Not Collect</option></select>') + field("Condition Type", '<select required><option value="">Select condition</option><option>Damaged</option><option>Leaking</option><option>Contains controlled material</option></select>') + field("Risk Level", '<select><option>Low</option><option>Medium</option><option>High</option></select>') + field("Action Note", '<textarea rows="3" required placeholder="Describe collection guidance"></textarea>') },
             "view-rule": { eyebrow: "Risk rule details", title: "View Risk Rule", description: "A compact summary of this collection rule.", confirm: "Close", closeOnly: true, fields: `<div class="dialog-summary"><div><span>Rule</span><strong>#${escapeHtml(trigger.dataset.ruleId)}</strong></div><div><span>Category</span><strong>${name}</strong></div><div><span>Risk</span><strong>${escapeHtml(trigger.dataset.risk || "High")}</strong></div><div><span>Status</span><strong>${escapeHtml(trigger.dataset.status || "Active")}</strong></div></div><p>${escapeHtml(trigger.dataset.note || "Collection guidance")}</p>` },
-            "edit-rule": { eyebrow: "Risk rules", title: "Edit Risk Rule", description: "Update the compact rule fields without leaving the table.", confirm: "Review Changes", fields: field("Category", `<input value="${name}" required>`) + field("Condition Type", `<input value="${escapeHtml(trigger.dataset.condition)}" required>`) + field("Risk Level", '<select><option>High</option><option>Medium</option><option>Low</option></select>') + field("Action Note", `<textarea rows="3" required>${escapeHtml(trigger.dataset.note)}</textarea>`) },
+            "edit-rule": { eyebrow: "Risk rules", title: "Edit Risk Rule", description: "Update the compact rule fields without leaving the table.", confirm: "Review Changes", fields: field("Category", `<input value="${name}" required>`) + field("Condition Type", `<input value="${escapeHtml(trigger.dataset.condition)}" required>`) + field("Risk Level", `<select><option${trigger.dataset.risk === "HIGH" ? " selected" : ""}>High</option><option${trigger.dataset.risk === "MEDIUM" ? " selected" : ""}>Medium</option><option${trigger.dataset.risk === "LOW" ? " selected" : ""}>Low</option></select>`) + field("Action Note", `<textarea rows="3" required>${escapeHtml(trigger.dataset.note)}</textarea>`) },
             "rule-status": { eyebrow: "Confirmation", title: `${action} Rule?`, description: "Rules are retained for history when their status changes.", confirm: action, danger: action === "Deactivate", fields: `<p>${action} risk rule <strong>#${escapeHtml(trigger.dataset.ruleId)}</strong>? No data will be persisted.</p>` },
             "category-status": { eyebrow: "Category status", title: "Update Category Status?", description: "Confirm the selected catalogue status.", confirm: action, danger: action === "Deactivate", fields: `<p>${action} <strong>${name}</strong>? Existing catalogue history will remain represented.</p>` }
         };
@@ -86,7 +120,17 @@
 
     document.addEventListener("click", (event) => {
         const trigger = event.target.closest("[data-admin-dialog]");
-        if (trigger) openDialog(trigger);
+        if (trigger) {
+            if (trigger.matches("[data-status-dialog]")) {
+                const selected = trigger.closest(".status-form")?.querySelector("select")?.value;
+                trigger.dataset.action = selected === "ACTIVE" ? "Activate" : "Deactivate";
+            }
+            if (trigger.dataset.adminDialog === "category-status") {
+                const selected = trigger.closest("form")?.querySelector('[name="status"]')?.value;
+                trigger.dataset.action = selected === "ACTIVE" ? "Activate" : "Deactivate";
+            }
+            openDialog(trigger);
+        }
         if (event.target.closest("[data-dialog-close]") || event.target === dialog) closeDialog();
         const demoControl = event.target.closest("[data-demo-message]");
         if (demoControl) {
@@ -127,4 +171,5 @@
             pageNotice.focus();
         }
     }));
+    initialiseFilters();
 }());

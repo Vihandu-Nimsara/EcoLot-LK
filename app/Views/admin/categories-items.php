@@ -300,6 +300,8 @@ $items = [
 
     <section class="data-card categories-card">
 
+        <form class="light-filter" data-client-filter data-rows="[data-category-row]" data-empty="[data-category-filter-empty]" data-result="[data-category-filter-result]"><div class="quick-filters" role="group" aria-label="Filter categories by status"><button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="ACTIVE">Active</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="INACTIVE">Inactive</button></div><div class="light-filter-controls"><div class="filter-field"><label for="category-search">Search categories</label><input id="category-search" name="search" type="search" placeholder="Category name"></div></div></form><p class="filter-result" data-category-filter-result role="status" aria-live="polite"></p>
+
 
         <div class="data-card-header">
 
@@ -352,7 +354,7 @@ $items = [
                     <?php foreach ($categories as $category): ?>
 
 
-                        <tr>
+                        <tr data-category-row data-search="<?= htmlspecialchars($category['name']) ?>" data-status="<?= htmlspecialchars($category['status']) ?>">
 
 
                             <td data-label="Category ID">
@@ -473,6 +475,7 @@ $items = [
             </table>
 
         </div>
+        <div class="filtered-empty-state" data-category-filter-empty hidden>No categories match the current search and status.</div>
 
 
     </section>
@@ -501,6 +504,8 @@ $items = [
             </div>
 
         </div>
+
+        <form class="light-filter" data-client-filter data-rows="[data-item-row]" data-empty="[data-item-filter-empty]" data-result="[data-item-filter-result]"><div class="light-filter-controls"><div class="filter-field"><label for="item-search">Search items</label><input id="item-search" name="search" type="search" placeholder="Item name"></div><div class="filter-field"><label for="item-category">Category</label><select id="item-category" name="category"><option value="">All Categories</option><?php foreach ($categories as $filterCategory): ?><option value="<?= htmlspecialchars($filterCategory['name']) ?>"><?= htmlspecialchars($filterCategory['name']) ?></option><?php endforeach; ?></select></div></div></form><p class="filter-result" data-item-filter-result role="status" aria-live="polite"></p>
 
 
 
@@ -581,7 +586,7 @@ $items = [
                         ?>
 
 
-                        <tr>
+                        <tr data-item-row data-search="<?= htmlspecialchars($item['item']) ?>" data-category="<?= htmlspecialchars($item['category']) ?>">
 
 
                             <td data-label="Item ID">
@@ -644,6 +649,7 @@ $items = [
 
 
         </div>
+        <div class="filtered-empty-state" data-item-filter-empty hidden>No items match the current search and category.</div>
 
 
     </section>

@@ -14,8 +14,9 @@ $bids = [
     <section class="bid-card">
         <div class="bid-header">
             <div><h2>My Bids</h2><p>Track every bid submitted by your company.</p></div>
-            <div class="bid-filter"><label for="my-bids-filter">Bid period</label><select id="my-bids-filter"><option>All Bids</option><option>July 2026 Bids</option></select></div>
         </div>
+        <form class="light-filter" data-client-filter data-rows="[data-bid-row]" data-empty="[data-bids-filter-empty]" data-result="[data-bids-filter-result]"><div class="quick-filters" role="group" aria-label="Filter bids by status"><button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Submitted">Submitted</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Won">Won</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Lost">Lost</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Withdrawn">Withdrawn</button></div><div class="light-filter-controls"><div class="filter-field"><label for="my-bids-search">Search bids</label><input id="my-bids-search" name="search" type="search" placeholder="E-Lot code"></div></div></form>
+        <p class="filter-result" data-bids-filter-result role="status" aria-live="polite"></p>
         <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
         <?php if ($bids === []): ?>
             <div class="empty-state">No bids are available.</div>
@@ -25,15 +26,16 @@ $bids = [
                     <thead><tr><th>Bid ID</th><th>E-Lot Code</th><th>E-Lot Title</th><th>Council</th><th>Category</th><th>Bid Amount</th><th>Bid Status</th><th>E-Lot Status</th><th>Bidding Period</th><th>Submitted At</th><th>Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($bids as $bid): ?>
-                        <tr>
-                            <td>#<?= htmlspecialchars((string) $bid['id']) ?></td><td><?= htmlspecialchars($bid['code']) ?></td><td><?= htmlspecialchars($bid['title']) ?></td><td><?= htmlspecialchars($bid['council']) ?></td><td><?= htmlspecialchars($bid['category']) ?></td><td class="money-cell">Rs. <?= htmlspecialchars($bid['amount']) ?></td>
-                            <td><span class="badge <?= htmlspecialchars($bid['bid_class']) ?>"><?= htmlspecialchars($bid['bid_status']) ?></span></td><td><span class="badge <?= htmlspecialchars($bid['lot_class']) ?>"><?= htmlspecialchars($bid['lot_status']) ?></span></td><td class="period-cell"><?= htmlspecialchars($bid['period']) ?></td><td class="date-cell"><?= htmlspecialchars($bid['submitted']) ?></td>
-                            <td><div class="row-actions"><button class="btn-action" type="button" data-recycler-dialog="view-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-bid-amount="<?= htmlspecialchars($bid['amount']) ?>" data-bid-status="<?= htmlspecialchars($bid['bid_status']) ?>" data-submitted="<?= htmlspecialchars($bid['submitted']) ?>">View Details</button><?php if ($bid['editable']): ?><button class="btn-action" type="button" data-recycler-dialog="edit-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-bid-amount="<?= htmlspecialchars($bid['amount']) ?>">Edit Bid</button><button class="btn-action" type="button" data-recycler-dialog="withdraw-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>">Withdraw</button><?php endif; ?></div></td>
+                        <tr data-bid-row data-search="<?= htmlspecialchars($bid['code']) ?>" data-status="<?= htmlspecialchars($bid['bid_status']) ?>">
+                            <td data-label="Bid ID">#<?= htmlspecialchars((string) $bid['id']) ?></td><td data-label="Lot Code"><?= htmlspecialchars($bid['code']) ?></td><td data-label="Title"><?= htmlspecialchars($bid['title']) ?></td><td data-label="Council"><?= htmlspecialchars($bid['council']) ?></td><td data-label="Category"><?= htmlspecialchars($bid['category']) ?></td><td data-label="Amount" class="money-cell">Rs. <?= htmlspecialchars($bid['amount']) ?></td>
+                            <td data-label="Bid Status"><span class="badge <?= htmlspecialchars($bid['bid_class']) ?>"><?= htmlspecialchars($bid['bid_status']) ?></span></td><td data-label="E-Lot Status"><span class="badge <?= htmlspecialchars($bid['lot_class']) ?>"><?= htmlspecialchars($bid['lot_status']) ?></span></td><td data-label="Bidding Period" class="period-cell"><?= htmlspecialchars($bid['period']) ?></td><td data-label="Submitted" class="date-cell"><?= htmlspecialchars($bid['submitted']) ?></td>
+                            <td data-label="Actions"><div class="row-actions"><button class="btn-action" type="button" data-recycler-dialog="view-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-bid-amount="<?= htmlspecialchars($bid['amount']) ?>" data-bid-status="<?= htmlspecialchars($bid['bid_status']) ?>" data-submitted="<?= htmlspecialchars($bid['submitted']) ?>" data-deadline="<?= htmlspecialchars(explode(' → ', $bid['period'])[1] ?? '') ?>" data-remarks="Collection and compliant processing included.">View Bid</button><?php if ($bid['editable']): ?><button class="btn-action" type="button" data-recycler-dialog="edit-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-bid-amount="<?= htmlspecialchars($bid['amount']) ?>" data-remarks="Collection and compliant processing included.">Edit Bid</button><button class="btn-action" type="button" data-recycler-dialog="withdraw-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>">Withdraw Bid</button><?php endif; ?></div></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+            <div class="filtered-empty-state" data-bids-filter-empty hidden>No bids match the selected filters.</div>
         <?php endif; ?>
     </section>
 </section>
