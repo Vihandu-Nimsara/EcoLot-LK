@@ -61,9 +61,35 @@
         return `<label class="dialog-field"><span>${label}</span>${control}</label>`;
     }
 
+    // Bid context helpers
+    const parseBid = (value) => {
+        const normalised = String(value ?? "").replace(/,/g, "").trim();
+        if (normalised === "") return null;
+        const parsed = Number(normalised);
+        return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    const formatBid = (value) => {
+        const amount = parseBid(value);
+        return amount === null ? "No bids yet" : `Rs. ${amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+    };
+
+    function bidContext(highestBid, totalBids, currentBid, position) {
+        const items = [
+            `<div><span>Current Highest Bid</span><strong>${formatBid(highestBid)}</strong></div>`,
+            `<div><span>Total Bids</span><strong>${escapeHtml(totalBids || "0")}</strong></div>`
+        ];
+        if (currentBid !== undefined) items.push(`<div><span>Your Current Bid</span><strong>${formatBid(currentBid)}</strong></div>`);
+        if (position) items.push(`<div><span>Position</span><strong class="dialog-position ${position.toLowerCase()}">${escapeHtml(position.charAt(0) + position.slice(1).toLowerCase())}</strong></div>`);
+        return `<div class="dialog-summary bid-context-summary">${items.join("")}</div>`;
+    }
+
     function dialogConfig(type, trigger) {
         const code = escapeHtml(trigger.dataset.elotCode || "Demo E-Lot");
         const amount = escapeHtml(trigger.dataset.bidAmount || "");
+        const highestBid = trigger.dataset.highestBid === "" || trigger.dataset.highestBid === undefined ? null : trigger.dataset.highestBid;
+        const totalBids = trigger.dataset.totalBids || "0";
+        const position = trigger.dataset.bidPosition || "";
         const status = escapeHtml(trigger.dataset.bidStatus || "Submitted");
         const title = escapeHtml(trigger.dataset.title || "Not available");
         const category = escapeHtml(trigger.dataset.category || "Not available");
@@ -74,9 +100,9 @@
 
         const configs = {
             "logout": { eyebrow: "Session", title: "Log Out?", description: "Confirm that you want to leave the Recycler workspace.", confirm: "Log Out", fields: "<p>Logout is a frontend-only representation until authentication is connected.</p>" },
-            "place-bid": { eyebrow: "Eligible E-Lot", title: "Place Bid", description: "Submit an offer while keeping the E-Lot context visible.", confirm: "Submit Bid", fields: field("E-Lot Code", `<input name="elot_code" value="${code}" readonly>`) + field("Bid Amount (LKR)", `<input name="bid_amount" type="number" min="1" step="0.01" required placeholder="Enter bid amount">`) + field("Remarks (optional)", `<textarea name="remarks" rows="4" placeholder="Add relevant bid remarks"></textarea>`) },
-            "view-bid": { eyebrow: "Bid details", title: "View Bid", description: "A compact summary of the submitted bid.", confirm: "Close", closeOnly: true, fields: `<div class="dialog-summary"><div><span>E-Lot</span><strong>${code}</strong></div><div><span>Title</span><strong>${title}</strong></div><div><span>Category</span><strong>${category}</strong></div><div><span>Amount</span><strong>Rs. ${amount}</strong></div><div><span>Status</span><strong>${status}</strong></div><div><span>Submitted</span><strong>${escapeHtml(trigger.dataset.submitted || "Not available")}</strong></div><div><span>Bidding Deadline</span><strong>${escapeHtml(trigger.dataset.deadline || "Not available")}</strong></div><div><span>Remarks</span><strong>${escapeHtml(trigger.dataset.remarks || "No remarks")}</strong></div></div>` },
-            "edit-bid": { eyebrow: "Open bid", title: "Edit Bid", description: `${code} · ${title} · ${category}`, confirm: "Save Bid Changes", fields: field("E-Lot Code", `<input value="${code}" readonly>`) + field("Bid Amount (LKR)", `<input type="number" min="1" step="0.01" value="${amount.replace(/,/g, "")}" required>`) + field("Remarks (optional)", `<textarea rows="3" placeholder="Update bid remarks">${escapeHtml(trigger.dataset.remarks || "")}</textarea>`) },
+            "place-bid": { eyebrow: "Eligible E-Lot", title: "Place Bid", description: "Submit an offer while keeping the E-Lot context visible.", confirm: "Place Bid", fields: field("E-Lot", `<input name="elot_code" value="${code}" readonly>`) + bidContext(highestBid, totalBids) + field("Your Bid", `<input name="bid_amount" type="number" min="1" step="0.01" required placeholder="Enter bid amount" data-bid-input data-highest-bid="${highestBid ?? ""}" data-validation-mode="place"><small class="dialog-helper">${highestBid === null ? "Enter your bid amount." : "Enter an amount higher than the current highest bid."}</small><small class="dialog-field-error" data-bid-error hidden></small>`) + field("Remarks", `<textarea name="remarks" rows="4" placeholder="Add relevant bid remarks"></textarea>`) },
+            "view-bid": { eyebrow: "Bid details", title: "View Bid", description: "Your bid and the anonymous bidding context.", confirm: "Close", closeOnly: true, fields: `<div class="dialog-summary"><div><span>E-Lot</span><strong>${code}</strong></div><div><span>Your Bid</span><strong>${formatBid(amount)}</strong></div><div><span>Current Highest Bid</span><strong>${formatBid(highestBid)}</strong></div><div><span>Position</span><strong>${position ? escapeHtml(position.charAt(0) + position.slice(1).toLowerCase()) : "—"}</strong></div><div><span>Bid Status</span><strong>${status}</strong></div><div><span>Submitted Date</span><strong>${escapeHtml(trigger.dataset.submitted || "Not available")}</strong></div><div><span>Bidding Deadline</span><strong>${escapeHtml(trigger.dataset.deadline || "Not available")}</strong></div><div><span>Remarks</span><strong>${escapeHtml(trigger.dataset.remarks || "No remarks")}</strong></div></div>` },
+            "edit-bid": { eyebrow: "Open bid", title: "Edit Bid", description: `${code} · ${title} · ${category}`, confirm: "Save Bid Changes", fields: field("E-Lot Code", `<input value="${code}" readonly>`) + bidContext(highestBid, totalBids, amount, position) + field("New Bid Amount", `<input name="bid_amount" type="number" min="1" step="0.01" value="${amount.replace(/,/g, "")}" required data-bid-input data-highest-bid="${highestBid ?? ""}" data-current-bid="${amount.replace(/,/g, "")}" data-position="${escapeHtml(position)}" data-validation-mode="edit"><small class="dialog-helper">${position === "LEADING" ? "Keep your current leading bid unchanged, or enter a higher amount." : "Enter an amount higher than the current highest bid."}</small><small class="dialog-field-error" data-bid-error hidden></small>`) + field("Remarks", `<textarea rows="3" placeholder="Update bid remarks">${escapeHtml(trigger.dataset.remarks || "")}</textarea>`) },
             "withdraw-bid": { eyebrow: "Confirmation", title: "Withdraw Bid?", description: "This action is available only before the bidding deadline.", confirm: "Withdraw Bid", danger: true, fields: `<p>Withdraw the bid for <strong>${code}</strong>? This frontend demo will not change the bid record.</p>` },
             "edit-profile": { eyebrow: "My Profile", title: "Edit Contact Details", description: "Update the basic contact information shown on your profile.", confirm: "Request Change", fields: field("Contact Person", '<input value="Anjana Silva" required>') + field("Business Email", '<input type="email" value="anjana@greencycle.lk" required>') + field("Phone", '<input value="077 234 5678" required>') + field("Business Address", '<textarea rows="3" required>45 Green Park, Colombo 05</textarea>') + field("District", '<select required><option selected>Colombo</option><option>Gampaha</option><option>Kalutara</option><option>Kandy</option><option>Galle</option></select>') },
             "licence-request": { eyebrow: "Compliance request", title: "Submit Licence Update", description: "New licence information requires Administrator verification and does not overwrite the current verified record.", confirm: "Submit Update for Review", fields: field("SWML Number", '<input value="SWML/2026/001" required>') + field("New Expiry Date", '<input type="date" value="2027-06-30" required>') + field("New Licence PDF", '<input type="file" accept="application/pdf,.pdf" required>') + '<p class="dialog-context-note">Upload the renewed CEA-issued SWML record. This frontend preview does not store the file.</p>' },
@@ -119,6 +145,28 @@
         dialog.querySelector("input:not([readonly]), select, textarea, [data-dialog-close]")?.focus();
     }
 
+    // Bid validation
+    function validateBidInput(input) {
+        const error = input.closest(".dialog-field")?.querySelector("[data-bid-error]");
+        const value = parseBid(input.value);
+        const highest = parseBid(input.dataset.highestBid);
+        const current = parseBid(input.dataset.currentBid);
+        const isUnchangedLeadingBid = input.dataset.validationMode === "edit"
+            && input.dataset.position === "LEADING"
+            && value === current;
+        let message = "";
+
+        if (value !== null && highest !== null && value <= highest && !isUnchangedLeadingBid) {
+            message = `Your bid must be higher than the current highest bid of ${formatBid(highest)}.`;
+        }
+        input.setCustomValidity(message);
+        if (error) {
+            error.textContent = message;
+            error.hidden = message === "";
+        }
+        return message === "";
+    }
+
     navToggle?.addEventListener("click", () => setNavigation(!body.classList.contains("nav-open")));
     navClose?.addEventListener("click", () => setNavigation(false));
 
@@ -135,6 +183,10 @@
                 pageNotice.focus();
             }
         }
+    });
+
+    document.addEventListener("input", (event) => {
+        if (event.target.matches("[data-bid-input]")) validateBidInput(event.target);
     });
 
     document.addEventListener("keydown", (event) => {
@@ -157,6 +209,11 @@
         event.preventDefault();
         if (dialogConfirm.dataset.closeOnly === "true") {
             closeDialog();
+            return;
+        }
+        const bidInput = dialogForm.querySelector("[data-bid-input]");
+        if (bidInput && !validateBidInput(bidInput)) {
+            bidInput.focus();
             return;
         }
         if (!dialogForm.reportValidity()) return;
