@@ -62,12 +62,12 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
             </div>
 
             <div class="hero-media">
-                <div class="image-placeholder image-placeholder-hero" role="img" aria-label="Placeholder for a household e-waste collection photograph">
-                    <div class="placeholder-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z"/><circle cx="9" cy="9" r="1.7"/><path d="m5 17 4.3-4.3 2.8 2.8 2.1-2.1L19 18"/></svg>
-                    </div>
-                    <strong>Municipal collection image</strong>
-                    <span>Household handover to a collector · Landscape 4:3</span>
+                <div class="image-placeholder image-placeholder-hero">
+                    <img
+                        src="<?= $safeBase ?>/assets/images/landing/municipal-collection.jpeg"
+                        alt="Household e-waste handover during a municipal collection"
+                        class="landing-photo"
+                    >
                 </div>
 
                 <div class="pickup-card">
@@ -121,7 +121,7 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
             <div class="audience-layout">
                 <div class="audience-copy">
                     <p class="eyebrow">One coordinated network</p>
-                    <h2>Every role.<br>One shared record.</h2>
+                    <h2>One coordinated network.<br>One shared record.</h2>
                     <p>Purpose-built workspaces keep households, councils, collectors, and recyclers connected.</p>
                 </div>
 
@@ -149,12 +149,12 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
 
         <section class="story section">
             <div class="story-card">
-                <div class="image-placeholder image-placeholder-story" role="img" aria-label="Placeholder for a community electronics collection photograph">
-                    <div class="placeholder-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z"/><circle cx="9" cy="9" r="1.7"/><path d="m5 17 4.3-4.3 2.8 2.8 2.1-2.1L19 18"/></svg>
-                    </div>
-                    <strong>E-Lot handover image</strong>
-                    <span>Council storage or recycler handover · Landscape 16:10</span>
+                <div class="image-placeholder image-placeholder-story">
+                    <img
+                        src="<?= $safeBase ?>/assets/images/landing/elot-handover.png"
+                        alt="E-waste E-Lot handover for authorized recycling"
+                        class="landing-photo"
+                    >
                 </div>
 
                 <div class="story-copy">
