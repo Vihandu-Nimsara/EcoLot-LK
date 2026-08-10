@@ -1,5 +1,9 @@
 <header class="top-header">
 
+    <button class="mobile-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="admin-sidebar" data-nav-toggle>
+        <span aria-hidden="true">☰</span>
+    </button>
+
     <div class="header-left">
         <h1>Admin Workspace</h1>
         <p>Manage users, recycler verification, system configuration, and reports.</p>

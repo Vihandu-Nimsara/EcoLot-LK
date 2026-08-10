@@ -18,6 +18,15 @@ class AdminController extends Controller
         $this->view('admin/recycler-verification', ['currentPage' => 'recycler-verification']);
     }
 
+    public function recyclerDetails(string $id): void
+    {
+        $this->view('admin/recycler-details', [
+            'currentPage' => 'recycler-verification',
+            'pageStylePage' => 'recycler-details',
+            'recyclerId' => $id,
+        ]);
+    }
+
     public function categoriesAndItems(): void
     {
         $this->view('admin/categories-items', ['currentPage' => 'categories-items']);

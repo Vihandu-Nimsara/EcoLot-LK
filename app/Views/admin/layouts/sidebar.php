@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" id="admin-sidebar" aria-label="Admin navigation">
     <?php $baseUrl = htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8'); ?>
 
     <div class="sidebar-logo">
@@ -36,9 +36,9 @@
 
 <div class="sidebar-bottom">
 
-    <a href="#" class="logout-link">
+    <button type="button" class="logout-link" data-admin-dialog="logout">
         Logout
-    </a>
+    </button>
 
 </div>
 

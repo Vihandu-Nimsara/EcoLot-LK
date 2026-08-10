@@ -253,6 +253,10 @@
     background: #FEF3C7;
 }
 
+.action-risk {
+    background: #FEE2E2;
+}
+
 
 .quick-action-content {
     display: flex;

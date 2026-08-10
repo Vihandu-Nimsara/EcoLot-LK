@@ -1,5 +1,9 @@
 <header class="top-header">
 
+    <button class="mobile-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="recycler-sidebar" data-nav-toggle>
+        <span aria-hidden="true">☰</span>
+    </button>
+
     <div class="header-left">
         <h1>Recycler Workspace</h1>
         <p>Review eligible E-Lots, manage bids, and track awarded recycling work.</p>

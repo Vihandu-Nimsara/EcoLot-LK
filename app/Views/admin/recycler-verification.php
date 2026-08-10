@@ -4,7 +4,7 @@
    CURRENT FILTER
 ========================================================= */
 
-$currentFilter = strtoupper($_GET['status'] ?? 'PENDING');
+$currentFilter = strtoupper($_GET['status'] ?? 'ALL');
 
 $allowedFilters = [
     'PENDING',
@@ -48,7 +48,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'anjana@greencycle.lk',
             'phone' => '077 234 5678',
             'district' => 'Colombo',
-            'license_no' => 'CEA-RC-2026-001',
+            'license_no' => 'SWML/2026/001',
             'license_expiry' => '2027-06-30',
             'submitted_at' => '2026-07-02 09:30:00',
             'status' => 'VERIFIED'
@@ -61,7 +61,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'nimal@ewasterecovery.lk',
             'phone' => '071 456 7890',
             'district' => 'Colombo',
-            'license_no' => 'CEA-RC-2026-002',
+            'license_no' => 'SWML/2026/002',
             'license_expiry' => '2027-04-18',
             'submitted_at' => '2026-07-03 11:15:00',
             'status' => 'VERIFIED'
@@ -74,7 +74,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'kavindi@safedispose.lk',
             'phone' => '076 876 5432',
             'district' => 'Gampaha',
-            'license_no' => 'CEA-RC-2026-003',
+            'license_no' => 'SWML/2026/003',
             'license_expiry' => '2027-03-22',
             'submitted_at' => '2026-07-04 14:20:00',
             'status' => 'VERIFIED'
@@ -87,7 +87,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'tharindu@ecorecyclers.lk',
             'phone' => '075 345 9087',
             'district' => 'Kalutara',
-            'license_no' => 'CEA-RC-2026-004',
+            'license_no' => 'SWML/2026/004',
             'license_expiry' => '2027-08-15',
             'submitted_at' => '2026-07-05 10:45:00',
             'status' => 'VERIFIED'
@@ -100,7 +100,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'isuru@ceylontechrecyclers.lk',
             'phone' => '078 112 3344',
             'district' => 'Kandy',
-            'license_no' => 'CEA-RC-2026-005',
+            'license_no' => 'SWML/2026/005',
             'license_expiry' => '2027-02-10',
             'submitted_at' => '2026-07-09 08:55:00',
             'status' => 'PENDING'
@@ -113,7 +113,7 @@ if (empty($allRecyclerProfiles)) {
             'email' => 'malith@urbaneco.lk',
             'phone' => '070 998 7766',
             'district' => 'Galle',
-            'license_no' => 'CEA-RC-2026-006',
+            'license_no' => 'SWML/2026/006',
             'license_expiry' => '2026-01-12',
             'submitted_at' => '2026-07-06 16:10:00',
             'status' => 'REJECTED'
@@ -128,21 +128,6 @@ if (empty($allRecyclerProfiles)) {
 ========================================================= */
 
 $filteredRecyclerProfiles = $allRecyclerProfiles;
-
-if ($currentFilter !== 'ALL') {
-
-    $filteredRecyclerProfiles = array_filter(
-        $allRecyclerProfiles,
-        function ($profile) use ($currentFilter) {
-
-            $profileStatus = strtoupper(
-                $profile['status'] ?? 'PENDING'
-            );
-
-            return $profileStatus === $currentFilter;
-        }
-    );
-}
 
 
 /* =========================================================
@@ -196,6 +181,8 @@ $totalCount = count($allRecyclerProfiles);
 
     </div>
 
+    <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
+
 
 
     <!-- =====================================================
@@ -209,66 +196,43 @@ $totalCount = count($allRecyclerProfiles);
              FILTER TABS
         ================================================== -->
 
-        <div class="verification-filters">
-
-            <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=PENDING"
-                class="filter-tab <?= $currentFilter === 'PENDING' ? 'active' : '' ?>"
-            >
-                Pending (<?= $pendingCount ?>)
-            </a>
-
-
-            <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=VERIFIED"
-                class="filter-tab <?= $currentFilter === 'VERIFIED' ? 'active' : '' ?>"
-            >
-                Verified (<?= $verifiedCount ?>)
-            </a>
-
-
-            <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=REJECTED"
-                class="filter-tab <?= $currentFilter === 'REJECTED' ? 'active' : '' ?>"
-            >
-                Rejected (<?= $rejectedCount ?>)
-            </a>
-
-
-            <a
-                href="/EcoLot-LK/public/admin/recycler-verification?status=ALL"
-                class="filter-tab <?= $currentFilter === 'ALL' ? 'active' : '' ?>"
-            >
-                All (<?= $totalCount ?>)
-            </a>
-
-        </div>
-
-
-        <div class="current-filter-text">
-
-            Current filter:
-
-            <span>
-                <?= htmlspecialchars(
-                    ucwords(
-                        strtolower($currentFilter)
-                    )
-                ) ?>
-            </span>
-
-        </div>
+        <form class="light-filter" data-client-filter data-rows="[data-recycler-row]" data-empty="[data-recycler-filter-empty]" data-result="[data-recycler-filter-result]">
+            <div class="quick-filters" role="group" aria-label="Filter recyclers by verification status"><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'ALL' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="">All (<?= $totalCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'PENDING' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="PENDING">Pending (<?= $pendingCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'VERIFIED' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="VERIFIED">Verified (<?= $verifiedCount ?>)</button><button class="quick-filter" type="button" aria-pressed="<?= $currentFilter === 'REJECTED' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="REJECTED">Rejected (<?= $rejectedCount ?>)</button></div>
+            <div class="light-filter-controls"><div class="filter-field"><label for="recycler-search">Search recyclers</label><input id="recycler-search" name="search" type="search" placeholder="Company, contact or SWML number"></div></div>
+        </form>
+        <p class="filter-result" data-recycler-filter-result role="status" aria-live="polite"></p>
 
 
 
         <!-- =================================================
-             RECYCLER PROFILE CARDS
+             RECYCLER VERIFICATION TABLE
         ================================================== -->
 
         <?php if (!empty($filteredRecyclerProfiles)): ?>
 
 
-            <div class="profiles-list">
+            <div class="report-table-wrapper recycler-verification-table-wrapper">
+
+
+                <table class="report-table recycler-verification-table">
+
+
+                    <thead>
+
+                        <tr>
+                            <th scope="col">Company</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Licence</th>
+                            <th scope="col">District</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
 
 
                 <?php foreach ($filteredRecyclerProfiles as $profile): ?>
@@ -355,208 +319,83 @@ $totalCount = count($allRecyclerProfiles);
                             str_replace('_', ' ', $status)
                         )
                     );
+                    if ($status === 'PENDING') {
+                        $statusLabel = 'Pending Verification';
+                    }
 
                     ?>
 
 
-                    <article class="profile-card">
+                    <?php $licenceFilter = $licenseExpiry < '2026-08-09' ? 'EXPIRED' : ($status === 'PENDING' ? 'PENDING' : 'VALID'); ?>
+                    <tr data-recycler-row data-search="<?= htmlspecialchars($companyName.' '.$contactPerson.' '.$licenseNo) ?>" data-status="<?= htmlspecialchars($status) ?>" data-licence="<?= $licenceFilter ?>">
 
+                        <td>
+                            <strong class="table-primary-text">
+                                <?= htmlspecialchars($companyName) ?>
+                            </strong>
+                            <span class="table-secondary-text">
+                                Recycler ID: #<?= htmlspecialchars((string)$recyclerId) ?>
+                            </span>
+                        </td>
 
-                        <!-- ===============================
-                             PROFILE TOP
-                        ================================ -->
+                        <td>
+                            <span class="table-contact-name">
+                                <?= htmlspecialchars($contactPerson) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                <?= htmlspecialchars($email) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                <?= htmlspecialchars($phone) ?>
+                            </span>
+                        </td>
 
-                        <div class="profile-card-top">
+                        <td>
+                            <span class="table-primary-text">
+                                <?= htmlspecialchars($licenseNo) ?>
+                            </span>
+                            <span class="table-secondary-text">
+                                Expires: <?= htmlspecialchars($licenseExpiry) ?>
+                            </span>
+                        </td>
 
-                            <div class="profile-main-info">
+                        <td><?= htmlspecialchars($district) ?></td>
 
-                                <h3>
-                                    <?= htmlspecialchars($companyName) ?>
-                                </h3>
+                        <td><?= htmlspecialchars($submittedAt) ?></td>
 
-                                <p>
+                        <td>
+                            <span class="status-badge <?= $statusClass ?>">
+                                <?= htmlspecialchars($statusLabel) ?>
+                            </span>
+                        </td>
 
-                                    Recycler ID:
+                        <td>
+                            <div class="table-actions">
 
-                                    <strong>
-                                        #<?= htmlspecialchars((string)$recyclerId) ?>
-                                    </strong>
-
-                                </p>
-
-                            </div>
-
-
-                            <div class="profile-status-wrap">
-
-                                <span class="status-badge <?= $statusClass ?>">
-
-                                    <?= htmlspecialchars($statusLabel) ?>
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- ===============================
-                             PROFILE DETAILS
-                        ================================ -->
-
-                        <div class="profile-details-grid">
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Contact Person
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($contactPerson) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Email
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($email) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Phone
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($phone) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    District
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($district) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Licence Number
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($licenseNo) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item">
-
-                                <span class="detail-label">
-                                    Licence Expiry
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($licenseExpiry) ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="detail-item detail-item-full">
-
-                                <span class="detail-label">
-                                    Submitted At
-                                </span>
-
-                                <span class="detail-value">
-                                    <?= htmlspecialchars($submittedAt) ?>
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <!-- ===============================
-                             DEMO ACTION BUTTONS
-                        ================================ -->
-
-                        <div class="profile-actions">
-
-                            <button
-                                type="button"
+                            <a
                                 class="action-btn secondary-btn-style"
+                                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= rawurlencode((string) $recyclerId) ?>"
                             >
                                 View Details
-                            </button>
+                            </a>
 
+                            </div>
+                        </td>
 
-                            <?php if ($status === 'PENDING'): ?>
-
-                                <button
-                                    type="button"
-                                    class="action-btn approve-btn"
-                                >
-                                    Approve
-                                </button>
-
-
-                                <button
-                                    type="button"
-                                    class="action-btn reject-btn"
-                                >
-                                    Reject
-                                </button>
-
-                            <?php endif; ?>
-
-
-                            <?php if ($status === 'REJECTED'): ?>
-
-                                <button
-                                    type="button"
-                                    class="action-btn approve-btn"
-                                >
-                                    Reconsider
-                                </button>
-
-                            <?php endif; ?>
-
-                        </div>
-
-
-                    </article>
+                    </tr>
 
 
                 <?php endforeach; ?>
 
 
+                    </tbody>
+
+
+                </table>
+
+
             </div>
+            <div class="filtered-empty-state" data-recycler-filter-empty hidden>No recyclers match the current search and verification filters.</div>
 
 
         <?php else: ?>

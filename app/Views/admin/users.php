@@ -1,169 +1,146 @@
+<?php
+$users = [
+    [
+        'id' => 1,
+        'name' => 'System Admin',
+        'email' => 'admin@ecolot.lk',
+        'phone' => '0770000000',
+        'role' => 'ADMIN',
+        'role_label' => 'Administrator',
+        'identifier' => 'System provisioned',
+        'status' => 'ACTIVE',
+        'kind' => 'administrator',
+        'protected' => true,
+    ],
+    [
+        'id' => 2,
+        'name' => 'Collector One',
+        'email' => 'collector@ecolot.lk',
+        'phone' => '0772222222',
+        'role' => 'COLLECTOR',
+        'role_label' => 'Collector',
+        'identifier' => 'Collector ID: COL-002',
+        'status' => 'INACTIVE',
+        'kind' => 'staff',
+    ],
+    [
+        'id' => 3,
+        'name' => 'GreenCycle Lanka Pvt Ltd',
+        'email' => 'anjana@greencycle.lk',
+        'phone' => '077 234 5678',
+        'role' => 'AUTHORIZED_RECYCLER',
+        'role_label' => 'Recycler',
+        'identifier' => 'SWML/2026/001',
+        'status' => 'ACTIVE',
+        'kind' => 'recycler',
+        'recycler_id' => 1,
+    ],
+    [
+        'id' => 4,
+        'name' => 'Municipal Officer',
+        'email' => 'officer@ecolot.lk',
+        'phone' => '0771111111',
+        'role' => 'MUNICIPAL_OFFICER',
+        'role_label' => 'Municipal Officer',
+        'identifier' => 'Officer ID: MO-004',
+        'status' => 'ACTIVE',
+        'kind' => 'staff',
+    ],
+    [
+        'id' => 5,
+        'name' => 'Public User',
+        'email' => 'public@ecolot.lk',
+        'phone' => '0774444444',
+        'role' => 'PUBLIC_USER',
+        'role_label' => 'Public User',
+        'identifier' => 'Resident account',
+        'status' => 'ACTIVE',
+        'kind' => 'public',
+    ],
+];
+?>
 <section class="users-page">
-
     <div class="users-title-row">
         <div>
-            <h2>User Management</h2>
-            <p>Create privileged accounts and manage existing system users.</p>
+            <h1>System Users</h1>
+            <p>Review system access and manage staff accounts across EcoLot LK.</p>
         </div>
+        <button class="create-user-btn" type="button" data-admin-dialog="create-staff">Create Staff</button>
     </div>
-    
-    <div class="users-card users-hero">
 
-        <nav class="filter-tabs" aria-label="Filter users">
-            <button class="filter-tab active" type="button" aria-pressed="true">All</button>
-            <button class="filter-tab" type="button" aria-pressed="false">Public Users</button>
-            <button class="filter-tab" type="button" aria-pressed="false">Officers</button>
-            <button class="filter-tab" type="button" aria-pressed="false">Collectors</button>
-            <button class="filter-tab" type="button" aria-pressed="false">Recyclers</button>
-        </nav>
+    <p class="staff-guidance">Administrators are provisioned separately. Public Users and Recyclers register through their own registration flows.</p>
 
-        <p class="current-filter">Current filter: ALL</p>
-
-        <div class="form-section">
-            <h3>Create Privileged User</h3>
-
-            <div class="privileged-user-form">
-                <div class="form-grid">
-                    <label class="field">
-                        <span>Full Name</span>
-                        <input type="text" autocomplete="name">
-                    </label>
-
-                    <label class="field">
-                        <span>Email</span>
-                        <input type="email" autocomplete="email">
-                    </label>
-
-                    <label class="field">
-                        <span>Phone</span>
-                        <input type="tel" autocomplete="tel">
-                    </label>
-
-                    <label class="field">
-                        <span>Password</span>
-                        <input type="password" autocomplete="new-password">
-                    </label>
-
-                    <label class="field">
-                        <span>Role</span>
-                        <select>
-                            <option value="" selected disabled>Select role</option>
-                            <option value="MUNICIPAL_OFFICER">Municipal Officer</option>
-                            <option value="COLLECTOR">Collector</option>
-                            <option value="AUTHORIZED_RECYCLER">Authorized Recycler</option>
-                        </select>
-                    </label>
-
-                    <label class="field">
-                        <span>Council</span>
-                        <select>
-                            <option value="" selected disabled>Select council</option>
-                            <option value="colombo">Colombo Municipal Council</option>
-                            <option value="dehiwala-mount-lavinia">Dehiwala-Mount Lavinia Municipal Council</option>
-                            <option value="sri-jayawardenepura-kotte">Sri Jayawardenepura Kotte Municipal Council</option>
-                        </select>
-                    </label>
-
-                    <label class="field">
-                        <span>Employee No</span>
-                        <input type="text" placeholder="Required for officer/collector">
-                    </label>
-
-                    <label class="field">
-                        <span>Designation</span>
-                        <input type="text" placeholder="For municipal officer">
-                    </label>
-                </div>
-
-                <button class="create-user-btn" type="button">Create User</button>
+    <form class="light-filter" data-client-filter data-rows="[data-user-row]" data-empty="[data-user-filter-empty]" data-result="[data-user-filter-result]">
+        <div class="quick-filters" role="group" aria-label="Filter users by role">
+            <button class="quick-filter" type="button" aria-pressed="true" data-filter-name="role" data-filter-value="">All</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="PUBLIC_USER">Public Users</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="MUNICIPAL_OFFICER">Municipal Officers</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="COLLECTOR">Collectors</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="AUTHORIZED_RECYCLER">Recyclers</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="ADMIN">Administrators</button>
+        </div>
+        <div class="light-filter-controls">
+            <div class="filter-field">
+                <label for="user-search">Search users</label>
+                <input id="user-search" name="search" type="search" placeholder="Name, email or identifier">
             </div>
         </div>
-    </div>
+    </form>
 
-    <div class="users-card users-list-card">
-        <h3>Users</h3>
-
-        <div class="users-table-wrap">
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th scope="col">User ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col">Update Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td data-label="User ID">#4</td>
-                        <td data-label="Name">Municipal Officer</td>
-                        <td data-label="Email">officer@ecolot.lk</td>
-                        <td data-label="Phone">0771111111</td>
-                        <td data-label="Role">MUNICIPAL_OFFICER</td>
-                        <td data-label="Status"><span class="user-status">ACTIVE</span></td>
-                        <td data-label="Created At"><time datetime="2026-07-09 13:23:02">2026-07-09 13:23:02</time></td>
-                        <td data-label="Update Status">
-                            <div class="status-form">
-                                <select aria-label="Status for Municipal Officer">
-                                    <option selected>ACTIVE</option>
-                                    <option>INACTIVE</option>
-                                </select>
-                                <button type="button">Update</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td data-label="User ID">#1</td>
-                        <td data-label="Name">System Admin</td>
-                        <td data-label="Email">admin@ecolot.lk</td>
-                        <td data-label="Phone">0770000000</td>
-                        <td data-label="Role">ADMIN</td>
-                        <td data-label="Status"><span class="user-status">ACTIVE</span></td>
-                        <td data-label="Created At"><time datetime="2026-07-09 12:33:59">2026-07-09 12:33:59</time></td>
-                        <td data-label="Update Status"><span class="current-admin">Current admin</span></td>
-                    </tr>
-                    <tr>
-                        <td data-label="User ID">#2</td>
-                        <td data-label="Name">Collector One</td>
-                        <td data-label="Email">collector@ecolot.lk</td>
-                        <td data-label="Phone">0772222222</td>
-                        <td data-label="Role">COLLECTOR</td>
-                        <td data-label="Status"><span class="user-status">ACTIVE</span></td>
-                        <td data-label="Created At"><time datetime="2026-07-09 12:33:59">2026-07-09 12:33:59</time></td>
-                        <td data-label="Update Status">
-                            <div class="status-form">
-                                <select aria-label="Status for Collector One">
-                                    <option selected>ACTIVE</option>
-                                    <option>INACTIVE</option>
-                                </select>
-                                <button type="button">Update</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td data-label="User ID">#3</td>
-                        <td data-label="Name">Demo Recycler</td>
-                        <td data-label="Email">recycler@ecolot.lk</td>
-                        <td data-label="Phone">0773333333</td>
-                        <td data-label="Role">AUTHORIZED_RECYCLER</td>
-                        <td data-label="Status"><span class="user-status">ACTIVE</span></td>
-                        <td data-label="Created At"><time datetime="2026-07-09 12:33:59">2026-07-09 12:33:59</time></td>
-                        <td data-label="Update Status">
-                            <div class="status-form">
-                                <select aria-label="Status for Demo Recycler">
-                                    <option selected>ACTIVE</option>
-                                    <option>INACTIVE</option>
-                                </select>
-                                <button type="button">Update</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <p class="filter-result" data-user-filter-result role="status" aria-live="polite"></p>
+    <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
+    <section class="users-card users-list-card">
+        <div class="users-list-heading">
+            <h2>Users</h2>
+            <p>Account-level information only; recycler compliance remains under Recycler Verification.</p>
         </div>
-    </div>
+
+        <?php if ($users === []): ?>
+            <div class="empty-state">No system users are available.</div>
+        <?php else: ?>
+            <div class="users-table-wrap">
+                <table class="users-table">
+                    <thead>
+                        <tr><th>User</th><th>Role</th><th>Contact</th><th>Identifier</th><th>Account Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($users as $user): ?>
+                        <tr
+                            data-user-row
+                            data-search="#<?= $user['id'] ?> <?= htmlspecialchars($user['name'].' '.$user['email'].' '.$user['identifier']) ?>"
+                            data-role="<?= $user['role'] ?>"
+                        >
+        <td data-label="User"><strong class="table-primary-text"><?= htmlspecialchars($user['name']) ?></strong><span class="table-secondary-text">User #<?= $user['id'] ?></span></td>
+        <td data-label="Role"><?= htmlspecialchars($user['role_label']) ?></td>
+        <td data-label="Contact"><span class="table-primary-text"><?= htmlspecialchars($user['email']) ?></span><span class="table-secondary-text"><?= htmlspecialchars($user['phone']) ?></span></td>
+        <td data-label="Identifier"><?= htmlspecialchars($user['identifier']) ?></td>
+        <td data-label="Account Status"><span class="user-status <?= $user['status']==='INACTIVE'?'status-inactive':'' ?>"><?= ucfirst(strtolower($user['status'])) ?></span></td>
+                            <td data-label="Actions">
+                                <div class="row-actions">
+                                    <?php if ($user['kind']==='recycler'): ?>
+                                        <a class="table-action-btn" href="<?= htmlspecialchars($basePath) ?>/admin/recycler-verification/<?= $user['recycler_id'] ?>">View Recycler</a>
+                                    <?php elseif (!empty($user['protected'])): ?>
+                                        <button class="table-action-btn" type="button" data-admin-dialog="view-user" data-name="<?= htmlspecialchars($user['name']) ?>" data-email="<?= htmlspecialchars($user['email']) ?>" data-phone="<?= htmlspecialchars($user['phone']) ?>" data-role="<?= htmlspecialchars($user['role_label']) ?>" data-identifier="<?= htmlspecialchars($user['identifier']) ?>">View Account</button>
+                                    <?php elseif ($user['kind']==='staff'): ?>
+                                        <button class="table-action-btn" type="button" data-admin-dialog="edit-staff" data-name="<?= htmlspecialchars($user['name']) ?>" data-email="<?= htmlspecialchars($user['email']) ?>" data-phone="<?= htmlspecialchars($user['phone']) ?>" data-role="<?= htmlspecialchars($user['role_label']) ?>">View / Edit</button>
+                                    <?php else: ?>
+                                        <button class="table-action-btn" type="button" data-admin-dialog="view-user" data-name="<?= htmlspecialchars($user['name']) ?>" data-email="<?= htmlspecialchars($user['email']) ?>" data-phone="<?= htmlspecialchars($user['phone']) ?>" data-role="<?= htmlspecialchars($user['role_label']) ?>" data-identifier="<?= htmlspecialchars($user['identifier']) ?>">View Account</button>
+                                    <?php endif; ?>
+
+                                    <?php if (empty($user['protected'])): ?>
+                                        <div class="status-form">
+                                            <select aria-label="Account status for <?= htmlspecialchars($user['name']) ?>"><option value="ACTIVE"<?= $user['status']==='ACTIVE'?' selected':'' ?>>Active</option><option value="INACTIVE"<?= $user['status']==='INACTIVE'?' selected':'' ?>>Inactive</option></select>
+                                            <button type="button" data-status-dialog data-admin-dialog="account-status" data-name="<?= htmlspecialchars($user['name']) ?>">Update</button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="filtered-empty-state" data-user-filter-empty hidden>No users match the selected role and search.</div>
+        <?php endif; ?>
+    </section>
 </section>

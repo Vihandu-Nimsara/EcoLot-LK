@@ -32,8 +32,12 @@ return static function (Router $router, array $app): void {
 
     $router->group('/recycler', static function (Router $router): void {
         $router->get('/eligible-e-lots', 'RecyclerController@eligibleELots');
+        $router->get('/e-lot/{id}', 'RecyclerController@eLotDetails');
         $router->get('/my-bids', 'RecyclerController@myBids');
         $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
+        $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
+        $router->get('/profile', 'RecyclerController@profile');
+        $router->get('/reports', 'RecyclerController@reports');
     });
 
     $router->group('/user', static function (Router $router): void {
@@ -51,6 +55,7 @@ return static function (Router $router, array $app): void {
     $router->group('/admin', static function (Router $router): void {
         $router->get('/users', 'AdminController@Users');
         $router->get('/recycler-verification', 'AdminController@recyclerVerification');
+        $router->get('/recycler-verification/{id}', 'AdminController@recyclerDetails');
         $router->get('/categories-items', 'AdminController@categoriesAndItems');
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
