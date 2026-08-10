@@ -75,8 +75,8 @@
                     </div>
                     <div class="quick-status-actions">
                         <button type="button" class="small-action-btn" data-send-update="<?= $request['id'] ?>">Update</button>
-                        <button type="button" class="hazard-toggle" data-toggle-hazard="<?= $request['id'] ?>" aria-label="Toggle hazard">!</button>
-                        <button type="button" class="clear-hazard" data-clear-hazard="<?= $request['id'] ?>" aria-label="Clear hazard">×</button>
+                        <button type="button" class="hazard-toggle" data-toggle-hazard="<?= $request['id'] ?>" aria-label="Toggle hazard">🚩</button>
+                        <button type="button" class="clear-hazard" data-clear-hazard="<?= $request['id'] ?>" aria-label="Clear hazard">🗑️</button>
                     </div>
                 </article>
             <?php endforeach; ?>

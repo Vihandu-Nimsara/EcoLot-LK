@@ -24,7 +24,7 @@
                     <div class="route-title-row">
                         <h2><?= $route['zone'] ?></h2>
                         <span class="route-status <?= $route['class'] ?>"><?= $route['status'] ?></span>
-                        <span class="hazard-indicator" data-hazard-indicator="<?= $route['id'] ?>" aria-label="Hazard flagged">!</span>
+                        <span class="hazard-indicator" data-hazard-indicator="<?= $route['id'] ?>" aria-label="Hazard flagged">🚩</span>
                     </div>
                     <p><?= $route['address'] ?></p>
                 </div>
