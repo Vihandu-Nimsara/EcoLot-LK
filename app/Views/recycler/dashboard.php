@@ -21,7 +21,7 @@
             <div class="stat-icon awarded">🏆</div>
             <div class="stat-info">
                 <span>Awarded E-Lots</span>
-                <h2>5</h2>
+                <h2>6</h2>
             </div>
         </article>
 
@@ -37,7 +37,7 @@
             <div class="stat-icon handed">📦</div>
             <div class="stat-info">
                 <span>Handed Over</span>
-                <h2>0</h2>
+                <h2>1</h2>
             </div>
         </div>
 

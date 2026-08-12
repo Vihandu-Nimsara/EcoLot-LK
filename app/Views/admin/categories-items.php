@@ -300,25 +300,37 @@ $items = [
 
     <section class="data-card categories-card">
 
-        <form class="light-filter" data-client-filter data-rows="[data-category-row]" data-empty="[data-category-filter-empty]" data-result="[data-category-filter-result]"><div class="quick-filters" role="group" aria-label="Filter categories by status"><button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="ACTIVE">Active</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="INACTIVE">Inactive</button></div><div class="light-filter-controls"><div class="filter-field"><label for="category-search">Search categories</label><input id="category-search" name="search" type="search" placeholder="Category name"></div></div></form><p class="filter-result" data-category-filter-result role="status" aria-live="polite"></p>
-
-
+        
+        
         <div class="data-card-header">
-
+            
             <div>
-
+                
                 <h2>
                     Categories
                 </h2>
-
+                
                 <p>
                     Manage the E-Waste categories currently available in the system.
                 </p>
-
+                
             </div>
-
+            
         </div>
-
+        
+        <form class="light-filter" data-client-filter data-rows="[data-category-row]" data-empty="[data-category-filter-empty]" data-result="[data-category-filter-result]"><div class="quick-filters" role="group" aria-label="Filter categories by status">
+            <button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="ACTIVE">Active</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="INACTIVE">Inactive</button>
+        </div>
+        <div class="light-filter-controls">
+            <div class="filter-field">
+                <label for="category-search">Search categories</label>
+                <input id="category-search" name="search" type="search" placeholder="Category name">
+            </div>
+        </div>
+    </form>
+    <p class="filter-result" data-category-filter-result role="status" aria-live="polite"></p>
 
 
         <div class="data-table-wrapper categories-table-wrapper">

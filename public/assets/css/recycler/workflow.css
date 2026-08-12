@@ -18,6 +18,11 @@
     background: #EDE9FE;
 }
 
+.workflow-page .badge-handed-over {
+    color: #1D4ED8;
+    background: #DBEAFE;
+}
+
 .workflow-page :is(.badge-submitted, .badge-active) {
     color: #0369A1;
     background: #E0F2FE;
