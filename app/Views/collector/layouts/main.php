@@ -3,6 +3,7 @@ $assetBase = htmlspecialchars($basePath . '/assets', ENT_QUOTES, 'UTF-8');
 $pageStyles = [
     'dashboard' => 'collector/assigned-routes.css',
     'my-requests' => 'collector/assigned-requests.css',
+    'initial-request' => 'collector/initial-request.css',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/collector/theme.css');

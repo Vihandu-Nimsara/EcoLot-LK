@@ -6,9 +6,9 @@
 
     <div class="header-right">
         <div class="profile">
-            <div class="avatar">KP</div>
+            <div class="avatar" data-collector-initials>--</div>
             <div class="profile-info">
-                <span class="name">Kasun Perera</span>
+                <span class="name" data-collector-name>Collector</span>
                 <span class="role">Collection Officer</span>
             </div>
         </div>
