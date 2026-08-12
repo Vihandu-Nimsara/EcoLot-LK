@@ -1,3 +1,227 @@
+.assigned-requests-page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.page-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Summary stat cards */
+.collector-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.collector-summary-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    background: #FFFFFF;
+    border: 1px solid #E1E9E4;
+    border-radius: 14px;
+}
+
+.collector-summary-card span {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #66736B;
+}
+
+.collector-summary-card strong {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0A5A3E;
+}
+
+.collector-summary-card small {
+    font-size: 0.75rem;
+    color: #66736B;
+}
+
+.collector-summary-card.hazard strong {
+    color: #B42318;
+}
+
+.pickup-progress {
+    width: 100%;
+    height: 6px;
+    background: #E1E9E4;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.pickup-progress div {
+    height: 100%;
+    background: #16794F;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+/* Two-column workspace: map + quick status */
+.request-workspace-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .request-workspace-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .collector-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.surface-card {
+    background: #FFFFFF;
+    border: 1px solid #E1E9E4;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.card-heading h2 {
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.card-heading p {
+    margin: 4px 0 0;
+    font-size: 0.8125rem;
+    color: #66736B;
+}
+
+.live-status {
+    padding: 4px 12px;
+    background: #073F2D;
+    color: #FFFFFF;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.route-map {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #E1E9E4;
+}
+
+.route-map img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Quick status list */
+#quickStatusContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #EDF2EE;
+}
+
+.quick-status-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.quick-status-row strong {
+    display: block;
+    font-size: 0.875rem;
+}
+
+.quick-status-row span {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    color: #66736B;
+}
+
+.quick-status-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.small-action-btn {
+    padding: 8px 16px;
+    color: #FFFFFF;
+    background: #16794F;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.small-action-btn:hover {
+    background: #106140;
+}
+
+.hazard-toggle,
+.clear-hazard {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8FBF9;
+    border: 1px solid #E1E9E4;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.hazard-toggle.active {
+    background: #B42318;
+    border-color: #B42318;
+    color: #FFFFFF;
+}
+
+.hazard-toggle:hover,
+.clear-hazard:hover {
+    background: #EDF2EE;
+}
+
+/* ---------- Request Notes (unchanged) ---------- */
+
 .notes-card {
     width: 100%;
     box-sizing: border-box;
