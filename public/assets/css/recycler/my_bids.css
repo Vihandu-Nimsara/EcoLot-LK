@@ -12,6 +12,19 @@
     white-space: nowrap;
 }
 
+.my-bids-page .bid-position {
+    display: block;
+    width: fit-content;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: .6875rem;
+    font-weight: 600;
+}
+
+.my-bids-page .bid-position.leading { color: #047857; background: #ECFDF3; }
+.my-bids-page .bid-position.outbid { color: #9A3412; background: #FFF7ED; }
+
 .badge-submitted {
     color: #0369A1;
     background: #E0F2FE;

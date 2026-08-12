@@ -452,6 +452,27 @@
     font-weight: 600;
 }
 
+.recycler-app .dialog-field .dialog-helper,
+.recycler-app .dialog-field .dialog-field-error {
+    font-size: .75rem;
+    line-height: 1.4;
+}
+
+.recycler-app .dialog-field .dialog-helper { color: var(--recycler-muted); }
+.recycler-app .dialog-field .dialog-field-error { color: #B42318; font-weight: 600; }
+.recycler-app .dialog-field .dialog-field-error[hidden] { display: none; }
+
+.recycler-app .bid-context-summary {
+    padding: 12px;
+    background: #F8FBF9;
+    border: 1px solid var(--recycler-border);
+    border-radius: 12px;
+}
+
+.recycler-app .bid-context-summary div { background: #FFFFFF; }
+.recycler-app .dialog-position.leading { color: #047857; }
+.recycler-app .dialog-position.outbid { color: #9A3412; }
+
 .recycler-app .dialog-field :is(input, select, textarea) {
     width: 100%;
     padding: 11px 12px;
