@@ -15,11 +15,33 @@
     height: 40px;
     align-items: center;
     justify-content: center;
-    color: #B42318;
+    color: #5f7268;
     background: #FFFFFF;
     border: 1px solid #E1E9E4;
     border-radius: 50%;
     box-shadow: 0 5px 12px rgba(15, 58, 39, 0.08);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-toggle:hover {
+    border-color: #1b7a4a;
+    color: #1b7a4a;
+}
+
+.notification-toggle svg {
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+
+.noti-badge {
+    position: absolute;
+    top: 10px;
+    right: 11px;
+    width: 8px;
+    height: 8px;
+    background: #c0392b;
+    border-radius: 50%;
 }
 
 .notification-menu {
@@ -36,15 +58,28 @@
 }
 
 .notification-menu h2 {
+    margin: 0;
     padding: 12px 16px;
     border-bottom: 1px solid #E1E9E4;
     font-size: 0.9375rem;
+    font-weight: 600;
 }
 
 .notification-menu article {
     padding: 12px 16px;
     border-bottom: 1px solid #EDF2EE;
     font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.notification-menu article:hover {
+    background: #eafbf0;
+}
+
+.notification-menu article p {
+    margin: 0 0 4px;
+    color: #16241c;
 }
 
 .notification-menu article:last-child {

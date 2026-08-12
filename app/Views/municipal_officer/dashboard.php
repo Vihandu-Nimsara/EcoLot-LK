@@ -37,7 +37,7 @@
             <div class="stat-icon lot">♻</div>
             <div class="stat-info">
                 <span>Open E-Lots</span>
-                <h2>0</h2>
+            <h2>1</h2>
             </div>
         </div>
     </div>
@@ -45,10 +45,16 @@
     <section class="schedule-section">
         <div class="section-header">
             <div>
-                <h2>Today's / Upcoming Collection Schedule</h2>
-                <p>Upcoming area collection dates for your council.</p>
+                <h2>Upcoming Collection Schedules</h2>
+                <p>Review upcoming collection dates, request load, and availability for your council.</p>
             </div>
-            <button class="secondary-btn">Manage Schedules</button>
+            <a
+                href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/officer/area-schedules"
+                class="primary-btn dashboard-schedule-link"
+            >
+                Manage Schedules
+                <span aria-hidden="true">→</span>
+            </a>
         </div>
 
         <div class="table-card">
@@ -67,52 +73,52 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>SCH0007</td>
+                        <td>SCH-0007</td>
                         <td>
-                            QA UI Check Monthly Campaign<br>8/2026
+                            Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10500</td>
-                        <td>Kollupitiya QA Zone</td>
-                        <td>2026-07-16</td>
+                        <td>Kollupitiya</td>
+                        <td>16 Aug 2026</td>
                         <td>3</td>
                         <td>45</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0008</td>
+                        <td>SCH-0008</td>
                         <td>
-                            QA UI Check Monthly Campaign<br>8/2026
+                            Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10600</td>
-                        <td>Narahenpita QA Zone</td>
-                        <td>2026-07-19</td>
+                        <td>Narahenpita</td>
+                        <td>19 Aug 2026</td>
                         <td>2</td>
                         <td>55</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0009</td>
+                        <td>SCH-0009</td>
                         <td>
-                            QA UI Check Monthly Campaign<br>8/2026
+                            Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>10800</td>
-                        <td>Rajagiriya QA Zone</td>
-                        <td>2026-07-23</td>
+                        <td>Rajagiriya</td>
+                        <td>23 Aug 2026</td>
                         <td>3</td>
                         <td>35</td>
                         <td><span class="status open">OPEN</span></td>
                     </tr>
                     <tr>
-                        <td>SCH0010</td>
+                        <td>SCH-0010</td>
                         <td>
-                            QA UI Check Monthly Campaign<br>8/2026
+                            Colombo Municipal E-Waste Campaign<br>8/2026
                         </td>
                         <td>11100</td>
-                        <td>Wellawatte QA Zone</td>
-                        <td>2026-07-30</td>
+                        <td>Wellawatte</td>
+                        <td>30 Aug 2026</td>
                         <td>0</td>
                         <td>30</td>
-                        <td><span class="status full">FULL</span></td>
+                        <td><span class="status open">OPEN</span></td>
                     </tr>
                 </tbody>
             </table>

@@ -34,3 +34,23 @@
     color: #B45309;
     background: #FFEDD5;
 }
+
+.dashboard-schedule-link {
+    display: inline-flex;
+    margin-left: auto;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.dashboard-schedule-link span {
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 150ms ease;
+}
+
+.dashboard-schedule-link:hover span {
+    transform: translateX(2px);
+}

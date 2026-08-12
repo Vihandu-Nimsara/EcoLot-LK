@@ -1,17 +1,29 @@
-.my-bids-page .bids-table :is(th, td):nth-child(1) { width: 5%; text-align: center; }
-.my-bids-page .bids-table :is(th, td):nth-child(2) { width: 11%; }
-.my-bids-page .bids-table :is(th, td):nth-child(3) { width: 15%; }
-.my-bids-page .bids-table :is(th, td):nth-child(4) { width: 12%; }
-.my-bids-page .bids-table :is(th, td):nth-child(5) { width: 11%; }
-.my-bids-page .bids-table :is(th, td):nth-child(6) { width: 10%; }
-.my-bids-page .bids-table :is(th, td):nth-child(7) { width: 9%; }
-.my-bids-page .bids-table :is(th, td):nth-child(8) { width: 10%; }
-.my-bids-page .bids-table :is(th, td):nth-child(9) { width: 10%; }
-.my-bids-page .bids-table :is(th, td):nth-child(10) { width: 7%; }
+.my-bids-page .bids-table {
+    min-width: 940px;
+}
 
-.my-bids-page .bids-table td:nth-child(6) {
+.my-bids-page .bids-table :is(th, td):nth-child(1) { width: 22%; }
+.my-bids-page .bids-table :is(th, td):nth-child(2) { width: 19%; }
+.my-bids-page .bids-table :is(th, td):nth-child(3) { width: 12%; }
+.my-bids-page .bids-table :is(th, td):nth-child(4) { width: 14%; }
+.my-bids-page .bids-table :is(th, td):nth-child(5) { width: 16%; }
+.my-bids-page .bids-table :is(th, td):nth-child(6) { width: 17%; }
+.my-bids-page .money-cell {
     white-space: nowrap;
 }
+
+.my-bids-page .bid-position {
+    display: block;
+    width: fit-content;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: .6875rem;
+    font-weight: 600;
+}
+
+.my-bids-page .bid-position.leading { color: #047857; background: #ECFDF3; }
+.my-bids-page .bid-position.outbid { color: #9A3412; background: #FFF7ED; }
 
 .badge-submitted {
     color: #0369A1;
@@ -33,27 +45,4 @@
 .badge-processing {
     color: #6D28D9;
     background: #EDE9FE;
-}
-
-@media (max-width: 1100px) {
-    .my-bids-page .bids-table :is(th, td):nth-child(4) {
-        display: none;
-    }
-}
-
-@media (max-width: 700px) {
-    .my-bids-page .bids-table td:nth-child(1)::before { content: "Bid ID"; }
-    .my-bids-page .bids-table td:nth-child(2)::before { content: "E-Lot Code"; }
-    .my-bids-page .bids-table td:nth-child(3)::before { content: "E-Lot Title"; }
-    .my-bids-page .bids-table td:nth-child(4)::before { content: "Council"; }
-    .my-bids-page .bids-table td:nth-child(5)::before { content: "Category"; }
-    .my-bids-page .bids-table td:nth-child(6)::before { content: "Bid Amount"; }
-    .my-bids-page .bids-table td:nth-child(7)::before { content: "Bid Status"; }
-    .my-bids-page .bids-table td:nth-child(8)::before { content: "E-Lot Status"; }
-    .my-bids-page .bids-table td:nth-child(9)::before { content: "Bidding Period"; }
-    .my-bids-page .bids-table td:nth-child(10)::before { content: "Submitted At"; }
-
-    .my-bids-page .bids-table td:nth-child(4) {
-        display: grid;
-    }
 }

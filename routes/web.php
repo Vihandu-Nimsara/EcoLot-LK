@@ -5,6 +5,8 @@ return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
     $router->get('/login', 'AuthController@login');
     $router->get('/register', 'AuthController@register');
+    $router->get('/register/public', 'AuthController@registerPublic');
+    $router->get('/register/recycler', 'AuthController@registerRecycler');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {
@@ -30,8 +32,12 @@ return static function (Router $router, array $app): void {
 
     $router->group('/recycler', static function (Router $router): void {
         $router->get('/eligible-e-lots', 'RecyclerController@eligibleELots');
+        $router->get('/e-lot/{id}', 'RecyclerController@eLotDetails');
         $router->get('/my-bids', 'RecyclerController@myBids');
         $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
+        $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
+        $router->get('/profile', 'RecyclerController@profile');
+        $router->get('/reports', 'RecyclerController@reports');
     });
 
     $router->group('/user', static function (Router $router): void {
@@ -45,5 +51,14 @@ return static function (Router $router, array $app): void {
     $router->group('/collector', static function (Router $router): void {
         $router->get('/my-requests', 'CollectorController@myRequests');
         $router->get('/initial-request', 'CollectorController@initialRequest');
+    });
+
+    $router->group('/admin', static function (Router $router): void {
+        $router->get('/users', 'AdminController@Users');
+        $router->get('/recycler-verification', 'AdminController@recyclerVerification');
+        $router->get('/recycler-verification/{id}', 'AdminController@recyclerDetails');
+        $router->get('/categories-items', 'AdminController@categoriesAndItems');
+        $router->get('/risk-rules', 'AdminController@riskRules');
+        $router->get('/reports', 'AdminController@reports');
     });
 };

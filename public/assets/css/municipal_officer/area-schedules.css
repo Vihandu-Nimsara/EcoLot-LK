@@ -17,12 +17,76 @@
 }
 
 .campaign-filter select {
-    min-width: 190px;
+    width: 220px;
+    min-width: 220px;
+}
+
+.create-schedule-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.create-schedule-trigger span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    color: #0E7A37;
+    background: #FFFFFF;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.schedule-dialog-card {
+    --officer-dialog-width: 680px;
+}
+
+.schedule-create-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.schedule-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.schedule-status-field {
+    grid-column: 1 / -1;
+}
+
+.schedule-status-field small {
+    margin-top: 6px;
+    color: #66736B;
+    font-size: 0.8125rem;
+    line-height: 1.45;
 }
 
 @media (max-width: 900px) {
     .scheduled-areas-header {
         align-items: stretch;
         flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .campaign-filter select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .schedule-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-status-field {
+        grid-column: auto;
     }
 }

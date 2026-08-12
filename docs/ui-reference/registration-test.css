@@ -1,0 +1,815 @@
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+    --eco-green-900: #0B4D30;
+    --eco-green-800: #116238;
+    --eco-green-600: #169B4B;
+    --eco-green-500: #22A95A;
+
+    --eco-page-background: #EFFFF5;
+    --eco-surface: #FFFFFF;
+
+    --eco-text: #171717;
+    --eco-muted: #707070;
+
+    --eco-input-background: #F4F4F4;
+    --eco-input-border: #B9B9B9;
+
+    --eco-card-shadow:
+        0 28px 48px rgba(25, 71, 47, 0.20),
+        0 12px 24px rgba(25, 71, 47, 0.09);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    min-height: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    min-height: 100vh;
+
+    color: var(--eco-text);
+
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(255, 255, 255, 0.96),
+            var(--eco-page-background) 75%
+        );
+
+    font-family: "Inter", sans-serif;
+}
+
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.registration-page {
+    display: flex;
+
+    width: 100%;
+    min-height: 100vh;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 64px 24px;
+}
+
+
+/* =========================================================
+   ONE SHARED REGISTRATION CARD
+========================================================= */
+
+.registration-card {
+    position: relative;
+
+    isolation: isolate;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 60%)
+        minmax(0, 40%);
+
+    grid-template-rows: minmax(825px, auto);
+
+    width: min(950px, 100%);
+    min-height: 825px;
+
+    overflow: hidden;
+
+    /*
+       Form side and brand side use the same parent surface.
+       This removes the visible middle dividing line.
+    */
+    background:
+        linear-gradient(
+            135deg,
+            #FFFFFF 0%,
+            #FFFFFF 57%,
+            #F9FFFB 78%,
+            #FFFFFF 100%
+        );
+
+    border: 1px solid #E2F2E8;
+    border-radius: 20px;
+
+    box-shadow: var(--eco-card-shadow);
+}
+
+
+/* =========================================================
+   LEFT FORM PANEL
+========================================================= */
+
+.registration-form-panel {
+    position: relative;
+
+    z-index: 2;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    min-width: 0;
+
+    padding:
+        62px
+        52px
+        48px;
+
+    background: transparent;
+
+    border: 0;
+
+    outline: 0;
+
+    box-shadow: none;
+}
+
+
+.registration-heading,
+.profile-tabs,
+.registration-form {
+    width: 100%;
+    max-width: 385px;
+}
+
+
+.registration-heading h1 {
+    margin: 0 0 20px;
+
+    color: var(--eco-green-900);
+
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(2.25rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.08;
+
+    letter-spacing: -0.045em;
+}
+
+
+/* =========================================================
+   PROFILE TABS
+========================================================= */
+
+.profile-tabs {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+}
+
+
+.profile-tab {
+    min-height: 40px;
+
+    padding: 7px 9px;
+
+    color: #1E1E1E;
+    background: transparent;
+
+    border: 0;
+    border-radius: 9px 9px 0 0;
+
+    font-size: 1.05rem;
+    font-weight: 400;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+.profile-tab:hover {
+    color: var(--eco-green-800);
+
+    background: rgba(235, 252, 241, 0.72);
+}
+
+
+.profile-tab.active {
+    color: #328C5A;
+
+    background: rgba(235, 252, 241, 0.72);
+}
+
+
+.profile-tab:focus-visible {
+    outline: 3px solid rgba(22, 155, 75, 0.18);
+    outline-offset: -3px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.registration-form {
+    width: 100%;
+    background: rgba(235, 252, 241, 0.72);
+    margin-top: 0;
+    padding: 24px 24px 32px;
+    border-radius: 0 0 9px 9px;
+}
+
+
+.form-panel {
+    display: none;
+}
+
+
+.form-panel.active {
+    display: block;
+}
+
+
+.form-group {
+    display: flex;
+
+    width: 100%;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    margin-bottom: 20px;
+}
+
+
+.form-group label {
+    color: #171717;
+
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 58px;
+
+    padding: 0 15px;
+
+    color: #252525;
+    background: var(--eco-input-background);
+
+    border: 1px solid var(--eco-input-border);
+    border-radius: 9px;
+
+    outline: none;
+
+    font-size: 1rem;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.form-group select {
+    cursor: pointer;
+}
+
+
+.form-group input::placeholder {
+    color: #727272;
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+    background: #FFFFFF;
+
+    border-color: var(--eco-green-500);
+
+    box-shadow:
+        0 0 0 4px rgba(34, 169, 90, 0.12);
+}
+
+
+/* =========================================================
+   SUBMIT AREA
+========================================================= */
+
+.form-submit-area {
+    display: flex;
+
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 24px;
+}
+
+
+.create-profile-btn {
+    display: inline-flex;
+
+    width: min(240px, 100%);
+    min-height: 48px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 22px;
+
+    color: #FFFFFF;
+    background: var(--eco-green-600);
+
+    border: 1px solid var(--eco-green-600);
+    border-radius: 999px;
+
+    font-family: "Exo 2", sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+.create-profile-btn:hover {
+    background: var(--eco-green-800);
+    border-color: var(--eco-green-800);
+
+    box-shadow:
+        0 9px 20px rgba(22, 155, 75, 0.20);
+
+    transform: translateY(-1px);
+}
+
+
+.create-profile-btn:active {
+    transform: translateY(1px);
+}
+
+
+.create-profile-btn:focus-visible {
+    outline: 3px solid rgba(22, 155, 75, 0.20);
+    outline-offset: 3px;
+}
+
+
+.login-text {
+    margin: 15px 0 0;
+
+    color: #171717;
+
+    font-size: 0.875rem;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+
+.login-text a {
+    color: var(--eco-green-800);
+
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+
+.login-text a:hover {
+    color: var(--eco-green-600);
+}
+
+
+/* =========================================================
+   RIGHT LEAF BACKGROUND LAYER
+========================================================= */
+
+.leaf-artwork {
+    position: relative;
+
+    z-index: 0;
+
+    grid-column: 2;
+    grid-row: 1;
+
+    align-self: stretch;
+    justify-self: stretch;
+
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+
+.registration-leaf-image {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    top: -80px;
+    right: -150px;
+    left: auto;
+    width: 200%;
+    height: auto;
+    max-width: none;
+
+    object-fit: fill;
+    object-position: top right;
+
+    user-select: none;
+}
+
+
+/* =========================================================
+   RIGHT BRAND PANEL
+========================================================= */
+
+.registration-brand-panel {
+    position: relative;
+
+    z-index: 2;
+
+    grid-column: 2;
+    grid-row: 1;
+
+    display: flex;
+
+    min-width: 0;
+
+    align-items: flex-start;
+    justify-content: center;
+
+    padding:
+        88px
+        30px
+        45px;
+
+    background: transparent;
+
+    border: 0;
+
+    outline: 0;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   BRAND CONTENT
+========================================================= */
+
+.brand-content {
+    position: relative;
+
+    z-index: 1;
+
+    display: flex;
+
+    width: 100%;
+
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.brand-logo-row {
+    display: flex;
+
+    width: 100%;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+}
+
+
+.brand-logo {
+    display: block;
+
+    width: 72px;
+    height: 56px;
+
+    object-fit: contain;
+}
+
+
+.brand-name {
+
+    background: linear-gradient(90deg, #35BD57 0%, #0E6925 31.25%, #00340D 64.42%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    color: linear-gradient(0deg, #00340d 64%, #0e6925 31%, #35bd57 0%);
+
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1;
+
+    letter-spacing: -0.04em;
+}
+
+
+.brand-content h2 {
+    margin: 34px 0 0;
+
+    color: var(--eco-green-900);
+
+    font-family: "Exo 2", sans-serif;
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.08;
+
+    text-align: center;
+}
+
+.brand-content h2 .brand-name1 {
+    background: linear-gradient(90deg, #098127 0%, #03631d 20%, #00340D 64.42%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+
+.brand-content p {
+    width: min(240px, 100%);
+
+    margin: 27px 0 0;
+
+    color: #171717;
+
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.35;
+
+    text-align: left;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .registration-page {
+        padding: 40px 20px;
+    }
+
+
+    .registration-card {
+        grid-template-columns:
+            minmax(0, 58%)
+            minmax(0, 42%);
+
+        grid-template-rows: minmax(740px, auto);
+
+        width: min(900px, 100%);
+        min-height: 740px;
+    }
+
+
+    .registration-form-panel {
+        padding: 48px 36px 42px;
+    }
+
+
+    .registration-heading,
+    .profile-tabs,
+    .registration-form {
+        max-width: 100%;
+    }
+
+
+    .registration-heading h1 {
+        font-size: 2.25rem;
+    }
+
+
+    .profile-tab {
+        font-size: 1rem;
+    }
+
+
+    .registration-brand-panel {
+        padding: 72px 22px 40px;
+    }
+
+
+    .brand-name {
+        font-size: 2rem;
+    }
+
+
+    .brand-content h2 {
+        font-size: 1.9rem;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    .registration-page {
+        align-items: flex-start;
+
+        padding: 18px 12px;
+    }
+
+
+    .registration-card {
+        grid-template-columns: 1fr;
+
+        grid-template-rows:
+            auto
+            430px;
+
+        width: min(620px, 100%);
+        min-height: 0;
+
+        border-radius: 18px;
+    }
+
+
+    .registration-form-panel {
+        grid-column: 1;
+        grid-row: 1;
+
+        padding: 38px 22px 42px;
+    }
+
+
+    .registration-heading h1 {
+        margin-bottom: 20px;
+
+        font-size: 2.1rem;
+    }
+
+
+    .profile-tabs,
+    .registration-form {
+        max-width: 100%;
+    }
+
+
+    .profile-tab {
+        font-size: 0.95rem;
+    }
+
+
+    .form-group input,
+    .form-group select {
+        height: 55px;
+    }
+
+
+    .create-profile-btn {
+        width: 100%;
+    }
+
+
+    .leaf-artwork {
+        grid-column: 1;
+        grid-row: 2;
+
+        width: 100%;
+        height: 430px;
+    }
+
+
+    .registration-brand-panel {
+        grid-column: 1;
+        grid-row: 2;
+
+        min-height: 430px;
+
+        padding: 58px 24px 42px;
+    }
+
+
+    .registration-leaf-image {
+        width: 100%;
+        height: 100%;
+
+        object-fit: fill;
+    }
+
+
+    .brand-content h2 {
+        margin-top: 28px;
+    }
+
+
+    .brand-content p {
+        margin-top: 23px;
+
+        text-align: center;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .registration-card {
+        grid-template-rows:
+            auto
+            390px;
+    }
+
+
+    .registration-form-panel {
+        padding: 32px 17px 36px;
+    }
+
+
+    .registration-heading h1 {
+        font-size: 1.9rem;
+    }
+
+
+    .profile-tab {
+        font-size: 0.86rem;
+    }
+
+
+    .leaf-artwork {
+        height: 390px;
+    }
+
+
+    .registration-brand-panel {
+        min-height: 390px;
+
+        padding-inline: 18px;
+    }
+
+
+    .brand-logo {
+        width: 64px;
+        height: 50px;
+    }
+
+
+    .brand-name {
+        font-size: 1.75rem;
+    }
+
+
+    .brand-content h2 {
+        font-size: 1.75rem;
+    }
+
+}

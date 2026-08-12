@@ -133,6 +133,11 @@
     font-size: 0.875rem;
 }
 
+.officer-app :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(64, 190, 108, 0.32);
+    outline-offset: 2px;
+}
+
 .officer-app .top-header {
     position: static;
     z-index: 20;
@@ -349,17 +354,17 @@
 .officer-app .compact-filter-card .records-filter-grid,
 .officer-app .compact-filter-card .elot-filter-grid,
 .officer-app .compact-filter-card .report-filter-grid {
-    flex: 1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 0 1 auto;
+    grid-template-columns: repeat(3, 220px);
     gap: 14px;
 }
 
 .officer-app .report-filter-card.compact-filter-card .report-filter-grid {
-    grid-template-columns: minmax(280px, 420px);
+    grid-template-columns: 220px;
 }
 
 .officer-app .elot-filter-card.compact-filter-card .elot-filter-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 220px);
 }
 
 .officer-app .compact-filter-card .filter-actions {
@@ -370,10 +375,12 @@
 
 .officer-app .compact-filter-card .filter-actions .primary-btn,
 .officer-app .compact-filter-card .filter-actions .secondary-btn {
-    min-width: 0;
+    flex: 0 0 112px;
+    min-width: 112px;
     min-height: 36px;
-    width: auto;
+    width: 112px;
     padding: 7px 12px;
+    text-align: center;
 }
 
 .officer-app .flagged-list-card,
@@ -436,6 +443,7 @@
 
 .officer-app .form-group input,
 .officer-app .form-group select,
+.officer-app .form-group textarea,
 .officer-app .campaign-filter select {
     width: 100%;
     height: 44px;
@@ -449,19 +457,57 @@
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
+.officer-app .form-group textarea {
+    min-height: 96px;
+    height: auto;
+    padding: 11px 13px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
 .officer-app .form-group input:hover,
 .officer-app .form-group select:hover,
+.officer-app .form-group textarea:hover,
 .officer-app .campaign-filter select:hover {
     border-color: #B8CABF;
 }
 
 .officer-app .form-group input:focus,
 .officer-app .form-group select:focus,
+.officer-app .form-group textarea:focus,
 .officer-app .campaign-filter select:focus {
     outline: none;
     background: #FFFFFF;
     border-color: var(--officer-green-600);
     box-shadow: 0 0 0 3px rgba(21, 147, 66, 0.12);
+}
+
+.officer-app :is(input, select, textarea):disabled,
+.officer-app textarea[readonly] {
+    color: #738078;
+    background-color: #F1F5F2;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.officer-app select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px !important;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #3B4D42 50%),
+        linear-gradient(135deg, #3B4D42 50%, transparent 50%) !important;
+    background-repeat: no-repeat !important;
+    background-position:
+        calc(100% - 18px) calc(50% - 2px),
+        calc(100% - 13px) calc(50% - 2px) !important;
+    background-size: 5px 5px, 5px 5px !important;
+}
+
+.officer-app select:disabled {
+    background-image:
+        linear-gradient(45deg, transparent 50%, #94A39A 50%),
+        linear-gradient(135deg, #94A39A 50%, transparent 50%) !important;
 }
 
 .officer-app .filter-actions,
@@ -488,6 +534,14 @@
     line-height: 1.2;
     transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease,
         box-shadow 150ms ease, transform 150ms ease;
+    white-space: nowrap;
+}
+
+.officer-app button:disabled {
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.58;
+    transform: none;
 }
 
 .officer-app .primary-btn,
@@ -573,6 +627,10 @@
 }
 
 .officer-app .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
     margin-bottom: 14px;
 }
 
@@ -590,6 +648,9 @@
 .officer-app .feedback-table-wrapper,
 .officer-app .report-table-wrapper {
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: #B8D6C3 #F2F7F3;
+    scrollbar-width: thin;
     border: 1px solid var(--officer-border);
     border-radius: 12px;
 }
@@ -613,6 +674,7 @@
     text-align: left;
     text-transform: uppercase;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .officer-app .page-content td {
@@ -622,6 +684,11 @@
     font-size: 0.875rem;
     line-height: 1.35;
     vertical-align: middle;
+    font-variant-numeric: tabular-nums;
+}
+
+.officer-app .page-content tbody tr:nth-child(even) {
+    background: #FCFEFC;
 }
 
 .officer-app .page-content tbody tr:last-child td {
@@ -630,6 +697,10 @@
 
 .officer-app .page-content tbody tr:hover {
     background: #F8FCF9;
+}
+
+.officer-app .page-content td:last-child button {
+    white-space: nowrap;
 }
 
 .officer-app .table-subtext {
@@ -725,6 +796,151 @@
     font-size: 1.25rem;
 }
 
+/* Shared interaction surfaces used across the municipal officer workspace. */
+.officer-result-count {
+    display: inline-block;
+    margin-top: 7px;
+    color: #287049;
+    font-size: 0.75rem;
+    font-weight: 650;
+}
+
+.officer-empty-state {
+    padding: 28px 18px;
+    color: var(--officer-muted);
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+.officer-dialog[hidden],
+.officer-toast[hidden],
+.officer-form-error[hidden],
+.officer-empty-state[hidden] {
+    display: none;
+}
+
+.officer-dialog {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(7, 45, 32, 0.48);
+    backdrop-filter: blur(4px);
+}
+
+.officer-dialog-card {
+    width: min(100%, var(--officer-dialog-width, 680px));
+    max-height: calc(100vh - 48px);
+    padding: 26px;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    background: var(--officer-surface);
+    border: 1px solid #DCE9E0;
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(7, 63, 45, 0.22);
+}
+
+.officer-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E6EEE8;
+}
+
+.officer-dialog-header .dialog-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--officer-green-600);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.officer-dialog-header h2 {
+    color: var(--officer-text);
+    font-size: 1.5rem;
+}
+
+.officer-dialog-header p {
+    max-width: 560px;
+    margin-top: 6px;
+    color: var(--officer-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.officer-dialog-close {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #526159;
+    background: #F3F7F4;
+    border: 1px solid #DFE8E2;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.officer-dialog-close:hover {
+    color: var(--officer-green-800);
+    background: #EAF7EF;
+    border-color: #B8D6C3;
+}
+
+.officer-form-error {
+    padding: 11px 13px;
+    color: #9F2F2F;
+    background: #FFF2F2;
+    border: 1px solid #F3CACA;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+.officer-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.officer-toast {
+    position: fixed;
+    z-index: 1100;
+    right: 24px;
+    bottom: 24px;
+    max-width: min(390px, calc(100vw - 48px));
+    padding: 13px 16px;
+    color: #FFFFFF;
+    background: var(--officer-green-800);
+    border-radius: 11px;
+    box-shadow: 0 12px 30px rgba(7, 63, 45, 0.22);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    animation: officer-toast-in 180ms ease-out;
+}
+
+@keyframes officer-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 1180px) {
     .officer-app .sidebar {
         width: 220px;
@@ -760,11 +976,100 @@
     .officer-app .toolbar-actions {
         justify-content: flex-start;
     }
+
+    .officer-app .compact-filter-card :is(
+        .filter-form,
+        .route-filter-form,
+        .records-filter-form,
+        .elot-filter-form,
+        .report-filter-form
+    ) {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .officer-app .compact-filter-card :is(
+        .filter-grid,
+        .route-filter-grid,
+        .records-filter-grid,
+        .elot-filter-grid,
+        .report-filter-grid
+    ),
+    .officer-app .report-filter-card.compact-filter-card .report-filter-grid,
+    .officer-app .elot-filter-card.compact-filter-card .elot-filter-grid {
+        width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+    }
+
+    .officer-app .compact-filter-card .filter-actions {
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 700px) {
+    .officer-app .app-layout {
+        display: block;
+    }
+
     .officer-app .sidebar {
+        position: sticky;
+        z-index: 100;
+        top: 0;
+        display: grid;
+        grid-template-columns: 120px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        min-height: 0;
+        height: auto;
+        padding: 10px 12px;
+        overflow: visible;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .officer-app .sidebar-logo {
+        margin: 0;
+    }
+
+    .officer-app .logo-box {
+        height: 42px;
+        padding: 5px 9px;
+        border-radius: 10px;
+    }
+
+    .officer-app .sidebar-nav {
+        flex-direction: row;
+        gap: 6px;
+        min-width: 0;
+        padding: 2px 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .officer-app .sidebar-nav::-webkit-scrollbar {
         display: none;
+    }
+
+    .officer-app .nav-item {
+        flex: 0 0 auto;
+        padding: 8px 11px;
+        white-space: nowrap;
+    }
+
+    .officer-app .nav-item.active::before {
+        display: none;
+    }
+
+    .officer-app .sidebar-bottom {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    .officer-app .logout-link {
+        padding: 8px 10px;
+        white-space: nowrap;
     }
 
     .officer-app .top-header {
@@ -791,5 +1096,70 @@
     .officer-app .compact-filter-card .filter-actions {
         flex-wrap: wrap;
         justify-content: flex-start;
+    }
+
+    .officer-app .compact-filter-card :is(
+        .filter-grid,
+        .route-filter-grid,
+        .records-filter-grid,
+        .elot-filter-grid,
+        .report-filter-grid
+    ),
+    .officer-app .report-filter-card.compact-filter-card .report-filter-grid,
+    .officer-app .elot-filter-card.compact-filter-card .elot-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .officer-dialog {
+        align-items: end;
+        padding: 12px;
+    }
+
+    .officer-dialog-card {
+        max-height: calc(100vh - 24px);
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .officer-dialog-actions {
+        flex-direction: column-reverse;
+    }
+
+    .officer-dialog-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .officer-app .sidebar {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .officer-app .sidebar-logo {
+        display: none;
+    }
+
+    .officer-app .top-header {
+        min-height: 0;
+    }
+
+    .officer-app .header-left p,
+    .officer-app .profile-info .role {
+        display: none;
+    }
+
+    .officer-app .header-left h1 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .officer-app *,
+    .officer-app *::before,
+    .officer-app *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

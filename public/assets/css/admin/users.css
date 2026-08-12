@@ -1,0 +1,110 @@
+.users-page {
+    color: var(--admin-text);
+}
+
+.users-page .user-status.status-inactive {
+    color: #7a2e0e;
+    background: #fff4ed;
+    border-color: #ffd6ae;
+}
+
+.form-section {
+    margin-top: 24px;
+}
+
+.form-section h3,
+.users-list-card > h3 {
+    color: var(--admin-text);
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.create-user-btn {
+    margin-top: 16px;
+}
+
+.users-title-row > .create-user-btn {
+    margin-top: 0;
+}
+
+.staff-guidance {
+    margin: 20px 0 0;
+    padding: 13px 15px;
+    color: var(--admin-muted);
+    background: #f7faf8;
+    border: 1px solid var(--admin-border-soft);
+    border-radius: 10px;
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.users-list-card > h3 {
+    margin-bottom: 18px;
+}
+
+.users-table {
+    min-width: 900px;
+}
+
+.users-table .row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.users-table .row-actions :is(a, button) {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: .75rem;
+}
+
+.users-table time {
+    display: block;
+    max-width: 100px;
+}
+
+.status-form {
+    display: grid;
+    width: 150px;
+    gap: 6px;
+}
+
+.status-form select {
+    min-height: 36px;
+    padding: 0 10px;
+}
+
+.status-form button {
+    min-height: 34px;
+    padding: 7px 12px;
+}
+
+.current-admin {
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .dashboard-link {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .users-title-row > .create-user-btn {
+        width: 100%;
+    }
+
+    .privileged-user-form {
+        padding: 16px;
+    }
+
+    .filter-tabs {
+        gap: 6px;
+    }
+
+    .filter-tab {
+        padding-inline: 11px;
+    }
+}

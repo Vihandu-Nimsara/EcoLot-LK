@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('click', (event) => {
-        if (!menu.contains(event.target)) setMenuOpen(false);
+        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+            setMenuOpen(false);
+        }
     });
 });

@@ -1,60 +1,10 @@
-.awarded-e-lots-page .awarded-e-lot-filter select {
-    width: 210px;
+.awarded-e-lots-page .awarded-table {
+    min-width: 820px;
 }
 
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(1) { width: 12%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(2) { width: 16%; }
+.awarded-e-lots-page .awarded-table :is(th, td):nth-child(1) { width: 24%; }
+.awarded-e-lots-page .awarded-table :is(th, td):nth-child(2) { width: 17%; }
 .awarded-e-lots-page .awarded-table :is(th, td):nth-child(3) { width: 13%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(4) { width: 13%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(5) { width: 5%; text-align: center; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(6) { width: 7%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(7) { width: 10%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(8) { width: 9%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(9) { width: 9%; }
-.awarded-e-lots-page .awarded-table :is(th, td):nth-child(10) { width: 6%; }
-
-.awarded-e-lots-page .awarded-table td:is(:nth-child(6), :nth-child(7)) {
-    white-space: nowrap;
-}
-
-.badge-awarded {
-    color: #B45309;
-    background: #FEF3C7;
-}
-
-.badge-processing {
-    color: #6D28D9;
-    background: #EDE9FE;
-}
-
-.badge-completed {
-    color: #047857;
-    background: #D1FAE5;
-}
-
-.text-center {
-    text-align: center;
-}
-
-@media (max-width: 1100px) {
-    .awarded-e-lots-page .awarded-table :is(th, td):nth-child(5) {
-        display: none;
-    }
-}
-
-@media (max-width: 700px) {
-    .awarded-e-lots-page .awarded-table td:nth-child(1)::before { content: "E-Lot Code"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(2)::before { content: "Title"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(3)::before { content: "Council"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(4)::before { content: "Category"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(5)::before { content: "Qty"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(6)::before { content: "Weight"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(7)::before { content: "Winning Bid"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(8)::before { content: "Status"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(9)::before { content: "Bid Submitted"; }
-    .awarded-e-lots-page .awarded-table td:nth-child(10)::before { content: "Action"; }
-
-    .awarded-e-lots-page .awarded-table td:nth-child(5) {
-        display: grid;
-    }
-}
+.awarded-e-lots-page .awarded-table :is(th, td):nth-child(4) { width: 14%; }
+.awarded-e-lots-page .awarded-table :is(th, td):nth-child(5) { width: 13%; }
+.awarded-e-lots-page .awarded-table :is(th, td):nth-child(6) { width: 19%; }

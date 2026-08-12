@@ -12,4 +12,14 @@ class AuthController extends Controller
     {
         $this->view('auth/register');
     }
+
+    public function registerPublic(): void
+    {
+        $this->view('auth/register-public');
+    }
+
+    public function registerRecycler(): void
+    {
+        $this->view('auth/register-recycler');
+    }
 }

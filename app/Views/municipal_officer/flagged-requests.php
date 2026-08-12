@@ -14,7 +14,7 @@
 
     <section class="filter-card compact-filter-card">
 
-        <form class="filter-form">
+        <form class="filter-form" data-flagged-filter-form>
 
             <div class="filter-grid">
 
@@ -30,8 +30,8 @@
                             All Campaigns
                         </option>
 
-                        <option value="1">
-                            July 2026 Campaign
+                        <option value="campaign-1">
+                            Colombo Municipal E-Waste Campaign — 8/2026
                         </option>
 
                     </select>
@@ -51,15 +51,15 @@
                         </option>
 
                         <option value="SCH-0010">
-                            SCH-0010 - Wellawatte - 30 Jul 2026
+                            SCH-0010 — Wellawatte — 30 Aug 2026
                         </option>
 
                         <option value="SCH-0009">
-                            SCH-0009 - Rajagiriya - 23 Jul 2026
+                            SCH-0009 — Rajagiriya — 23 Aug 2026
                         </option>
 
                         <option value="SCH-0008">
-                            SCH-0008 - Narahenpita - 19 Jul 2026
+                            SCH-0008 — Narahenpita — 19 Aug 2026
                         </option>
 
                     </select>
@@ -130,6 +130,8 @@
                     Requests requiring officer review before they can proceed to collection.
                 </p>
 
+                <span class="filter-result-count officer-result-count" data-filter-result-count role="status" aria-live="polite">2 requests shown</span>
+
             </div>
 
         </div>
@@ -146,7 +148,7 @@
 
                         <th>User</th>
 
-                        <th>Area</th>
+                        <th>Collection Schedule</th>
 
                         <th>Item Category</th>
 
@@ -162,20 +164,26 @@
 
                 </thead>
 
-                <tbody>
+                <tbody data-flagged-table-body>
 
-                    <tr>
+                    <tr
+                        data-request-id="REQ-1045"
+                        data-campaign="campaign-1"
+                        data-schedule="SCH-0010"
+                        data-review-status="PENDING_REVIEW"
+                    >
 
                         <td>
                             REQ-1045
                         </td>
 
                         <td>
-                            QA Public User
+                            Kasun Perera
                         </td>
 
                         <td>
-                            Egoda Uyana
+                            <strong>SCH-0010</strong>
+                            <span class="table-subtext">Wellawatte · 30 Aug 2026</span>
                         </td>
 
                         <td>
@@ -187,7 +195,7 @@
                         </td>
 
                         <td>
-                            20 Jul 2026
+                            12 Aug 2026
                         </td>
 
                         <td>
@@ -200,7 +208,7 @@
 
                         <td>
 
-                            <button class="review-btn">
+                            <button type="button" class="review-btn">
                                 Review
                             </button>
 
@@ -208,18 +216,24 @@
 
                     </tr>
 
-                    <tr>
+                    <tr
+                        data-request-id="REQ-1048"
+                        data-campaign="campaign-1"
+                        data-schedule="SCH-0009"
+                        data-review-status="PENDING_REVIEW"
+                    >
 
                         <td>
                             REQ-1048
                         </td>
 
                         <td>
-                            QA Public User
+                            Dilini Silva
                         </td>
 
                         <td>
-                            Katubedda
+                            <strong>SCH-0009</strong>
+                            <span class="table-subtext">Rajagiriya · 23 Aug 2026</span>
                         </td>
 
                         <td>
@@ -231,7 +245,7 @@
                         </td>
 
                         <td>
-                            20 Jul 2026
+                            14 Aug 2026
                         </td>
 
                         <td>
@@ -244,7 +258,7 @@
 
                         <td>
 
-                            <button class="review-btn">
+                            <button type="button" class="review-btn">
                                 Review
                             </button>
 
@@ -258,6 +272,75 @@
 
         </div>
 
+        <div class="flagged-empty-state officer-empty-state" data-flagged-empty-state hidden>
+            No flagged requests match the selected filters.
+        </div>
+
     </section>
 
 </section>
+
+<div class="review-dialog officer-dialog" data-review-dialog hidden>
+    <section
+        class="review-dialog-card officer-dialog-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="review-dialog-title"
+    >
+        <div class="review-dialog-header officer-dialog-header">
+            <div>
+                <span class="dialog-eyebrow" data-review-request-id>Flagged request</span>
+                <h2 id="review-dialog-title">Review Hazardous Request</h2>
+                <p>Confirm whether this request can proceed to the assigned collection schedule.</p>
+            </div>
+
+            <button
+                type="button"
+                class="review-dialog-close officer-dialog-close"
+                aria-label="Close request review"
+                data-close-review-dialog
+            >×</button>
+        </div>
+
+        <div class="review-request-summary">
+            <div><span>User</span><strong data-review-user></strong></div>
+            <div><span>Schedule</span><strong data-review-schedule></strong></div>
+            <div><span>Item Category</span><strong data-review-category></strong></div>
+            <div class="review-summary-wide"><span>Hazard Reason</span><strong data-review-reason></strong></div>
+        </div>
+
+        <form class="review-form" data-review-form>
+            <div class="form-group">
+                <label for="review-decision">Review Decision</label>
+                <select id="review-decision" name="decision" required>
+                    <option value="PENDING_REVIEW">Pending Review</option>
+                    <option value="APPROVED">Approve for Collection</option>
+                    <option value="REJECTED">Reject Request</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="review-note">Officer Note</label>
+                <textarea
+                    id="review-note"
+                    name="note"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Add handling instructions or a reason for the decision"
+                ></textarea>
+                <small>A note is required when rejecting a request.</small>
+            </div>
+
+            <p class="review-form-error officer-form-error" role="alert" data-review-form-error hidden></p>
+
+            <div class="review-dialog-actions officer-dialog-actions">
+                <button type="button" class="secondary-btn" data-close-review-dialog>Cancel</button>
+                <button type="submit" class="primary-btn">Save Review</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="review-toast officer-toast" role="status" aria-live="polite" data-review-toast hidden>
+    Review decision saved in this browser.
+</div>
