@@ -133,8 +133,8 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-COMPLETED-001',
-        'title' => 'DEMO-FIX Completed Lot - Routers',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Completed Lot - Routers',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'COMPLETED',
         'bids' => 1,
         'highest_bid' => 29500.00,
@@ -143,28 +143,28 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-OPEN-001',
-        'title' => 'DEMO-FIX Open Lot - Laptops and Monitors',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Open Lot - Laptops and Monitors',
+        'category' => 'Office E-Waste',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
+        'bids' => 5,
         'highest_bid' => 94500.00,
         'average_bid' => 94500.00
     ],
 
     [
         'elot_code' => 'DEMO-FIX-LOT-OPEN-002',
-        'title' => 'DEMO-FIX Open Lot - Mobile Phones and Routers',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Open Lot - Mobile Phones and Routers',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
+        'bids' => 3,
         'highest_bid' => 38200.00,
         'average_bid' => 38200.00
     ],
 
     [
         'elot_code' => 'DEMO-FIX-LOT-AWARDED-001',
-        'title' => 'DEMO-FIX Awarded Lot - Printers and Circuit Boards',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Awarded Lot - Printers and Circuit Boards',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'AWARDED',
         'bids' => 1,
         'highest_bid' => 132000.00,
@@ -173,8 +173,8 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-PROCESSING-001',
-        'title' => 'DEMO-FIX Processing Lot - Lithium Batteries',
-        'category' => 'DEMO-FIX Recycler Batteries',
+        'title' => 'Processing Lot - Lithium Batteries',
+        'category' => 'Demo Battery and Circuit Boards',
         'status' => 'PROCESSING',
         'bids' => 1,
         'highest_bid' => 88000.00,
@@ -196,8 +196,8 @@ $recentELotBidSummary = [
         'title' => 'Demo Open Lot - Laptops from Nugegoda',
         'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 2,
-        'highest_bid' => 97250.00,
+        'bids' => 4,
+        'highest_bid' => 85000.00,
         'average_bid' => 83875.00
     ],
 
@@ -206,8 +206,8 @@ $recentELotBidSummary = [
         'title' => 'Demo Open Lot - Phones and Routers',
         'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
-        'highest_bid' => 48200.00,
+        'bids' => 4,
+        'highest_bid' => 51000.00,
         'average_bid' => 48200.00
     ],
 

@@ -8,3 +8,23 @@
 .awarded-e-lots-page .awarded-table :is(th, td):nth-child(4) { width: 14%; }
 .awarded-e-lots-page .awarded-table :is(th, td):nth-child(5) { width: 13%; }
 .awarded-e-lots-page .awarded-table :is(th, td):nth-child(6) { width: 19%; }
+
+.awarded-e-lots-page .badge-awarded {
+    color: #B45309;
+    background: #FEF3C7;
+}
+
+.awarded-e-lots-page .badge-handed-over {
+    color: #1D4ED8;
+    background: #DBEAFE;
+}
+
+.awarded-e-lots-page .badge-processing {
+    color: #6D28D9;
+    background: #EDE9FE;
+}
+
+.awarded-e-lots-page .badge-completed {
+    color: #047857;
+    background: #D1FAE5;
+}

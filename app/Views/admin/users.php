@@ -68,9 +68,14 @@ $users = [
         <button class="create-user-btn" type="button" data-admin-dialog="create-staff">Create Staff</button>
     </div>
 
-    <p class="staff-guidance">Administrators are provisioned separately. Public Users and Recyclers register through their own registration flows.</p>
+    <p class="filter-result" data-user-filter-result role="status" aria-live="polite"></p>
+    <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
+    <section class="users-card users-list-card">
+        <div class="users-list-heading">
+            <h2>Users</h2>
+        </div>
 
-    <form class="light-filter" data-client-filter data-rows="[data-user-row]" data-empty="[data-user-filter-empty]" data-result="[data-user-filter-result]">
+        <form class="light-filter" data-client-filter data-rows="[data-user-row]" data-empty="[data-user-filter-empty]" data-result="[data-user-filter-result]">
         <div class="quick-filters" role="group" aria-label="Filter users by role">
             <button class="quick-filter" type="button" aria-pressed="true" data-filter-name="role" data-filter-value="">All</button>
             <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="PUBLIC_USER">Public Users</button>
@@ -86,14 +91,6 @@ $users = [
             </div>
         </div>
     </form>
-
-    <p class="filter-result" data-user-filter-result role="status" aria-live="polite"></p>
-    <p class="page-notice" data-page-notice tabindex="-1" hidden></p>
-    <section class="users-card users-list-card">
-        <div class="users-list-heading">
-            <h2>Users</h2>
-            <p>Account-level information only; recycler compliance remains under Recycler Verification.</p>
-        </div>
 
         <?php if ($users === []): ?>
             <div class="empty-state">No system users are available.</div>
