@@ -176,3 +176,116 @@
         flex-wrap: wrap;
     }
 }
+
+.modal-card-wide {
+    width: 460px;
+}
+
+.modal-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+}
+
+.modal-detail-grid div {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-detail-grid span {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-detail-grid strong {
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.collector-use-divider {
+    margin: 18px 0 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #ddd;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--collector-green-800);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.collector-use-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+
+.form-field-inline {
+    flex: 1;
+}
+
+.form-field-inline label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.form-field-inline input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #B8D6C3;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+.weight-update-input {
+    padding: 12px 14px;
+    font-size: 15px;
+    height: 46px;
+    box-sizing: border-box;
+}
+
+.hazard-toggle-btn.active {
+    background: var(--collector-danger);
+    color: white;
+}
+
+.saved-records-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.saved-records-table th {
+    text-align: left;
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.saved-records-table td {
+    padding: 8px 0;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.delete-record-btn {
+    padding: 5px 10px;
+    color: #fff;
+    background: var(--collector-danger, #B42318);
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-record-btn:hover {
+    background: #8f1c14;
+}
