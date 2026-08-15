@@ -17,4 +17,9 @@ class CollectorController extends Controller
     {
         $this->view('collector/initial-request', ['currentPage' => 'initial-request']);
     }
+
+    public function eLots(): void
+    {
+        $this->view('collector/elots', ['currentPage' => 'e-lots']);
+    }
 }

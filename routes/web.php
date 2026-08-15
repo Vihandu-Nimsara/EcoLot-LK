@@ -51,6 +51,7 @@ return static function (Router $router, array $app): void {
     $router->group('/collector', static function (Router $router): void {
         $router->get('/my-requests', 'CollectorController@myRequests');
         $router->get('/initial-request', 'CollectorController@initialRequest');
+        $router->get('/e-lots', 'CollectorController@eLots');
     });
 
     $router->group('/admin', static function (Router $router): void {

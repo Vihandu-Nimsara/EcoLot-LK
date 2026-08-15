@@ -47,6 +47,22 @@ function getSelection() {
     catch { return null; }
 }
 
+function renderSelectionRequired(container) {
+    const message = document.createElement('div');
+    message.className = 'collector-selection-required';
+    const title = document.createElement('strong');
+    title.textContent = 'Collector details are not selected yet.';
+    const description = document.createElement('p');
+    description.textContent = 'Use the sidebar freely, or select a Collector ID and collection date to load assigned work.';
+    const link = document.createElement('a');
+    link.className = 'primary-btn';
+    link.href = document.querySelector('.sidebar-nav a[href$="/collector/initial-request"]')?.href
+        || '/EcoLot-LK/public/collector/initial-request';
+    link.textContent = 'Select Collector Details';
+    message.append(title, description, link);
+    container.replaceChildren(message);
+}
+
 function getAllRecords() {
     return JSON.parse(localStorage.getItem('ecolot_route_records') || '{}');
 }
@@ -134,7 +150,7 @@ function renderFilteredRoutes() {
 
     const selection = getSelection();
     if (!selection || !collectorsData[selection.collectorId]) {
-        window.location.href = window.location.origin + '/EcoLot-LK/public/collector/initial-request';
+        renderSelectionRequired(container);
         return;
     }
 
@@ -365,7 +381,9 @@ function renderQuickStatus() {
 
     const selection = getSelection();
     if (!selection || !collectorsData[selection.collectorId]) {
-        window.location.href = window.location.origin + '/EcoLot-LK/public/collector/initial-request';
+        const sublineEl = document.getElementById('requestsSubline');
+        if (sublineEl) sublineEl.textContent = 'Select collector details to load assigned pickup requests.';
+        renderSelectionRequired(container);
         return;
     }
     const collector = collectorsData[selection.collectorId];
