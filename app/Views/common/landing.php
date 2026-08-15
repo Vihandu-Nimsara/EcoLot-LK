@@ -19,7 +19,7 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
 <body>
     <header class="site-header" aria-label="Main navigation">
         <a class="brand" href="<?= $safeBase ?>/" aria-label="EcoLot LK home">
-            <img src="<?= $safeBase ?>/assets/images/ecolot-logo.png" alt="EcoLot LK">
+            <img src="<?= $safeBase ?>/assets/images/ecolot-logo.png" alt="EcoLot LK" width="1920" height="672">
         </a>
 
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation" aria-label="Open navigation menu">
@@ -67,6 +67,9 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
                         src="<?= $safeBase ?>/assets/images/landing/municipal-collection.jpeg"
                         alt="Household e-waste handover during a municipal collection"
                         class="landing-photo"
+                        width="1254"
+                        height="1254"
+                        fetchpriority="high"
                     >
                 </div>
 
@@ -127,17 +130,25 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
 
                 <div class="role-grid">
                     <article class="role-card role-card-featured">
-                        <span class="role-label">For households</span>
+                        <img
+                            src="<?= $safeBase ?>/assets/images/landing/household-request.png"
+                            alt="Household e-waste request and item drop-off"
+                            class="audience-card__image"
+                            width="1254"
+                            height="1254"
+                            loading="lazy"
+                            decoding="async"
+                            >
                         <h3>Request with confidence</h3>
                         <p>See dates for your postal-code area, add item details, and follow every request.</p>
                         <a href="<?= $safeBase ?>/register/public">Create a request <span>→</span></a>
                     </article>
-                    <article class="role-card">
+                    <article class="role-card role-card-council">
                         <span class="role-label">For councils</span>
                         <h3>Manage the full cycle</h3>
                         <p>Plan area schedules, coordinate routes, verify pickups, create E-Lots, and review bids.</p>
                     </article>
-                    <article class="role-card" id="recyclers">
+                    <article class="role-card role-card-recycler" id="recyclers">
                         <span class="role-label">For recyclers</span>
                         <h3>Bid on eligible E-Lots</h3>
                         <p>Find lots that match approved capabilities, submit bids, and report processing progress.</p>
@@ -154,6 +165,10 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
                         src="<?= $safeBase ?>/assets/images/landing/elot-handover.png"
                         alt="E-waste E-Lot handover for authorized recycling"
                         class="landing-photo"
+                        width="1066"
+                        height="941"
+                        loading="lazy"
+                        decoding="async"
                     >
                 </div>
 
@@ -184,7 +199,7 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
 
     <footer class="site-footer">
         <div class="footer-brand">
-            <img src="<?= $safeBase ?>/assets/images/ecolot-logo.png" alt="EcoLot LK">
+            <img src="<?= $safeBase ?>/assets/images/ecolot-logo.png" alt="EcoLot LK" width="1920" height="672">
             <p>Municipal e-waste collection and E-Lot management for Sri Lanka.</p>
         </div>
         <nav aria-label="Footer navigation">

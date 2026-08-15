@@ -15,11 +15,22 @@ if (menuToggle && mainNavigation) {
         menuToggle.setAttribute('aria-label', willOpen ? 'Close navigation menu' : 'Open navigation menu');
         mainNavigation.classList.toggle('is-open', willOpen);
         document.body.classList.toggle('menu-open', willOpen);
+
+        if (willOpen) {
+            mainNavigation.querySelector('a')?.focus();
+        }
     });
 
     mainNavigation.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
 
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
+            closeMenu();
+            menuToggle.focus();
+        }
+    });
+
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 760) closeMenu();
+        if (window.innerWidth > 820) closeMenu();
     });
 }
