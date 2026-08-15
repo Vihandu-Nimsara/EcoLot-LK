@@ -7,20 +7,15 @@
     </div>
 
     <nav class="sidebar-nav">
-        <a
-            href="<?= $baseUrl ?>/collector/dashboard"
-            class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>"
-        >Assigned Routes</a>
-        <a
-            href="<?= $baseUrl ?>/collector/my-requests"
-            class="nav-item <?= ($currentPage ?? '') === 'my-requests' ? 'active' : '' ?>"
-        >Assigned Requests</a>
+        <a href="<?= $baseUrl ?>/collector/initial-request" class="nav-item <?= ($currentPage ?? '') === 'initial-request' ? 'active' : '' ?>">Initial Request</a>
+        <a href="<?= $baseUrl ?>/collector/dashboard" class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">Assigned Routes</a>
+        <a href="<?= $baseUrl ?>/collector/my-requests" class="nav-item <?= ($currentPage ?? '') === 'my-requests' ? 'active' : '' ?>">Assigned Requests</a>
     </nav>
 
     <div class="sidebar-bottom">
         <div class="sidebar-identity">
-            <strong>Kasun Perera</strong>
-            <span>LK-COL-082</span>
+            <strong data-collector-name>Collector</strong>
+            <span data-collector-id>—</span>
         </div>
         <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
     </div>

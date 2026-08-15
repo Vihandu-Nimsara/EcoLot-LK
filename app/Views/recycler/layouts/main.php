@@ -5,7 +5,13 @@ $pageStyles = [
     'eligible-e-lots' => 'recycler/eligible_e-lots.css',
     'my-bids' => 'recycler/my_bids.css',
     'awarded-e-lots' => 'recycler/awarded_e-lots.css',
+    'profile' => 'recycler/workflow.css',
+    'reports' => 'recycler/workflow.css',
 ];
+$workflowPages = ['eligible-e-lots', 'my-bids', 'awarded-e-lots'];
+$secondaryPageStyle = in_array($currentPage ?? '', $workflowPages, true)
+    ? 'recycler/workflow.css'
+    : null;
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/recycler/theme.css');
 ?>
@@ -36,6 +42,10 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
         >
     <?php endif; ?>
 
+    <?php if ($secondaryPageStyle !== null): ?>
+        <link rel="stylesheet" href="<?= $assetBase ?>/css/<?= htmlspecialchars($secondaryPageStyle, ENT_QUOTES, 'UTF-8') ?>">
+    <?php endif; ?>
+
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
     <link rel="stylesheet" href="<?= $assetBase ?>/css/recycler/theme.css?v=<?= $themeVersion ?>">
 </head>
@@ -43,6 +53,7 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
 <body class="recycler-app">
     <div class="app-layout">
         <?php include __DIR__ . '/sidebar.php'; ?>
+        <button class="workspace-overlay" type="button" aria-label="Close navigation" data-nav-close></button>
 
         <div class="main-content">
             <?php include __DIR__ . '/header.php'; ?>
@@ -52,6 +63,8 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
             </main>
         </div>
     </div>
+    <?php include __DIR__ . '/action-dialog.php'; ?>
+    <script src="<?= $assetBase ?>/js/recycler/frontend-demo.js"></script>
 </body>
 
 </html>

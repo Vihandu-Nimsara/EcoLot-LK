@@ -252,6 +252,8 @@ $items = [
 
     </div>
 
+    <p class="page-notice" data-page-notice tabindex="-1" hidden>Demo only — catalogue changes will be connected during backend implementation.</p>
+
 
 
     <!-- =====================================================
@@ -266,73 +268,8 @@ $items = [
         ========================== -->
 
         <div class="management-section">
-
-            <div class="section-heading">
-
-                <h2>
-                    Create Category
-                </h2>
-
-                <p>
-                    Add a new E-Waste category to the system catalogue.
-                </p>
-
-            </div>
-
-
-            <form method="POST" class="admin-form">
-
-                <div class="form-grid">
-
-
-                    <div class="form-group form-group-full">
-
-                        <label for="category_name">
-                            Category Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="category_name"
-                            name="category_name"
-                            placeholder="Enter category name"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group form-group-full">
-
-                        <label for="category_description">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="category_description"
-                            name="description"
-                            rows="4"
-                            placeholder="Enter category description"
-                        ></textarea>
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="form-actions">
-
-                    <button
-                        type="submit"
-                        class="primary-action-btn"
-                    >
-                        Create Category
-                    </button>
-
-                </div>
-
-            </form>
-
+            <div class="section-heading"><h2>Create Category</h2><p>Add a new E-Waste category to the system catalogue.</p></div>
+            <button type="button" class="primary-action-btn" data-admin-dialog="create-category">Create Category</button>
         </div>
 
 
@@ -348,156 +285,8 @@ $items = [
         ========================== -->
 
         <div class="management-section">
-
-            <div class="section-heading">
-
-                <h2>
-                    Create E-Waste Item
-                </h2>
-
-                <p>
-                    Add an item and configure its default collection behaviour.
-                </p>
-
-            </div>
-
-
-            <form method="POST" class="admin-form">
-
-                <div class="form-grid">
-
-
-                    <!-- Category -->
-
-                    <div class="form-group form-group-full">
-
-                        <label for="item_category">
-                            Category
-                        </label>
-
-                        <select
-                            id="item_category"
-                            name="category_id"
-                        >
-
-                            <option value="">
-                                Select category
-                            </option>
-
-
-                            <?php foreach ($categories as $category): ?>
-
-                                <option
-                                    value="<?= htmlspecialchars((string)$category['id']) ?>"
-                                >
-                                    <?= htmlspecialchars($category['name']) ?>
-                                </option>
-
-                            <?php endforeach; ?>
-
-
-                        </select>
-
-                    </div>
-
-
-
-                    <!-- Item Name -->
-
-                    <div class="form-group form-group-full">
-
-                        <label for="item_name">
-                            Item Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="item_name"
-                            name="item_name"
-                            placeholder="Enter E-Waste item name"
-                        >
-
-                    </div>
-
-
-
-                    <!-- Collection Status -->
-
-                    <div class="form-group">
-
-                        <label for="collection_status">
-                            Collection Status
-                        </label>
-
-                        <select
-                            id="collection_status"
-                            name="collection_status"
-                        >
-
-                            <option value="ACCEPTED">
-                                Accepted
-                            </option>
-
-                            <option value="REVIEW_REQUIRED">
-                                Review Required
-                            </option>
-
-                            <option value="DO_NOT_COLLECT">
-                                Do Not Collect
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-
-                    <!-- Default Risk -->
-
-                    <div class="form-group">
-
-                        <label for="default_risk_level">
-                            Default Risk Level
-                        </label>
-
-                        <select
-                            id="default_risk_level"
-                            name="default_risk_level"
-                        >
-
-                            <option value="LOW">
-                                Low
-                            </option>
-
-                            <option value="MEDIUM">
-                                Medium
-                            </option>
-
-                            <option value="HIGH">
-                                High
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="form-actions">
-
-                    <button
-                        type="submit"
-                        class="primary-action-btn"
-                    >
-                        Create Item
-                    </button>
-
-                </div>
-
-            </form>
-
+            <div class="section-heading"><h2>Create E-Waste Item</h2><p>Add an item and configure its default collection behaviour.</p></div>
+            <button type="button" class="primary-action-btn" data-admin-dialog="create-item" data-category-options="<?= htmlspecialchars(json_encode(array_column($categories, 'name'), JSON_THROW_ON_ERROR), ENT_QUOTES, 'UTF-8') ?>">Create Item</button>
         </div>
 
 
@@ -511,23 +300,37 @@ $items = [
 
     <section class="data-card categories-card">
 
-
+        
+        
         <div class="data-card-header">
-
+            
             <div>
-
+                
                 <h2>
                     Categories
                 </h2>
-
+                
                 <p>
                     Manage the E-Waste categories currently available in the system.
                 </p>
-
+                
             </div>
-
+            
         </div>
-
+        
+        <form class="light-filter" data-client-filter data-rows="[data-category-row]" data-empty="[data-category-filter-empty]" data-result="[data-category-filter-result]"><div class="quick-filters" role="group" aria-label="Filter categories by status">
+            <button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="ACTIVE">Active</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="INACTIVE">Inactive</button>
+        </div>
+        <div class="light-filter-controls">
+            <div class="filter-field">
+                <label for="category-search">Search categories</label>
+                <input id="category-search" name="search" type="search" placeholder="Category name">
+            </div>
+        </div>
+    </form>
+    <p class="filter-result" data-category-filter-result role="status" aria-live="polite"></p>
 
 
         <div class="data-table-wrapper categories-table-wrapper">
@@ -563,7 +366,7 @@ $items = [
                     <?php foreach ($categories as $category): ?>
 
 
-                        <tr>
+                        <tr data-category-row data-search="<?= htmlspecialchars($category['name']) ?>" data-status="<?= htmlspecialchars($category['status']) ?>">
 
 
                             <td data-label="Category ID">
@@ -618,6 +421,7 @@ $items = [
                                 <form
                                     method="POST"
                                     class="category-update-form"
+                                    data-demo-form
                                 >
 
                                     <input
@@ -655,8 +459,11 @@ $items = [
 
 
                                     <button
-                                        type="submit"
+                                        type="button"
                                         class="table-action-btn"
+                                        data-admin-dialog="category-status"
+                                        data-action="Update Status"
+                                        data-name="<?= htmlspecialchars($category['name']) ?>"
                                     >
                                         Update
                                     </button>
@@ -680,6 +487,7 @@ $items = [
             </table>
 
         </div>
+        <div class="filtered-empty-state" data-category-filter-empty hidden>No categories match the current search and status.</div>
 
 
     </section>
@@ -708,6 +516,8 @@ $items = [
             </div>
 
         </div>
+
+        <form class="light-filter" data-client-filter data-rows="[data-item-row]" data-empty="[data-item-filter-empty]" data-result="[data-item-filter-result]"><div class="light-filter-controls"><div class="filter-field"><label for="item-search">Search items</label><input id="item-search" name="search" type="search" placeholder="Item name"></div><div class="filter-field"><label for="item-category">Category</label><select id="item-category" name="category"><option value="">All Categories</option><?php foreach ($categories as $filterCategory): ?><option value="<?= htmlspecialchars($filterCategory['name']) ?>"><?= htmlspecialchars($filterCategory['name']) ?></option><?php endforeach; ?></select></div></div></form><p class="filter-result" data-item-filter-result role="status" aria-live="polite"></p>
 
 
 
@@ -788,7 +598,7 @@ $items = [
                         ?>
 
 
-                        <tr>
+                        <tr data-item-row data-search="<?= htmlspecialchars($item['item']) ?>" data-category="<?= htmlspecialchars($item['category']) ?>">
 
 
                             <td data-label="Item ID">
@@ -851,6 +661,7 @@ $items = [
 
 
         </div>
+        <div class="filtered-empty-state" data-item-filter-empty hidden>No items match the current search and category.</div>
 
 
     </section>

@@ -12,4 +12,9 @@ class CollectorController extends Controller
     {
         $this->view('collector/assigned-requests', ['currentPage' => 'my-requests']);
     }
+
+    public function initialRequest(): void
+    {
+        $this->view('collector/initial-request', ['currentPage' => 'initial-request']);
+    }
 }

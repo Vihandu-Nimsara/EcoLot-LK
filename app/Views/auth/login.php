@@ -7,15 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="<?= htmlspecialchars($basePath . '/assets/css/auth/login.css?v=20260806c', ENT_QUOTES, 'UTF-8') ?>">
 </head>
 <body>
 <main class="login-page">
     <section class="login-card" aria-labelledby="login-title">
         <div class="login-form-panel">
+
             <header class="login-heading">
                 <h1 id="login-title">Sign In</h1>
             </header>
+
 
             <form class="login-form" action="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>" method="post">
                 <div class="form-group">
@@ -58,13 +61,16 @@
 
         <div class="leaf-artwork" aria-hidden="true">
             <img src="<?= htmlspecialchars($basePath . '/assets/images/registration-leaf.svg', ENT_QUOTES, 'UTF-8') ?>" alt="" class="login-leaf-image" draggable="false">
+
         </div>
 
         <aside class="login-brand-panel">
             <div class="brand-content">
+
                 <img src="<?= htmlspecialchars($basePath . '/assets/images/ecolot-logo.png', ENT_QUOTES, 'UTF-8') ?>" alt="EcoLot LK" class="brand-logo">
                 <h2>Welcome Back</h2>
                 <p>To stay connected with us, please sign in with your personal details...</p>
+
             </div>
         </aside>
     </section>

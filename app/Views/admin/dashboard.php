@@ -38,7 +38,7 @@
 
                 <div class="stat-info">
                     <span>Total Users</span>
-                    <strong class="stat-value">4</strong>
+                    <strong class="stat-value">5</strong>
                 </div>
 
             </article>
@@ -92,7 +92,7 @@
 
                 <div class="stat-info">
                     <span>Pending Recyclers</span>
-                    <strong class="stat-value">0</strong>
+                    <strong class="stat-value">1</strong>
                 </div>
 
             </article>
@@ -110,7 +110,7 @@
 
                 <div class="stat-info">
                     <span>Verified Recyclers</span>
-                    <strong class="stat-value">1</strong>
+                    <strong class="stat-value">4</strong>
                 </div>
 
             </article>
@@ -128,7 +128,7 @@
 
                 <div class="stat-info">
                     <span>E-Waste Categories</span>
-                    <strong class="stat-value">6</strong>
+                    <strong class="stat-value">10</strong>
                 </div>
 
             </article>
@@ -146,7 +146,7 @@
 
                 <div class="stat-info">
                     <span>E-Waste Items</span>
-                    <strong class="stat-value">50</strong>
+                    <strong class="stat-value">16</strong>
                 </div>
 
             </article>
@@ -164,7 +164,7 @@
 
                 <div class="stat-info">
                     <span>Risk Rules</span>
-                    <strong class="stat-value">50</strong>
+                    <strong class="stat-value">5</strong>
                 </div>
 
             </article>
@@ -202,7 +202,7 @@
 
                 <!-- Create User -->
                 <a
-                    href="/EcoLot-LK/public/admin/users"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/users"
                     class="quick-action-item"
                 >
 
@@ -215,7 +215,7 @@
 
                     <span class="quick-action-content">
 
-                        <strong>Create User</strong>
+                        <strong>Manage Users</strong>
 
                         <small>
                             Add and manage system user accounts.
@@ -235,7 +235,7 @@
 
                 <!-- Recycler Applications -->
                 <a
-                    href="/EcoLot-LK/public/admin/recycler-verification?status=PENDING"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=PENDING"
                     class="quick-action-item"
                 >
 
@@ -268,7 +268,7 @@
 
                 <!-- Categories and Items -->
                 <a
-                    href="/EcoLot-LK/public/admin/categories-items"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/categories-items"
                     class="quick-action-item"
                 >
 
@@ -299,9 +299,19 @@
                 </a>
 
 
+                <a
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/risk-rules"
+                    class="quick-action-item"
+                >
+                    <span class="quick-action-icon action-risk" aria-hidden="true">⚠️</span>
+                    <span class="quick-action-content"><strong>Manage Risk Rules</strong><small>Maintain collection classification guidance.</small></span>
+                    <span class="quick-action-arrow" aria-hidden="true">→</span>
+                </a>
+
+
                 <!-- Reports -->
                 <a
-                    href="/EcoLot-LK/public/admin/reports"
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/reports"
                     class="quick-action-item"
                 >
 

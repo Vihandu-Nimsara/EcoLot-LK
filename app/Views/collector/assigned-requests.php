@@ -1,8 +1,8 @@
 <section class="assigned-requests-page">
     <div class="page-toolbar">
         <div>
-            <h1>Assigned Pickup Requests</h1>
-            <p>Route COL-RT-042 · Sector 7B · Today, April 24</p>
+            <h1 id="requestsTitle">Assigned Pickup Requests</h1>
+            <p id="requestsSubline">Loading...</p>
         </div>
         <div class="toolbar-actions">
             <button type="button" class="secondary-btn" data-toggle-filter>Filter Requests</button>
@@ -10,105 +10,47 @@
         </div>
     </div>
 
-    <section class="surface-card request-filter-card" data-filter-panel hidden>
-        <div class="form-field">
-            <label for="request-filter">Show Requests</label>
-            <select id="request-filter" data-request-filter>
-                <option value="all">All stops</option>
-                <option value="flagged">Hazard flagged</option>
-                <option value="pending">Pending pickup</option>
-            </select>
-        </div>
-    </section>
-
     <div class="collector-summary-grid">
-        <article class="collector-summary-card">
-            <span>Total Stops</span><strong>48</strong><small>Planned for this shift</small>
-        </article>
-        <article class="collector-summary-card">
-            <span>Picked Up</span><strong data-picked-up-count>0</strong>
-            <div class="pickup-progress"><div data-pickup-progress></div></div>
-        </article>
-        <article class="collector-summary-card">
-            <span>Pending</span><strong data-pending-count>4</strong><small>Assigned stops remaining</small>
-        </article>
-        <article class="collector-summary-card hazard">
-            <span>Hazards</span><strong data-hazard-count>0</strong><small>Require officer review</small>
-        </article>
+        <article class="collector-summary-card"><span>Total Stops</span><strong id="statTotal">4</strong><small>Planned for this shift</small></article>
+        <article class="collector-summary-card"><span>Picked Up</span><strong data-picked-up-count>0</strong><div class="pickup-progress"><div data-pickup-progress></div></div></article>
+        <article class="collector-summary-card"><span>Pending</span><strong data-pending-count>4</strong><small>Assigned stops remaining</small></article>
+        <article class="collector-summary-card hazard"><span>Hazards</span><strong data-hazard-count>0</strong><small>Require officer review</small></article>
     </div>
 
     <div class="request-workspace-grid">
         <section class="surface-card route-map-card">
             <div class="card-heading">
-                <div>
-                    <h2>Active Route Map</h2>
-                    <p>Current collection route coverage.</p>
-                </div>
+                <div><h2>Active Route Map</h2><p>Current collection route coverage.</p></div>
                 <span class="live-status">Live</span>
             </div>
             <div class="route-map">
-                <img
-                    src="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/assets/images/map.jpeg"
-                    alt="Active route from Kollupitiya to Wellawatta"
-                >
+                <img src="/EcoLot-LK/public/assets/images/map.jpeg" alt="Active route map">
             </div>
         </section>
 
         <section class="surface-card quick-status-card">
-            <div class="card-heading">
-                <div>
-                    <h2>Quick Status</h2>
-                    <p>Update or flag assigned stops.</p>
-                </div>
-            </div>
-
-            <?php foreach ([
-                ['id' => 'kol', 'code' => '#COL-KOL', 'zone' => 'Kollupitiya'],
-                ['id' => 'nar', 'code' => '#COL-NAR', 'zone' => 'Narahenpita'],
-                ['id' => 'raj', 'code' => '#COL-RAJ', 'zone' => 'Rajagiriya'],
-                ['id' => 'wel', 'code' => '#COL-WEL', 'zone' => 'Wellawatte'],
-            ] as $request): ?>
-                <article class="quick-status-row" data-request-id="<?= $request['id'] ?>" data-request-row>
-                    <div>
-                        <strong><?= $request['code'] ?></strong>
-                        <span><?= $request['zone'] ?></span>
-                    </div>
-                    <div class="quick-status-actions">
-                        <button type="button" class="small-action-btn" data-send-update="<?= $request['id'] ?>">Update</button>
-                        <button type="button" class="hazard-toggle" data-toggle-hazard="<?= $request['id'] ?>" aria-label="Toggle hazard">!</button>
-                        <button type="button" class="clear-hazard" data-clear-hazard="<?= $request['id'] ?>" aria-label="Clear hazard">×</button>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+            <div class="card-heading"><div><h2>Quick Status</h2><p>Update or flag assigned stops.</p></div></div>
+            <div id="quickStatusContainer"></div>
         </section>
     </div>
 
-    <section class="surface-card quick-record-card">
-        <div class="card-heading">
-            <div>
-                <h2>Quick Pickup Record</h2>
-                <p>Save a weight and priority update for a request.</p>
-            </div>
+    <section class="surface-card notes-card">
+        <div class="card-heading"><div><h2>Request Notes</h2><p>Add, view, edit, or delete a note for this shift.</p></div></div>
+
+        <label class="note-label" for="noteTextInput">Note</label>
+        <div class="note-box" style="width:100%; box-sizing:border-box;">
+            <textarea
+                id="noteTextInput"
+                data-note-text
+                placeholder="Write a note about this stop..."
+                style="display:block; width:100%; min-width:100%; max-width:100%; height:260px; box-sizing:border-box; border:1px solid #B8D6C3; border-radius:12px; background:#F8FBF9; padding:18px; margin:0; font-family:'Inter',sans-serif; font-size:15px; line-height:1.6; resize:vertical; color:#1f2a24;"
+            ></textarea>
         </div>
 
-        <form class="quick-record-form" data-quick-record-form>
-            <div class="form-field">
-                <label for="record-id">Request ID</label>
-                <input id="record-id" name="id" type="text" required>
-            </div>
-            <div class="form-field">
-                <label for="record-weight">Weight (kg)</label>
-                <input id="record-weight" name="weight" type="number" min="0" step="0.1" required>
-            </div>
-            <div class="form-field">
-                <label for="record-priority">Priority</label>
-                <select id="record-priority" name="priority">
-                    <option>Standard</option>
-                    <option>Priority</option>
-                </select>
-            </div>
-            <button type="submit" class="primary-btn">Save Record</button>
-        </form>
-        <p class="form-message" data-record-message aria-live="polite"></p>
+        <div class="note-bottom-row" style="display:flex; align-items:center; gap:10px; margin-top:16px;">
+            <button type="button" class="primary-btn save-note-btn" data-save-note>Save Note</button>
+            <button type="button" class="note-edit-btn" data-edit-note hidden>Edit</button>
+            <button type="button" class="note-delete-btn" data-delete-note hidden>Delete</button>
+        </div>
     </section>
 </section>

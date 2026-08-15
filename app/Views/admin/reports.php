@@ -10,15 +10,15 @@
    System Overview
 ========================= */
 
-$totalUsers = 18;
+$totalUsers = 5;
 $totalRequests = 10;
 $completedRequests = 8;
 $pickupRecords = 9;
 $verifiedPickups = 9;
 
-$totalELots = 10;
-$totalBids = 12;
-$winningBids = 6;
+$totalELots = 9;
+$totalBids = 8;
+$winningBids = 5;
 
 
 /* =========================
@@ -119,7 +119,7 @@ $eLotStatusSummary = [
 
     [
         'status' => 'COMPLETED',
-        'total' => 2
+        'total' => 1
     ]
 
 ];
@@ -133,8 +133,8 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-COMPLETED-001',
-        'title' => 'DEMO-FIX Completed Lot - Routers',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Completed Lot - Routers',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'COMPLETED',
         'bids' => 1,
         'highest_bid' => 29500.00,
@@ -143,28 +143,28 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-OPEN-001',
-        'title' => 'DEMO-FIX Open Lot - Laptops and Monitors',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Open Lot - Laptops and Monitors',
+        'category' => 'Office E-Waste',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
+        'bids' => 5,
         'highest_bid' => 94500.00,
         'average_bid' => 94500.00
     ],
 
     [
         'elot_code' => 'DEMO-FIX-LOT-OPEN-002',
-        'title' => 'DEMO-FIX Open Lot - Mobile Phones and Routers',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Open Lot - Mobile Phones and Routers',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
+        'bids' => 3,
         'highest_bid' => 38200.00,
         'average_bid' => 38200.00
     ],
 
     [
         'elot_code' => 'DEMO-FIX-LOT-AWARDED-001',
-        'title' => 'DEMO-FIX Awarded Lot - Printers and Circuit Boards',
-        'category' => 'DEMO-FIX Recycler Electronics',
+        'title' => 'Awarded Lot - Printers and Circuit Boards',
+        'category' => 'Demo Consumer Electronics',
         'status' => 'AWARDED',
         'bids' => 1,
         'highest_bid' => 132000.00,
@@ -173,8 +173,8 @@ $recentELotBidSummary = [
 
     [
         'elot_code' => 'DEMO-FIX-LOT-PROCESSING-001',
-        'title' => 'DEMO-FIX Processing Lot - Lithium Batteries',
-        'category' => 'DEMO-FIX Recycler Batteries',
+        'title' => 'Processing Lot - Lithium Batteries',
+        'category' => 'Demo Battery and Circuit Boards',
         'status' => 'PROCESSING',
         'bids' => 1,
         'highest_bid' => 88000.00,
@@ -196,8 +196,8 @@ $recentELotBidSummary = [
         'title' => 'Demo Open Lot - Laptops from Nugegoda',
         'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 2,
-        'highest_bid' => 97250.00,
+        'bids' => 4,
+        'highest_bid' => 85000.00,
         'average_bid' => 83875.00
     ],
 
@@ -206,8 +206,8 @@ $recentELotBidSummary = [
         'title' => 'Demo Open Lot - Phones and Routers',
         'category' => 'Demo Consumer Electronics',
         'status' => 'OPEN_FOR_BIDDING',
-        'bids' => 1,
-        'highest_bid' => 48200.00,
+        'bids' => 4,
+        'highest_bid' => 51000.00,
         'average_bid' => 48200.00
     ],
 
@@ -217,7 +217,7 @@ $recentELotBidSummary = [
         'category' => 'Demo Consumer Electronics',
         'status' => 'AWARDED',
         'bids' => 2,
-        'highest_bid' => 128000.00,
+        'highest_bid' => 126000.00,
         'average_bid' => 122250.00
     ],
 
@@ -346,6 +346,33 @@ $recentAuditLogs = [
         'action' => 'UPDATE_USER_STATUS',
         'description' => 'Updated User ID 6 status to ACTIVE.',
         'created_at' => '2026-07-08 14:08:23'
+    ],
+
+    [
+        'log_id' => 4,
+        'user' => 'Demo Admin',
+        'role' => 'ADMIN',
+        'action' => 'RECYCLER_VERIFICATION_DECISION',
+        'description' => 'Recorded a frontend demo recycler verification decision.',
+        'created_at' => '2026-07-11 09:15:00'
+    ],
+
+    [
+        'log_id' => 5,
+        'user' => 'Anjana Silva',
+        'role' => 'AUTHORIZED_RECYCLER',
+        'action' => 'BID_SUBMISSION',
+        'description' => 'Submitted a frontend demo bid for DEMO-FIX-LOT-OPEN-001.',
+        'created_at' => '2026-07-11 10:05:00'
+    ],
+
+    [
+        'log_id' => 6,
+        'user' => 'Demo Municipal Officer',
+        'role' => 'MUNICIPAL_OFFICER',
+        'action' => 'WINNING_BID_SELECTION',
+        'description' => 'Selected a winning bid in the frontend demo workflow.',
+        'created_at' => '2026-07-11 11:20:00'
     ]
 
 ];
@@ -379,7 +406,7 @@ $recentAuditLogs = [
             <button
                 type="button"
                 class="print-report-btn"
-                onclick="window.print()"
+                data-print-report
             >
                 Print Report
             </button>
