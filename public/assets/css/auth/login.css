@@ -830,6 +830,7 @@ a {
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: 190px auto;
         width: min(560px, 100%);
+        height: auto;
         min-height: auto;
     }
 
