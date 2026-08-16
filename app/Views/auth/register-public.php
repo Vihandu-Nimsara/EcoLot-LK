@@ -21,12 +21,20 @@
 
             <form class="registration-form" action="<?= htmlspecialchars($basePath . '/register/public', ENT_QUOTES, 'UTF-8') ?>" method="post">
                 <div class="form-group">
-                    <label for="full-name">Full Name</label>
-                    <input type="text" id="full-name" name="full_name" placeholder="your name" autocomplete="name" required>
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" name="first_name" placeholder="your first name" autocomplete="given-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" name="last_name" placeholder="your last name" autocomplete="family-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact-number">Contact Number</label>
+                    <input type="tel" id="contact-number" name="contact_number" placeholder="enter your contact number" autocomplete="tel" required>
                 </div>
                 <div class="form-group">
                     <label for="public-email">Email</label>
-                    <input type="email" id="public-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                    <input type="email" id="public-email" name="email" placeholder="you@example.com" autocomplete="email">
                 </div>
                 <div class="form-group">
                     <label for="public-password">Password</label>
@@ -35,6 +43,10 @@
                 <div class="form-group">
                     <label for="postal-code">Postal Code</label>
                     <input type="text" id="postal-code" name="postal_code" placeholder="enter your postal code" autocomplete="postal-code" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" placeholder="enter your address" autocomplete="street-address" required>
                 </div>
                 <div class="form-submit-area">
                     <button type="submit" class="create-profile-btn">Create profile</button>
