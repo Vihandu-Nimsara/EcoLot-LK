@@ -1,28 +1,10 @@
-<section class="initial-request-page">
-    <div class="form-card">
-        <h1>Initial Request Form</h1>
-        <p class="form-subtitle">Please provide collector assignment details.</p>
-
-        <div class="form-field">
-            <label for="collectorId">Collector ID</label>
-            <select id="collectorId">
-                <option value="">Select a Collector ID</option>
-            </select>
-            <small>Select the specific ID mapping to the collector.</small>
-        </div>
-
-        <div class="form-field">
-            <label for="postalCode">Postal Code</label>
-            <input type="text" id="postalCode" placeholder="Auto-filled after selecting Collector ID" readonly>
-        </div>
-
-        <div class="form-field">
-            <label for="collectionDate">Collection Date</label>
-            <select id="collectionDate">
-                <option value="">Select a Date</option>
-            </select>
-        </div>
-
-        <button type="button" class="primary-btn full-width" id="submitRequestBtn">Submit</button>
-    </div>
+<?php $assignedSchedulesUrl = htmlspecialchars($basePath . '/collector/dashboard', ENT_QUOTES, 'UTF-8'); ?>
+<section class="collector-selection-required" aria-live="polite">
+    <strong>Collector setup is no longer required.</strong>
+    <p>Your schedules are loaded from the signed-in collector assignment.</p>
+    <a class="primary-btn" href="<?= $assignedSchedulesUrl ?>">Open Assigned Schedules</a>
 </section>
+
+<script>
+    window.location.replace(<?= json_encode($basePath . '/collector/dashboard', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+</script>

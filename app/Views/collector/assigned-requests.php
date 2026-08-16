@@ -1,56 +1,104 @@
-<section class="assigned-requests-page">
+<section class="collector-workflow-page assigned-requests-page" data-collector-page="requests">
     <div class="page-toolbar">
         <div>
-            <h1 id="requestsTitle">Assigned Pickup Requests</h1>
-            <p id="requestsSubline">Loading...</p>
+            <span class="page-eyebrow">Request tracking</span>
+            <h1>Assigned Requests</h1>
+            <p>Select a schedule first to view its collection progress and assigned pickup requests.</p>
         </div>
-        <div class="toolbar-actions">
-            <button type="button" class="secondary-btn" data-toggle-filter>Filter Requests</button>
-            <button type="button" class="primary-btn" data-daily-report>Print Daily Report</button>
-        </div>
+        <button type="button" class="secondary-btn print-report-btn" data-print-summary>Print Summary</button>
     </div>
 
-    <div class="collector-summary-grid">
-        <article class="collector-summary-card"><span>Total Stops</span><strong id="statTotal">4</strong><small>Planned for this shift</small></article>
-        <article class="collector-summary-card"><span>Picked Up</span><strong data-picked-up-count>0</strong><div class="pickup-progress"><div data-pickup-progress></div></div></article>
-        <article class="collector-summary-card"><span>Pending</span><strong data-pending-count>4</strong><small>Assigned stops remaining</small></article>
-        <article class="collector-summary-card hazard"><span>Hazards</span><strong data-hazard-count>0</strong><small>Require officer review</small></article>
-    </div>
-
-    <div class="request-workspace-grid">
-        <section class="surface-card route-map-card">
-            <div class="card-heading">
-                <div><h2>Active Route Map</h2><p>Current collection route coverage.</p></div>
-                <span class="live-status">Live</span>
+    <section class="schedule-picker surface-card" aria-labelledby="schedule-picker-title">
+        <div class="section-heading">
+            <div>
+                <h2 id="schedule-picker-title">Choose a Schedule</h2>
+                <p>Only schedules assigned to this collector are available.</p>
             </div>
-            <div class="route-map">
-                <img src="/EcoLot-LK/public/assets/images/map.jpeg" alt="Active route map">
-            </div>
-        </section>
-
-        <section class="surface-card quick-status-card">
-            <div class="card-heading"><div><h2>Quick Status</h2><p>Update or flag assigned stops.</p></div></div>
-            <div id="quickStatusContainer"></div>
-        </section>
-    </div>
-
-    <section class="surface-card notes-card">
-        <div class="card-heading"><div><h2>Request Notes</h2><p>Add, view, edit, or delete a note for this shift.</p></div></div>
-
-        <label class="note-label" for="noteTextInput">Note</label>
-        <div class="note-box" style="width:100%; box-sizing:border-box;">
-            <textarea
-                id="noteTextInput"
-                data-note-text
-                placeholder="Write a note about this stop..."
-                style="display:block; width:100%; min-width:100%; max-width:100%; height:260px; box-sizing:border-box; border:1px solid #B8D6C3; border-radius:12px; background:#F8FBF9; padding:18px; margin:0; font-family:'Inter',sans-serif; font-size:15px; line-height:1.6; resize:vertical; color:#1f2a24;"
-            ></textarea>
+            <span class="request-count-label" data-schedule-count>0 schedules</span>
         </div>
-
-        <div class="note-bottom-row" style="display:flex; align-items:center; gap:10px; margin-top:16px;">
-            <button type="button" class="primary-btn save-note-btn" data-save-note>Save Note</button>
-            <button type="button" class="note-edit-btn" data-edit-note hidden>Edit</button>
-            <button type="button" class="note-delete-btn" data-delete-note hidden>Delete</button>
-        </div>
+        <div class="schedule-card-grid compact" data-schedule-list aria-label="Assigned schedules"></div>
     </section>
+
+    <div data-selected-schedule-shell hidden>
+        <section class="selected-request-summary surface-card">
+            <div class="selected-schedule-heading">
+                <div>
+                    <span class="page-eyebrow">Schedule summary</span>
+                    <h2 data-selected-schedule-title></h2>
+                    <p data-selected-schedule-subtitle></p>
+                </div>
+                <span class="status-badge" data-selected-schedule-status></span>
+            </div>
+
+            <dl class="schedule-detail-grid summary-details">
+                <div><dt>Schedule ID</dt><dd data-selected-schedule-id></dd></div>
+                <div><dt>Collection date</dt><dd data-selected-schedule-date></dd></div>
+                <div><dt>Postal code</dt><dd data-selected-schedule-postal></dd></div>
+                <div><dt>Vehicle</dt><dd data-selected-schedule-vehicle></dd></div>
+            </dl>
+
+            <div class="collector-summary-grid">
+                <article class="collector-summary-card">
+                    <span>Total requests</span>
+                    <strong data-summary-total>0</strong>
+                    <small>Approved pickup stops</small>
+                </article>
+                <article class="collector-summary-card success">
+                    <span>Confirmed</span>
+                    <strong data-summary-confirmed>0</strong>
+                    <small>Collection details completed</small>
+                </article>
+                <article class="collector-summary-card">
+                    <span>Pending</span>
+                    <strong data-summary-pending>0</strong>
+                    <small>Requests still to collect</small>
+                </article>
+                <article class="collector-summary-card">
+                    <span>Actual weight</span>
+                    <strong><span data-summary-weight>0.0</span> <small>kg</small></strong>
+                    <small>Confirmed item weight</small>
+                </article>
+            </div>
+
+            <div class="schedule-progress" aria-label="Schedule completion progress">
+                <div class="schedule-progress-copy">
+                    <span>Collection progress</span>
+                    <strong data-summary-progress-label>0% complete</strong>
+                </div>
+                <div class="progress-track"><div data-summary-progress-bar></div></div>
+            </div>
+        </section>
+
+        <section class="surface-card request-list-card">
+            <div class="section-heading request-section-heading">
+                <div>
+                    <h2>Requests in this Schedule</h2>
+                    <p>Request IDs are used as the primary reference for each pickup.</p>
+                </div>
+                <span class="request-count-label" data-selected-request-count></span>
+            </div>
+
+            <div class="table-scroll">
+                <table class="workflow-table request-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Request ID</th>
+                            <th scope="col">Pickup Address</th>
+                            <th scope="col">Items</th>
+                            <th scope="col">Collection Status</th>
+                            <th scope="col" aria-label="Actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody data-request-table-body></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div class="workflow-empty-state" data-no-schedules hidden>
+        <strong>No schedules are assigned</strong>
+        <p>There are no request groups available for this collector.</p>
+    </div>
 </section>
+
+<?php include __DIR__ . '/partials/request-details-modal.php'; ?>

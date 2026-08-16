@@ -1,516 +1,598 @@
-const collectorsData = {
-    "Ram/2025/6": {
-        name: "Ramesh Fernando",
-        postal: "10500", zone: "Kollupitiya QA Zone", routes: [
-            { id: "ram-r1", address: "No 23, Alfred Road", weight: "18 kg" },
-            { id: "ram-r2", address: "No 28, Market Road", weight: "15 kg" },
-            { id: "ram-r3", address: "No 29, Market Road", weight: "12 kg" },
-            { id: "ram-r4", address: "No 42, Prince Road", weight: "20 kg" },
-        ]
+const collectorWorkspaceData = {
+    collector: {
+        userId: 26,
+        displayId: 'Collector #26',
+        name: 'Collector User',
     },
-    "Kal/2024/6": {
-        name: "Kasun Perera",
-        postal: "10600", zone: "Narahenpita QA Zone", routes: [
-            { id: "kal-r1", address: "No 10, Sinha Patumaga", weight: "14 kg" },
-            { id: "kal-r2", address: "No 16, Sinha Patumaga", weight: "11 kg" },
-            { id: "kal-r3", address: "No 23, Janatha Mawatha", weight: "17 kg" },
-            { id: "kal-r4", address: "No 32, Deweni Patumaga", weight: "9 kg" },
-        ]
-    },
-    "Kas/2026/6": {
-        name: "Kasuni Silva",
-        postal: "10800", zone: "Rajagiriya QA Zone", routes: [
-            { id: "kas-r1", address: "79/6, Lgxa Road", weight: "16 kg" },
-            { id: "kas-r2", address: "81/2, Lgxa Road", weight: "13 kg" },
-            { id: "kas-r3", address: "60/2, Divya Road", weight: "19 kg" },
-            { id: "kas-r4", address: "60/8, Divya Road", weight: "10 kg" },
-        ]
-    },
-    "Pri/2026/4": {
-        name: "Priyantha Jayasuriya",
-        postal: "11000", zone: "Wellawatta QA Zone", routes: [
-            { id: "pri-r1", address: "No 23, Mukandiram Road", weight: "8 kg" },
-            { id: "pri-r2", address: "No 46, Shiva Road", weight: "21 kg" },
-            { id: "pri-r3", address: "No 50, Shiva Road", weight: "7 kg" },
-            { id: "pri-r4", address: "No 32, Grace Road", weight: "15 kg" },
-        ]
-    },
+    schedules: [
+        {
+            scheduleId: 3201,
+            area: 'Kollupitiya',
+            postalCode: '00300',
+            collectionDate: '2026-08-16',
+            status: 'IN_PROGRESS',
+            vehicle: 'WP LC-4821',
+            requests: [
+                {
+                    requestId: 1058,
+                    pickupAddress: 'No. 45, Galle Road, Colombo 03',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5001, itemName: 'Laptop Computer', category: 'Computers & Accessories', requestedQuantity: 2, estimatedWeightKg: 4.8 },
+                        { requestItemId: 5002, itemName: 'LCD Monitor', category: 'Display Equipment', requestedQuantity: 1, estimatedWeightKg: 3.6 },
+                    ],
+                },
+                {
+                    requestId: 1061,
+                    pickupAddress: 'No. 28, Duplication Road, Colombo 03',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5003, itemName: 'Mobile Phone', category: 'Mobile Devices', requestedQuantity: 4, estimatedWeightKg: 0.8 },
+                        { requestItemId: 5004, itemName: 'Wi-Fi Router', category: 'Network Equipment', requestedQuantity: 2, estimatedWeightKg: 0.7 },
+                        { requestItemId: 5005, itemName: 'UPS Unit', category: 'Power Equipment', requestedQuantity: 1, estimatedWeightKg: 5.2 },
+                    ],
+                },
+                {
+                    requestId: 1064,
+                    pickupAddress: '12/4, Sea View Avenue, Colombo 03',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5006, itemName: 'Desktop Computer', category: 'Computers & Accessories', requestedQuantity: 1, estimatedWeightKg: 8.4 },
+                        { requestItemId: 5007, itemName: 'Keyboard', category: 'Computers & Accessories', requestedQuantity: 2, estimatedWeightKg: 1.1 },
+                    ],
+                },
+            ],
+        },
+        {
+            scheduleId: 3204,
+            area: 'Narahenpita',
+            postalCode: '00500',
+            collectionDate: '2026-08-18',
+            status: 'ASSIGNED',
+            vehicle: 'WP LM-7315',
+            requests: [
+                {
+                    requestId: 1072,
+                    pickupAddress: 'No. 18, Kirimandala Mawatha, Colombo 05',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5008, itemName: 'Television', category: 'Display Equipment', requestedQuantity: 1, estimatedWeightKg: 9.5 },
+                        { requestItemId: 5009, itemName: 'DVD Player', category: 'Home Electronics', requestedQuantity: 1, estimatedWeightKg: 1.8 },
+                    ],
+                },
+                {
+                    requestId: 1075,
+                    pickupAddress: 'No. 67, Park Road, Colombo 05',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5010, itemName: 'Printer', category: 'Office Equipment', requestedQuantity: 2, estimatedWeightKg: 11.0 },
+                    ],
+                },
+            ],
+        },
+        {
+            scheduleId: 3208,
+            area: 'Rajagiriya',
+            postalCode: '10100',
+            collectionDate: '2026-08-25',
+            status: 'ASSIGNED',
+            vehicle: 'Vehicle pending',
+            requests: [
+                {
+                    requestId: 1083,
+                    pickupAddress: 'No. 22, Parliament Road, Rajagiriya',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5011, itemName: 'Refrigerator', category: 'Large Appliances', requestedQuantity: 1, estimatedWeightKg: 42.0 },
+                    ],
+                },
+                {
+                    requestId: 1087,
+                    pickupAddress: '14/2, Lake Drive, Rajagiriya',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5012, itemName: 'Electric Fan', category: 'Small Appliances', requestedQuantity: 3, estimatedWeightKg: 8.7 },
+                        { requestItemId: 5013, itemName: 'Electric Kettle', category: 'Small Appliances', requestedQuantity: 2, estimatedWeightKg: 2.1 },
+                    ],
+                },
+                {
+                    requestId: 1090,
+                    pickupAddress: 'No. 91, Cotta Road, Borella',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5014, itemName: 'Tablet Computer', category: 'Mobile Devices', requestedQuantity: 2, estimatedWeightKg: 1.3 },
+                    ],
+                },
+                {
+                    requestId: 1094,
+                    pickupAddress: 'No. 36, Welikada Terrace, Rajagiriya',
+                    requestStatus: 'APPROVED',
+                    items: [
+                        { requestItemId: 5015, itemName: 'Washing Machine', category: 'Large Appliances', requestedQuantity: 1, estimatedWeightKg: 58.0 },
+                    ],
+                },
+            ],
+        },
+    ],
 };
-
-const collectionDates = {
-    "2026-08-16": "August 16, 2026",
-    "2026-08-18": "August 18, 2026",
-};
-
-function getSelection() {
-    try { return JSON.parse(localStorage.getItem('ecolot_collector_selection')); }
-    catch { return null; }
-}
-
-function renderSelectionRequired(container) {
-    const message = document.createElement('div');
-    message.className = 'collector-selection-required';
-
-    const title = document.createElement('strong');
-    title.textContent = 'Collector details are not selected yet.';
-
-    const description = document.createElement('p');
-    description.textContent = 'Use the sidebar freely, or select a Collector ID and collection date to load assigned work.';
-
-    const link = document.createElement('a');
-    link.className = 'primary-btn';
-    link.href = document.querySelector('.sidebar-nav a[href$="/collector/initial-request"]')?.href
-        || '/EcoLot-LK/public/collector/initial-request';
-    link.textContent = 'Select Collector Details';
-
-    message.append(title, description, link);
-    container.replaceChildren(message);
-}
-
-function getAllRecords() {
-    return JSON.parse(localStorage.getItem('ecolot_route_records') || '{}');
-}
-
-function saveRouteRecord(routeId, record) {
-    const all = getAllRecords();
-    if (!all[routeId]) all[routeId] = [];
-    all[routeId].push(record);
-    localStorage.setItem('ecolot_route_records', JSON.stringify(all));
-}
-
-function deleteRouteRecordByIndex(routeId, index) {
-    const all = getAllRecords();
-    if (!all[routeId]) return;
-    all[routeId].splice(index, 1);
-    localStorage.setItem('ecolot_route_records', JSON.stringify(all));
-}
-
-function updateCollectorIdentity() {
-    const selection = getSelection();
-    const collector = selection ? collectorsData[selection.collectorId] : null;
-
-    const name = collector ? collector.name : 'Collector';
-    const idLabel = selection ? selection.collectorId : '—';
-
-    document.querySelectorAll('[data-collector-name]').forEach((el) => { el.textContent = name; });
-    document.querySelectorAll('[data-collector-id]').forEach((el) => { el.textContent = idLabel; });
-    document.querySelectorAll('[data-collector-initials]').forEach((el) => {
-        el.textContent = name
-            .split(' ')
-            .map((part) => part[0])
-            .join('')
-            .slice(0, 2)
-            .toUpperCase();
-    });
-}
-
-function initInitialRequestForm() {
-    const collectorSelect = document.getElementById('collectorId');
-    if (!collectorSelect) return;
-
-    const postalInput = document.getElementById('postalCode');
-    const dateSelect = document.getElementById('collectionDate');
-    const submitBtn = document.getElementById('submitRequestBtn');
-
-    Object.keys(collectorsData).forEach((id) => {
-        const opt = document.createElement('option');
-        opt.value = id;
-        opt.textContent = id;
-        collectorSelect.appendChild(opt);
-    });
-
-    Object.entries(collectionDates).forEach(([value, label]) => {
-        const opt = document.createElement('option');
-        opt.value = value;
-        opt.textContent = label;
-        dateSelect.appendChild(opt);
-    });
-
-    collectorSelect.addEventListener('change', () => {
-        const data = collectorsData[collectorSelect.value];
-        postalInput.value = data ? data.postal : '';
-    });
-
-    submitBtn.addEventListener('click', () => {
-        if (!collectorSelect.value || !dateSelect.value) {
-            alert('Please select a Collector ID and a Collection Date.');
-            return;
-        }
-        localStorage.setItem('ecolot_collector_selection', JSON.stringify({
-            collectorId: collectorSelect.value,
-            postalCode: postalInput.value,
-            date: dateSelect.value,
-        }));
-        window.location.href = window.location.origin + '/EcoLot-LK/public/collector/dashboard';
-    });
-}
-
-let currentModalRouteId = null;
-let currentModalCollector = null;
-
-function renderFilteredRoutes() {
-    const container = document.getElementById('routesContainer');
-    if (!container) return;
-
-    const selection = getSelection();
-    if (!selection || !collectorsData[selection.collectorId]) {
-        renderSelectionRequired(container);
-        return;
-    }
-
-    const collector = collectorsData[selection.collectorId];
-    currentModalCollector = { ...collector, selection };
-
-    const zoneTitle = document.getElementById('zoneTitle');
-    const dateLine = document.getElementById('routeDateLine');
-    if (zoneTitle) zoneTitle.textContent = collector.zone;
-    if (dateLine) dateLine.textContent = 'Assigned routes for ' + (collectionDates[selection.date] || selection.date) + ' · Collector ID: ' + selection.collectorId;
-
-    container.innerHTML = collector.routes.map((route) => `
-        <article class="assigned-route-card" data-route-id="${route.id}" data-route-address="${route.address}" data-route-weight="${route.weight}">
-            <div class="route-summary">
-                <div class="route-title-row">
-                    <h2>${route.address}</h2>
-                    <span class="hazard-indicator" data-hazard-indicator="${route.id}" aria-label="Hazard flagged">!</span>
-                </div>
-                <p>${collector.zone}</p>
-            </div>
-            <div class="route-actions">
-                <button type="button" class="primary-btn" data-confirm-pickup="${route.id}">Confirm Pickup</button>
-                <button type="button" class="secondary-btn" data-view-route="${route.id}">View Details</button>
-            </div>
-        </article>
-    `).join('');
-
-    attachRouteCardListeners();
-    renderCollectorState();
-}
-
-function attachRouteCardListeners() {
-    document.querySelectorAll('[data-confirm-pickup]').forEach((button) => {
-        button.addEventListener('click', () => {
-            updatePickup(button.dataset.confirmPickup, true);
-            renderCollectorState();
-        });
-    });
-    document.querySelectorAll('[data-view-route]').forEach((button) => {
-        button.addEventListener('click', () => openRouteDetailsExpanded(button.dataset.viewRoute));
-    });
-}
-
-function openRouteDetailsExpanded(id) {
-    const routeCard = document.querySelector(`[data-route-id="${id}"]`);
-    if (!routeCard || !currentModalCollector) return;
-
-    currentModalRouteId = id;
-    selectedRouteId = id;
-
-    const route = currentModalCollector.routes.find((r) => r.id === id);
-    document.querySelector('[data-route-zone]').textContent = route.address;
-    document.querySelector('[data-modal-collector-id]').textContent = currentModalCollector.selection.collectorId;
-    document.querySelector('[data-modal-postal]').textContent = currentModalCollector.selection.postalCode;
-    document.querySelector('[data-modal-zone-name]').textContent = currentModalCollector.zone;
-    document.querySelector('[data-route-modal-weight-label]').textContent = route.address;
-    document.querySelector('[data-route-modal-weight]').textContent = route.weight;
-    document.getElementById('weightUpdateInput').value = '';
-
-    renderSavedRecordsTable(id, route.address);
-    setRouteModalOpen(true);
-}
-
-function renderSavedRecordsTable(routeId, address) {
-    const all = getAllRecords();
-    const records = all[routeId] || [];
-    const tbody = document.querySelector('[data-saved-records-body]');
-    if (!tbody) return;
-
-    tbody.innerHTML = records.length === 0
-        ? '<tr><td colspan="4" style="color:#999;">No records saved yet.</td></tr>'
-        : records.map((r, index) => `
-            <tr>
-                <td>${address}</td>
-                <td>${r.weight}</td>
-                <td>${r.hazard ? 'Hazard' : 'Not a hazard'}</td>
-                <td><button type="button" class="delete-record-btn" data-delete-index="${index}">Delete</button></td>
-            </tr>
-        `).join('');
-}
 
 const collectorStorageKeys = {
-    hazards: 'ecolot_collector_flags',
-    pickups: 'ecolot_collector_pickups',
+    selectedSchedule: 'ecolot_collector_selected_schedule_id',
+    collectionRecords: 'ecolot_collector_collection_records',
 };
 
-let selectedRouteId = null;
+let activeRequestId = null;
+let returnFocusElement = null;
 
-function readCollectorState(key) {
+function readJSONStorage(key, fallback) {
     try {
-        return JSON.parse(localStorage.getItem(key) || '{}');
+        const value = JSON.parse(localStorage.getItem(key));
+        return value ?? fallback;
     } catch {
-        return {};
+        return fallback;
     }
 }
 
-function writeCollectorState(key, value) {
+function writeJSONStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
-function updateHazard(id, isHazardous) {
-    const hazards = readCollectorState(collectorStorageKeys.hazards);
-    hazards[id] = isHazardous;
-    writeCollectorState(collectorStorageKeys.hazards, hazards);
+function getCollectionRecords() {
+    return readJSONStorage(collectorStorageKeys.collectionRecords, {});
 }
 
-function updatePickup(id, isPickedUp) {
-    const pickups = readCollectorState(collectorStorageKeys.pickups);
-    pickups[id] = isPickedUp;
-    writeCollectorState(collectorStorageKeys.pickups, pickups);
+function getSelectedScheduleId() {
+    const savedId = Number(localStorage.getItem(collectorStorageKeys.selectedSchedule));
+    const matchingSchedule = collectorWorkspaceData.schedules.find((schedule) => schedule.scheduleId === savedId);
+    return matchingSchedule?.scheduleId ?? collectorWorkspaceData.schedules[0]?.scheduleId ?? null;
 }
 
-function renderCollectorState() {
-    const hazards = readCollectorState(collectorStorageKeys.hazards);
-    const pickups = readCollectorState(collectorStorageKeys.pickups);
-
-    const selection = getSelection();
-    const collector = selection ? collectorsData[selection.collectorId] : null;
-    const currentRouteIds = collector ? collector.routes.map((r) => r.id) : [];
-    const routeStopCount = currentRouteIds.length || 4;
-
-    const completedPickupIds = currentRouteIds.filter((id) => pickups[id]);
-    const hazardCountForCollector = currentRouteIds.filter((id) => hazards[id]).length;
-
-    document.querySelectorAll('[data-hazard-indicator]').forEach((indicator) => {
-        indicator.classList.toggle('active', Boolean(hazards[indicator.dataset.hazardIndicator]));
-    });
-
-    document.querySelectorAll('[data-toggle-hazard]').forEach((button) => {
-        button.classList.toggle('active', Boolean(hazards[button.dataset.toggleHazard]));
-    });
-
-    document.querySelectorAll('[data-confirm-pickup]').forEach((button) => {
-        const isPickedUp = Boolean(pickups[button.dataset.confirmPickup]);
-        button.textContent = isPickedUp ? 'Picked Up' : 'Confirm Pickup';
-        button.disabled = isPickedUp;
-    });
-
-    const pickedUpCount = document.querySelector('[data-picked-up-count]');
-    const pendingCount = document.querySelector('[data-pending-count]');
-    const hazardCount = document.querySelector('[data-hazard-count]');
-    const progress = document.querySelector('[data-pickup-progress]');
-
-    if (pickedUpCount) pickedUpCount.textContent = completedPickupIds.length;
-    if (pendingCount) pendingCount.textContent = Math.max(routeStopCount - completedPickupIds.length, 0);
-    if (hazardCount) hazardCount.textContent = hazardCountForCollector;
-    if (progress) progress.style.width = `${(completedPickupIds.length / routeStopCount) * 100}%`;
+function setSelectedScheduleId(scheduleId) {
+    localStorage.setItem(collectorStorageKeys.selectedSchedule, String(scheduleId));
 }
 
-function setRouteModalOpen(isOpen) {
-    const modal = document.querySelector('[data-route-modal]');
-    if (modal) modal.hidden = !isOpen;
+function getSelectedSchedule() {
+    const selectedId = getSelectedScheduleId();
+    return collectorWorkspaceData.schedules.find((schedule) => schedule.scheduleId === selectedId) ?? null;
+}
+
+function findRequest(requestId) {
+    for (const schedule of collectorWorkspaceData.schedules) {
+        const request = schedule.requests.find((candidate) => candidate.requestId === requestId);
+        if (request) return { schedule, request };
+    }
+    return null;
+}
+
+function formatScheduleId(scheduleId) {
+    return `SCH-${String(scheduleId).padStart(5, '0')}`;
+}
+
+function formatRequestId(requestId) {
+    return `REQ-${String(requestId).padStart(5, '0')}`;
+}
+
+function formatDate(dateValue) {
+    return new Intl.DateTimeFormat('en-LK', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(`${dateValue}T00:00:00`));
+}
+
+function humanizeStatus(status) {
+    return String(status)
+        .toLowerCase()
+        .split('_')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+}
+
+function statusClass(status) {
+    return `status-${String(status).toLowerCase().replaceAll('_', '-')}`;
+}
+
+function escapeHTML(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function roundWeight(value) {
+    return Math.round((Number(value) + Number.EPSILON) * 1000) / 1000;
+}
+
+function setText(selector, value) {
+    document.querySelectorAll(selector).forEach((element) => {
+        element.textContent = value;
+    });
+}
+
+function setBadge(element, status, label = humanizeStatus(status)) {
+    if (!element) return;
+    element.className = `status-badge ${statusClass(status)}`;
+    element.textContent = label;
+}
+
+function updateCollectorIdentity() {
+    const { name, displayId } = collectorWorkspaceData.collector;
+    setText('[data-collector-name]', name);
+    setText('[data-collector-id]', displayId);
+    setText(
+        '[data-collector-initials]',
+        name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
+    );
+}
+
+function getScheduleProgress(schedule, records = getCollectionRecords()) {
+    const confirmedRequests = schedule.requests.filter((request) => records[request.requestId]?.confirmed);
+    const total = schedule.requests.length;
+    const confirmed = confirmedRequests.length;
+    const percentage = total === 0 ? 0 : Math.round((confirmed / total) * 100);
+    const actualWeight = confirmedRequests.reduce((scheduleTotal, request) => {
+        const requestWeight = records[request.requestId].items.reduce(
+            (itemTotal, item) => itemTotal + Number(item.actualWeightKg || 0),
+            0
+        );
+        return scheduleTotal + requestWeight;
+    }, 0);
+
+    return { total, confirmed, pending: Math.max(total - confirmed, 0), percentage, actualWeight: roundWeight(actualWeight) };
+}
+
+function renderScheduleCards() {
+    const scheduleList = document.querySelector('[data-schedule-list]');
+    if (!scheduleList) return;
+
+    const schedules = collectorWorkspaceData.schedules;
+    const selectedScheduleId = getSelectedScheduleId();
+    const records = getCollectionRecords();
+
+    setText('[data-schedule-count]', `${schedules.length} schedule${schedules.length === 1 ? '' : 's'}`);
+
+    const nextSchedule = [...schedules].sort((a, b) => a.collectionDate.localeCompare(b.collectionDate))[0];
+    setText('[data-next-collection]', nextSchedule ? `Next: ${formatDate(nextSchedule.collectionDate)}` : 'No upcoming collections');
+
+    scheduleList.innerHTML = schedules.map((schedule) => {
+        const progress = getScheduleProgress(schedule, records);
+        const isSelected = schedule.scheduleId === selectedScheduleId;
+        return `
+            <button
+                type="button"
+                class="schedule-card${isSelected ? ' is-selected' : ''}"
+                data-schedule-select="${schedule.scheduleId}"
+                aria-pressed="${isSelected}"
+            >
+                <span class="schedule-card-top">
+                    <span class="schedule-card-date">${escapeHTML(formatDate(schedule.collectionDate))}</span>
+                    <span class="status-badge ${statusClass(schedule.status)}">${escapeHTML(humanizeStatus(schedule.status))}</span>
+                </span>
+                <h2>${escapeHTML(schedule.area)}</h2>
+                <p>${escapeHTML(formatScheduleId(schedule.scheduleId))} · ${escapeHTML(schedule.postalCode)}</p>
+                <span class="schedule-card-footer">
+                    <span class="schedule-progress-copy-mini">${progress.confirmed} of ${progress.total} confirmed</span>
+                    <span class="schedule-open-label">${isSelected ? 'Selected' : 'View schedule'} →</span>
+                </span>
+            </button>
+        `;
+    }).join('');
+}
+
+function renderRequestTable(schedule) {
+    const tableBody = document.querySelector('[data-request-table-body]');
+    if (!tableBody) return;
+
+    const records = getCollectionRecords();
+    setText('[data-selected-request-count]', `${schedule.requests.length} request${schedule.requests.length === 1 ? '' : 's'}`);
+
+    tableBody.innerHTML = schedule.requests.map((request) => {
+        const record = records[request.requestId];
+        const status = record?.confirmed ? 'COMPLETED' : 'APPROVED';
+        const label = record?.confirmed ? 'Confirmed' : 'Pending collection';
+
+        return `
+            <tr>
+                <td><span class="request-reference">${escapeHTML(formatRequestId(request.requestId))}</span></td>
+                <td class="request-address">${escapeHTML(request.pickupAddress)}</td>
+                <td><span class="request-item-count">${request.items.length} item${request.items.length === 1 ? '' : 's'}</span></td>
+                <td><span class="status-badge ${statusClass(status)}">${escapeHTML(label)}</span></td>
+                <td class="table-action-cell">
+                    <button type="button" class="secondary-btn view-detail-btn" data-view-request="${request.requestId}">View Details</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderScheduleSummary(schedule) {
+    const progress = getScheduleProgress(schedule);
+
+    setText('[data-summary-total]', progress.total);
+    setText('[data-summary-confirmed]', progress.confirmed);
+    setText('[data-summary-pending]', progress.pending);
+    setText('[data-summary-weight]', progress.actualWeight.toFixed(1));
+    setText('[data-summary-progress-label]', `${progress.percentage}% complete`);
+
+    const progressBar = document.querySelector('[data-summary-progress-bar]');
+    if (progressBar) progressBar.style.width = `${progress.percentage}%`;
+}
+
+function renderSelectedSchedule() {
+    const schedule = getSelectedSchedule();
+    const shell = document.querySelector('[data-selected-schedule-shell]');
+    const emptyState = document.querySelector('[data-no-schedules]');
+
+    if (!schedule) {
+        if (shell) shell.hidden = true;
+        if (emptyState) emptyState.hidden = false;
+        return;
+    }
+
+    if (shell) shell.hidden = false;
+    if (emptyState) emptyState.hidden = true;
+
+    setText('[data-selected-schedule-title]', `${schedule.area} Collection`);
+    setText('[data-selected-schedule-subtitle]', `${schedule.requests.length} approved requests assigned to this collection schedule.`);
+    setText('[data-selected-schedule-id]', formatScheduleId(schedule.scheduleId));
+    setText('[data-selected-schedule-date]', formatDate(schedule.collectionDate));
+    setText('[data-selected-schedule-postal]', schedule.postalCode);
+    setText('[data-selected-schedule-vehicle]', schedule.vehicle);
+    setBadge(document.querySelector('[data-selected-schedule-status]'), schedule.status);
+
+    renderRequestTable(schedule);
+    renderScheduleSummary(schedule);
+}
+
+function renderWorkspace() {
+    renderScheduleCards();
+    renderSelectedSchedule();
+}
+
+function defaultItemValues(item, recordItem) {
+    return {
+        actualQuantity: recordItem?.actualQuantity ?? item.requestedQuantity,
+        actualWeightKg: recordItem?.actualWeightKg ?? item.estimatedWeightKg,
+        itemResult: recordItem?.itemResult ?? calculateItemResult(item.requestedQuantity, item.requestedQuantity, item.estimatedWeightKg),
+    };
+}
+
+function calculateItemResult(requestedQuantity, actualQuantity, actualWeightKg) {
+    if (actualQuantity === 0 && actualWeightKg === 0) return 'NOT_COLLECTED';
+    if (actualQuantity < requestedQuantity) return 'PARTIAL';
+    return 'COLLECTED';
+}
+
+function calculatePickupResult(items) {
+    if (items.every((item) => item.itemResult === 'NOT_COLLECTED')) return 'NOT_COLLECTED';
+    if (items.every((item) => item.itemResult === 'COLLECTED')) return 'COLLECTED';
+    return 'PARTIAL';
+}
+
+function updateItemResultPreview(row) {
+    const requestedQuantity = Number(row.dataset.requestedQuantity);
+    const quantity = Number(row.querySelector('[data-actual-quantity]').value);
+    const weight = Number(row.querySelector('[data-actual-weight]').value);
+    const result = calculateItemResult(requestedQuantity, quantity, weight);
+    setBadge(row.querySelector('[data-item-result]'), result);
+}
+
+function updateNoteCharacterCount() {
+    const note = document.querySelector('[data-collector-request-note]');
+    setText('[data-note-character-count]', note?.value.length ?? 0);
+}
+
+function populateRequestModal(schedule, request) {
+    const records = getCollectionRecords();
+    const record = records[request.requestId];
+    const isConfirmed = Boolean(record?.confirmed);
+    const estimatedWeight = request.items.reduce((total, item) => total + item.estimatedWeightKg, 0);
+
+    setText('[data-modal-request-id]', formatRequestId(request.requestId));
+    setText('[data-modal-request-address]', request.pickupAddress);
+    setText('[data-modal-schedule-id]', formatScheduleId(schedule.scheduleId));
+    setText('[data-modal-item-count]', `${request.items.length} item${request.items.length === 1 ? '' : 's'}`);
+    setText('[data-modal-estimated-weight]', `${roundWeight(estimatedWeight).toFixed(1)} kg`);
+    setText('[data-modal-pickup-result]', isConfirmed ? humanizeStatus(record.pickupResult) : 'Not confirmed');
+    setBadge(
+        document.querySelector('[data-modal-request-status]'),
+        isConfirmed ? 'COMPLETED' : 'APPROVED',
+        isConfirmed ? 'Confirmed' : 'Pending collection'
+    );
+
+    const itemBody = document.querySelector('[data-request-items-body]');
+    itemBody.innerHTML = request.items.map((item) => {
+        const recordItem = record?.items.find((candidate) => candidate.requestItemId === item.requestItemId);
+        const values = defaultItemValues(item, recordItem);
+        return `
+            <tr data-collection-item-row data-request-item-id="${item.requestItemId}" data-requested-quantity="${item.requestedQuantity}">
+                <td class="item-name-cell">
+                    <strong>${escapeHTML(item.itemName)}</strong>
+                    <span>${escapeHTML(item.category)}</span>
+                </td>
+                <td class="requested-value">
+                    ${item.requestedQuantity} unit${item.requestedQuantity === 1 ? '' : 's'}
+                    <span>${item.estimatedWeightKg.toFixed(1)} kg estimated</span>
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        class="collection-value-input"
+                        min="0"
+                        step="1"
+                        inputmode="numeric"
+                        aria-label="Actual quantity for ${escapeHTML(item.itemName)}"
+                        value="${values.actualQuantity}"
+                        data-actual-quantity
+                        ${isConfirmed ? 'disabled' : ''}
+                    >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        class="collection-value-input"
+                        min="0"
+                        step="0.001"
+                        inputmode="decimal"
+                        aria-label="Actual weight in kilograms for ${escapeHTML(item.itemName)}"
+                        value="${values.actualWeightKg}"
+                        data-actual-weight
+                        ${isConfirmed ? 'disabled' : ''}
+                    >
+                </td>
+                <td><span class="status-badge ${statusClass(values.itemResult)}" data-item-result>${escapeHTML(humanizeStatus(values.itemResult))}</span></td>
+            </tr>
+        `;
+    }).join('');
+
+    const note = document.querySelector('[data-collector-request-note]');
+    note.value = record?.collectorNote ?? '';
+    note.disabled = isConfirmed;
+    updateNoteCharacterCount();
+
+    const confirmButton = document.querySelector('[data-confirm-request]');
+    confirmButton.disabled = isConfirmed;
+    confirmButton.textContent = isConfirmed ? 'Collection Confirmed' : 'Confirm Collection';
+
+    const validation = document.querySelector('[data-request-validation]');
+    validation.hidden = true;
+    validation.classList.remove('is-success');
+}
+
+function openRequestModal(requestId, triggerElement) {
+    const result = findRequest(requestId);
+    const modal = document.querySelector('[data-request-modal]');
+    if (!result || !modal) return;
+
+    activeRequestId = requestId;
+    returnFocusElement = triggerElement ?? null;
+    populateRequestModal(result.schedule, result.request);
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    modal.querySelector('[data-close-request-modal]')?.focus();
+}
+
+function closeRequestModal() {
+    const modal = document.querySelector('[data-request-modal]');
+    if (!modal || modal.hidden) return;
+
+    modal.hidden = true;
+    document.body.classList.remove('modal-open');
+    activeRequestId = null;
+    returnFocusElement?.focus();
+    returnFocusElement = null;
+}
+
+function collectItemValues() {
+    return [...document.querySelectorAll('[data-collection-item-row]')].map((row) => {
+        const requestedQuantity = Number(row.dataset.requestedQuantity);
+        const actualQuantity = Number(row.querySelector('[data-actual-quantity]').value);
+        const actualWeightKg = Number(row.querySelector('[data-actual-weight]').value);
+        return {
+            requestItemId: Number(row.dataset.requestItemId),
+            requestedQuantity,
+            actualQuantity,
+            actualWeightKg: roundWeight(actualWeightKg),
+            itemResult: calculateItemResult(requestedQuantity, actualQuantity, actualWeightKg),
+        };
+    });
+}
+
+function validateCollectionItems(items) {
+    for (const item of items) {
+        if (!Number.isInteger(item.actualQuantity) || item.actualQuantity < 0) {
+            return 'Actual quantity must be a whole number of zero or more for every item.';
+        }
+        if (!Number.isFinite(item.actualWeightKg) || item.actualWeightKg < 0) {
+            return 'Actual weight must be a valid value of zero or more for every item.';
+        }
+        const hasQuantity = item.actualQuantity > 0;
+        const hasWeight = item.actualWeightKg > 0;
+        if (hasQuantity !== hasWeight) {
+            return 'Quantity and weight must both be zero for an item not collected, or both be greater than zero.';
+        }
+    }
+    return null;
+}
+
+function confirmActiveRequest() {
+    const result = findRequest(activeRequestId);
+    if (!result) return;
+
+    const items = collectItemValues();
+    const validationMessage = validateCollectionItems(items);
+    const validation = document.querySelector('[data-request-validation]');
+
+    if (validationMessage) {
+        validation.textContent = validationMessage;
+        validation.classList.remove('is-success');
+        validation.hidden = false;
+        return;
+    }
+
+    const records = getCollectionRecords();
+    records[result.request.requestId] = {
+        confirmed: true,
+        pickupResult: calculatePickupResult(items),
+        collectorNote: document.querySelector('[data-collector-request-note]').value.trim(),
+        collectedAt: new Date().toISOString(),
+        items: items.map(({ requestedQuantity, ...item }) => item),
+    };
+    writeJSONStorage(collectorStorageKeys.collectionRecords, records);
+
+    renderWorkspace();
+    populateRequestModal(result.schedule, result.request);
+    validation.textContent = 'Collection details confirmed. This request is now available in read-only view.';
+    validation.classList.add('is-success');
+    validation.hidden = false;
+}
+
+function bindCollectorWorkspaceEvents() {
+    document.querySelector('[data-schedule-list]')?.addEventListener('click', (event) => {
+        const scheduleButton = event.target.closest('[data-schedule-select]');
+        if (!scheduleButton) return;
+
+        setSelectedScheduleId(Number(scheduleButton.dataset.scheduleSelect));
+        renderWorkspace();
+        document.querySelector('[data-selected-schedule-shell]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelector('[data-request-table-body]')?.addEventListener('click', (event) => {
+        const detailsButton = event.target.closest('[data-view-request]');
+        if (!detailsButton) return;
+        openRequestModal(Number(detailsButton.dataset.viewRequest), detailsButton);
+    });
+
+    document.querySelectorAll('[data-close-request-modal]').forEach((button) => {
+        button.addEventListener('click', closeRequestModal);
+    });
+
+    document.querySelector('[data-request-modal]')?.addEventListener('click', (event) => {
+        if (event.target === event.currentTarget) closeRequestModal();
+    });
+
+    document.querySelector('[data-request-items-body]')?.addEventListener('input', (event) => {
+        const row = event.target.closest('[data-collection-item-row]');
+        if (!row) return;
+        updateItemResultPreview(row);
+        document.querySelector('[data-request-validation]').hidden = true;
+    });
+
+    document.querySelector('[data-collector-request-note]')?.addEventListener('input', updateNoteCharacterCount);
+    document.querySelector('[data-confirm-request]')?.addEventListener('click', confirmActiveRequest);
+    document.querySelector('[data-print-summary]')?.addEventListener('click', () => window.print());
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeRequestModal();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     updateCollectorIdentity();
-    initInitialRequestForm();
-    renderFilteredRoutes();
-    renderQuickStatus();
-    initRequestNotes();
 
-    document.querySelector('[data-save-record]')?.addEventListener('click', () => {
-        if (!currentModalRouteId) return;
-        const weightValue = document.getElementById('weightUpdateInput').value.trim();
-        if (!weightValue) { alert('Please enter a weight before saving.'); return; }
-
-        const hazards = readCollectorState(collectorStorageKeys.hazards);
-        saveRouteRecord(currentModalRouteId, { weight: weightValue, hazard: Boolean(hazards[currentModalRouteId]) });
-        document.getElementById('weightUpdateInput').value = '';
-
-        const route = currentModalCollector.routes.find((r) => r.id === currentModalRouteId);
-        renderSavedRecordsTable(currentModalRouteId, route.address);
-        alert('Record saved.');
-    });
-
-    document.querySelector('[data-saved-records-body]')?.addEventListener('click', (event) => {
-        const btn = event.target.closest('[data-delete-index]');
-        if (!btn || !currentModalRouteId) return;
-
-        const index = Number(btn.dataset.deleteIndex);
-        deleteRouteRecordByIndex(currentModalRouteId, index);
-
-        const route = currentModalCollector.routes.find((r) => r.id === currentModalRouteId);
-        renderSavedRecordsTable(currentModalRouteId, route.address);
-    });
-
-    renderCollectorState();
-
-    document.querySelector('[data-close-route-modal]')?.addEventListener('click', () => {
-        setRouteModalOpen(false);
-    });
-
-    document.querySelector('[data-route-modal]')?.addEventListener('click', (event) => {
-        if (event.target === event.currentTarget) setRouteModalOpen(false);
-    });
-
-    document.querySelector('[data-mark-hazard]')?.addEventListener('click', () => {
-        if (!selectedRouteId) return;
-        updateHazard(selectedRouteId, true);
-        renderCollectorState();
-        setRouteModalOpen(false);
-    });
-
-    document.querySelector('[data-toggle-filter]')?.addEventListener('click', () => {
-        const panel = document.querySelector('[data-filter-panel]');
-        if (panel) panel.hidden = !panel.hidden;
-    });
-
-    document.querySelector('[data-request-filter]')?.addEventListener('change', (event) => {
-        const hazards = readCollectorState(collectorStorageKeys.hazards);
-        const pickups = readCollectorState(collectorStorageKeys.pickups);
-
-        document.querySelectorAll('[data-request-row]').forEach((row) => {
-            const id = row.dataset.requestId;
-            const shouldShow = event.target.value === 'all'
-                || (event.target.value === 'flagged' && hazards[id])
-                || (event.target.value === 'pending' && !pickups[id]);
-            row.hidden = !shouldShow;
-        });
-    });
-
-    document.querySelector('[data-daily-report]')?.addEventListener('click', () => window.print());
+    if (!document.querySelector('[data-collector-page]')) return;
+    renderWorkspace();
+    bindCollectorWorkspaceEvents();
 });
-
-function renderQuickStatus() {
-    const container = document.getElementById('quickStatusContainer');
-    if (!container) return;
-
-    const selection = getSelection();
-    if (!selection || !collectorsData[selection.collectorId]) {
-        const sublineEl = document.getElementById('requestsSubline');
-        if (sublineEl) sublineEl.textContent = 'Select collector details to load assigned pickup requests.';
-        renderSelectionRequired(container);
-        return;
-    }
-    const collector = collectorsData[selection.collectorId];
-
-    const sublineEl = document.getElementById('requestsSubline');
-    if (sublineEl) sublineEl.textContent = collector.zone + ' · Collector ID: ' + selection.collectorId + ' · ' + (collectionDates[selection.date] || selection.date);
-
-    container.innerHTML = collector.routes.map((route) => `
-        <article class="quick-status-row" data-request-id="${route.id}" data-request-row>
-            <div><strong>${route.address}</strong><span>${collector.zone}</span></div>
-            <div class="quick-status-actions">
-                <button type="button" class="small-action-btn" data-send-update="${route.id}">Update</button>
-                <button type="button" class="hazard-toggle" data-toggle-hazard="${route.id}" aria-label="Toggle hazard">🚩</button>
-                <button type="button" class="clear-hazard" data-clear-hazard="${route.id}" aria-label="Clear hazard">🗑️</button>
-            </div>
-        </article>
-    `).join('');
-
-    document.querySelectorAll('[data-toggle-hazard]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const id = button.dataset.toggleHazard;
-            const hazards = readCollectorState(collectorStorageKeys.hazards);
-            updateHazard(id, !hazards[id]);
-            renderCollectorState();
-        });
-    });
-
-    document.querySelectorAll('[data-clear-hazard], [data-send-update]').forEach((button) => {
-        button.addEventListener('click', () => {
-            const id = button.dataset.clearHazard || button.dataset.sendUpdate;
-            updateHazard(id, false);
-            renderCollectorState();
-            if (button.dataset.sendUpdate) {
-                alert('Mistake!! That is not a hazard.');
-            }
-        });
-    });
-
-    renderCollectorState();
-}
-
-/* ---------- Request Notes ---------- */
-
-function getSavedNote() {
-    try { return JSON.parse(localStorage.getItem('ecolot_general_note') || 'null'); }
-    catch { return null; }
-}
-
-function saveGeneralNote(text) {
-    localStorage.setItem('ecolot_general_note', JSON.stringify({ text }));
-}
-
-function deleteGeneralNote() {
-    localStorage.removeItem('ecolot_general_note');
-}
-
-function loadGeneralNote() {
-    const note = getSavedNote();
-
-    const textarea = document.querySelector('[data-note-text]');
-    const editBtn = document.querySelector('[data-edit-note]');
-    const deleteBtn = document.querySelector('[data-delete-note]');
-    const saveBtn = document.querySelector('[data-save-note]');
-    if (!textarea || !editBtn || !deleteBtn || !saveBtn) return;
-
-    if (note && note.text) {
-        textarea.value = note.text;
-        textarea.readOnly = true;
-        editBtn.hidden = false;
-        deleteBtn.hidden = false;
-        saveBtn.hidden = true;
-    } else {
-        textarea.value = '';
-        textarea.readOnly = false;
-        editBtn.hidden = true;
-        deleteBtn.hidden = true;
-        saveBtn.hidden = false;
-        saveBtn.textContent = 'Save Note';
-    }
-}
-
-function commitNote() {
-    const textArea = document.querySelector('[data-note-text]');
-    const text = textArea.value.trim();
-    if (!text) { alert('Please write a note before saving.'); return; }
-
-    saveGeneralNote(text);
-    loadGeneralNote();
-}
-
-function initRequestNotes() {
-    const textarea = document.querySelector('[data-note-text]');
-    if (!textarea) return;
-
-    loadGeneralNote();
-
-    document.querySelector('[data-save-note]')?.addEventListener('click', () => {
-        commitNote();
-    });
-
-    textarea.addEventListener('keydown', (event) => {
-        if (textarea.readOnly) return;
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            commitNote();
-        }
-    });
-
-    document.querySelector('[data-edit-note]')?.addEventListener('click', () => {
-        const editBtn = document.querySelector('[data-edit-note]');
-        const deleteBtn = document.querySelector('[data-delete-note]');
-        const saveBtn = document.querySelector('[data-save-note]');
-
-        textarea.readOnly = false;
-        textarea.focus();
-        editBtn.hidden = true;
-        deleteBtn.hidden = true;
-        saveBtn.hidden = false;
-        saveBtn.textContent = 'Update Note';
-    });
-
-    document.querySelector('[data-delete-note]')?.addEventListener('click', () => {
-        deleteGeneralNote();
-        loadGeneralNote();
-    });
-}

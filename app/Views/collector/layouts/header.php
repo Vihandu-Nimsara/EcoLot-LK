@@ -1,7 +1,7 @@
 <header class="top-header">
     <div class="header-left">
         <h1>Collector Workspace</h1>
-        <p>Review assigned routes, record pickups, and flag hazardous items.</p>
+        <p>Review assigned schedules and record accurate collection details.</p>
     </div>
 
     <div class="header-right">
