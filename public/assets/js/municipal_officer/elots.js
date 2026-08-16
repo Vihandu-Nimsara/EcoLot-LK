@@ -1,59 +1,13 @@
 (() => {
     'use strict';
 
-    const storageKey = 'ecolot_officer_elots_v1';
-    const filterForm = document.querySelector('[data-elot-filter-form]');
-    const tableBody = document.querySelector('[data-elots-table-body]');
-    const dialog = document.querySelector('[data-elot-dialog]');
-
-    if (!filterForm || !tableBody || !dialog) {
-        return;
-    }
-
-    const tableWrapper = document.querySelector('.elots-table-wrapper');
-    const resultCount = document.querySelector('[data-elot-result-count]');
-    const emptyState = document.querySelector('[data-elots-empty-state]');
-    const createTrigger = document.querySelector('[data-open-create-elot]');
-    const poolTrigger = document.querySelector('[data-open-item-pool]');
-    const createForm = dialog.querySelector('[data-elot-create-form]');
-    const poolSection = dialog.querySelector('[data-verified-pool-section]');
-    const manageForm = dialog.querySelector('[data-elot-manage-form]');
-    const dialogTitle = dialog.querySelector('[data-elot-dialog-title]');
-    const dialogDescription = dialog.querySelector('[data-elot-dialog-description]');
-    const dialogEyebrow = dialog.querySelector('[data-elot-dialog-eyebrow]');
-    const createError = dialog.querySelector('[data-create-elot-error]');
-    const manageError = dialog.querySelector('[data-manage-elot-error]');
-    const itemOptions = dialog.querySelector('[data-create-item-options]');
-    const poolBody = dialog.querySelector('[data-verified-pool-body]');
-    const bidSelector = dialog.querySelector('[data-bid-selector]');
-    const bidOptions = dialog.querySelector('[data-bid-options]');
-    const manageStatusField = dialog.querySelector('[data-manage-status-field]');
-    const manageStatus = manageForm.elements.status;
-    const manageSubmit = dialog.querySelector('[data-manage-elot-submit]');
-    const winnerSummary = dialog.querySelector('[data-elot-winner-summary]');
-    const winnerOutput = dialog.querySelector('[data-dialog-elot-winner]');
-    const toast = document.querySelector('[data-elot-toast]');
-    const summary = {
-        category: dialog.querySelector('[data-dialog-elot-category]'),
-        items: dialog.querySelector('[data-dialog-elot-items]'),
-        weight: dialog.querySelector('[data-dialog-elot-weight]'),
-        period: dialog.querySelector('[data-dialog-elot-period]'),
-    };
-
-    const categoryLabels = {
-        DOMESTIC: 'Domestic E-Waste',
-        OFFICE: 'Office E-Waste',
-        INDUSTRIAL: 'Industrial E-Waste',
-    };
-
-    const verifiedItems = [
-        { id: 'ITM-201', name: 'LED Monitor', category: 'DOMESTIC', weight: 4.5 },
-        { id: 'ITM-202', name: 'Rice Cooker', category: 'DOMESTIC', weight: 1 },
-        { id: 'ITM-203', name: 'Laser Printer', category: 'OFFICE', weight: 5 },
-        { id: 'ITM-204', name: 'UPS Unit', category: 'OFFICE', weight: 4 },
-        { id: 'ITM-205', name: 'Control Unit', category: 'INDUSTRIAL', weight: 10 },
+    const storageKey = 'ecolot_elots_v2';
+    const categoryLabels = { DOMESTIC: 'Domestic E-Waste', OFFICE: 'Office E-Waste', INDUSTRIAL: 'Industrial E-Waste' };
+    const seedLots = [
+        { code: 'EL-001', title: 'Domestic E-Waste Lot', collector: 'Ramesh Fernando', collectorId: 'Ram/2025/6', category: 'DOMESTIC', itemIds: ['ITM-201', 'ITM-202'], weight: 5.5, created: '2026-08-02', status: 'OPEN_FOR_BIDDING', officerNote: 'Verified and opened for bidding.', period: '03 Aug – 09 Aug 2026', bids: 2, winner: '' },
+        { code: 'EL-002', title: 'Office E-Waste Lot', collector: 'Ramesh Fernando', collectorId: 'Ram/2025/6', category: 'OFFICE', itemIds: ['ITM-203', 'ITM-204'], weight: 9, created: '2026-07-05', status: 'AWARDED', officerNote: 'Verified.', period: '06 Jul – 09 Jul 2026', bids: 2, winner: 'GreenCycle Lanka (Pvt) Ltd' },
+        { code: 'EL-003', title: 'Industrial E-Waste Lot', collector: 'Ramesh Fernando', collectorId: 'Ram/2025/6', category: 'INDUSTRIAL', itemIds: ['ITM-205'], weight: 10, created: '2026-07-05', status: 'COMPLETED', officerNote: 'Verified.', period: '06 Jul – 09 Jul 2026', bids: 1, winner: 'Ceylon Circular Metals (Pvt) Ltd' },
     ];
-
     const bids = {
         'EL-001': [
             { recycler: 'GreenCycle Lanka (Pvt) Ltd', amount: 'LKR 42,500' },
@@ -61,361 +15,228 @@
         ],
     };
 
-    let activeRow = null;
-    let lastFocusedElement = null;
+    const filterForm = document.querySelector('[data-elot-filter-form]');
+    const body = document.querySelector('[data-elots-table-body]');
+    const dialog = document.querySelector('[data-elot-dialog]');
+    if (!filterForm || !body || !dialog) return;
+
+    const tableWrapper = document.querySelector('.elots-table-wrapper');
+    const empty = document.querySelector('[data-elots-empty-state]');
+    const count = document.querySelector('[data-elot-result-count]');
+    const pendingCount = document.querySelector('[data-pending-count]');
+    const reviewForm = dialog.querySelector('[data-review-form]');
+    const manageForm = dialog.querySelector('[data-manage-form]');
+    const reviewError = dialog.querySelector('[data-review-error]');
+    const manageError = dialog.querySelector('[data-manage-error]');
+    const manageSubmit = dialog.querySelector('[data-manage-submit]');
+    const bidSelector = dialog.querySelector('[data-bid-selector]');
+    const bidOptions = dialog.querySelector('[data-bid-options]');
+    const winnerSummary = dialog.querySelector('[data-winner-summary]');
+    const toast = document.querySelector('[data-elot-toast]');
+    let activeLot = null;
+    let lastFocused = null;
     let toastTimer = null;
 
     const readState = () => {
         try {
-            const value = JSON.parse(localStorage.getItem(storageKey) || '{}');
-            return {
-                created: Array.isArray(value.created) ? value.created : [],
-                updates: value.updates && typeof value.updates === 'object' ? value.updates : {},
-                usedItems: Array.isArray(value.usedItems) ? value.usedItems : [],
-            };
-        } catch (error) {
-            return { created: [], updates: {}, usedItems: [] };
-        }
+            const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+            if (saved && Array.isArray(saved.lots)) return saved;
+        } catch (ignored) {}
+        const initial = { lots: seedLots, usedItemIds: ['ITM-201', 'ITM-202', 'ITM-203', 'ITM-204', 'ITM-205'] };
+        localStorage.setItem(storageKey, JSON.stringify(initial));
+        return initial;
     };
-
     const state = readState();
-
-    const persist = () => {
-        try {
-            localStorage.setItem(storageKey, JSON.stringify(state));
-        } catch (error) {
-            // Continue without persistence when browser storage is unavailable.
-        }
+    const save = () => localStorage.setItem(storageKey, JSON.stringify(state));
+    const cell = (text) => { const td = document.createElement('td'); td.textContent = text; return td; };
+    const statusClass = (status) => status.toLowerCase().replaceAll('_', '-');
+    const actionLabel = (status) => {
+        if (status === 'PENDING_VERIFICATION') return 'Verify';
+        if (status === 'REJECTED') return 'Review Again';
+        if (status === 'OPEN_FOR_BIDDING') return 'Review Bids';
+        if (status === 'AWARDED') return 'Manage';
+        return 'View';
     };
 
-    const formatDate = (value) => new Intl.DateTimeFormat('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC',
-    }).format(new Date(`${value}T00:00:00Z`));
-
-    const createCell = (text) => {
-        const cell = document.createElement('td');
-        cell.textContent = text;
-        return cell;
-    };
-
-    const buildRow = (lot) => {
-        const row = document.createElement('tr');
-        row.dataset.elotCode = lot.code;
-        row.dataset.elotTitle = lot.title;
-        row.dataset.category = lot.category;
-        row.dataset.elotStatus = lot.status;
-        row.append(
-            createCell(lot.code),
-            createCell(lot.title),
-            createCell(categoryLabels[lot.category]),
-            createCell(String(lot.items)),
-            createCell(`${Number(lot.weight).toFixed(2)} kg`),
-            createCell(lot.period),
-            createCell(String(lot.bids || 0)),
-        );
-
-        const statusCell = document.createElement('td');
-        const statusBadge = document.createElement('span');
-        statusBadge.className = 'elot-status open';
-        statusCell.appendChild(statusBadge);
-        row.appendChild(statusCell);
-
-        const winnerCell = document.createElement('td');
-        winnerCell.innerHTML = '<span class="not-assigned">Not Selected</span>';
-        row.appendChild(winnerCell);
-
-        const actionCell = document.createElement('td');
-        const action = document.createElement('button');
-        action.type = 'button';
-        action.className = 'elot-action-btn primary-action';
-        actionCell.appendChild(action);
-        row.appendChild(actionCell);
-        setRowState(row, lot.status, lot.winner || '');
-        return row;
-    };
-
-    const setRowState = (row, status, winner = '') => {
-        const normalizedStatus = ['OPEN_FOR_BIDDING', 'AWARDED', 'COMPLETED'].includes(status)
-            ? status : 'OPEN_FOR_BIDDING';
-        const badge = row.cells[7].querySelector('.elot-status');
-        const winnerCell = row.cells[8];
-        const action = row.querySelector('.elot-action-btn');
-
-        row.dataset.elotStatus = normalizedStatus;
-        badge.textContent = normalizedStatus.replaceAll('_', ' ');
-        badge.className = `elot-status ${normalizedStatus === 'OPEN_FOR_BIDDING' ? 'open' : normalizedStatus.toLowerCase()}`;
-        winnerCell.replaceChildren();
-        if (winner) {
-            winnerCell.textContent = winner;
-        } else {
-            const missing = document.createElement('span');
-            missing.className = 'not-assigned';
-            missing.textContent = 'Not Selected';
-            winnerCell.appendChild(missing);
-        }
-
-        if (normalizedStatus === 'OPEN_FOR_BIDDING') {
-            action.textContent = 'Review Bids';
-            action.className = 'elot-action-btn primary-action';
-        } else if (normalizedStatus === 'AWARDED') {
-            action.textContent = 'Manage';
-            action.className = 'elot-action-btn secondary-action';
-        } else {
-            action.textContent = 'View';
-            action.className = 'elot-action-btn secondary-action';
-        }
-    };
-
-    state.created.forEach((lot) => tableBody.appendChild(buildRow(lot)));
-    Object.entries(state.updates).forEach(([code, update]) => {
-        const row = Array.from(tableBody.rows).find((item) => item.dataset.elotCode === code);
-        if (row) {
-            setRowState(row, update.status, update.winner);
-        }
-    });
-
-    const getRows = () => Array.from(tableBody.querySelectorAll('[data-elot-code]'));
-
-    const applyFilters = () => {
+    const render = () => {
         const status = filterForm.elements.elot_status.value;
         const category = filterForm.elements.category.value;
-        let count = 0;
-
-        getRows().forEach((row) => {
-            const matches = (!status || row.dataset.elotStatus === status)
-                && (!category || row.dataset.category === category);
-            row.hidden = !matches;
-            count += matches ? 1 : 0;
+        const lots = state.lots.filter((lot) => (!status || lot.status === status) && (!category || lot.category === category));
+        body.replaceChildren();
+        lots.forEach((lot) => {
+            const row = document.createElement('tr');
+            row.dataset.code = lot.code;
+            const lotCell = document.createElement('td');
+            const code = document.createElement('strong');
+            code.textContent = lot.code;
+            const title = document.createElement('span');
+            title.className = 'table-secondary-text';
+            title.textContent = lot.title;
+            lotCell.append(code, title);
+            const statusCell = document.createElement('td');
+            const badge = document.createElement('span');
+            badge.className = `elot-status ${statusClass(lot.status)}`;
+            badge.textContent = lot.status.replaceAll('_', ' ');
+            statusCell.appendChild(badge);
+            const winnerCell = cell(lot.winner || '');
+            if (!lot.winner) {
+                const missing = document.createElement('span');
+                missing.className = 'not-assigned';
+                missing.textContent = 'Not selected';
+                winnerCell.appendChild(missing);
+            }
+            const actionCell = document.createElement('td');
+            const action = document.createElement('button');
+            action.type = 'button';
+            action.className = `elot-action-btn ${['PENDING_VERIFICATION', 'OPEN_FOR_BIDDING'].includes(lot.status) ? 'primary-action' : 'secondary-action'}`;
+            action.textContent = actionLabel(lot.status);
+            actionCell.appendChild(action);
+            row.append(lotCell, cell(lot.collector), cell(categoryLabels[lot.category]), cell(String(lot.itemIds.length)), cell(`${Number(lot.weight).toFixed(2)} kg`), cell(lot.created), cell(lot.period || 'Not opened'), cell(String(lot.bids || 0)), statusCell, winnerCell, actionCell);
+            body.appendChild(row);
         });
-
-        resultCount.textContent = `${count} ${count === 1 ? 'E-Lot' : 'E-Lots'} shown`;
-        emptyState.hidden = count !== 0;
-        tableWrapper.hidden = count === 0;
+        count.textContent = `${lots.length} ${lots.length === 1 ? 'E-Lot' : 'E-Lots'} shown`;
+        pendingCount.textContent = String(state.lots.filter((lot) => lot.status === 'PENDING_VERIFICATION').length);
+        empty.hidden = lots.length !== 0;
+        tableWrapper.hidden = lots.length === 0;
     };
 
-    const closeDialog = () => {
-        dialog.hidden = true;
-        document.body.style.overflow = '';
-        activeRow = null;
-        lastFocusedElement?.focus();
+    const formatDate = (value) => new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${value}T00:00:00Z`));
+    const setDialogSummary = (lot) => {
+        dialog.querySelector('[data-dialog-eyebrow]').textContent = lot.code;
+        dialog.querySelector('[data-summary-collector]').textContent = lot.collector;
+        dialog.querySelector('[data-summary-category]').textContent = categoryLabels[lot.category];
+        dialog.querySelector('[data-summary-items]').textContent = String(lot.itemIds.length);
+        dialog.querySelector('[data-summary-weight]').textContent = `${Number(lot.weight).toFixed(2)} kg`;
     };
-
-    const showSection = (section) => {
-        createForm.hidden = section !== createForm;
-        poolSection.hidden = section !== poolSection;
-        manageForm.hidden = section !== manageForm;
-        dialog.hidden = false;
-        document.body.style.overflow = 'hidden';
-    };
-
-    const showToast = () => {
+    const showDialog = () => { dialog.hidden = false; document.body.style.overflow = 'hidden'; };
+    const closeDialog = () => { dialog.hidden = true; document.body.style.overflow = ''; activeLot = null; lastFocused?.focus(); };
+    const showToast = (message) => {
         window.clearTimeout(toastTimer);
+        toast.textContent = message;
         toast.hidden = false;
         toastTimer = window.setTimeout(() => { toast.hidden = true; }, 2800);
     };
-
-    const renderItems = () => {
-        itemOptions.replaceChildren();
-        poolBody.replaceChildren();
-
-        verifiedItems.forEach((item) => {
-            const used = state.usedItems.includes(item.id);
-            const label = document.createElement('label');
-            label.className = 'verified-item-option';
-            label.dataset.category = item.category;
-            label.innerHTML = `<input type="checkbox" name="items" value="${item.id}" ${used ? 'disabled' : ''}><strong>${item.id} — ${item.name}</strong><span>${item.weight.toFixed(2)} kg</span>`;
-            itemOptions.appendChild(label);
-
-            const row = document.createElement('tr');
-            [item.id, item.name, categoryLabels[item.category], `${item.weight.toFixed(2)} kg`].forEach((text) => row.appendChild(createCell(text)));
-            const availability = createCell(used ? 'Added to E-Lot' : 'Available');
-            availability.className = used ? '' : 'pool-availability';
-            row.appendChild(availability);
-            poolBody.appendChild(row);
-        });
+    const toggleBiddingFields = () => {
+        const approving = reviewForm.elements.decision.value === 'APPROVE';
+        reviewForm.querySelectorAll('.bidding-field').forEach((field) => { field.hidden = !approving; });
+        dialog.querySelector('[data-review-submit]').textContent = approving ? 'Approve E-Lot' : 'Reject E-Lot';
     };
 
-    const filterCreateItems = () => {
-        const category = createForm.elements.category.value;
-        itemOptions.querySelectorAll('.verified-item-option').forEach((option) => {
-            option.hidden = Boolean(category) && option.dataset.category !== category;
-            if (option.hidden) {
-                option.querySelector('input').checked = false;
-            }
-        });
-    };
-
-    createTrigger.addEventListener('click', () => {
-        lastFocusedElement = createTrigger;
-        dialogEyebrow.textContent = 'New E-Lot';
-        dialogTitle.textContent = 'Create E-Lot';
-        dialogDescription.textContent = 'Select verified items and set the recycler bidding period.';
-        createForm.reset();
-        createForm.elements.start.value = '2026-08-04';
-        createForm.elements.end.value = '2026-08-09';
-        createError.hidden = true;
-        renderItems();
-        filterCreateItems();
-        showSection(createForm);
-        createForm.elements.title.focus();
-    });
-
-    poolTrigger.addEventListener('click', () => {
-        lastFocusedElement = poolTrigger;
-        dialogEyebrow.textContent = 'Verified inventory';
-        dialogTitle.textContent = 'Verified Item Pool';
-        dialogDescription.textContent = 'Items can be included in one E-Lot while they are available.';
-        renderItems();
-        showSection(poolSection);
-    });
-
-    createForm.elements.category.addEventListener('change', filterCreateItems);
-    createForm.addEventListener('input', () => { createError.hidden = true; });
-    createForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const selectedIds = Array.from(createForm.querySelectorAll('input[name="items"]:checked')).map((input) => input.value);
-        const selectedItems = verifiedItems.filter((item) => selectedIds.includes(item.id));
-        const category = createForm.elements.category.value;
-
-        if (createForm.elements.title.value.trim().length < 3) {
-            createError.textContent = 'Enter a clear E-Lot title.';
-            createError.hidden = false;
-            createForm.elements.title.focus();
-            return;
-        }
-
-        if (!selectedItems.length) {
-            createError.textContent = 'Select at least one available verified item.';
-            createError.hidden = false;
-            return;
-        }
-        if (selectedItems.some((item) => item.category !== category)) {
-            createError.textContent = 'All selected items must match the E-Lot category.';
-            createError.hidden = false;
-            return;
-        }
-        if (createForm.elements.end.value <= createForm.elements.start.value) {
-            createError.textContent = 'The bidding closing date must be after the opening date.';
-            createError.hidden = false;
-            createForm.elements.end.focus();
-            return;
-        }
-
-        const nextNumber = Math.max(3, ...getRows().map((row) => Number(row.dataset.elotCode.replace('EL-', '')) || 0)) + 1;
-        const lot = {
-            code: `EL-${String(nextNumber).padStart(3, '0')}`,
-            title: createForm.elements.title.value.trim(),
-            category,
-            items: selectedItems.length,
-            weight: selectedItems.reduce((total, item) => total + item.weight, 0),
-            period: `${formatDate(createForm.elements.start.value)} – ${formatDate(createForm.elements.end.value)}`,
-            bids: 0,
-            status: 'OPEN_FOR_BIDDING',
-            winner: '',
-        };
-        state.created.push(lot);
-        state.usedItems.push(...selectedIds);
-        tableBody.appendChild(buildRow(lot));
-        persist();
-        closeDialog();
-        applyFilters();
-        showToast();
-    });
-
-    const populateManageSummary = (row) => {
-        summary.category.textContent = row.cells[2].textContent.trim();
-        summary.items.textContent = row.cells[3].textContent.trim();
-        summary.weight.textContent = row.cells[4].textContent.trim();
-        summary.period.textContent = row.cells[5].textContent.trim();
-    };
-
-    tableBody.addEventListener('click', (event) => {
-        const trigger = event.target.closest('.elot-action-btn');
-        if (!trigger) return;
-        const row = trigger.closest('[data-elot-code]');
-        const status = row.dataset.elotStatus;
-        const lotBids = bids[row.dataset.elotCode] || [];
-        activeRow = row;
-        lastFocusedElement = trigger;
-        dialogEyebrow.textContent = row.dataset.elotCode;
-        populateManageSummary(row);
-        bidOptions.replaceChildren();
+    body.addEventListener('click', (event) => {
+        const button = event.target.closest('.elot-action-btn');
+        if (!button) return;
+        activeLot = state.lots.find((lot) => lot.code === button.closest('tr').dataset.code);
+        if (!activeLot) return;
+        lastFocused = button;
+        setDialogSummary(activeLot);
+        reviewForm.hidden = true;
+        manageForm.hidden = true;
+        reviewError.hidden = true;
         manageError.hidden = true;
         winnerSummary.hidden = true;
-        manageStatusField.hidden = true;
         bidSelector.hidden = true;
-        manageSubmit.hidden = false;
-        manageSubmit.disabled = false;
+        manageSubmit.hidden = true;
 
-        if (status === 'OPEN_FOR_BIDDING') {
-            dialogTitle.textContent = 'Review Recycler Bids';
-            dialogDescription.textContent = lotBids.length ? 'Select the winning recycler bid for this E-Lot.' : 'No recycler bids have been submitted for this E-Lot yet.';
-            bidSelector.hidden = false;
-            lotBids.forEach((bid, index) => {
-                const label = document.createElement('label');
-                label.className = 'bid-option';
-                label.innerHTML = `<input type="radio" name="winner" value="${bid.recycler}"><strong>${bid.recycler}</strong><span>${bid.amount}</span>`;
-                bidOptions.appendChild(label);
-                if (index === 0) label.querySelector('input').checked = true;
-            });
-            if (!lotBids.length) {
-                bidOptions.textContent = 'Waiting for recycler bids.';
-                manageSubmit.hidden = true;
-            } else {
-                manageSubmit.textContent = 'Award E-Lot';
-            }
+        if (['PENDING_VERIFICATION', 'REJECTED'].includes(activeLot.status)) {
+            reviewForm.hidden = false;
+            reviewForm.reset();
+            reviewForm.elements.note.value = activeLot.officerNote || '';
+            dialog.querySelector('[data-dialog-title]').textContent = activeLot.status === 'REJECTED' ? 'Review Rejected E-Lot' : 'Verify Collector E-Lot';
+            dialog.querySelector('[data-dialog-description]').textContent = 'Approve the E-Lot and set its bidding window, or return it to the collector with a reason.';
+            toggleBiddingFields();
         } else {
-            const winner = row.cells[8].textContent.trim();
-            winnerOutput.textContent = winner;
-            winnerSummary.hidden = false;
-            manageStatusField.hidden = status === 'COMPLETED';
-            manageStatus.value = status === 'COMPLETED' ? 'COMPLETED' : 'AWARDED';
-            dialogTitle.textContent = status === 'COMPLETED' ? 'View E-Lot' : 'Manage Awarded E-Lot';
-            dialogDescription.textContent = status === 'COMPLETED' ? 'Review the completed E-Lot and selected recycler.' : 'Update the awarded E-Lot when recycler handover is complete.';
-            manageSubmit.hidden = status === 'COMPLETED';
-            manageSubmit.textContent = 'Save Changes';
+            manageForm.hidden = false;
+            const lotBids = bids[activeLot.code] || [];
+            const noteCard = dialog.querySelector('[data-note-card]');
+            noteCard.hidden = !activeLot.officerNote;
+            dialog.querySelector('[data-note-output]').textContent = activeLot.officerNote || '';
+            if (activeLot.status === 'OPEN_FOR_BIDDING') {
+                dialog.querySelector('[data-dialog-title]').textContent = 'Review Recycler Bids';
+                dialog.querySelector('[data-dialog-description]').textContent = lotBids.length ? 'Select the winning recycler bid.' : 'No recycler bids have been submitted yet.';
+                bidSelector.hidden = false;
+                bidOptions.replaceChildren();
+                lotBids.forEach((bid, index) => {
+                    const label = document.createElement('label');
+                    label.className = 'bid-option';
+                    const radio = document.createElement('input');
+                    radio.type = 'radio'; radio.name = 'winner'; radio.value = bid.recycler; radio.checked = index === 0;
+                    const name = document.createElement('strong'); name.textContent = bid.recycler;
+                    const amount = document.createElement('span'); amount.textContent = bid.amount;
+                    label.append(radio, name, amount); bidOptions.appendChild(label);
+                });
+                if (!lotBids.length) bidOptions.textContent = 'Waiting for recycler bids.';
+                manageSubmit.hidden = lotBids.length === 0;
+                manageSubmit.textContent = 'Award E-Lot';
+            } else {
+                winnerSummary.hidden = false;
+                dialog.querySelector('[data-winner-output]').textContent = activeLot.winner || 'Not selected';
+                dialog.querySelector('[data-dialog-title]').textContent = activeLot.status === 'COMPLETED' ? 'View Completed E-Lot' : 'Manage Awarded E-Lot';
+                dialog.querySelector('[data-dialog-description]').textContent = activeLot.status === 'COMPLETED' ? 'Review the completed handover details.' : 'Mark the E-Lot complete after recycler handover.';
+                manageSubmit.hidden = activeLot.status === 'COMPLETED';
+                manageSubmit.textContent = 'Mark Completed';
+            }
         }
-        const cancel = manageForm.querySelector('[data-close-elot-dialog]');
-        cancel.textContent = status === 'COMPLETED' || (status === 'OPEN_FOR_BIDDING' && !lotBids.length)
-            ? 'Close' : 'Cancel';
-        showSection(manageForm);
+        showDialog();
+    });
+
+    reviewForm.elements.decision.addEventListener('change', toggleBiddingFields);
+    reviewForm.addEventListener('input', () => { reviewError.hidden = true; });
+    reviewForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!activeLot) return;
+        const decision = reviewForm.elements.decision.value;
+        const note = reviewForm.elements.note.value.trim();
+        if (decision === 'REJECT' && note.length < 3) {
+            reviewError.textContent = 'Add a clear reason before rejecting the E-Lot.';
+            reviewError.hidden = false;
+            return;
+        }
+        if (decision === 'APPROVE') {
+            const start = reviewForm.elements.start.value;
+            const end = reviewForm.elements.end.value;
+            if (!start || !end || end <= start) {
+                reviewError.textContent = 'Choose a valid bidding window with a closing date after the opening date.';
+                reviewError.hidden = false;
+                return;
+            }
+            activeLot.status = 'OPEN_FOR_BIDDING';
+            activeLot.period = `${formatDate(start)} – ${formatDate(end)}`;
+            activeLot.officerNote = note || 'Verified and opened for bidding.';
+        } else {
+            activeLot.status = 'REJECTED';
+            activeLot.period = '';
+            activeLot.officerNote = note;
+        }
+        save();
+        closeDialog();
+        render();
+        showToast(decision === 'APPROVE' ? 'E-Lot approved and opened for bidding.' : 'E-Lot returned to the collector.');
     });
 
     manageForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        if (!activeRow) return;
-        let status = activeRow.dataset.elotStatus;
-        let winner = activeRow.cells[8].textContent.trim();
-
-        if (status === 'OPEN_FOR_BIDDING') {
-            const selectedBid = manageForm.querySelector('input[name="winner"]:checked');
-            if (!selectedBid) {
+        if (!activeLot) return;
+        if (activeLot.status === 'OPEN_FOR_BIDDING') {
+            const selected = manageForm.querySelector('input[name="winner"]:checked');
+            if (!selected) {
                 manageError.textContent = 'Select a recycler bid before awarding this E-Lot.';
                 manageError.hidden = false;
                 return;
             }
-            status = 'AWARDED';
-            winner = selectedBid.value;
-        } else {
-            status = manageStatus.value;
+            activeLot.status = 'AWARDED';
+            activeLot.winner = selected.value;
+        } else if (activeLot.status === 'AWARDED') {
+            activeLot.status = 'COMPLETED';
         }
-
-        setRowState(activeRow, status, winner);
-        state.updates[activeRow.dataset.elotCode] = { status, winner };
-        persist();
+        save();
         closeDialog();
-        applyFilters();
-        showToast();
+        render();
+        showToast('E-Lot updated.');
     });
-
-    filterForm.addEventListener('submit', (event) => { event.preventDefault(); applyFilters(); });
-    filterForm.addEventListener('reset', () => requestAnimationFrame(applyFilters));
-    dialog.addEventListener('click', (event) => {
-        if (event.target === dialog || event.target.closest('[data-close-elot-dialog]')) closeDialog();
-    });
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !dialog.hidden) closeDialog();
-    });
-
-    applyFilters();
+    filterForm.addEventListener('submit', (event) => { event.preventDefault(); render(); });
+    filterForm.addEventListener('reset', () => requestAnimationFrame(render));
+    dialog.addEventListener('click', (event) => { if (event.target === dialog || event.target.closest('[data-close-dialog]')) closeDialog(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !dialog.hidden) closeDialog(); });
+    window.addEventListener('storage', (event) => { if (event.key === storageKey) window.location.reload(); });
+    render();
 })();
