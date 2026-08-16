@@ -206,6 +206,30 @@
     padding: 24px;
 }
 
+.collector-app .collector-selection-required {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    width: 100%;
+    padding: 24px;
+    color: var(--collector-text);
+    background: var(--collector-surface);
+    border: 1px solid var(--collector-border);
+    border-radius: 14px;
+    box-shadow: var(--collector-shadow);
+}
+
+.collector-app .collector-selection-required p {
+    max-width: 620px;
+    color: var(--collector-muted);
+    font-size: 0.8125rem;
+}
+
+.collector-app .collector-selection-required .primary-btn {
+    margin-top: 4px;
+    text-decoration: none;
+}
+
 .collector-app .card-heading {
     display: flex;
     align-items: flex-end;

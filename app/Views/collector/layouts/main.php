@@ -4,8 +4,13 @@ $pageStyles = [
     'dashboard' => 'collector/assigned-routes.css',
     'my-requests' => 'collector/assigned-requests.css',
     'initial-request' => 'collector/initial-request.css',
+    'e-lots' => 'collector/elots.css',
+];
+$pageScripts = [
+    'e-lots' => 'collector/elots.js',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$pageScript = $pageScripts[$currentPage ?? ''] ?? null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/collector/theme.css');
 ?>
 <!DOCTYPE html>
@@ -50,5 +55,8 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/col
     </div>
 
     <script src="<?= $assetBase ?>/js/collector/collector-workspace.js"></script>
+    <?php if ($pageScript !== null): ?>
+        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>"></script>
+    <?php endif; ?>
 </body>
 </html>
