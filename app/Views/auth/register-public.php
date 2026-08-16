@@ -19,34 +19,60 @@
                 <h1>Create Your Profile</h1>
             </header>
 
+            <?php if (!empty($errors['general'])): ?>
+                <p class="registration-group-error"><?= htmlspecialchars($errors['general'][0], ENT_QUOTES, 'UTF-8') ?></p>
+            <?php endif; ?>
+
             <form class="registration-form" action="<?= htmlspecialchars($basePath . '/register/public', ENT_QUOTES, 'UTF-8') ?>" method="post">
                 <div class="form-group">
                     <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first_name" placeholder="your first name" autocomplete="given-name" required>
+                    <input type="text" id="first-name" name="first_name" placeholder="your first name" autocomplete="given-name" value="<?= htmlspecialchars($old['first_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
+                    <?php if (!empty($errors['first_name'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['first_name'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last_name" placeholder="your last name" autocomplete="family-name" required>
+                    <input type="text" id="last-name" name="last_name" placeholder="your last name" autocomplete="family-name" value="<?= htmlspecialchars($old['last_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
+                    <?php if (!empty($errors['last_name'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['last_name'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="contact-number">Contact Number</label>
-                    <input type="tel" id="contact-number" name="contact_number" placeholder="enter your contact number" autocomplete="tel" required>
+                    <input type="tel" id="contact-number" name="contact_number" placeholder="enter your contact number" autocomplete="tel" value="<?= htmlspecialchars($old['contact_number'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
+                    <?php if (!empty($errors['contact_number'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['contact_number'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="public-email">Email</label>
-                    <input type="email" id="public-email" name="email" placeholder="you@example.com" autocomplete="email">
+                    <input type="email" id="public-email" name="email" placeholder="you@example.com" autocomplete="email" value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                    <?php if (!empty($errors['email'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['email'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="public-password">Password</label>
                     <input type="password" id="public-password" name="password" placeholder="create a password" autocomplete="new-password" required>
+                    <?php if (!empty($errors['password'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['password'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="postal-code">Postal Code</label>
-                    <input type="text" id="postal-code" name="postal_code" placeholder="enter your postal code" autocomplete="postal-code" required>
+                    <select id="postal-code" name="postal_code" required>
+                        <option value="" disabled <?= empty($old['postal_code']) ? 'selected' : '' ?>>Select your area</option>
+                        <?php
+                        $postalAreas = [
+                            'Wellawatte' => '11100',
+                            'Rajagiriya' => '10800',
+                            'Narahenpita' => '10600',
+                            'Kollupitiya' => '10500',
+                            'Borella' => '00800',
+                            'Cinnamon Gardens' => '00700',
+                        ];
+                        foreach ($postalAreas as $areaName => $areaCode):
+                        ?>
+                            <option value="<?= htmlspecialchars($areaCode, ENT_QUOTES, 'UTF-8') ?>" <?= (($old['postal_code'] ?? '') === $areaCode) ? 'selected' : '' ?>><?= htmlspecialchars($areaName . ' — ' . $areaCode, ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($errors['postal_code'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['postal_code'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="address">Address</label>
-                    <input type="text" id="address" name="address" placeholder="enter your address" autocomplete="street-address" required>
+                    <input type="text" id="address" name="address" placeholder="enter your address" autocomplete="street-address" value="<?= htmlspecialchars($old['address'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
+                    <?php if (!empty($errors['address'])): ?><p class="registration-group-error"><?= htmlspecialchars($errors['address'][0], ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
                 </div>
                 <div class="form-submit-area">
                     <button type="submit" class="create-profile-btn">Create profile</button>
