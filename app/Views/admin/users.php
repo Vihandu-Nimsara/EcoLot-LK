@@ -20,7 +20,7 @@ $users = [
         'role' => 'COLLECTOR',
         'role_label' => 'Collector',
         'identifier' => 'Collector ID: COL-002',
-        'status' => 'INACTIVE',
+        'status' => 'DISABLED',
         'kind' => 'staff',
     ],
     [
@@ -28,8 +28,8 @@ $users = [
         'name' => 'GreenCycle Lanka Pvt Ltd',
         'email' => 'anjana@greencycle.lk',
         'phone' => '077 234 5678',
-        'role' => 'AUTHORIZED_RECYCLER',
-        'role_label' => 'Recycler',
+        'role' => 'RECYCLER',
+        'role_label' => 'Authorized Recycler',
         'identifier' => 'SWML/2026/001',
         'status' => 'ACTIVE',
         'kind' => 'recycler',
@@ -81,7 +81,7 @@ $users = [
             <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="PUBLIC_USER">Public Users</button>
             <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="MUNICIPAL_OFFICER">Municipal Officers</button>
             <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="COLLECTOR">Collectors</button>
-            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="AUTHORIZED_RECYCLER">Recyclers</button>
+            <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="RECYCLER">Recyclers</button>
             <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="role" data-filter-value="ADMIN">Administrators</button>
         </div>
         <div class="light-filter-controls">
@@ -111,7 +111,7 @@ $users = [
         <td data-label="Role"><?= htmlspecialchars($user['role_label']) ?></td>
         <td data-label="Contact"><span class="table-primary-text"><?= htmlspecialchars($user['email']) ?></span><span class="table-secondary-text"><?= htmlspecialchars($user['phone']) ?></span></td>
         <td data-label="Identifier"><?= htmlspecialchars($user['identifier']) ?></td>
-        <td data-label="Account Status"><span class="user-status <?= $user['status']==='INACTIVE'?'status-inactive':'' ?>"><?= ucfirst(strtolower($user['status'])) ?></span></td>
+        <td data-label="Account Status"><span class="user-status <?= $user['status']==='DISABLED'?'status-inactive':'' ?>"><?= ucfirst(strtolower($user['status'])) ?></span></td>
                             <td data-label="Actions">
                                 <div class="row-actions">
                                     <?php if ($user['kind']==='recycler'): ?>
@@ -126,7 +126,7 @@ $users = [
 
                                     <?php if (empty($user['protected'])): ?>
                                         <div class="status-form">
-                                            <select aria-label="Account status for <?= htmlspecialchars($user['name']) ?>"><option value="ACTIVE"<?= $user['status']==='ACTIVE'?' selected':'' ?>>Active</option><option value="INACTIVE"<?= $user['status']==='INACTIVE'?' selected':'' ?>>Inactive</option></select>
+                                            <select aria-label="Account status for <?= htmlspecialchars($user['name']) ?>"><option value="PENDING"<?= $user['status']==='PENDING'?' selected':'' ?>>Pending</option><option value="ACTIVE"<?= $user['status']==='ACTIVE'?' selected':'' ?>>Active</option><option value="SUSPENDED"<?= $user['status']==='SUSPENDED'?' selected':'' ?>>Suspended</option><option value="DISABLED"<?= $user['status']==='DISABLED'?' selected':'' ?>>Disabled</option></select>
                                             <button type="button" data-status-dialog data-admin-dialog="account-status" data-name="<?= htmlspecialchars($user['name']) ?>">Update</button>
                                         </div>
                                     <?php endif; ?>

@@ -47,18 +47,7 @@
                 </fieldset>
 
                 <fieldset class="registration-section">
-                    <legend><span>C</span> Authorized Activities Claimed</legend>
-                    <p class="section-helper">Select the activities shown on your CEA licence. These claims remain subject to Administrator verification.</p>
-                    <div class="option-grid">
-                        <?php foreach (['Collection', 'Transportation', 'Storage', 'Recovery', 'Recycling', 'Disposal'] as $activity): ?>
-                            <label class="check-option"><input type="checkbox" name="activities[]" value="<?= htmlspecialchars($activity, ENT_QUOTES, 'UTF-8') ?>"><span><?= htmlspecialchars($activity, ENT_QUOTES, 'UTF-8') ?></span></label>
-                        <?php endforeach; ?>
-                    </div>
-                    <p class="registration-group-error" data-activities-error role="alert" hidden>Select at least one licence activity.</p>
-                </fieldset>
-
-                <fieldset class="registration-section">
-                    <legend><span>D</span> Requested Waste-Handling Capabilities</legend>
+                    <legend><span>C</span> Requested Waste-Handling Capabilities</legend>
                     <p class="section-helper">Selected capabilities will be reviewed by the Administrator against your submitted licence information.</p>
                     <div class="option-grid capability-options">
                         <?php foreach (['Automobile E-Waste', 'Demo Battery and Circuit Boards', 'Demo Consumer Electronics', 'Domestic E-Waste', 'Industrial E-Waste', 'Medical E-Waste', 'Office E-Waste'] as $category): ?>

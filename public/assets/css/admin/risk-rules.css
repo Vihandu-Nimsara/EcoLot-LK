@@ -10,7 +10,7 @@
 }
 
 .risk-table :is(th, td):nth-child(1) {
-    width: 7%;
+    width: 16%;
 }
 
 .risk-table :is(th, td):nth-child(2) {
@@ -18,15 +18,15 @@
 }
 
 .risk-table :is(th, td):nth-child(3) {
-    width: 18%;
+    width: 16%;
 }
 
 .risk-table :is(th, td):nth-child(4) {
-    width: 9%;
+    width: 8%;
 }
 
 .risk-table :is(th, td):nth-child(5) {
-    width: 27%;
+    width: 25%;
 }
 
 .risk-table :is(th, td):nth-child(6) {
@@ -34,11 +34,11 @@
 }
 
 .risk-table :is(th, td):nth-child(7) {
-    width: 17%;
+    width: 13%;
 }
 
 .risk-table :is(td):nth-child(1) {
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .rule-actions {

@@ -60,7 +60,7 @@
 
     <section class="compliance-summary" aria-label="Compliance summary">
         <div><span>Verification</span><strong>Verified</strong></div>
-        <div><span>CEA Licence Record</span><strong>Verified until 2027-06-30</strong></div>
+        <div><span>CEA Licence Status</span><strong>Valid until 2027-06-30</strong></div>
         <div><span>Approved Capabilities</span><strong>2</strong></div>
         <a href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/recycler/profile">View My Profile</a>
     </section>

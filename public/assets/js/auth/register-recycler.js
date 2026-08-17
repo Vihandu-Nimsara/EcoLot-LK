@@ -10,24 +10,15 @@
     form.addEventListener("submit", (event) => {
         event.preventDefault();
         const expiry = form.elements.licence_expiry;
-        const activities = form.querySelectorAll(
-            '[name="activities[]"]:checked'
-        );
         const capabilities = form.querySelectorAll(
             '[name="requested_capabilities[]"]:checked'
         );
-        const firstActivity = form.querySelector('[name="activities[]"]');
         const firstCapability = form.querySelector('[name="requested_capabilities[]"]');
-        const activitiesError = form.querySelector("[data-activities-error]");
         const capabilitiesError = form.querySelector("[data-capabilities-error]");
-        firstActivity?.setCustomValidity(
-            activities.length ? "" : "Select at least one licence activity."
-        );
         firstCapability?.setCustomValidity(
             capabilities.length ? "" : "Select at least one requested capability."
         );
 
-        if (activitiesError) activitiesError.hidden = activities.length > 0;
         if (capabilitiesError) capabilitiesError.hidden = capabilities.length > 0;
 
         if (expiry) {
@@ -70,19 +61,11 @@
 
     form.addEventListener("change", (event) => {
         if (event.target.matches(
-            '[name="activities[]"], [name="requested_capabilities[]"], [name="licence_expiry"]'
+            '[name="requested_capabilities[]"], [name="licence_expiry"]'
         )) {
             event.target.setCustomValidity("");
-            form.querySelector('[name="activities[]"]')?.setCustomValidity("");
             form.querySelector('[name="requested_capabilities[]"]')?.setCustomValidity("");
-            const activitiesError = form.querySelector("[data-activities-error]");
             const capabilitiesError = form.querySelector("[data-capabilities-error]");
-            if (activitiesError && event.target.matches('[name="activities[]"]')) {
-                activitiesError.hidden = form.querySelectorAll(
-                    '[name="activities[]"]:checked'
-                ).length > 0;
-            }
-
             if (capabilitiesError && event.target.matches('[name="requested_capabilities[]"]')) {
                 capabilitiesError.hidden = form.querySelectorAll(
                     '[name="requested_capabilities[]"]:checked'

@@ -1,7 +1,7 @@
 <?php $capabilities = [
-    ['category' => 'Demo Consumer Electronics', 'status' => 'Approved', 'class' => 'badge-completed'],
-    ['category' => 'Demo Battery and Circuit Boards', 'status' => 'Approved', 'class' => 'badge-completed'],
-    ['category' => 'Medical E-Waste', 'status' => 'Pending', 'class' => 'badge-pending'],
+    ['category' => 'Demo Consumer Electronics', 'status' => 'APPROVED', 'class' => 'badge-completed'],
+    ['category' => 'Demo Battery and Circuit Boards', 'status' => 'APPROVED', 'class' => 'badge-completed'],
+    ['category' => 'Medical E-Waste', 'status' => 'PENDING', 'class' => 'badge-pending'],
 ]; ?>
 <section class="workflow-page">
     <div class="workflow-header">
@@ -35,8 +35,7 @@
             <div class="detail-item"><span class="detail-label">Licence Type</span><strong class="detail-value">Scheduled Waste Management Licence (SWML)</strong></div>
             <div class="detail-item"><span class="detail-label">SWML Number</span><strong class="detail-value">SWML/2026/001</strong></div>
             <div class="detail-item"><span class="detail-label">Expiry Date</span><strong class="detail-value">2027-06-30</strong></div>
-            <div class="detail-item"><span class="detail-label">Licence Verification Status</span><span class="badge badge-completed">Verified</span></div>
-            <div class="detail-item"><span class="detail-label">Activities Recorded</span><strong class="detail-value">Recovery, Recycling, Storage</strong></div>
+            <div class="detail-item"><span class="detail-label">Licence Status</span><span class="badge badge-completed">Valid</span></div>
             <div class="detail-item"><span class="detail-label">Licence Document</span><strong class="detail-value">Submitted document preview unavailable in this frontend demo</strong></div>
         </div>
         <div class="form-actions">
@@ -49,7 +48,7 @@
         <div class="workflow-table-wrapper">
             <table class="workflow-table">
                 <thead><tr><th>Waste Category</th><th>Capability Status</th><th>Action</th></tr></thead>
-                <tbody><?php foreach ($capabilities as $capability): ?><tr><td><?= htmlspecialchars($capability['category']) ?></td><td><span class="badge <?= htmlspecialchars($capability['class']) ?>"><?= htmlspecialchars($capability['status']) ?></span></td><td><?php if ($capability['status'] === 'Pending'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="<?= htmlspecialchars($capability['category']) ?>">Request Change</button><?php endif; ?></td></tr><?php endforeach; ?></tbody>
+                <tbody><?php foreach ($capabilities as $capability): ?><tr><td><?= htmlspecialchars($capability['category']) ?></td><td><span class="badge <?= htmlspecialchars($capability['class']) ?>"><?= htmlspecialchars(ucfirst(strtolower($capability['status']))) ?></span></td><td><?php if ($capability['status'] === 'PENDING'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-recycler-dialog="capability-request" data-category="<?= htmlspecialchars($capability['category']) ?>">Request Change</button><?php endif; ?></td></tr><?php endforeach; ?></tbody>
             </table>
         </div>
         <?php if ($capabilities === []): ?><div class="empty-state">No handling capabilities are recorded.</div><?php endif; ?>

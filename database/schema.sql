@@ -458,7 +458,7 @@ CREATE TABLE IF NOT EXISTS `e_lots` (
     `title` VARCHAR(180) NOT NULL,
     `lot_status` ENUM(
         'DRAFT', 'PENDING_VERIFICATION', 'REJECTED', 'OPEN_FOR_BIDDING',
-        'AWARDED', 'COMPLETED', 'CANCELLED'
+        'AWARDED', 'PROCESSING', 'COMPLETED', 'CANCELLED'
     ) NOT NULL DEFAULT 'DRAFT',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `verified_by_officer_user_id` BIGINT UNSIGNED NULL,
@@ -466,6 +466,8 @@ CREATE TABLE IF NOT EXISTS `e_lots` (
     `verified_at` DATETIME NULL,
     `bidding_open_at` DATETIME NULL,
     `bidding_close_at` DATETIME NULL,
+    `processing_started_at` DATETIME NULL,
+    `processing_completed_at` DATETIME NULL,
     PRIMARY KEY (`e_lot_id`),
     UNIQUE KEY `uq_e_lots_code` (`lot_code`),
     KEY `idx_e_lots_category_status` (`category_id`, `lot_status`),

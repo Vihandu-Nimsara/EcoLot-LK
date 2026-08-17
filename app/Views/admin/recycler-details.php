@@ -1,12 +1,12 @@
 <?php
 $selectedId = (string) ($recyclerId ?? '');
 $records = [
- '1'=>['company'=>'GreenCycle Lanka Pvt Ltd','contact'=>'Anjana Silva','email'=>'anjana@greencycle.lk','phone'=>'077 234 5678','address'=>'45 Green Park, Colombo 05','district'=>'Colombo','swml'=>'SWML/2026/001','expiry'=>'2027-06-30','status'=>'VERIFIED','licence'=>'VERIFIED','activities'=>['Recovery','Recycling','Storage'],'capabilities'=>[['Demo Consumer Electronics','Approved'],['Demo Battery and Circuit Boards','Approved']]],
- '2'=>['company'=>'E-Waste Recovery Colombo','contact'=>'Nimal Perera','email'=>'nimal@ewasterecovery.lk','phone'=>'071 456 7890','address'=>'28 Recovery Road, Colombo 10','district'=>'Colombo','swml'=>'SWML/2026/002','expiry'=>'2027-04-18','status'=>'VERIFIED','licence'=>'VERIFIED','activities'=>['Collection','Recovery','Recycling'],'capabilities'=>[['Office E-Waste','Approved']]],
- '3'=>['company'=>'SafeDispose Electronics','contact'=>'Kavindi Fernando','email'=>'kavindi@safedispose.lk','phone'=>'076 876 5432','address'=>'14 Circular Avenue, Wattala','district'=>'Gampaha','swml'=>'SWML/2026/003','expiry'=>'2027-03-22','status'=>'VERIFIED','licence'=>'VERIFIED','activities'=>['Collection','Transportation','Storage'],'capabilities'=>[['Domestic E-Waste','Approved']]],
- '4'=>['company'=>'Eco Recyclers Pvt Ltd','contact'=>'Tharindu Jayasinghe','email'=>'tharindu@ecorecyclers.lk','phone'=>'075 345 9087','address'=>'8 Coastal Road, Panadura','district'=>'Kalutara','swml'=>'SWML/2026/004','expiry'=>'2027-08-15','status'=>'VERIFIED','licence'=>'VERIFIED','activities'=>['Recovery','Recycling'],'capabilities'=>[['Automobile E-Waste','Approved']]],
- '5'=>['company'=>'Ceylon Tech Recyclers','contact'=>'Isuru Bandara','email'=>'isuru@ceylontechrecyclers.lk','phone'=>'078 112 3344','address'=>'18 Industrial Road, Kandy','district'=>'Kandy','swml'=>'SWML/2026/005','expiry'=>'2027-02-10','status'=>'PENDING','licence'=>'PENDING','activities'=>['Recovery','Recycling'],'capabilities'=>[['Demo Consumer Electronics','Pending'],['Demo Battery and Circuit Boards','Pending']]],
- '6'=>['company'=>'Urban Eco Metals','contact'=>'Malith Gunawardena','email'=>'malith@urbaneco.lk','phone'=>'070 998 7766','address'=>'21 Harbour Road, Galle','district'=>'Galle','swml'=>'SWML/2026/006','expiry'=>'2026-01-12','status'=>'REJECTED','licence'=>'REJECTED','activities'=>['Collection','Storage'],'capabilities'=>[['Demo Consumer Electronics','Rejected']]],
+ '1'=>['company'=>'GreenCycle Lanka Pvt Ltd','contact'=>'Anjana Silva','email'=>'anjana@greencycle.lk','phone'=>'077 234 5678','address'=>'45 Green Park, Colombo 05','district'=>'Colombo','swml'=>'SWML/2026/001','expiry'=>'2027-06-30','status'=>'VERIFIED','licence'=>'VALID','capabilities'=>[['Demo Consumer Electronics','APPROVED'],['Demo Battery and Circuit Boards','APPROVED']]],
+ '2'=>['company'=>'E-Waste Recovery Colombo','contact'=>'Nimal Perera','email'=>'nimal@ewasterecovery.lk','phone'=>'071 456 7890','address'=>'28 Recovery Road, Colombo 10','district'=>'Colombo','swml'=>'SWML/2026/002','expiry'=>'2027-04-18','status'=>'VERIFIED','licence'=>'VALID','capabilities'=>[['Office E-Waste','APPROVED']]],
+ '3'=>['company'=>'SafeDispose Electronics','contact'=>'Kavindi Fernando','email'=>'kavindi@safedispose.lk','phone'=>'076 876 5432','address'=>'14 Circular Avenue, Wattala','district'=>'Gampaha','swml'=>'SWML/2026/003','expiry'=>'2027-03-22','status'=>'VERIFIED','licence'=>'VALID','capabilities'=>[['Domestic E-Waste','APPROVED']]],
+ '4'=>['company'=>'Eco Recyclers Pvt Ltd','contact'=>'Tharindu Jayasinghe','email'=>'tharindu@ecorecyclers.lk','phone'=>'075 345 9087','address'=>'8 Coastal Road, Panadura','district'=>'Kalutara','swml'=>'SWML/2026/004','expiry'=>'2027-08-15','status'=>'VERIFIED','licence'=>'VALID','capabilities'=>[['Automobile E-Waste','APPROVED']]],
+ '5'=>['company'=>'Ceylon Tech Recyclers','contact'=>'Isuru Bandara','email'=>'isuru@ceylontechrecyclers.lk','phone'=>'078 112 3344','address'=>'18 Industrial Road, Kandy','district'=>'Kandy','swml'=>'SWML/2026/005','expiry'=>'2027-02-10','status'=>'PENDING','licence'=>'PENDING','capabilities'=>[['Demo Consumer Electronics','PENDING'],['Demo Battery and Circuit Boards','PENDING']]],
+ '6'=>['company'=>'Urban Eco Metals','contact'=>'Malith Gunawardena','email'=>'malith@urbaneco.lk','phone'=>'070 998 7766','address'=>'21 Harbour Road, Galle','district'=>'Galle','swml'=>'SWML/2026/006','expiry'=>'2026-01-12','status'=>'REJECTED','licence'=>'EXPIRED','capabilities'=>[['Demo Consumer Electronics','SUSPENDED']]],
 ];
 $record = $records[$selectedId] ?? null;
 if ($record === null): ?>
@@ -16,12 +16,12 @@ $companyName=$record['company']; $contactPerson=$record['contact']; $email=$reco
 $isPending = $recordStatus === 'PENDING';
 $isRejected = $recordStatus === 'REJECTED';
 $isExpired = $expiry < date('Y-m-d');
-$licenceVerified = $record['licence'] === 'VERIFIED' && !$isExpired;
-$approvedCapabilityCount = count(array_filter($record['capabilities'], static fn(array $capability): bool => $capability[1] === 'Approved'));
+$licenceVerified = $record['licence'] === 'VALID' && !$isExpired;
+$approvedCapabilityCount = count(array_filter($record['capabilities'], static fn(array $capability): bool => $capability[1] === 'APPROVED'));
 $canVerify = $isPending && $licenceVerified && $approvedCapabilityCount > 0;
 $overallStatus = $isPending ? 'Pending Verification' : ($isRejected ? 'Rejected' : 'Verified');
 $statusClass = $isPending ? 'status-pending' : ($isRejected ? 'status-rejected' : 'status-verified');
-$licenceStatus = $isExpired ? 'Expired' : ($record['licence'] === 'PENDING' ? 'Pending Verification' : ucfirst(strtolower($record['licence'])));
+$licenceStatus = $isExpired ? 'Expired' : ucfirst(strtolower($record['licence']));
 ?>
 <section class="recycler-details-page">
     <div class="details-header">
@@ -56,9 +56,8 @@ $licenceStatus = $isExpired ? 'Expired' : ($record['licence'] === 'PENDING' ? 'P
             <div class="details-item"><span class="details-label">Licence Verification Status</span><span class="status-badge <?= $statusClass ?>"><?= htmlspecialchars($licenceStatus) ?></span></div>
             <div class="details-item"><span class="details-label">Licence Document</span><strong class="details-value">Submitted document preview unavailable in this frontend demo</strong></div>
         </div>
-        <div class="submitted-activities"><span>Activities Submitted</span><ul><?php foreach ($record['activities'] as $activity): ?><li><?= htmlspecialchars($activity) ?></li><?php endforeach; ?></ul></div>
         <div class="details-actions">
-            <button class="action-btn approve-btn" type="button" data-admin-dialog="review-licence" data-name="<?= htmlspecialchars($companyName) ?>" data-swml="<?= htmlspecialchars($swmlNumber) ?>" data-expiry="<?= htmlspecialchars($expiry) ?>" data-status="<?= htmlspecialchars($licenceStatus) ?>" data-activities="<?= htmlspecialchars(implode(', ', $record['activities'])) ?>">Review Licence</button>
+            <button class="action-btn approve-btn" type="button" data-admin-dialog="review-licence" data-name="<?= htmlspecialchars($companyName) ?>" data-swml="<?= htmlspecialchars($swmlNumber) ?>" data-expiry="<?= htmlspecialchars($expiry) ?>" data-status="<?= htmlspecialchars($licenceStatus) ?>">Review Licence</button>
         </div>
     </section>
 
@@ -68,7 +67,7 @@ $licenceStatus = $isExpired ? 'Expired' : ($record['licence'] === 'PENDING' ? 'P
             <table class="categories-table capabilities-table">
                 <thead><tr><th>Waste Category</th><th>Status</th><th>Action</th></tr></thead>
                 <tbody>
-                    <?php foreach ($record['capabilities'] as [$capabilityName,$capabilityStatus]): $capabilityClass=$capabilityStatus==='Approved'?'status-verified':($capabilityStatus==='Pending'?'status-pending':'status-rejected'); ?><tr><td><?= htmlspecialchars($capabilityName) ?></td><td><span class="status-badge <?= $capabilityClass ?>"><?= htmlspecialchars($capabilityStatus) ?></span></td><td><button class="table-action-btn" type="button" data-admin-dialog="review-capability" data-name="<?= htmlspecialchars($capabilityName) ?>" data-status="<?= htmlspecialchars($capabilityStatus) ?>">Review</button></td></tr><?php endforeach; ?>
+                    <?php foreach ($record['capabilities'] as [$capabilityName,$capabilityStatus]): $capabilityClass=$capabilityStatus==='APPROVED'?'status-verified':($capabilityStatus==='PENDING'?'status-pending':'status-rejected'); ?><tr><td><?= htmlspecialchars($capabilityName) ?></td><td><span class="status-badge <?= $capabilityClass ?>"><?= htmlspecialchars(ucfirst(strtolower($capabilityStatus))) ?></span></td><td><button class="table-action-btn" type="button" data-admin-dialog="review-capability" data-name="<?= htmlspecialchars($capabilityName) ?>" data-status="<?= htmlspecialchars($capabilityStatus) ?>">Review</button></td></tr><?php endforeach; ?>
                 </tbody>
             </table>
         </div>
