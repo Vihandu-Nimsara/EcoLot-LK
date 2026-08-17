@@ -163,6 +163,19 @@ class AuthController extends Controller
                 'Enter a valid Sri Lankan mobile number.';
         }
 
+        $postalArea = null;
+
+        if (!isset($errors['postal_code'])) {
+            $postalArea = (new PostalCodeArea())->findActiveByPostalCode(
+                $input['postal_code']
+            );
+
+            if ($postalArea === null) {
+                $errors['postal_code'][] =
+                    'The selected postal area is not currently available.';
+            }
+        }
+
         if (
             $input['password'] !== ''
             && preg_match('/[A-Z]/', $input['password']) !== 1
@@ -231,8 +244,81 @@ class AuthController extends Controller
             return;
         }
 
-        // Temporary response until the transactional account insert is added.
-        echo 'Public registration validation and uniqueness checks passed.';
+        $connection = Database::connection();
+
+        try {
+            $connection->beginTransaction();
+
+            $transactionUserModel = new User($connection);
+            $userId = $transactionUserModel->create([
+                'full_name' => trim(
+                    $input['first_name'] . ' ' . $input['last_name']
+                ),
+                'mobile_number' => $normalizedMobile,
+                'email' => $input['email'] === '' ? null : $input['email'],
+                'password_hash' => password_hash(
+                    $input['password'],
+                    PASSWORD_DEFAULT
+                ),
+                'role' => 'PUBLIC_USER',
+                'account_status' => 'PENDING',
+            ]);
+
+            $publicProfileModel = new PublicProfile($connection);
+            $publicProfileModel->create([
+                'user_id' => $userId,
+                'postal_area_id' => (int) $postalArea['postal_area_id'],
+                'address' => $input['address'],
+            ]);
+
+            $connection->commit();
+        } catch (Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            $errorReference = bin2hex(random_bytes(8));
+            error_log(
+                'Public registration database failure ['
+                . $errorReference
+                . '] category='
+                . $exception::class
+            );
+
+            $message = $exception instanceof PDOException
+                && $exception->getCode() === '23000'
+                ? 'An account already exists with this mobile number or email address.'
+                : 'We could not create your account. Please try again.';
+
+            http_response_code(409);
+
+            $this->view('auth/register-public', [
+                'csrfToken' => Csrf::regenerate(),
+                'errors' => [
+                    'general' => [
+                        $message . ' Reference: ' . $errorReference,
+                    ],
+                ],
+                'old' => [
+                    'first_name' => $input['first_name'],
+                    'last_name' => $input['last_name'],
+                    'contact_number' => $input['contact_number'],
+                    'email' => $input['email'],
+                    'postal_code' => $input['postal_code'],
+                    'address' => $input['address'],
+                ],
+            ]);
+
+            return;
+        }
+
+        Session::put('pending_verification_user_id', $userId);
+        Session::put('pending_verification_role', 'PUBLIC_USER');
+        Session::put('otp_last_sent_at', null);
+        Csrf::regenerate();
+
+        // OTP creation and redirect to /verify-mobile are added next.
+        echo 'Public account created and is pending mobile verification.';
     }
 
     private function registrationInput(
