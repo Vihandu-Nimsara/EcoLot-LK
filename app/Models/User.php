@@ -46,25 +46,4 @@ final class User extends Model
 
         return $result === false ? null : $result;
     }
-
-    public function activateVerifiedPublicUser(int $userId): bool
-    {
-        $statement = $this->query(
-            'UPDATE `users`
-             SET `mobile_verified_at` = CURRENT_TIMESTAMP,
-                 `account_status` = :active_status
-             WHERE `user_id` = :user_id
-               AND `role` = :public_role
-               AND `account_status` = :pending_status
-               AND `mobile_verified_at` IS NULL',
-            [
-                'active_status' => 'ACTIVE',
-                'user_id' => $userId,
-                'public_role' => 'PUBLIC_USER',
-                'pending_status' => 'PENDING',
-            ]
-        );
-
-        return $statement->rowCount() === 1;
-    }
 }

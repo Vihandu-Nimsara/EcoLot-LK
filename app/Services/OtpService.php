@@ -145,11 +145,6 @@ final class OtpService
         return $this->result(true, 'verified', 0);
     }
 
-    public function invalidateChallenge(int $otpId): bool
-    {
-        return $this->otpModel->invalidate($otpId);
-    }
-
     private function assertSendAllowed(
         int $userId,
         string $purpose,

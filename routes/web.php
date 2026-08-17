@@ -9,9 +9,6 @@ return static function (Router $router, array $app): void {
     $router->get('/login', 'AuthController@login');
     $router->post('/login', 'AuthController@submitLogin');
     $router->post('/register/public', 'AuthController@submitPublicRegistration');
-    $router->get('/verify-mobile', 'AuthController@verifyMobile');
-    $router->post('/verify-mobile', 'AuthController@submitMobileVerification');
-    $router->post('/verify-mobile/resend', 'AuthController@resendMobileVerification');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {
