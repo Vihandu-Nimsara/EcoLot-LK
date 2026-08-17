@@ -54,7 +54,33 @@ class AuthController extends Controller
         }
 
         // Temporary response for this increment.
-        echo 'Login input validation passed.';
+                $userModel = new User();
+        $user = $userModel->findByMobileNumber($mobileNumber);
+
+        // Valid fallback hash prevents a noticeably faster unknown-user check.
+        $dummyPasswordHash =
+            '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.';
+
+        $storedPasswordHash = $user !== null
+            ? (string) $user['password_hash']
+            : $dummyPasswordHash;
+
+        $passwordIsValid = password_verify($password, $storedPasswordHash);
+
+        if ($user === null || !$passwordIsValid) {
+            http_response_code(401);
+
+            $this->view('auth/login', [
+                'csrfToken' => Csrf::token(),
+                'error' => 'The mobile number or password is incorrect.',
+                'oldMobile' => $rawMobile,
+            ]);
+
+            return;
+        }
+
+        // Temporary response for this increment.
+        echo 'Credentials verified.';
     }
 
     public function register(): void
