@@ -14,11 +14,9 @@ class AuthController extends Controller
 
     public function submitLogin(): void
     {
-        $submittedToken = isset($_POST['_csrf_token'])
-            ? (string) $_POST['_csrf_token']
-            : null;
+        $submittedToken = $_POST['_csrf_token'] ?? null;
 
-        if (!Csrf::validate($submittedToken)) {
+        if (!is_string($submittedToken) || !Csrf::validate($submittedToken)) {
             http_response_code(403);
 
             $this->view('auth/login', [
@@ -30,8 +28,33 @@ class AuthController extends Controller
             return;
         }
 
-        // Temporary response for this increment only.
-        echo 'CSRF validation passed.';
+        $rawMobile = $_POST['mobile_number'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        if (!is_string($rawMobile)) {
+            $rawMobile = '';
+        }
+
+        if (!is_string($password)) {
+            $password = '';
+        }
+
+        $mobileNumber = MobileNumber::normalize($rawMobile);
+
+        if ($mobileNumber === null || $password === '') {
+            http_response_code(422);
+
+            $this->view('auth/login', [
+                'csrfToken' => Csrf::token(),
+                'error' => 'Enter a valid mobile number and password.',
+                'oldMobile' => $rawMobile,
+            ]);
+
+            return;
+        }
+
+        // Temporary response for this increment.
+        echo 'Login input validation passed.';
     }
 
     public function register(): void
