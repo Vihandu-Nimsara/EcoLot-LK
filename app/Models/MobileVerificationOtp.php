@@ -120,11 +120,32 @@ final class MobileVerificationOtp extends Model
         )->fetchColumn();
     }
 
-    public function incrementAttemptCount(int $otpId): bool
+    public function incrementAttemptCount(
+        int $otpId,
+        int $maximumAttempts
+    ): bool
     {
         $statement = $this->query(
             'UPDATE `mobile_verification_otps`
              SET `attempt_count` = `attempt_count` + 1
+             WHERE `otp_id` = :otp_id
+               AND `verified_at` IS NULL
+               AND `invalidated_at` IS NULL
+               AND `attempt_count` < :maximum_attempts',
+            [
+                'otp_id' => $otpId,
+                'maximum_attempts' => $maximumAttempts,
+            ]
+        );
+
+        return $statement->rowCount() === 1;
+    }
+
+    public function invalidate(int $otpId): bool
+    {
+        $statement = $this->query(
+            'UPDATE `mobile_verification_otps`
+             SET `invalidated_at` = CURRENT_TIMESTAMP
              WHERE `otp_id` = :otp_id
                AND `verified_at` IS NULL
                AND `invalidated_at` IS NULL',

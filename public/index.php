@@ -10,6 +10,7 @@ spl_autoload_register(static function (string $class): void {
         APP_ROOT . '/app/Core/',
         APP_ROOT . '/app/Controllers/',
         APP_ROOT . '/app/Models/',
+        APP_ROOT . '/app/Services/',
     ];
 
     foreach ($directories as $directory) {
