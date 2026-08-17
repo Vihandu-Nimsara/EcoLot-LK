@@ -6,12 +6,12 @@ Implement secure authentication for EcoLot-LK using:
 
 - Native PHP sessions
 - Mobile number and password login
-- Notify.lk SMS API
+- Pluggable SMS provider API
 - OTP-based mobile number verification
 - Role-based access control
 - No external frameworks or authentication libraries
 
-The Notify.lk API will only deliver SMS messages. OTP generation, storage, expiry, verification, retry limits, account activation, and session management will be handled by the EcoLot-LK application.
+The selected SMS provider will only deliver messages. OTP generation, storage, expiry, verification, retry limits, account activation, and session management will be handled by the EcoLot-LK application.
 
 ---
 
@@ -68,7 +68,7 @@ The full password hash, OTP, API credentials, or other sensitive data must never
 |---|---|
 | Generate OTP | EcoLot-LK |
 | Store OTP hash | EcoLot-LK database |
-| Send OTP by SMS | Notify.lk |
+| Send OTP by SMS | Selected SMS provider |
 | Verify submitted OTP | EcoLot-LK |
 | Apply expiry and attempt limits | EcoLot-LK |
 | Activate verified account | EcoLot-LK |
@@ -95,7 +95,7 @@ Create public_profiles record
         ↓
 Generate and store OTP
         ↓
-Send OTP through Notify.lk
+Send OTP through the SMS provider
         ↓
 Display OTP verification page
         ↓
@@ -161,45 +161,11 @@ A mobile-verified Recycler must not receive full Recycler access until Admin app
 
 ---
 
-## 5. Notify.lk Integration Design
+## 5. SMS Provider Integration Design
 
-## 5.1 API endpoint
+## 5.1 API endpoint and request format
 
-```text
-POST https://app.notify.lk/api/v1/send
-```
-
-Required request values:
-
-```text
-user_id
-api_key
-sender_id
-to
-message
-```
-
-Example conceptual request:
-
-```text
-user_id   = NOTIFY_USER_ID
-api_key   = NOTIFY_API_KEY
-sender_id = EcoLotLK
-to        = 94771234567
-message   = Your EcoLot-LK verification code is 482913.
-            It expires in 5 minutes. Do not share this code.
-```
-
-Expected success response:
-
-```json
-{
-  "status": "success",
-  "data": "Sent"
-}
-```
-
-Official documentation: [Notify.lk API endpoints](https://developer.notify.lk/api-endpoints/)
+The endpoint, authentication fields, request payload, and success response must be defined after selecting the replacement SMS provider. Provider-specific details must remain inside the SMS service and configuration layer.
 
 ## 5.2 API communication rules
 
@@ -210,15 +176,13 @@ Official documentation: [Notify.lk API endpoints](https://developer.notify.lk/ap
 - Apply connection and response timeouts.
 - Parse and validate the JSON response.
 - Treat only a confirmed success response as a successful send request.
-- Do not display internal Notify.lk errors to users.
+- Do not display internal provider errors to users.
 - Log a safe error reference for failed requests.
 - Do not automatically retry multiple times because duplicate SMS messages may be sent.
 
 ## 5.3 Sender ID
 
-An approved Notify.lk Sender ID must be obtained for EcoLot-LK.
-
-The `NotifyDEMO` sender must not be used for OTP messages. Notify.lk warns that using the demo sender for OTP content may result in account suspension.
+An approved Sender ID must be obtained from the selected SMS provider for EcoLot-LK.
 
 Recommended sender:
 
@@ -238,9 +202,9 @@ It expires in 5 minutes. Do not share this code.
 The following values must be stored outside public files:
 
 ```text
-NOTIFY_USER_ID
-NOTIFY_API_KEY
-NOTIFY_SENDER_ID
+SMS_PROVIDER_ACCOUNT_ID
+SMS_PROVIDER_API_KEY
+SMS_PROVIDER_SENDER_ID
 ```
 
 Requirements:
@@ -462,21 +426,21 @@ app/Views/auth/register-recycler.php
 
 ```text
 app/Models/MobileVerificationOtp.php
-app/Services/NotifySmsService.php
+app/Services/SmsGatewayService.php
 app/Services/OtpService.php
 app/Views/auth/verify-mobile.php
 public/assets/css/auth/verify-mobile.css
 public/assets/js/auth/verify-mobile.js
-config/notify.php
+config/sms.php
 ```
 
 Because the current autoloader loads only Core, Controllers, and Models, the proposed `app/Services/` directory must also be added to the autoloader.
 
 ### Component responsibilities
 
-#### `NotifySmsService`
+#### `SmsGatewayService`
 
-- Build Notify.lk request
+- Build the selected provider request
 - Execute native PHP cURL request
 - Apply timeouts
 - Parse JSON response
@@ -575,7 +539,7 @@ If profile creation fails:
 Rollback transaction
 ```
 
-The external Notify.lk API call should be made after the database transaction is committed. A slow external API request must not keep a database transaction open.
+The external SMS API call should be made after the database transaction is committed. A slow external API request must not keep a database transaction open.
 
 If SMS sending fails:
 
@@ -602,7 +566,7 @@ It must not contain:
 plain OTP
 OTP hash
 password
-Notify.lk API key
+SMS provider API key
 ```
 
 If the verification session is lost, the application may allow the user to restart verification using the registered mobile number after applying the required rate limits.
@@ -844,7 +808,7 @@ Timestamp
 Event type
 User ID
 Masked mobile number
-Notify.lk response status
+SMS provider response status
 Internal error category
 Request correlation ID
 ```
@@ -855,7 +819,7 @@ Logs must not include:
 Plain OTP
 Password
 Password hash
-Notify.lk API key
+SMS provider API key
 Full session ID
 CSRF token
 ```
@@ -868,7 +832,7 @@ Example masked mobile number:
 
 ---
 
-## 20. Notify.lk Failure Scenarios
+## 20. SMS Provider Failure Scenarios
 
 | Scenario | Application behaviour |
 |---|---|
@@ -876,19 +840,13 @@ Example masked mobile number:
 | Invalid API credentials | Log configuration error and show generic message |
 | Invalid Sender ID | Log provider response and stop repeated retries |
 | Insufficient balance | Log operational error and notify system administrator |
-| Invalid mobile format | Reject before calling Notify.lk |
+| Invalid mobile format | Reject before calling the SMS provider |
 | API returns invalid JSON | Treat as failed send |
 | Duplicate submit | Prevent duplicate OTP/account creation |
-| Notify.lk accepts SMS but delivery is delayed | Keep OTP valid until normal expiry |
+| SMS provider accepts the message but delivery is delayed | Keep OTP valid until normal expiry |
 | SMS arrives after OTP expiry | User requests a new OTP |
 
-Notify.lk account balance can optionally be monitored using:
-
-```text
-https://app.notify.lk/api/v1/status
-```
-
-This is an operational feature and is not required for the first authentication release.
+Provider account balance or quota monitoring can be added if the replacement provider supports it. This is an operational feature and is not required for the first authentication release.
 
 ---
 
@@ -998,8 +956,8 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 - Resend before cooldown
 - Resend after cooldown
 - Old OTP after resend
-- Notify.lk timeout
-- Notify.lk error response
+- SMS provider timeout
+- SMS provider error response
 - Invalid JSON response
 - SMS send failure after user creation
 - Verification without a pending session
@@ -1051,7 +1009,7 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 - Finalize mobile number format.
 - Define account status transitions.
 - Define Recycler approval behaviour.
-- Add private Notify.lk configuration.
+- Add private SMS provider configuration.
 - Add Services directory to the custom autoloader.
 - Add the OTP database table.
 
@@ -1068,9 +1026,9 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 
 **Deliverable:** Reusable native PHP security layer.
 
-## Phase 3 — Notify.lk and OTP Services
+## Phase 3 — SMS Provider and OTP Services
 
-- Create Notify.lk SMS service using native PHP cURL.
+- Create a provider-neutral SMS service using native PHP cURL.
 - Add timeout and response validation.
 - Create OTP generation service.
 - Add OTP hashing and expiry.
@@ -1132,7 +1090,7 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 - Add OTP request limits.
 - Add resend limits.
 - Add safe operational logs.
-- Add Notify.lk failure handling.
+- Add SMS provider failure handling.
 - Add user-friendly messages.
 
 **Deliverable:** Abuse-resistant authentication workflow.
@@ -1141,7 +1099,7 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 
 - Run all functional tests.
 - Run security test cases.
-- Test using an approved Notify.lk Sender ID.
+- Test using an approved Sender ID from the selected SMS provider.
 - Test on multiple Sri Lankan mobile networks if possible.
 - Confirm secrets are not committed.
 - Confirm OTPs and passwords do not appear in logs.
@@ -1157,7 +1115,7 @@ Do not store the password or a permanent user ID directly inside a long-lived co
 | Task | Suggested owner |
 |---|---|
 | Database OTP table and queries | Backend/Database member |
-| Notify.lk API service | Backend member |
+| SMS provider API service | Backend member |
 | OTP generation and verification | Backend member |
 | Session and CSRF security | Backend/Security member |
 | Registration processing | Backend member |
@@ -1178,7 +1136,7 @@ The authentication feature is complete only when:
 - Public Users can self-register.
 - Recycler accounts can self-register.
 - Mobile numbers are normalized consistently.
-- OTP messages are sent using Notify.lk.
+- OTP messages are sent using the selected SMS provider.
 - OTPs expire after the configured period.
 - Plain OTPs are not stored.
 - Failed OTP attempts are limited.
@@ -1194,7 +1152,7 @@ The authentication feature is complete only when:
 - Role permissions are enforced.
 - CSRF protection covers all POST actions.
 - API credentials are not committed or exposed.
-- Notify.lk failures are handled safely.
+- SMS provider failures are handled safely.
 - All functional and security test cases pass.
 - The implementation uses no external framework or authentication library.
 
@@ -1237,10 +1195,10 @@ EcoLot-LK PHP Application
    ├──────────────► MySQL/MariaDB
    │                Users, profiles, OTP hashes and statuses
    │
-   └──────────────► Notify.lk API
+   └──────────────► SMS provider API
                     SMS delivery only
 ```
 
 The final recommended solution is:
 
-> Native PHP session authentication with mobile-number/password login, EcoLot-LK-managed OTP verification, Notify.lk SMS delivery, and role-based access control.
+> Native PHP session authentication with mobile-number/password login, EcoLot-LK-managed OTP verification, provider-neutral SMS delivery, and role-based access control.
