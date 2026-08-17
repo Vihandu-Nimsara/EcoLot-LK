@@ -25,7 +25,14 @@
                 <h1 id="login-title">Sign In</h1>
             </header>
 
-            <div class="auth-alert" data-auth-alert role="alert" hidden></div>
+            <div
+                class="auth-alert"
+                data-auth-alert
+                role="alert"
+                <?= empty($error) ? 'hidden' : '' ?>
+            >
+                <?= htmlspecialchars($error ?? '', ENT_QUOTES, 'UTF-8') ?>
+            </div>
 
             <form
                 class="login-form"
@@ -34,6 +41,12 @@
                 novalidate
                 data-login-form
             >
+                <input
+                    type="hidden"
+                    name="_csrf_token"
+                    value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                >
+
                 <div class="form-group">
                     <label for="mobile-number">Mobile Number</label>
                     <input
@@ -43,6 +56,7 @@
                         inputmode="tel"
                         autocomplete="tel"
                         placeholder="07X XXX XXXX"
+                        value="<?= htmlspecialchars($oldMobile ?? '', ENT_QUOTES, 'UTF-8') ?>"
                         aria-describedby="mobile-number-error"
                         required
                     >

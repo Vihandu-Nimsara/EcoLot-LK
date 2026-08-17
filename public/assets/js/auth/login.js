@@ -41,9 +41,6 @@
         password.focus();
     });
 
-    form?.addEventListener("submit", (event) => {
-        event.preventDefault();
-    });
 
     dialogTrigger?.addEventListener("click", openDialog);
     dialogClose?.addEventListener("click", closeDialog);
