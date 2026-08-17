@@ -194,6 +194,24 @@ class AuthController extends Controller
                 'Password confirmation does not match.';
         }
 
+        $userModel = new User();
+
+        if (
+            $normalizedMobile !== null
+            && $userModel->findByMobileNumber($normalizedMobile) !== null
+        ) {
+            $errors['contact_number'][] =
+                'An account already exists with this mobile number.';
+        }
+
+        if (
+            $input['email'] !== ''
+            && $userModel->findByEmail($input['email']) !== null
+        ) {
+            $errors['email'][] =
+                'An account already exists with this email address.';
+        }
+
         if ($errors !== []) {
             http_response_code(422);
 
@@ -213,8 +231,8 @@ class AuthController extends Controller
             return;
         }
 
-        // Temporary response for this validation increment.
-        echo 'Public registration validation passed.';
+        // Temporary response until the transactional account insert is added.
+        echo 'Public registration validation and uniqueness checks passed.';
     }
 
     private function registrationInput(
