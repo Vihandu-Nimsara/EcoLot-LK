@@ -13,6 +13,7 @@ final class User extends Model
                 `user_id`,
                 `full_name`,
                 `mobile_number`,
+                `email`,
                 `password_hash`,
                 `role`,
                 `account_status`,
@@ -23,6 +24,23 @@ final class User extends Model
              LIMIT 1',
             [
                 'mobile_number' => $mobileNumber,
+            ]
+        )->fetch();
+
+        return $result === false ? null : $result;
+    }
+
+    public function findByEmail(string $email): ?array
+    {
+        $result = $this->query(
+            'SELECT
+                `user_id`,
+                `email`
+             FROM `users`
+             WHERE `email` = :email
+             LIMIT 1',
+            [
+                'email' => $email,
             ]
         )->fetch();
 

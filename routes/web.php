@@ -8,6 +8,7 @@ return static function (Router $router, array $app): void {
     $router->get('/register/recycler', 'AuthController@registerRecycler');
     $router->get('/login', 'AuthController@login');
     $router->post('/login', 'AuthController@submitLogin');
+    $router->post('/register/public', 'AuthController@submitPublicRegistration');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {
