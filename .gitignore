@@ -47,6 +47,7 @@ coverage/
 # Sensitive local configuration
 config/local.php
 config/database.local.php
+config/notify.local.php
 
 # Archive files
 *.zip
