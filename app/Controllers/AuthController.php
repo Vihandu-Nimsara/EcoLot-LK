@@ -90,7 +90,11 @@ class AuthController extends Controller
 
     public function registerPublic(): void
     {
-        $this->view('auth/register-public');
+        $this->view('auth/register-public', [
+            'csrfToken' => Csrf::token(),
+            'errors' => [],
+            'old' => [],
+        ]);
     }
 
     public function registerRecycler(): void
