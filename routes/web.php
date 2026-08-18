@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
-    $router->get('/register', 'AuthController@register');
-    $router->get('/register/public', 'AuthController@registerPublic');
-    $router->get('/register/recycler', 'AuthController@registerRecycler');
+    $router->get('/register', 'RegistrationController@index');
+    $router->get('/register/public', 'RegistrationController@publicForm');
+    $router->get('/register/recycler', 'RegistrationController@recyclerForm');
     $router->get('/login', 'AuthController@login');
     $router->post('/login', 'AuthController@submitLogin');
-    $router->post('/register/public', 'AuthController@submitPublicRegistration');
+    $router->post('/register/public', 'RegistrationController@submitPublic');
+    $router->get('/verify-mobile', 'MobileVerificationController@show');
+    $router->post('/verify-mobile', 'MobileVerificationController@verify');
+    $router->post('/verify-mobile/resend', 'MobileVerificationController@resend');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {

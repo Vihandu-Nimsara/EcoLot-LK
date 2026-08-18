@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 final class OtpService
 {
-    public const PURPOSE_REGISTRATION = 'REGISTRATION';
+    private const PURPOSE_REGISTRATION = 'REGISTRATION';
 
     private const OTP_VALIDITY_SECONDS = 300;
     private const MAXIMUM_ATTEMPTS = 5;
@@ -67,8 +67,6 @@ final class OtpService
         return [
             'otp_id' => $otpId,
             'otp' => $plainOtp,
-            'expires_at' => $expiresAt,
-            'expires_in_seconds' => self::OTP_VALIDITY_SECONDS,
         ];
     }
 
@@ -143,6 +141,11 @@ final class OtpService
         }
 
         return $this->result(true, 'verified', 0);
+    }
+
+    public function invalidateChallenge(int $otpId): void
+    {
+        $this->otpModel->invalidate($otpId);
     }
 
     private function assertSendAllowed(
