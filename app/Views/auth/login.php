@@ -34,6 +34,12 @@
                 <?= htmlspecialchars($error ?? '', ENT_QUOTES, 'UTF-8') ?>
             </div>
 
+            <?php if (!empty($success)): ?>
+                <div class="auth-alert auth-success" role="status">
+                    <?= htmlspecialchars($success, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+
             <form
                 class="login-form"
                 action="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>"
