@@ -61,6 +61,30 @@ CREATE TABLE IF NOT EXISTS `collectors` (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `mobile_verification_otps` (
+    `otp_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `purpose` ENUM('REGISTRATION', 'PASSWORD_RESET') NOT NULL DEFAULT 'REGISTRATION',
+    `otp_hash` VARCHAR(255) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `attempt_count` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `verified_at` DATETIME NULL,
+    `invalidated_at` DATETIME NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`otp_id`),
+    KEY `idx_otp_user_purpose_state` (
+        `user_id`,
+        `purpose`,
+        `verified_at`,
+        `invalidated_at`
+    ),
+    KEY `idx_otp_user_purpose_sent` (`user_id`, `purpose`, `sent_at`),
+    CONSTRAINT `fk_mobile_otps_user`
+        FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- =========================================================
 -- Zones and public profiles
 -- =========================================================
