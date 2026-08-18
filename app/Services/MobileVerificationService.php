@@ -50,4 +50,37 @@ final class MobileVerificationService
             throw $exception;
         }
     }
+
+    public function verifyAndActivateRecycler(int $userId, string $otp): array
+    {
+        $connection = Database::connection();
+
+        try {
+            $connection->beginTransaction();
+            $result = (new OtpService($connection))->verifyRegistrationOtp(
+                $userId,
+                $otp
+            );
+
+            if (
+                $result['success']
+                && !(new User($connection))->activateRecyclerAfterMobileVerification(
+                    $userId
+                )
+            ) {
+                throw new RuntimeException(
+                    'The pending recycler account could not be activated.'
+                );
+            }
+
+            $connection->commit();
+            return $result;
+        } catch (Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
 }

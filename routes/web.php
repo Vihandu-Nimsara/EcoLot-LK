@@ -6,9 +6,11 @@ return static function (Router $router, array $app): void {
     $router->get('/register', 'RegistrationController@index');
     $router->get('/register/public', 'RegistrationController@publicForm');
     $router->get('/register/recycler', 'RegistrationController@recyclerForm');
+    $router->get('/register/recycler/pending', 'RegistrationController@recyclerPending');
     $router->get('/login', 'AuthController@login');
     $router->post('/login', 'AuthController@submitLogin');
     $router->post('/register/public', 'RegistrationController@submitPublic');
+    $router->post('/register/recycler', 'RegistrationController@submitRecycler');
     $router->get('/verify-mobile', 'MobileVerificationController@show');
     $router->post('/verify-mobile', 'MobileVerificationController@verify');
     $router->post('/verify-mobile/resend', 'MobileVerificationController@resend');

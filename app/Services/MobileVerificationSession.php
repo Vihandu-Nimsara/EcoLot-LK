@@ -22,7 +22,11 @@ final class MobileVerificationSession
 
         if (
             $user === null
-            || ($user['role'] ?? null) !== 'PUBLIC_USER'
+            || !in_array(
+                $user['role'] ?? null,
+                ['PUBLIC_USER', 'RECYCLER'],
+                true
+            )
             || ($user['account_status'] ?? null) !== 'PENDING'
             || ($user['mobile_verified_at'] ?? null) !== null
         ) {
