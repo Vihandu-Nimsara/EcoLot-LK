@@ -1,598 +1,951 @@
-const collectorWorkspaceData = {
-    collector: {
+(() => {
+    'use strict';
+
+    const SELECTED_SCHEDULE_KEY = 'ecolot_collector_selected_schedule_id';
+    const COLLECTION_RECORDS_KEY = 'ecolot_collector_collection_records';
+    const SCHEDULE_SUBMISSIONS_KEY = 'ecolot_collector_schedule_submissions_v1';
+
+    const collector = {
         userId: 26,
-        displayId: 'Collector #26',
         name: 'Collector User',
-    },
-    schedules: [
+        code: 'Collector #26'
+    };
+
+    const schedules = [
         {
-            scheduleId: 3201,
+            id: 'SCH-03201',
             area: 'Kollupitiya',
             postalCode: '00300',
             collectionDate: '2026-08-16',
+            vehicle: 'WP LM-7284',
             status: 'IN_PROGRESS',
-            vehicle: 'WP LC-4821',
-            requests: [
-                {
-                    requestId: 1058,
-                    pickupAddress: 'No. 45, Galle Road, Colombo 03',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5001, itemName: 'Laptop Computer', category: 'Computers & Accessories', requestedQuantity: 2, estimatedWeightKg: 4.8 },
-                        { requestItemId: 5002, itemName: 'LCD Monitor', category: 'Display Equipment', requestedQuantity: 1, estimatedWeightKg: 3.6 },
-                    ],
-                },
-                {
-                    requestId: 1061,
-                    pickupAddress: 'No. 28, Duplication Road, Colombo 03',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5003, itemName: 'Mobile Phone', category: 'Mobile Devices', requestedQuantity: 4, estimatedWeightKg: 0.8 },
-                        { requestItemId: 5004, itemName: 'Wi-Fi Router', category: 'Network Equipment', requestedQuantity: 2, estimatedWeightKg: 0.7 },
-                        { requestItemId: 5005, itemName: 'UPS Unit', category: 'Power Equipment', requestedQuantity: 1, estimatedWeightKg: 5.2 },
-                    ],
-                },
-                {
-                    requestId: 1064,
-                    pickupAddress: '12/4, Sea View Avenue, Colombo 03',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5006, itemName: 'Desktop Computer', category: 'Computers & Accessories', requestedQuantity: 1, estimatedWeightKg: 8.4 },
-                        { requestItemId: 5007, itemName: 'Keyboard', category: 'Computers & Accessories', requestedQuantity: 2, estimatedWeightKg: 1.1 },
-                    ],
-                },
-            ],
+            requestIds: ['REQ-01061', 'REQ-01064', 'REQ-01067']
         },
         {
-            scheduleId: 3204,
+            id: 'SCH-03204',
             area: 'Narahenpita',
             postalCode: '00500',
             collectionDate: '2026-08-18',
-            status: 'ASSIGNED',
             vehicle: 'WP LM-7315',
-            requests: [
-                {
-                    requestId: 1072,
-                    pickupAddress: 'No. 18, Kirimandala Mawatha, Colombo 05',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5008, itemName: 'Television', category: 'Display Equipment', requestedQuantity: 1, estimatedWeightKg: 9.5 },
-                        { requestItemId: 5009, itemName: 'DVD Player', category: 'Home Electronics', requestedQuantity: 1, estimatedWeightKg: 1.8 },
-                    ],
-                },
-                {
-                    requestId: 1075,
-                    pickupAddress: 'No. 67, Park Road, Colombo 05',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5010, itemName: 'Printer', category: 'Office Equipment', requestedQuantity: 2, estimatedWeightKg: 11.0 },
-                    ],
-                },
-            ],
+            status: 'ASSIGNED',
+            requestIds: ['REQ-01072', 'REQ-01075']
         },
         {
-            scheduleId: 3208,
+            id: 'SCH-03208',
             area: 'Rajagiriya',
             postalCode: '10100',
             collectionDate: '2026-08-25',
+            vehicle: 'WP LM-7342',
             status: 'ASSIGNED',
-            vehicle: 'Vehicle pending',
-            requests: [
-                {
-                    requestId: 1083,
-                    pickupAddress: 'No. 22, Parliament Road, Rajagiriya',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5011, itemName: 'Refrigerator', category: 'Large Appliances', requestedQuantity: 1, estimatedWeightKg: 42.0 },
-                    ],
-                },
-                {
-                    requestId: 1087,
-                    pickupAddress: '14/2, Lake Drive, Rajagiriya',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5012, itemName: 'Electric Fan', category: 'Small Appliances', requestedQuantity: 3, estimatedWeightKg: 8.7 },
-                        { requestItemId: 5013, itemName: 'Electric Kettle', category: 'Small Appliances', requestedQuantity: 2, estimatedWeightKg: 2.1 },
-                    ],
-                },
-                {
-                    requestId: 1090,
-                    pickupAddress: 'No. 91, Cotta Road, Borella',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5014, itemName: 'Tablet Computer', category: 'Mobile Devices', requestedQuantity: 2, estimatedWeightKg: 1.3 },
-                    ],
-                },
-                {
-                    requestId: 1094,
-                    pickupAddress: 'No. 36, Welikada Terrace, Rajagiriya',
-                    requestStatus: 'APPROVED',
-                    items: [
-                        { requestItemId: 5015, itemName: 'Washing Machine', category: 'Large Appliances', requestedQuantity: 1, estimatedWeightKg: 58.0 },
-                    ],
-                },
-            ],
+            requestIds: ['REQ-01080', 'REQ-01081', 'REQ-01082', 'REQ-01084']
+        }
+    ];
+
+    const requests = [
+        {
+            id: 'REQ-01061',
+            scheduleId: 'SCH-03201',
+            pickupAddress: 'No. 42, Galle Road, Colombo 03',
+            publicUser: 'Public User 061',
+            phone: '077 100 0061',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-061-1', name: 'Laptop Computer', category: 'Computers & IT Equipment', requestedQuantity: 1, estimatedWeightKg: 2.4, reportedCondition: 'USED', conditionNote: 'Battery drains quickly.' },
+                { id: 'RI-061-2', name: 'Computer Mouse', category: 'Computers & IT Equipment', requestedQuantity: 2, estimatedWeightKg: 0.3, reportedCondition: 'USED', conditionNote: '' }
+            ]
         },
-    ],
-};
+        {
+            id: 'REQ-01064',
+            scheduleId: 'SCH-03201',
+            pickupAddress: 'No. 17, Duplication Road, Colombo 03',
+            publicUser: 'Public User 064',
+            phone: '077 100 0064',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-064-1', name: 'Mobile Phone', category: 'Mobile & Communication Devices', requestedQuantity: 3, estimatedWeightKg: 0.7, reportedCondition: 'DAMAGED', conditionNote: 'Two screens are cracked.' }
+            ]
+        },
+        {
+            id: 'REQ-01067',
+            scheduleId: 'SCH-03201',
+            pickupAddress: 'No. 8, Sea View Avenue, Colombo 03',
+            publicUser: 'Public User 067',
+            phone: '077 100 0067',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-067-1', name: 'Wi-Fi Router', category: 'Networking Equipment', requestedQuantity: 2, estimatedWeightKg: 1.1, reportedCondition: 'USED', conditionNote: 'Old routers.' },
+                { id: 'RI-067-2', name: 'Power Adapter', category: 'Accessories', requestedQuantity: 2, estimatedWeightKg: 0.5, reportedCondition: 'UNKNOWN', conditionNote: '' }
+            ]
+        },
+        {
+            id: 'REQ-01072',
+            scheduleId: 'SCH-03204',
+            pickupAddress: 'No. 18, Kirimandala Mawatha, Colombo 05',
+            publicUser: 'Public User 072',
+            phone: '077 100 0072',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-072-1', name: 'Laptop Computer', category: 'Computers & IT Equipment', requestedQuantity: 2, estimatedWeightKg: 5.4, reportedCondition: 'USED', conditionNote: 'Both laptops are old but complete.' },
+                { id: 'RI-072-2', name: 'Mobile Phone', category: 'Mobile & Communication Devices', requestedQuantity: 3, estimatedWeightKg: 0.9, reportedCondition: 'DAMAGED', conditionNote: 'One phone has a swollen battery.' }
+            ]
+        },
+        {
+            id: 'REQ-01075',
+            scheduleId: 'SCH-03204',
+            pickupAddress: 'No. 67, Park Road, Colombo 05',
+            publicUser: 'Public User 075',
+            phone: '077 100 0075',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-075-1', name: 'Desktop Monitor', category: 'Displays & Monitors', requestedQuantity: 1, estimatedWeightKg: 4.8, reportedCondition: 'DAMAGED', conditionNote: 'Display does not power on.' }
+            ]
+        },
+        {
+            id: 'REQ-01080',
+            scheduleId: 'SCH-03208',
+            pickupAddress: 'No. 11, Parliament Road, Rajagiriya',
+            publicUser: 'Public User 080',
+            phone: '077 100 0080',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-080-1', name: 'Keyboard', category: 'Computer Accessories', requestedQuantity: 4, estimatedWeightKg: 2.4, reportedCondition: 'USED', conditionNote: '' }
+            ]
+        },
+        {
+            id: 'REQ-01081',
+            scheduleId: 'SCH-03208',
+            pickupAddress: 'No. 38, Cotta Road, Rajagiriya',
+            publicUser: 'Public User 081',
+            phone: '077 100 0081',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-081-1', name: 'Printer', category: 'Office Electronics', requestedQuantity: 1, estimatedWeightKg: 7.2, reportedCondition: 'USED', conditionNote: 'Ink removed.' }
+            ]
+        },
+        {
+            id: 'REQ-01082',
+            scheduleId: 'SCH-03208',
+            pickupAddress: 'No. 90, Lake Drive, Rajagiriya',
+            publicUser: 'Public User 082',
+            phone: '077 100 0082',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-082-1', name: 'Lithium-ion Battery Pack', category: 'Batteries', requestedQuantity: 2, estimatedWeightKg: 3.1, reportedCondition: 'DAMAGED', conditionNote: 'Outer casing scratched.' }
+            ]
+        },
+        {
+            id: 'REQ-01084',
+            scheduleId: 'SCH-03208',
+            pickupAddress: 'No. 6, Welikada Terrace, Rajagiriya',
+            publicUser: 'Public User 084',
+            phone: '077 100 0084',
+            requestStatus: 'APPROVED',
+            items: [
+                { id: 'RI-084-1', name: 'Wi-Fi Router', category: 'Networking Equipment', requestedQuantity: 3, estimatedWeightKg: 1.8, reportedCondition: 'USED', conditionNote: '' },
+                { id: 'RI-084-2', name: 'Network Switch', category: 'Networking Equipment', requestedQuantity: 1, estimatedWeightKg: 1.6, reportedCondition: 'UNKNOWN', conditionNote: 'Not tested.' }
+            ]
+        }
+    ];
 
-const collectorStorageKeys = {
-    selectedSchedule: 'ecolot_collector_selected_schedule_id',
-    collectionRecords: 'ecolot_collector_collection_records',
-};
+    let activeRequestId = null;
+    let modalReturnFocus = null;
 
-let activeRequestId = null;
-let returnFocusElement = null;
-
-function readJSONStorage(key, fallback) {
-    try {
-        const value = JSON.parse(localStorage.getItem(key));
-        return value ?? fallback;
-    } catch {
-        return fallback;
-    }
-}
-
-function writeJSONStorage(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-}
-
-function getCollectionRecords() {
-    return readJSONStorage(collectorStorageKeys.collectionRecords, {});
-}
-
-function getSelectedScheduleId() {
-    const savedId = Number(localStorage.getItem(collectorStorageKeys.selectedSchedule));
-    const matchingSchedule = collectorWorkspaceData.schedules.find((schedule) => schedule.scheduleId === savedId);
-    return matchingSchedule?.scheduleId ?? collectorWorkspaceData.schedules[0]?.scheduleId ?? null;
-}
-
-function setSelectedScheduleId(scheduleId) {
-    localStorage.setItem(collectorStorageKeys.selectedSchedule, String(scheduleId));
-}
-
-function getSelectedSchedule() {
-    const selectedId = getSelectedScheduleId();
-    return collectorWorkspaceData.schedules.find((schedule) => schedule.scheduleId === selectedId) ?? null;
-}
-
-function findRequest(requestId) {
-    for (const schedule of collectorWorkspaceData.schedules) {
-        const request = schedule.requests.find((candidate) => candidate.requestId === requestId);
-        if (request) return { schedule, request };
-    }
-    return null;
-}
-
-function formatScheduleId(scheduleId) {
-    return `SCH-${String(scheduleId).padStart(5, '0')}`;
-}
-
-function formatRequestId(requestId) {
-    return `REQ-${String(requestId).padStart(5, '0')}`;
-}
-
-function formatDate(dateValue) {
-    return new Intl.DateTimeFormat('en-LK', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    }).format(new Date(`${dateValue}T00:00:00`));
-}
-
-function humanizeStatus(status) {
-    return String(status)
-        .toLowerCase()
-        .split('_')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' ');
-}
-
-function statusClass(status) {
-    return `status-${String(status).toLowerCase().replaceAll('_', '-')}`;
-}
-
-function escapeHTML(value) {
-    return String(value)
+    const escapeHtml = (value) => String(value ?? '')
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
-}
 
-function roundWeight(value) {
-    return Math.round((Number(value) + Number.EPSILON) * 1000) / 1000;
-}
-
-function setText(selector, value) {
-    document.querySelectorAll(selector).forEach((element) => {
-        element.textContent = value;
-    });
-}
-
-function setBadge(element, status, label = humanizeStatus(status)) {
-    if (!element) return;
-    element.className = `status-badge ${statusClass(status)}`;
-    element.textContent = label;
-}
-
-function updateCollectorIdentity() {
-    const { name, displayId } = collectorWorkspaceData.collector;
-    setText('[data-collector-name]', name);
-    setText('[data-collector-id]', displayId);
-    setText(
-        '[data-collector-initials]',
-        name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
-    );
-}
-
-function getScheduleProgress(schedule, records = getCollectionRecords()) {
-    const confirmedRequests = schedule.requests.filter((request) => records[request.requestId]?.confirmed);
-    const total = schedule.requests.length;
-    const confirmed = confirmedRequests.length;
-    const percentage = total === 0 ? 0 : Math.round((confirmed / total) * 100);
-    const actualWeight = confirmedRequests.reduce((scheduleTotal, request) => {
-        const requestWeight = records[request.requestId].items.reduce(
-            (itemTotal, item) => itemTotal + Number(item.actualWeightKg || 0),
-            0
-        );
-        return scheduleTotal + requestWeight;
-    }, 0);
-
-    return { total, confirmed, pending: Math.max(total - confirmed, 0), percentage, actualWeight: roundWeight(actualWeight) };
-}
-
-function renderScheduleCards() {
-    const scheduleList = document.querySelector('[data-schedule-list]');
-    if (!scheduleList) return;
-
-    const schedules = collectorWorkspaceData.schedules;
-    const selectedScheduleId = getSelectedScheduleId();
-    const records = getCollectionRecords();
-
-    setText('[data-schedule-count]', `${schedules.length} schedule${schedules.length === 1 ? '' : 's'}`);
-
-    const nextSchedule = [...schedules].sort((a, b) => a.collectionDate.localeCompare(b.collectionDate))[0];
-    setText('[data-next-collection]', nextSchedule ? `Next: ${formatDate(nextSchedule.collectionDate)}` : 'No upcoming collections');
-
-    scheduleList.innerHTML = schedules.map((schedule) => {
-        const progress = getScheduleProgress(schedule, records);
-        const isSelected = schedule.scheduleId === selectedScheduleId;
-        return `
-            <button
-                type="button"
-                class="schedule-card${isSelected ? ' is-selected' : ''}"
-                data-schedule-select="${schedule.scheduleId}"
-                aria-pressed="${isSelected}"
-            >
-                <span class="schedule-card-top">
-                    <span class="schedule-card-date">${escapeHTML(formatDate(schedule.collectionDate))}</span>
-                    <span class="status-badge ${statusClass(schedule.status)}">${escapeHTML(humanizeStatus(schedule.status))}</span>
-                </span>
-                <h2>${escapeHTML(schedule.area)}</h2>
-                <p>${escapeHTML(formatScheduleId(schedule.scheduleId))} · ${escapeHTML(schedule.postalCode)}</p>
-                <span class="schedule-card-footer">
-                    <span class="schedule-progress-copy-mini">${progress.confirmed} of ${progress.total} confirmed</span>
-                    <span class="schedule-open-label">${isSelected ? 'Selected' : 'View schedule'} →</span>
-                </span>
-            </button>
-        `;
-    }).join('');
-}
-
-function renderRequestTable(schedule) {
-    const tableBody = document.querySelector('[data-request-table-body]');
-    if (!tableBody) return;
-
-    const records = getCollectionRecords();
-    setText('[data-selected-request-count]', `${schedule.requests.length} request${schedule.requests.length === 1 ? '' : 's'}`);
-
-    tableBody.innerHTML = schedule.requests.map((request) => {
-        const record = records[request.requestId];
-        const status = record?.confirmed ? 'COMPLETED' : 'APPROVED';
-        const label = record?.confirmed ? 'Confirmed' : 'Pending collection';
-
-        return `
-            <tr>
-                <td><span class="request-reference">${escapeHTML(formatRequestId(request.requestId))}</span></td>
-                <td class="request-address">${escapeHTML(request.pickupAddress)}</td>
-                <td><span class="request-item-count">${request.items.length} item${request.items.length === 1 ? '' : 's'}</span></td>
-                <td><span class="status-badge ${statusClass(status)}">${escapeHTML(label)}</span></td>
-                <td class="table-action-cell">
-                    <button type="button" class="secondary-btn view-detail-btn" data-view-request="${request.requestId}">View Details</button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function renderScheduleSummary(schedule) {
-    const progress = getScheduleProgress(schedule);
-
-    setText('[data-summary-total]', progress.total);
-    setText('[data-summary-confirmed]', progress.confirmed);
-    setText('[data-summary-pending]', progress.pending);
-    setText('[data-summary-weight]', progress.actualWeight.toFixed(1));
-    setText('[data-summary-progress-label]', `${progress.percentage}% complete`);
-
-    const progressBar = document.querySelector('[data-summary-progress-bar]');
-    if (progressBar) progressBar.style.width = `${progress.percentage}%`;
-}
-
-function renderSelectedSchedule() {
-    const schedule = getSelectedSchedule();
-    const shell = document.querySelector('[data-selected-schedule-shell]');
-    const emptyState = document.querySelector('[data-no-schedules]');
-
-    if (!schedule) {
-        if (shell) shell.hidden = true;
-        if (emptyState) emptyState.hidden = false;
-        return;
-    }
-
-    if (shell) shell.hidden = false;
-    if (emptyState) emptyState.hidden = true;
-
-    setText('[data-selected-schedule-title]', `${schedule.area} Collection`);
-    setText('[data-selected-schedule-subtitle]', `${schedule.requests.length} approved requests assigned to this collection schedule.`);
-    setText('[data-selected-schedule-id]', formatScheduleId(schedule.scheduleId));
-    setText('[data-selected-schedule-date]', formatDate(schedule.collectionDate));
-    setText('[data-selected-schedule-postal]', schedule.postalCode);
-    setText('[data-selected-schedule-vehicle]', schedule.vehicle);
-    setBadge(document.querySelector('[data-selected-schedule-status]'), schedule.status);
-
-    renderRequestTable(schedule);
-    renderScheduleSummary(schedule);
-}
-
-function renderWorkspace() {
-    renderScheduleCards();
-    renderSelectedSchedule();
-}
-
-function defaultItemValues(item, recordItem) {
-    return {
-        actualQuantity: recordItem?.actualQuantity ?? item.requestedQuantity,
-        actualWeightKg: recordItem?.actualWeightKg ?? item.estimatedWeightKg,
-        itemResult: recordItem?.itemResult ?? calculateItemResult(item.requestedQuantity, item.requestedQuantity, item.estimatedWeightKg),
+    const getJson = (key, fallback) => {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(key));
+            return parsed && typeof parsed === 'object' ? parsed : fallback;
+        } catch (error) {
+            return fallback;
+        }
     };
-}
 
-function calculateItemResult(requestedQuantity, actualQuantity, actualWeightKg) {
-    if (actualQuantity === 0 && actualWeightKg === 0) return 'NOT_COLLECTED';
-    if (actualQuantity < requestedQuantity) return 'PARTIAL';
-    return 'COLLECTED';
-}
+    const setJson = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
-function calculatePickupResult(items) {
-    if (items.every((item) => item.itemResult === 'NOT_COLLECTED')) return 'NOT_COLLECTED';
-    if (items.every((item) => item.itemResult === 'COLLECTED')) return 'COLLECTED';
-    return 'PARTIAL';
-}
+    const getRecords = () => {
+        const raw = getJson(COLLECTION_RECORDS_KEY, {});
+        const migrated = { ...raw };
+        let changed = false;
 
-function updateItemResultPreview(row) {
-    const requestedQuantity = Number(row.dataset.requestedQuantity);
-    const quantity = Number(row.querySelector('[data-actual-quantity]').value);
-    const weight = Number(row.querySelector('[data-actual-weight]').value);
-    const result = calculateItemResult(requestedQuantity, quantity, weight);
-    setBadge(row.querySelector('[data-item-result]'), result);
-}
+        Object.keys(migrated).forEach((requestId) => {
+            const record = migrated[requestId];
+            if (record && record.confirmed === true && !record.state) {
+                migrated[requestId] = {
+                    ...record,
+                    requestId,
+                    state: 'SUBMITTED',
+                    submittedAt: record.confirmedAt || record.updatedAt || new Date().toISOString()
+                };
+                changed = true;
+            }
+        });
 
-function updateNoteCharacterCount() {
-    const note = document.querySelector('[data-collector-request-note]');
-    setText('[data-note-character-count]', note?.value.length ?? 0);
-}
+        if (changed) {
+            setJson(COLLECTION_RECORDS_KEY, migrated);
+        }
 
-function populateRequestModal(schedule, request) {
-    const records = getCollectionRecords();
-    const record = records[request.requestId];
-    const isConfirmed = Boolean(record?.confirmed);
-    const estimatedWeight = request.items.reduce((total, item) => total + item.estimatedWeightKg, 0);
+        return migrated;
+    };
 
-    setText('[data-modal-request-id]', formatRequestId(request.requestId));
-    setText('[data-modal-request-address]', request.pickupAddress);
-    setText('[data-modal-schedule-id]', formatScheduleId(schedule.scheduleId));
-    setText('[data-modal-item-count]', `${request.items.length} item${request.items.length === 1 ? '' : 's'}`);
-    setText('[data-modal-estimated-weight]', `${roundWeight(estimatedWeight).toFixed(1)} kg`);
-    setText('[data-modal-pickup-result]', isConfirmed ? humanizeStatus(record.pickupResult) : 'Not confirmed');
-    setBadge(
-        document.querySelector('[data-modal-request-status]'),
-        isConfirmed ? 'COMPLETED' : 'APPROVED',
-        isConfirmed ? 'Confirmed' : 'Pending collection'
-    );
+    const saveRecords = (records) => setJson(COLLECTION_RECORDS_KEY, records);
+    const getSubmissions = () => getJson(SCHEDULE_SUBMISSIONS_KEY, {});
+    const saveSubmissions = (submissions) => setJson(SCHEDULE_SUBMISSIONS_KEY, submissions);
 
-    const itemBody = document.querySelector('[data-request-items-body]');
-    itemBody.innerHTML = request.items.map((item) => {
-        const recordItem = record?.items.find((candidate) => candidate.requestItemId === item.requestItemId);
-        const values = defaultItemValues(item, recordItem);
-        return `
-            <tr data-collection-item-row data-request-item-id="${item.requestItemId}" data-requested-quantity="${item.requestedQuantity}">
-                <td class="item-name-cell">
-                    <strong>${escapeHTML(item.itemName)}</strong>
-                    <span>${escapeHTML(item.category)}</span>
-                </td>
-                <td class="requested-value">
-                    ${item.requestedQuantity} unit${item.requestedQuantity === 1 ? '' : 's'}
-                    <span>${item.estimatedWeightKg.toFixed(1)} kg estimated</span>
-                </td>
-                <td>
-                    <input
-                        type="number"
-                        class="collection-value-input"
-                        min="0"
-                        step="1"
-                        inputmode="numeric"
-                        aria-label="Actual quantity for ${escapeHTML(item.itemName)}"
-                        value="${values.actualQuantity}"
-                        data-actual-quantity
-                        ${isConfirmed ? 'disabled' : ''}
-                    >
-                </td>
-                <td>
-                    <input
-                        type="number"
-                        class="collection-value-input"
-                        min="0"
-                        step="0.001"
-                        inputmode="decimal"
-                        aria-label="Actual weight in kilograms for ${escapeHTML(item.itemName)}"
-                        value="${values.actualWeightKg}"
-                        data-actual-weight
-                        ${isConfirmed ? 'disabled' : ''}
-                    >
-                </td>
-                <td><span class="status-badge ${statusClass(values.itemResult)}" data-item-result>${escapeHTML(humanizeStatus(values.itemResult))}</span></td>
-            </tr>
+    const formatDate = (isoDate) => {
+        const date = new Date(`${isoDate}T00:00:00`);
+        return new Intl.DateTimeFormat('en-LK', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(date);
+    };
+
+    const formatDateTime = (iso) => {
+        if (!iso) return '—';
+        const date = new Date(iso);
+        return new Intl.DateTimeFormat('en-LK', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        }).format(date);
+    };
+
+    const normalizeState = (record) => record?.state || 'PENDING_COLLECTION';
+
+    const stateLabel = (state) => ({
+        PENDING_COLLECTION: 'Pending Collection',
+        DRAFT: 'Draft',
+        SUBMITTED: 'Submitted',
+        VERIFIED: 'Verified',
+        REJECTED: 'Needs Correction'
+    }[state] || state);
+
+    const stateClass = (state) => ({
+        PENDING_COLLECTION: 'pending',
+        DRAFT: 'draft',
+        SUBMITTED: 'submitted',
+        VERIFIED: 'verified',
+        REJECTED: 'rejected'
+    }[state] || 'pending');
+
+    const scheduleStatusLabel = (status) => ({
+        ASSIGNED: 'Assigned',
+        IN_PROGRESS: 'In Progress',
+        COLLECTION_SUBMITTED: 'Pending Verification',
+        COMPLETED: 'Completed'
+    }[status] || status.replaceAll('_', ' '));
+
+    const scheduleStatusClass = (status) => ({
+        ASSIGNED: 'assigned',
+        IN_PROGRESS: 'in-progress',
+        COLLECTION_SUBMITTED: 'pending-verification',
+        COMPLETED: 'completed'
+    }[status] || 'assigned');
+
+    const getRequest = (requestId) => requests.find((request) => request.id === requestId) || null;
+    const getSchedule = (scheduleId) => schedules.find((schedule) => schedule.id === scheduleId) || null;
+
+    const getScheduleRequests = (scheduleId) => requests.filter((request) => request.scheduleId === scheduleId);
+
+    const getScheduleDisplayStatus = (scheduleId) => {
+        const submission = getSubmissions()[scheduleId];
+        if (submission?.status === 'VERIFIED') return 'COMPLETED';
+        if (submission?.status === 'PENDING') return 'COLLECTION_SUBMITTED';
+        return getSchedule(scheduleId)?.status || 'ASSIGNED';
+    };
+
+    const deriveItemResult = (actualQuantity, requestedQuantity) => {
+        const actual = Number(actualQuantity);
+        const requested = Number(requestedQuantity);
+        if (!Number.isFinite(actual) || actual <= 0) return 'NOT_COLLECTED';
+        if (actual < requested) return 'PARTIAL';
+        return 'COLLECTED';
+    };
+
+    const derivePickupResult = (items) => {
+        if (!items.length || items.every((item) => item.itemResult === 'NOT_COLLECTED')) return 'NOT_COLLECTED';
+        if (items.every((item) => item.itemResult === 'COLLECTED')) return 'COLLECTED';
+        return 'PARTIAL';
+    };
+
+    const recordTotalWeight = (record) => (record?.items || []).reduce((sum, item) => sum + (Number(item.actualWeightKg) || 0), 0);
+
+    const showFeedback = (message) => {
+        document.querySelectorAll('#collector-feedback').forEach((box) => {
+            box.textContent = message;
+            box.hidden = false;
+            window.clearTimeout(box._hideTimer);
+            box._hideTimer = window.setTimeout(() => {
+                box.hidden = true;
+            }, 3600);
+        });
+    };
+
+    const selectedScheduleId = () => {
+        const saved = localStorage.getItem(SELECTED_SCHEDULE_KEY);
+        if (saved && schedules.some((schedule) => schedule.id === saved)) return saved;
+        const first = schedules[0]?.id || null;
+        if (first) localStorage.setItem(SELECTED_SCHEDULE_KEY, first);
+        return first;
+    };
+
+    const setSelectedSchedule = (scheduleId) => {
+        if (!schedules.some((schedule) => schedule.id === scheduleId)) return;
+        localStorage.setItem(SELECTED_SCHEDULE_KEY, scheduleId);
+        renderSchedulesPage();
+    };
+
+    const scheduleProgress = (scheduleId) => {
+        const records = getRecords();
+        const scheduleRequests = getScheduleRequests(scheduleId);
+        const ready = scheduleRequests.filter((request) => ['SUBMITTED', 'VERIFIED'].includes(normalizeState(records[request.id]))).length;
+        const drafts = scheduleRequests.filter((request) => normalizeState(records[request.id]) === 'DRAFT').length;
+        return { ready, drafts, total: scheduleRequests.length };
+    };
+
+    const renderScheduleCards = () => {
+        const grid = document.getElementById('collector-schedule-grid');
+        if (!grid) return;
+
+        const selected = selectedScheduleId();
+        const scheduleCount = document.getElementById('collector-schedule-count');
+        const nextSchedule = document.getElementById('collector-next-schedule');
+        const empty = document.getElementById('collector-schedule-empty');
+
+        if (scheduleCount) scheduleCount.textContent = `${schedules.length} schedule${schedules.length === 1 ? '' : 's'}`;
+
+        const futureSchedules = [...schedules].sort((a, b) => a.collectionDate.localeCompare(b.collectionDate));
+        if (nextSchedule) {
+            nextSchedule.textContent = futureSchedules[0] ? `Next: ${formatDate(futureSchedules[0].collectionDate)}` : 'Next: —';
+        }
+
+        if (!schedules.length) {
+            grid.innerHTML = '';
+            if (empty) empty.hidden = false;
+            return;
+        }
+        if (empty) empty.hidden = true;
+
+        grid.innerHTML = schedules.map((schedule) => {
+            const progress = scheduleProgress(schedule.id);
+            const displayStatus = getScheduleDisplayStatus(schedule.id);
+            return `
+                <article class="collector-schedule-card ${schedule.id === selected ? 'is-selected' : ''}">
+                    <div class="collector-schedule-card__top">
+                        <span class="collector-schedule-card__date">${escapeHtml(formatDate(schedule.collectionDate))}</span>
+                        <span class="collector-status collector-status--${scheduleStatusClass(displayStatus)}">${escapeHtml(scheduleStatusLabel(displayStatus))}</span>
+                    </div>
+                    <h3>${escapeHtml(schedule.area)}</h3>
+                    <span class="collector-schedule-card__id">${escapeHtml(schedule.id)} · ${escapeHtml(schedule.postalCode)}</span>
+                    <div class="collector-schedule-card__bottom">
+                        <span class="collector-schedule-card__progress">${progress.ready} of ${progress.total} records submitted${progress.drafts ? ` · ${progress.drafts} draft` : ''}</span>
+                        <button type="button" class="collector-link-button" data-schedule-select="${escapeHtml(schedule.id)}">
+                            ${schedule.id === selected ? 'Selected →' : 'View schedule →'}
+                        </button>
+                    </div>
+                </article>
+            `;
+        }).join('');
+    };
+
+    const requestActionLabel = (state) => {
+        if (state === 'DRAFT' || state === 'REJECTED') return 'Continue Record';
+        if (state === 'SUBMITTED' || state === 'VERIFIED') return 'View Record';
+        return 'Record Collection';
+    };
+
+    const renderSelectedSchedule = () => {
+        const host = document.getElementById('collector-selected-schedule');
+        if (!host) return;
+
+        const schedule = getSchedule(selectedScheduleId());
+        if (!schedule) {
+            host.innerHTML = '';
+            return;
+        }
+
+        const scheduleRequests = getScheduleRequests(schedule.id);
+        const records = getRecords();
+        const progress = scheduleProgress(schedule.id);
+        const submission = getSubmissions()[schedule.id];
+        const displayStatus = getScheduleDisplayStatus(schedule.id);
+        const allSubmitted = scheduleRequests.length > 0 && scheduleRequests.every((request) => ['SUBMITTED', 'VERIFIED'].includes(normalizeState(records[request.id])));
+
+        const rows = scheduleRequests.map((request) => {
+            const state = normalizeState(records[request.id]);
+            return `
+                <tr>
+                    <td><span class="collector-request-id">${escapeHtml(request.id)}</span></td>
+                    <td>${escapeHtml(request.pickupAddress)}</td>
+                    <td>${request.items.length} item${request.items.length === 1 ? '' : 's'}</td>
+                    <td><span class="collector-status collector-status--${stateClass(state)}">${escapeHtml(stateLabel(state))}</span></td>
+                    <td><button type="button" class="collector-table-action" data-request-open="${escapeHtml(request.id)}">${escapeHtml(requestActionLabel(state))}</button></td>
+                </tr>
+            `;
+        }).join('');
+
+        let submissionCopy = `${progress.ready} of ${progress.total} collection records submitted.`;
+        let submissionAction = `<button type="button" class="collector-primary-button" data-submit-schedule="${escapeHtml(schedule.id)}" ${allSubmitted ? '' : 'disabled'}>Submit Schedule for Verification</button>`;
+
+        if (submission?.status === 'PENDING') {
+            submissionCopy = `Submitted ${formatDateTime(submission.submittedAt)}. Waiting for Municipal Officer verification.`;
+            submissionAction = '<span class="collector-status collector-status--pending-verification">Pending Verification</span>';
+        } else if (submission?.status === 'VERIFIED') {
+            submissionCopy = `Verified ${formatDateTime(submission.verifiedAt)} by the Municipal Officer.`;
+            submissionAction = '<span class="collector-status collector-status--verified">Verified</span>';
+        } else if (submission?.status === 'REJECTED') {
+            submissionCopy = 'The Municipal Officer returned this schedule for correction. Correct the relevant records before resubmitting.';
+            submissionAction = '<span class="collector-status collector-status--rejected">Needs Correction</span>';
+        }
+
+        host.innerHTML = `
+            <div class="collector-selected-schedule__header">
+                <div>
+                    <span class="collector-eyebrow">Selected schedule</span>
+                    <h2>${escapeHtml(schedule.area)} Collection</h2>
+                    <p>${scheduleRequests.length} approved request${scheduleRequests.length === 1 ? '' : 's'} assigned to this collection schedule.</p>
+                </div>
+                <span class="collector-status collector-status--${scheduleStatusClass(displayStatus)}">${escapeHtml(scheduleStatusLabel(displayStatus))}</span>
+            </div>
+
+            <div class="collector-schedule-meta">
+                <div><span>Schedule ID</span><strong>${escapeHtml(schedule.id)}</strong></div>
+                <div><span>Collection Date</span><strong>${escapeHtml(formatDate(schedule.collectionDate))}</strong></div>
+                <div><span>Postal Code</span><strong>${escapeHtml(schedule.postalCode)}</strong></div>
+                <div><span>Vehicle</span><strong>${escapeHtml(schedule.vehicle)}</strong></div>
+            </div>
+
+            <div class="collector-section-header">
+                <div>
+                    <h2>Collection Requests</h2>
+                    <p>Open a request to compare the original details with the actual collection and save the collection record.</p>
+                </div>
+                <span class="collector-count-pill">${scheduleRequests.length} request${scheduleRequests.length === 1 ? '' : 's'}</span>
+            </div>
+
+            <div class="collector-table-wrap">
+                <table class="collector-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Request ID</th>
+                            <th scope="col">Pickup Address</th>
+                            <th scope="col">Items</th>
+                            <th scope="col">Record Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows || '<tr><td colspan="5">No approved requests assigned to this schedule.</td></tr>'}</tbody>
+                </table>
+            </div>
+
+            <div class="collector-schedule-submit">
+                <div class="collector-schedule-submit__copy">
+                    <strong>Schedule Collection Submission</strong>
+                    <span>${escapeHtml(submissionCopy)}</span>
+                </div>
+                ${submissionAction}
+            </div>
         `;
-    }).join('');
+    };
 
-    const note = document.querySelector('[data-collector-request-note]');
-    note.value = record?.collectorNote ?? '';
-    note.disabled = isConfirmed;
-    updateNoteCharacterCount();
+    const renderSchedulesPage = () => {
+        if (!document.querySelector('[data-collector-page="schedules"]')) return;
+        renderScheduleCards();
+        renderSelectedSchedule();
+    };
 
-    const confirmButton = document.querySelector('[data-confirm-request]');
-    confirmButton.disabled = isConfirmed;
-    confirmButton.textContent = isConfirmed ? 'Collection Confirmed' : 'Confirm Collection';
+    const allRequestsWithSchedule = () => requests.map((request) => ({ ...request, schedule: getSchedule(request.scheduleId) }));
 
-    const validation = document.querySelector('[data-request-validation]');
-    validation.hidden = true;
-    validation.classList.remove('is-success');
-}
+    const renderRequestFilters = () => {
+        const select = document.getElementById('collector-request-schedule-filter');
+        if (!select || select.dataset.ready === 'true') return;
+        schedules.forEach((schedule) => {
+            const option = document.createElement('option');
+            option.value = schedule.id;
+            option.textContent = `${schedule.area} · ${formatDate(schedule.collectionDate)}`;
+            select.append(option);
+        });
+        select.dataset.ready = 'true';
+    };
 
-function openRequestModal(requestId, triggerElement) {
-    const result = findRequest(requestId);
-    const modal = document.querySelector('[data-request-modal]');
-    if (!result || !modal) return;
+    const renderRequestSummary = () => {
+        const total = document.getElementById('collector-summary-total');
+        if (!total) return;
+        const records = getRecords();
+        const recordList = Object.values(records);
+        const drafts = recordList.filter((record) => normalizeState(record) === 'DRAFT').length;
+        const submitted = recordList.filter((record) => ['SUBMITTED', 'VERIFIED'].includes(normalizeState(record))).length;
+        const weight = recordList.reduce((sum, record) => sum + recordTotalWeight(record), 0);
 
-    activeRequestId = requestId;
-    returnFocusElement = triggerElement ?? null;
-    populateRequestModal(result.schedule, result.request);
-    modal.hidden = false;
-    document.body.classList.add('modal-open');
-    modal.querySelector('[data-close-request-modal]')?.focus();
-}
+        total.textContent = String(requests.length);
+        document.getElementById('collector-summary-drafts').textContent = String(drafts);
+        document.getElementById('collector-summary-submitted').textContent = String(submitted);
+        document.getElementById('collector-summary-weight').textContent = `${weight.toFixed(2)} kg`;
+    };
 
-function closeRequestModal() {
-    const modal = document.querySelector('[data-request-modal]');
-    if (!modal || modal.hidden) return;
+    const renderAllRequests = () => {
+        const body = document.getElementById('collector-all-request-rows');
+        if (!body) return;
+        renderRequestFilters();
+        renderRequestSummary();
 
-    modal.hidden = true;
-    document.body.classList.remove('modal-open');
-    activeRequestId = null;
-    returnFocusElement?.focus();
-    returnFocusElement = null;
-}
+        const scheduleFilter = document.getElementById('collector-request-schedule-filter')?.value || 'ALL';
+        const statusFilter = document.getElementById('collector-request-status-filter')?.value || 'ALL';
+        const search = (document.getElementById('collector-request-search')?.value || '').trim().toLowerCase();
+        const records = getRecords();
 
-function collectItemValues() {
-    return [...document.querySelectorAll('[data-collection-item-row]')].map((row) => {
-        const requestedQuantity = Number(row.dataset.requestedQuantity);
-        const actualQuantity = Number(row.querySelector('[data-actual-quantity]').value);
-        const actualWeightKg = Number(row.querySelector('[data-actual-weight]').value);
+        const filtered = allRequestsWithSchedule().filter((request) => {
+            const state = normalizeState(records[request.id]);
+            if (scheduleFilter !== 'ALL' && request.scheduleId !== scheduleFilter) return false;
+            if (statusFilter !== 'ALL' && state !== statusFilter) return false;
+            if (search && !`${request.id} ${request.pickupAddress} ${request.schedule?.area || ''}`.toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        body.innerHTML = filtered.map((request) => {
+            const state = normalizeState(records[request.id]);
+            return `
+                <tr>
+                    <td><span class="collector-request-id">${escapeHtml(request.id)}</span></td>
+                    <td>${escapeHtml(request.schedule?.area || request.scheduleId)}<br><small>${escapeHtml(formatDate(request.schedule?.collectionDate || '2026-08-01'))}</small></td>
+                    <td>${escapeHtml(request.pickupAddress)}</td>
+                    <td>${request.items.length} item${request.items.length === 1 ? '' : 's'}</td>
+                    <td><span class="collector-status collector-status--${stateClass(state)}">${escapeHtml(stateLabel(state))}</span></td>
+                    <td><button type="button" class="collector-table-action" data-request-open="${escapeHtml(request.id)}">${escapeHtml(requestActionLabel(state))}</button></td>
+                </tr>
+            `;
+        }).join('');
+
+        const count = document.getElementById('collector-request-result-count');
+        if (count) count.textContent = `${filtered.length} request${filtered.length === 1 ? '' : 's'}`;
+        const empty = document.getElementById('collector-request-filter-empty');
+        if (empty) empty.hidden = filtered.length !== 0;
+    };
+
+    const renderRequestsPage = () => {
+        if (!document.querySelector('[data-collector-page="requests"]')) return;
+        renderAllRequests();
+    };
+
+    const buildOriginalRequestHtml = (request, schedule) => `
+        <section class="collector-record-original">
+            <div class="collector-record-block-heading">
+                <h3>Original Request <small>(Read-only)</small></h3>
+                <span class="collector-status collector-status--verified">Approved Request</span>
+            </div>
+            <div class="collector-original-grid">
+                <div><span>Request ID</span><strong>${escapeHtml(request.id)}</strong></div>
+                <div><span>Schedule</span><strong>${escapeHtml(schedule?.id || request.scheduleId)}</strong></div>
+                <div><span>Collection Date</span><strong>${escapeHtml(schedule ? formatDate(schedule.collectionDate) : '—')}</strong></div>
+                <div><span>Pickup Address</span><strong>${escapeHtml(request.pickupAddress)}</strong></div>
+                <div><span>Public User</span><strong>${escapeHtml(request.publicUser)}</strong></div>
+                <div><span>Contact</span><strong>${escapeHtml(request.phone)}</strong></div>
+                <div><span>Requested Items</span><strong>${request.items.length}</strong></div>
+                <div><span>Area</span><strong>${escapeHtml(schedule?.area || '—')}</strong></div>
+            </div>
+            <div class="collector-requested-items">
+                ${request.items.map((item) => `
+                    <div class="collector-requested-item">
+                        <strong>${escapeHtml(item.name)}</strong>
+                        <span>Qty: ${item.requestedQuantity}</span>
+                        <span>Est. ${Number(item.estimatedWeightKg).toFixed(2)} kg</span>
+                        <span>${escapeHtml(item.reportedCondition)}${item.conditionNote ? ` · ${escapeHtml(item.conditionNote)}` : ''}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+    `;
+
+    const blankItemRecord = (item) => ({
+        itemId: item.id,
+        actualQuantity: '',
+        actualWeightKg: '',
+        actualCondition: '',
+        itemNote: '',
+        itemResult: ''
+    });
+
+    const recordForRequest = (request) => {
+        const existing = getRecords()[request.id];
+        if (!existing) {
+            return {
+                requestId: request.id,
+                scheduleId: request.scheduleId,
+                state: 'PENDING_COLLECTION',
+                collectorNote: '',
+                items: request.items.map(blankItemRecord)
+            };
+        }
+        const byId = new Map((existing.items || []).map((item) => [item.itemId, item]));
         return {
-            requestItemId: Number(row.dataset.requestItemId),
-            requestedQuantity,
-            actualQuantity,
-            actualWeightKg: roundWeight(actualWeightKg),
-            itemResult: calculateItemResult(requestedQuantity, actualQuantity, actualWeightKg),
+            ...existing,
+            items: request.items.map((item) => ({ ...blankItemRecord(item), ...(byId.get(item.id) || {}) }))
         };
-    });
-}
-
-function validateCollectionItems(items) {
-    for (const item of items) {
-        if (!Number.isInteger(item.actualQuantity) || item.actualQuantity < 0) {
-            return 'Actual quantity must be a whole number of zero or more for every item.';
-        }
-        if (!Number.isFinite(item.actualWeightKg) || item.actualWeightKg < 0) {
-            return 'Actual weight must be a valid value of zero or more for every item.';
-        }
-        const hasQuantity = item.actualQuantity > 0;
-        const hasWeight = item.actualWeightKg > 0;
-        if (hasQuantity !== hasWeight) {
-            return 'Quantity and weight must both be zero for an item not collected, or both be greater than zero.';
-        }
-    }
-    return null;
-}
-
-function confirmActiveRequest() {
-    const result = findRequest(activeRequestId);
-    if (!result) return;
-
-    const items = collectItemValues();
-    const validationMessage = validateCollectionItems(items);
-    const validation = document.querySelector('[data-request-validation]');
-
-    if (validationMessage) {
-        validation.textContent = validationMessage;
-        validation.classList.remove('is-success');
-        validation.hidden = false;
-        return;
-    }
-
-    const records = getCollectionRecords();
-    records[result.request.requestId] = {
-        confirmed: true,
-        pickupResult: calculatePickupResult(items),
-        collectorNote: document.querySelector('[data-collector-request-note]').value.trim(),
-        collectedAt: new Date().toISOString(),
-        items: items.map(({ requestedQuantity, ...item }) => item),
     };
-    writeJSONStorage(collectorStorageKeys.collectionRecords, records);
 
-    renderWorkspace();
-    populateRequestModal(result.schedule, result.request);
-    validation.textContent = 'Collection details confirmed. This request is now available in read-only view.';
-    validation.classList.add('is-success');
-    validation.hidden = false;
-}
+    const renderRecordEditorHtml = (request, record) => {
+        const state = normalizeState(record);
+        const readonly = ['SUBMITTED', 'VERIFIED'].includes(state);
+        const editable = !readonly;
+        const totalWeight = recordTotalWeight(record);
+        const pickupResult = record.pickupResult || '—';
 
-function bindCollectorWorkspaceEvents() {
-    document.querySelector('[data-schedule-list]')?.addEventListener('click', (event) => {
+        const itemHtml = request.items.map((item) => {
+            const current = record.items.find((entry) => entry.itemId === item.id) || blankItemRecord(item);
+            return `
+                <article class="collector-record-item" data-record-item="${escapeHtml(item.id)}">
+                    <div class="collector-record-item__header">
+                        <div>
+                            <strong>${escapeHtml(item.name)}</strong>
+                            <span>${escapeHtml(item.category)}</span>
+                        </div>
+                        <span>Requested: ${item.requestedQuantity} · Est. ${Number(item.estimatedWeightKg).toFixed(2)} kg</span>
+                    </div>
+                    <div class="collector-record-item__grid">
+                        <label class="collector-record-field">
+                            <span>Actual Quantity *</span>
+                            <input type="number" min="0" step="1" inputmode="numeric" data-record-field="actualQuantity" value="${escapeHtml(current.actualQuantity)}" ${readonly ? 'readonly' : ''}>
+                        </label>
+                        <label class="collector-record-field">
+                            <span>Actual Weight (kg) *</span>
+                            <input type="number" min="0" step="0.001" inputmode="decimal" data-record-field="actualWeightKg" value="${escapeHtml(current.actualWeightKg)}" ${readonly ? 'readonly' : ''}>
+                        </label>
+                        <label class="collector-record-field">
+                            <span>Actual Condition *</span>
+                            <select data-record-field="actualCondition" ${readonly ? 'disabled' : ''}>
+                                <option value="">Select condition</option>
+                                <option value="WORKING" ${current.actualCondition === 'WORKING' ? 'selected' : ''}>Working</option>
+                                <option value="DAMAGED" ${current.actualCondition === 'DAMAGED' ? 'selected' : ''}>Damaged</option>
+                                <option value="UNKNOWN" ${current.actualCondition === 'UNKNOWN' ? 'selected' : ''}>Unknown</option>
+                            </select>
+                        </label>
+                        <label class="collector-record-field">
+                            <span>Item Note</span>
+                            <input type="text" maxlength="180" data-record-field="itemNote" value="${escapeHtml(current.itemNote)}" placeholder="Optional observation" ${readonly ? 'readonly' : ''}>
+                        </label>
+                    </div>
+                </article>
+            `;
+        }).join('');
+
+        let actions = '';
+        if (editable) {
+            actions = `
+                <button type="button" class="collector-modal-button collector-modal-button--secondary" data-save-draft>Save Draft</button>
+                ${state === 'DRAFT' || state === 'REJECTED' ? '<button type="button" class="collector-modal-button collector-modal-button--danger" data-delete-draft>Delete Draft</button>' : ''}
+                <button type="button" class="collector-modal-button collector-modal-button--primary" data-submit-record>Submit Record</button>
+            `;
+        } else {
+            actions = '<button type="button" class="collector-modal-button collector-modal-button--secondary" data-collector-modal-close>Close</button>';
+        }
+
+        return `
+            <section class="collector-record-editor">
+                <div class="collector-record-block-heading">
+                    <h3>Collection Record</h3>
+                    <span class="collector-status collector-status--${stateClass(state)}">${escapeHtml(stateLabel(state))}</span>
+                </div>
+
+                ${readonly ? `<p class="collector-record-readonly-note">This record has already been submitted and is read-only while it waits for Municipal Officer verification.</p>` : ''}
+
+                <div class="collector-record-items">${itemHtml}</div>
+
+                <div class="collector-record-note-grid">
+                    <label class="collector-record-field">
+                        <span>Collection Note</span>
+                        <textarea maxlength="300" data-record-note placeholder="Optional overall collection note" ${readonly ? 'readonly' : ''}>${escapeHtml(record.collectorNote || '')}</textarea>
+                    </label>
+                    <div class="collector-record-total">
+                        <span>Total Weight (Auto)</span>
+                        <strong data-record-total-weight>${totalWeight.toFixed(2)} kg</strong>
+                        <small>Pickup result: <b data-record-pickup-result>${escapeHtml(pickupResult)}</b></small>
+                    </div>
+                </div>
+
+                ${record.updatedAt ? `<p class="collector-record-readonly-note">Last updated: ${escapeHtml(formatDateTime(record.updatedAt))}${record.submittedAt ? ` · Submitted: ${escapeHtml(formatDateTime(record.submittedAt))}` : ''}</p>` : ''}
+
+                <div class="collector-modal-actions">${actions}</div>
+            </section>
+        `;
+    };
+
+    const openRequestModal = (requestId, trigger = null) => {
+        const modal = document.getElementById('collector-record-modal');
+        const body = document.getElementById('collector-record-modal-body');
+        const title = document.getElementById('collector-record-modal-title');
+        if (!modal || !body) return;
+
+        const request = getRequest(requestId);
+        if (!request) return;
+        const schedule = getSchedule(request.scheduleId);
+        const record = recordForRequest(request);
+        activeRequestId = requestId;
+        modalReturnFocus = trigger || document.activeElement;
+
+        if (title) title.textContent = `Collection Record — ${request.id}`;
+        body.innerHTML = `${buildOriginalRequestHtml(request, schedule)}${renderRecordEditorHtml(request, record)}`;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        window.setTimeout(() => modal.querySelector('.collector-modal__close')?.focus(), 0);
+        refreshRecordDerivedPreview();
+    };
+
+    const closeRequestModal = () => {
+        const modal = document.getElementById('collector-record-modal');
+        if (!modal || modal.hidden) return;
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        activeRequestId = null;
+        if (modalReturnFocus instanceof HTMLElement) modalReturnFocus.focus();
+        modalReturnFocus = null;
+    };
+
+    const collectModalDraft = ({ requireComplete = false } = {}) => {
+        const request = getRequest(activeRequestId);
+        const modal = document.getElementById('collector-record-modal');
+        if (!request || !modal) return { ok: false, error: 'Request is unavailable.' };
+
+        const items = [];
+        for (const requestItem of request.items) {
+            const block = modal.querySelector(`[data-record-item="${CSS.escape(requestItem.id)}"]`);
+            if (!block) continue;
+            const quantityRaw = block.querySelector('[data-record-field="actualQuantity"]')?.value ?? '';
+            const weightRaw = block.querySelector('[data-record-field="actualWeightKg"]')?.value ?? '';
+            const condition = block.querySelector('[data-record-field="actualCondition"]')?.value ?? '';
+            const itemNote = block.querySelector('[data-record-field="itemNote"]')?.value?.trim() ?? '';
+
+            if (requireComplete) {
+                if (quantityRaw === '' || weightRaw === '' || !condition) {
+                    return { ok: false, error: `Complete Actual Quantity, Actual Weight and Actual Condition for ${requestItem.name}.` };
+                }
+            }
+
+            const quantity = quantityRaw === '' ? '' : Number(quantityRaw);
+            const weight = weightRaw === '' ? '' : Number(weightRaw);
+
+            if (quantity !== '' && (!Number.isInteger(quantity) || quantity < 0)) {
+                return { ok: false, error: `Actual Quantity for ${requestItem.name} must be a whole number of 0 or more.` };
+            }
+            if (weight !== '' && (!Number.isFinite(weight) || weight < 0)) {
+                return { ok: false, error: `Actual Weight for ${requestItem.name} must be 0 or more.` };
+            }
+
+            items.push({
+                itemId: requestItem.id,
+                actualQuantity: quantity,
+                actualWeightKg: weight,
+                actualCondition: condition,
+                itemNote,
+                itemResult: quantity === '' ? '' : deriveItemResult(quantity, requestItem.requestedQuantity)
+            });
+        }
+
+        const collectorNote = modal.querySelector('[data-record-note]')?.value?.trim() ?? '';
+        const pickupResult = items.every((item) => item.itemResult) ? derivePickupResult(items) : '';
+
+        return {
+            ok: true,
+            record: {
+                requestId: request.id,
+                scheduleId: request.scheduleId,
+                collectorUserId: collector.userId,
+                collectorNote,
+                items,
+                pickupResult
+            }
+        };
+    };
+
+    const refreshRecordDerivedPreview = () => {
+        const draft = collectModalDraft({ requireComplete: false });
+        if (!draft.ok) return;
+        const weight = recordTotalWeight(draft.record);
+        const totalEl = document.querySelector('#collector-record-modal [data-record-total-weight]');
+        const resultEl = document.querySelector('#collector-record-modal [data-record-pickup-result]');
+        if (totalEl) totalEl.textContent = `${weight.toFixed(2)} kg`;
+        if (resultEl) resultEl.textContent = draft.record.pickupResult || '—';
+    };
+
+    const saveDraft = () => {
+        const draft = collectModalDraft({ requireComplete: false });
+        if (!draft.ok) {
+            window.alert(draft.error);
+            return;
+        }
+        const records = getRecords();
+        const previous = records[activeRequestId] || {};
+        records[activeRequestId] = {
+            ...previous,
+            ...draft.record,
+            state: 'DRAFT',
+            updatedAt: new Date().toISOString(),
+            submittedAt: null
+        };
+        saveRecords(records);
+        showFeedback(`${activeRequestId} draft saved.`);
+        const currentId = activeRequestId;
+        renderAll();
+        openRequestModal(currentId);
+    };
+
+    const submitRecord = () => {
+        const draft = collectModalDraft({ requireComplete: true });
+        if (!draft.ok) {
+            window.alert(draft.error);
+            return;
+        }
+        if (!window.confirm('Submit this collection record? After submission it becomes read-only while awaiting Municipal Officer verification.')) return;
+
+        const records = getRecords();
+        const previous = records[activeRequestId] || {};
+        records[activeRequestId] = {
+            ...previous,
+            ...draft.record,
+            state: 'SUBMITTED',
+            updatedAt: new Date().toISOString(),
+            submittedAt: new Date().toISOString()
+        };
+        saveRecords(records);
+        showFeedback(`${activeRequestId} submitted successfully.`);
+        const currentId = activeRequestId;
+        renderAll();
+        openRequestModal(currentId);
+    };
+
+    const deleteDraft = () => {
+        if (!activeRequestId) return;
+        const records = getRecords();
+        const current = records[activeRequestId];
+        if (!current || !['DRAFT', 'REJECTED'].includes(normalizeState(current))) return;
+        if (!window.confirm(`Delete the draft collection record for ${activeRequestId}?`)) return;
+        delete records[activeRequestId];
+        saveRecords(records);
+        showFeedback(`${activeRequestId} draft deleted.`);
+        closeRequestModal();
+        renderAll();
+    };
+
+    const submitSchedule = (scheduleId) => {
+        const schedule = getSchedule(scheduleId);
+        if (!schedule) return;
+        const records = getRecords();
+        const scheduleRequests = getScheduleRequests(scheduleId);
+        const allSubmitted = scheduleRequests.length > 0 && scheduleRequests.every((request) => ['SUBMITTED', 'VERIFIED'].includes(normalizeState(records[request.id])));
+        if (!allSubmitted) {
+            window.alert('Submit every request collection record before submitting the whole schedule for verification.');
+            return;
+        }
+        if (!window.confirm(`Submit ${schedule.area} schedule collection for Municipal Officer verification?`)) return;
+
+        const submissions = getSubmissions();
+        submissions[scheduleId] = {
+            scheduleId,
+            collectorUserId: collector.userId,
+            status: 'PENDING',
+            submittedAt: new Date().toISOString()
+        };
+        saveSubmissions(submissions);
+        showFeedback(`${schedule.id} submitted for Municipal Officer verification.`);
+        renderAll();
+    };
+
+    const renderAll = () => {
+        renderSchedulesPage();
+        renderRequestsPage();
+    };
+
+    const trapModalFocus = (event) => {
+        const modal = document.getElementById('collector-record-modal');
+        if (!modal || modal.hidden) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeRequestModal();
+            return;
+        }
+        if (event.key !== 'Tab') return;
+        const focusable = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]')]
+            .filter((el) => !el.closest('[hidden]'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    };
+
+    document.addEventListener('click', (event) => {
         const scheduleButton = event.target.closest('[data-schedule-select]');
-        if (!scheduleButton) return;
+        if (scheduleButton) {
+            setSelectedSchedule(scheduleButton.dataset.scheduleSelect);
+            document.getElementById('collector-selected-schedule')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+        }
 
-        setSelectedScheduleId(Number(scheduleButton.dataset.scheduleSelect));
-        renderWorkspace();
-        document.querySelector('[data-selected-schedule-shell]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const requestButton = event.target.closest('[data-request-open]');
+        if (requestButton) {
+            openRequestModal(requestButton.dataset.requestOpen, requestButton);
+            return;
+        }
+
+        if (event.target.closest('[data-collector-modal-close]')) {
+            closeRequestModal();
+            return;
+        }
+
+        if (event.target.closest('[data-save-draft]')) {
+            saveDraft();
+            return;
+        }
+
+        if (event.target.closest('[data-submit-record]')) {
+            submitRecord();
+            return;
+        }
+
+        if (event.target.closest('[data-delete-draft]')) {
+            deleteDraft();
+            return;
+        }
+
+        const submitScheduleButton = event.target.closest('[data-submit-schedule]');
+        if (submitScheduleButton) {
+            submitSchedule(submitScheduleButton.dataset.submitSchedule);
+        }
     });
 
-    document.querySelector('[data-request-table-body]')?.addEventListener('click', (event) => {
-        const detailsButton = event.target.closest('[data-view-request]');
-        if (!detailsButton) return;
-        openRequestModal(Number(detailsButton.dataset.viewRequest), detailsButton);
+    document.addEventListener('input', (event) => {
+        if (event.target.closest('#collector-record-modal') && (event.target.matches('[data-record-field]') || event.target.matches('[data-record-note]'))) {
+            refreshRecordDerivedPreview();
+        }
+        if (event.target.matches('#collector-request-search')) renderAllRequests();
     });
 
-    document.querySelectorAll('[data-close-request-modal]').forEach((button) => {
-        button.addEventListener('click', closeRequestModal);
+    document.addEventListener('change', (event) => {
+        if (event.target.closest('#collector-record-modal') && event.target.matches('[data-record-field]')) {
+            refreshRecordDerivedPreview();
+        }
+        if (event.target.matches('#collector-request-schedule-filter, #collector-request-status-filter')) renderAllRequests();
     });
 
-    document.querySelector('[data-request-modal]')?.addEventListener('click', (event) => {
-        if (event.target === event.currentTarget) closeRequestModal();
+    document.addEventListener('keydown', trapModalFocus);
+
+    document.addEventListener('click', (event) => {
+        if (event.target.matches('#collector-print-summary')) {
+            window.print();
+        }
     });
 
-    document.querySelector('[data-request-items-body]')?.addEventListener('input', (event) => {
-        const row = event.target.closest('[data-collection-item-row]');
-        if (!row) return;
-        updateItemResultPreview(row);
-        document.querySelector('[data-request-validation]').hidden = true;
-    });
-
-    document.querySelector('[data-collector-request-note]')?.addEventListener('input', updateNoteCharacterCount);
-    document.querySelector('[data-confirm-request]')?.addEventListener('click', confirmActiveRequest);
-    document.querySelector('[data-print-summary]')?.addEventListener('click', () => window.print());
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') closeRequestModal();
-    });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    updateCollectorIdentity();
-
-    if (!document.querySelector('[data-collector-page]')) return;
-    renderWorkspace();
-    bindCollectorWorkspaceEvents();
-});
+    renderAll();
+})();
