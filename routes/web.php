@@ -4,6 +4,7 @@ declare(strict_types=1);
 return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
     $router->get('/login', 'AuthController@login');
+    $router->get('/logout', 'AuthController@logout');
     $router->get('/register', 'AuthController@register');
     $router->get('/register/public', 'AuthController@registerPublic');
     $router->get('/register/recycler', 'AuthController@registerRecycler');

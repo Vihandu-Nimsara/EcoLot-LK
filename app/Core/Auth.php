@@ -50,4 +50,30 @@ final class Auth
     {
         return in_array(self::role(), (array) $roles, true);
     }
+
+    public static function requireRole(string $role): void
+{
+    if (!self::check()) {
+        self::redirectToLogin();
+    }
+
+    if (self::role() !== $role) {
+        http_response_code(403);
+        echo '403 Forbidden';
+        exit;
+    }
+}
+
+private static function redirectToLogin(): void
+{
+    $appConfig = require APP_ROOT . '/config/app.php';
+
+    $basePath = rtrim(
+        (string) ($appConfig['base_path'] ?? ''),
+        '/'
+    );
+
+    header('Location: ' . $basePath . '/login');
+    exit;
+}
 }

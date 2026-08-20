@@ -22,4 +22,12 @@ class AuthController extends Controller
     {
         $this->view('auth/register-recycler');
     }
+
+    public function logout(): void
+{
+    Auth::logout();
+
+    $this->redirect('/login');
+}
+
 }
