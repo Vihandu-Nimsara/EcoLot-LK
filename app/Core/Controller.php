@@ -62,6 +62,40 @@ class Controller
         echo trim($page) === '' ? $content : $page;
     }
 
+    protected function postString(string $field, bool $trim = true): string
+    {
+        $value = $_POST[$field] ?? '';
+
+        if (!is_string($value)) {
+            return '';
+        }
+
+        return $trim ? trim($value) : $value;
+    }
+
+    protected function hasValidCsrfToken(): bool
+    {
+        $token = $_POST['_csrf_token'] ?? null;
+
+        return is_string($token) && Csrf::validate($token);
+    }
+
+    protected function redirect(string $path, int $status = 303): never
+    {
+        $rootPath = defined('APP_ROOT')
+            ? APP_ROOT
+            : dirname(__DIR__, 2);
+        $config = require $rootPath . '/config/app.php';
+        $basePath = rtrim((string) ($config['base_path'] ?? ''), '/');
+
+        header(
+            'Location: ' . $basePath . '/' . ltrim($path, '/'),
+            true,
+            $status
+        );
+        exit;
+    }
+
     private function resolveLayout(string $view, string $rootPath): ?string
     {
         $segments = explode('/', $view);

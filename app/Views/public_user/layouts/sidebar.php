@@ -30,6 +30,6 @@
     </nav>
 
     <div class="sidebar-bottom">
-        <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
+        <a href="<?= $baseUrl ?>/logout" class="logout-link">Logout</a>
     </div>
 </aside>

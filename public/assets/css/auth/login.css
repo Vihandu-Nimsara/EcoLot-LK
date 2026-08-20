@@ -639,6 +639,12 @@ a {
     line-height: 1.45;
 }
 
+.auth-alert.auth-success {
+    color: #176a39;
+    background: #e9f8ee;
+    border-color: #bfe6cb;
+}
+
 /* Branding Panel */
 .login-leaf-artwork {
     position: relative;
