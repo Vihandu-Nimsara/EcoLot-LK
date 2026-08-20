@@ -35,11 +35,9 @@
     </nav>
 
 <div class="sidebar-bottom">
-
-    <button type="button" class="logout-link" data-admin-dialog="logout">
+    <a href="<?= $baseUrl ?>/logout" class="logout-link">
         Logout
-    </button>
-
+    </a>
 </div>
 
 </aside>

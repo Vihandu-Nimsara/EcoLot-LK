@@ -18,4 +18,18 @@ final class AuthorizedRecycler extends Model
 
         return $result === false ? null : $result;
     }
+
+    public function findByUserId(int $userId): ?array
+    {
+        $result = $this->query(
+            'SELECT `user_id`, `company_name`, `verification_status`
+             FROM `authorized_recyclers`
+             WHERE `user_id` = :user_id
+             LIMIT 1',
+            ['user_id' => $userId]
+        )->fetch();
+
+        return $result === false ? null : $result;
+    }
 }
+

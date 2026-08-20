@@ -5,17 +5,39 @@ class RegistrationController extends Controller
 {
     public function index(): void
     {
+        $this->redirectIfAuthenticated();
         $this->view('auth/register');
     }
 
     public function publicForm(): void
     {
+        $this->redirectIfAuthenticated();
         $this->renderPublicForm();
     }
 
     public function recyclerForm(): void
     {
+        $this->redirectIfAuthenticated();
         $this->renderRecyclerForm();
+    }
+
+    private function redirectIfAuthenticated(): void
+    {
+        if (Auth::check()) {
+            $role = Auth::role();
+            $dashboardPaths = [
+                'ADMIN' => '/admin/dashboard',
+                'MUNICIPAL_OFFICER' => '/officer/dashboard',
+                'COLLECTOR' => '/collector/dashboard',
+                'RECYCLER' => '/recycler/dashboard',
+                'PUBLIC_USER' => '/user/dashboard',
+            ];
+            $dashboardPath = $dashboardPaths[$role] ?? null;
+
+            if ($dashboardPath !== null) {
+                $this->redirect($dashboardPath);
+            }
+        }
     }
 
     public function recyclerPending(): void

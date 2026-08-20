@@ -16,6 +16,15 @@ class AuthController extends Controller
 
     public function login(): void
     {
+        if (Auth::check()) {
+            $role = Auth::role();
+            $dashboardPath = self::DASHBOARD_PATHS[$role] ?? null;
+
+            if ($dashboardPath !== null) {
+                $this->redirect($dashboardPath);
+            }
+        }
+
         $this->renderLogin();
     }
 
@@ -68,6 +77,31 @@ class AuthController extends Controller
             $this->redirect('/verify-mobile');
         }
 
+        $role = (string) $user['role'];
+
+        if ($role === 'RECYCLER') {
+            $recycler = (new AuthorizedRecycler())->findByUserId((int) $user['user_id']);
+            $verificationStatus = $recycler['verification_status'] ?? 'PENDING';
+
+            if ($verificationStatus === 'PENDING') {
+                http_response_code(403);
+                $this->renderLogin(
+                    'Your Recycler account is awaiting Admin verification approval.',
+                    $rawMobile
+                );
+                return;
+            }
+
+            if ($verificationStatus === 'REJECTED') {
+                http_response_code(403);
+                $this->renderLogin(
+                    'Your Recycler application was rejected by an Administrator.',
+                    $rawMobile
+                );
+                return;
+            }
+        }
+
         if (($user['account_status'] ?? null) !== 'ACTIVE') {
             http_response_code(403);
             $this->renderLogin(
@@ -77,7 +111,6 @@ class AuthController extends Controller
             return;
         }
 
-        $role = (string) $user['role'];
         $dashboardPath = self::DASHBOARD_PATHS[$role] ?? null;
 
         if ($dashboardPath === null) {
@@ -97,8 +130,7 @@ class AuthController extends Controller
 
     private function requiresMobileVerification(array $user): bool
     {
-        return ($user['role'] ?? null) === 'PUBLIC_USER'
-            && ($user['account_status'] ?? null) === 'PENDING'
+        return in_array($user['role'] ?? null, ['PUBLIC_USER', 'RECYCLER'], true)
             && ($user['mobile_verified_at'] ?? null) === null;
     }
 
@@ -116,10 +148,9 @@ class AuthController extends Controller
     }
 
     public function logout(): void
-{
-    Auth::logout();
-
-    $this->redirect('/login');
+    {
+        Auth::logout();
+        $this->redirect('/login');
+    }
 }
 
-}

@@ -23,6 +23,7 @@ class CollectorController extends Controller
 
     public function eLots(): void
     {
+        Auth::requireRole('COLLECTOR');
         $this->view('collector/elots', ['currentPage' => 'e-lots']);
     }
 }
