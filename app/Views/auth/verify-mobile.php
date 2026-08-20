@@ -49,7 +49,11 @@ $maskedMobile = isset($maskedMobile) && is_string($maskedMobile) ? $maskedMobile
             <button type="submit">Resend Code</button>
         </form>
 
-        <a class="restart-link" href="<?= htmlspecialchars($basePath . '/register/public', ENT_QUOTES, 'UTF-8') ?>">Use a different number</a>
+        <a class="restart-link" href="<?= htmlspecialchars(
+            $basePath . (($isRecycler ?? false) ? '/register/recycler' : '/register/public'),
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>">Use a different number</a>
     </section>
 </main>
 </body>

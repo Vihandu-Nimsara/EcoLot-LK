@@ -26,10 +26,16 @@ class MobileVerificationController extends Controller
         }
 
         try {
-            $result = (new MobileVerificationService())->verifyAndActivate(
-                (int) $user['user_id'],
-                $this->postString('otp')
-            );
+            $verificationService = new MobileVerificationService();
+            $result = ($user['role'] ?? null) === 'RECYCLER'
+                ? $verificationService->verifyAndActivateRecycler(
+                    (int) $user['user_id'],
+                    $this->postString('otp')
+                )
+                : $verificationService->verifyAndActivate(
+                    (int) $user['user_id'],
+                    $this->postString('otp')
+                );
         } catch (Throwable $exception) {
             error_log('Mobile verification failure category=' . $exception::class);
             http_response_code(500);
@@ -47,9 +53,22 @@ class MobileVerificationController extends Controller
             return;
         }
 
+        $isRecycler = ($user['role'] ?? null) === 'RECYCLER';
+        $mobile = (string) $user['mobile_number'];
+        $maskedMobile = substr($mobile, 0, 4)
+            . str_repeat('*', max(0, strlen($mobile) - 7))
+            . substr($mobile, -3);
         MobileVerificationSession::clear();
         Session::regenerate();
         Csrf::regenerate();
+
+        if ($isRecycler) {
+            Session::flash('recycler_verification_summary', [
+                'masked_mobile' => $maskedMobile,
+            ]);
+            $this->redirect('/register/recycler/pending');
+        }
+
         Session::flash(
             'auth_success',
             'Your mobile number is verified. You can now log in.'
@@ -123,6 +142,7 @@ class MobileVerificationController extends Controller
             'maskedMobile' => $maskedMobile,
             'notice' => null,
             'error' => null,
+            'isRecycler' => ($user['role'] ?? null) === 'RECYCLER',
         ], $data));
     }
 

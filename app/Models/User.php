@@ -62,4 +62,20 @@ final class User extends Model
 
         return $statement->rowCount() === 1;
     }
+
+    public function activateRecyclerAfterMobileVerification(int $userId): bool
+    {
+        $statement = $this->query(
+            'UPDATE `users`
+             SET `mobile_verified_at` = CURRENT_TIMESTAMP,
+                 `account_status` = \'ACTIVE\'
+             WHERE `user_id` = :user_id
+               AND `role` = \'RECYCLER\'
+               AND `account_status` = \'PENDING\'
+               AND `mobile_verified_at` IS NULL',
+            ['user_id' => $userId]
+        );
+
+        return $statement->rowCount() === 1;
+    }
 }
