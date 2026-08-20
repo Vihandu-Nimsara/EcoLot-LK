@@ -114,4 +114,12 @@ class AuthController extends Controller
             'oldMobile' => $oldMobile,
         ]);
     }
+
+    public function logout(): void
+{
+    Auth::logout();
+
+    $this->redirect('/login');
+}
+
 }

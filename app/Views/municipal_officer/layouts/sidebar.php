@@ -49,7 +49,7 @@
 
     <div class="sidebar-bottom">
 
-    <a href="<?= $baseUrl ?>/login" class="logout-link">
+    <a href="<?= $baseUrl ?>/logout" class="logout-link">
         Logout
     </a>
 

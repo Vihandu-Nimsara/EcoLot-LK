@@ -8,12 +8,10 @@ return static function (Router $router, array $app): void {
     $router->get('/register/recycler', 'RegistrationController@recyclerForm');
     $router->get('/register/recycler/pending', 'RegistrationController@recyclerPending');
     $router->get('/login', 'AuthController@login');
-    $router->post('/login', 'AuthController@submitLogin');
-    $router->post('/register/public', 'RegistrationController@submitPublic');
-    $router->post('/register/recycler', 'RegistrationController@submitRecycler');
-    $router->get('/verify-mobile', 'MobileVerificationController@show');
-    $router->post('/verify-mobile', 'MobileVerificationController@verify');
-    $router->post('/verify-mobile/resend', 'MobileVerificationController@resend');
+    $router->get('/logout', 'AuthController@logout');
+    $router->get('/register', 'AuthController@register');
+    $router->get('/register/public', 'AuthController@registerPublic');
+    $router->get('/register/recycler', 'AuthController@registerRecycler');
 
     foreach ($app['roles'] ?? [] as $role) {
         if (!isset($role['route_prefix'], $role['controller'])) {

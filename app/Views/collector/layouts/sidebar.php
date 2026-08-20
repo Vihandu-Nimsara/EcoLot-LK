@@ -18,6 +18,6 @@
             <strong data-collector-name>Collector</strong>
             <span data-collector-id>—</span>
         </div>
-        <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
+        <a href="<?= $baseUrl ?>/logout" class="logout-link">Logout</a>
     </div>
 </aside>
