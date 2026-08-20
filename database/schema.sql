@@ -61,6 +61,30 @@ CREATE TABLE IF NOT EXISTS `collectors` (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `mobile_verification_otps` (
+    `otp_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id` BIGINT UNSIGNED NOT NULL,
+    `purpose` ENUM('REGISTRATION', 'PASSWORD_RESET') NOT NULL DEFAULT 'REGISTRATION',
+    `otp_hash` VARCHAR(255) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `attempt_count` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `verified_at` DATETIME NULL,
+    `invalidated_at` DATETIME NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`otp_id`),
+    KEY `idx_otp_user_purpose_state` (
+        `user_id`,
+        `purpose`,
+        `verified_at`,
+        `invalidated_at`
+    ),
+    KEY `idx_otp_user_purpose_sent` (`user_id`, `purpose`, `sent_at`),
+    CONSTRAINT `fk_mobile_otps_user`
+        FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- =========================================================
 -- Zones and public profiles
 -- =========================================================
@@ -364,6 +388,27 @@ CREATE TABLE IF NOT EXISTS `recycler_capabilities` (
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `fk_recycler_capabilities_category`
         FOREIGN KEY (`category_id`) REFERENCES `waste_categories` (`category_id`)
+        ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `recycler_authorized_activities` (
+    `activity_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `recycler_user_id` BIGINT UNSIGNED NOT NULL,
+    `activity_type` ENUM(
+        'COLLECTION',
+        'TRANSPORTATION',
+        'STORAGE',
+        'RECOVERY',
+        'RECYCLING',
+        'DISPOSAL'
+    ) NOT NULL,
+    `activity_status` ENUM('PENDING', 'APPROVED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`activity_id`),
+    UNIQUE KEY `uq_recycler_authorized_activity` (`recycler_user_id`, `activity_type`),
+    KEY `idx_recycler_authorized_activities_status` (`activity_status`),
+    CONSTRAINT `fk_recycler_authorized_activities_recycler`
+        FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`)
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

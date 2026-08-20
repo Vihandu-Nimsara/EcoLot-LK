@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
+    $router->get('/register', 'RegistrationController@index');
+    $router->get('/register/public', 'RegistrationController@publicForm');
+    $router->get('/register/recycler', 'RegistrationController@recyclerForm');
+    $router->get('/register/recycler/pending', 'RegistrationController@recyclerPending');
     $router->get('/login', 'AuthController@login');
     $router->get('/logout', 'AuthController@logout');
     $router->get('/register', 'AuthController@register');
@@ -52,6 +56,7 @@ return static function (Router $router, array $app): void {
     $router->group('/collector', static function (Router $router): void {
         $router->get('/my-requests', 'CollectorController@myRequests');
         $router->get('/initial-request', 'CollectorController@initialRequest');
+        $router->get('/e-lots', 'CollectorController@eLots');
     });
 
     $router->group('/admin', static function (Router $router): void {

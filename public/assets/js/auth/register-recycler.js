@@ -8,7 +8,6 @@
     }
 
     form.addEventListener("submit", (event) => {
-        event.preventDefault();
         const expiry = form.elements.licence_expiry;
         const activities = form.querySelectorAll(
             '[name="activities[]"]:checked'
@@ -41,14 +40,14 @@
             );
         }
         if (!form.reportValidity()) {
+            event.preventDefault();
             return;
         }
 
         const password = form.querySelector('[name="company_password"]');
         const confirmation = form.querySelector('[name="confirm_password"]');
-        const notice = document.querySelector("[data-registration-notice]");
-
         if (password && confirmation && password.value !== confirmation.value) {
+            event.preventDefault();
             confirmation.setCustomValidity("Passwords do not match.");
             confirmation.reportValidity();
             confirmation.addEventListener(
@@ -59,12 +58,10 @@
             return;
         }
 
-        const result = document.querySelector("[data-registration-result]");
-        form.hidden = true;
-        document.querySelector(".registration-heading")?.setAttribute("hidden", "");
-        if (result) {
-            result.hidden = false;
-            result.focus();
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Processing...";
         }
     });
 

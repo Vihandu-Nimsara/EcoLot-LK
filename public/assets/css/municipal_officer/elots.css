@@ -3,6 +3,21 @@
     background: #DDE9FF;
 }
 
+.elot-status.open-for-bidding {
+    color: #1D4ED8;
+    background: #DDE9FF;
+}
+
+.elot-status.pending-verification {
+    color: #92400E;
+    background: #FEF3C7;
+}
+
+.elot-status.rejected {
+    color: #B42318;
+    background: #FEE4E2;
+}
+
 .elot-status.awarded {
     color: #047857;
     background: #D0FAE4;
@@ -28,6 +43,7 @@
 }
 
 .elot-create-form[hidden],
+.elot-review-form[hidden],
 .verified-pool-section[hidden],
 .elot-manage-form[hidden],
 [data-manage-status-field][hidden],
@@ -42,6 +58,7 @@
 }
 
 .elot-create-form,
+.elot-review-form,
 .elot-manage-form,
 .verified-pool-section {
     display: grid;
@@ -138,6 +155,42 @@
     background: #F5FAF7;
     border: 1px solid #DFEAE2;
     border-radius: 10px;
+}
+
+.verification-note-card {
+    padding: 12px;
+    background: #FFF8E8;
+    border: 1px solid #F4DFB3;
+    border-radius: 10px;
+}
+
+.verification-note-card span {
+    display: block;
+    margin-bottom: 4px;
+    color: #80642B;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.pending-summary {
+    display: grid;
+    min-width: 150px;
+    padding: 13px 16px;
+    background: #FFF8E8;
+    border: 1px solid #F4DFB3;
+    border-radius: 12px;
+    text-align: right;
+}
+
+.pending-summary strong {
+    color: #92400E;
+    font-size: 1.35rem;
+}
+
+.pending-summary span {
+    color: #80642B;
+    font-size: 0.72rem;
 }
 
 .elot-summary-grid span,
