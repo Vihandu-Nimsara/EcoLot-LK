@@ -1,100 +1,122 @@
-<section class="collector-elots-page">
-    <div class="page-toolbar">
+<?php
+declare(strict_types=1);
+?>
+
+<section class="collector-elots" data-collector-page="elots">
+    <header class="collector-page-heading">
         <div>
+            <span class="collector-eyebrow">Verified collection output</span>
             <h1>My E-Lots</h1>
-            <p>Create E-Lots from verified collected items and follow the municipal officer's decision.</p>
-        </div>
-        <div class="toolbar-actions">
-            <button type="button" class="secondary-btn" data-open-item-pool>Verified Item Pool</button>
-            <button type="button" class="primary-btn" data-open-create-elot>Create E-Lot</button>
-        </div>
-    </div>
-
-    <div class="elot-summary-cards" aria-label="E-Lot summary">
-        <article class="elot-summary-card"><span>Total E-Lots</span><strong data-total-count>0</strong><small>Created by this collector</small></article>
-        <article class="elot-summary-card pending"><span>Pending Verification</span><strong data-pending-count>0</strong><small>Waiting for officer review</small></article>
-        <article class="elot-summary-card open"><span>Open for Bidding</span><strong data-open-count>0</strong><small>Available to recyclers</small></article>
-        <article class="elot-summary-card available"><span>Available Items</span><strong data-available-count>0</strong><small>Verified and not yet grouped</small></article>
-    </div>
-
-    <section class="surface-card elots-card">
-        <div class="card-heading">
-            <div><h2>Created E-Lots</h2><p>Submitted E-Lots cannot receive bids until an officer approves them.</p></div>
+            <p>Create E-Lot drafts from verified collection items, update them before submission, and track their verification lifecycle.</p>
         </div>
 
-        <form class="elot-filters" data-elot-filters>
-            <label>Search
-                <input name="search" type="search" placeholder="Lot code or title">
-            </label>
-            <label>Status
-                <select name="status">
-                    <option value="">All statuses</option>
-                    <option value="PENDING_VERIFICATION">Pending verification</option>
-                    <option value="REJECTED">Rejected</option>
-                    <option value="OPEN_FOR_BIDDING">Open for bidding</option>
-                    <option value="AWARDED">Awarded</option>
-                    <option value="COMPLETED">Completed</option>
-                </select>
-            </label>
-            <button type="reset" class="secondary-btn">Clear</button>
-        </form>
+        <button id="collector-create-elot" class="collector-primary-button" type="button">Create E-Lot</button>
+    </header>
 
-        <div class="elots-table-wrapper">
-            <table class="elots-table">
-                <thead><tr><th>E-Lot</th><th>Category</th><th>Items</th><th>Total Weight</th><th>Created</th><th>Status</th><th>Officer Note</th></tr></thead>
-                <tbody data-elots-body></tbody>
+    <div id="elot-feedback" class="collector-feedback" role="status" aria-live="polite" hidden></div>
+
+    <section class="collector-elot-summary" aria-label="E-Lot summary">
+        <article>
+            <span>Verified Items</span>
+            <strong id="elot-verified-item-count">0</strong>
+        </article>
+        <article>
+            <span>Draft E-Lots</span>
+            <strong id="elot-draft-count">0</strong>
+        </article>
+        <article>
+            <span>Pending Verification</span>
+            <strong id="elot-pending-count">0</strong>
+        </article>
+        <article>
+            <span>Open / Awarded</span>
+            <strong id="elot-active-count">0</strong>
+        </article>
+    </section>
+
+    <section class="collector-elot-card" aria-labelledby="verified-items-title">
+        <div class="collector-section-header">
+            <div>
+                <h2 id="verified-items-title">Verified Items Pool</h2>
+                <p>Only officer-verified collected items should become available for E-Lot creation.</p>
+            </div>
+            <span id="elot-available-weight" class="collector-count-pill">0.00 kg available</span>
+        </div>
+
+        <div class="collector-table-wrap">
+            <table class="collector-table collector-table--verified-items">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Actual Weight</th>
+                        <th scope="col">Verified On</th>
+                        <th scope="col">Availability</th>
+                    </tr>
+                </thead>
+                <tbody id="collector-verified-item-rows"></tbody>
             </table>
         </div>
-        <div class="elots-empty" data-elots-empty hidden>No E-Lots match the selected filters.</div>
+    </section>
+
+    <section class="collector-elot-card" aria-labelledby="my-elots-title">
+        <div class="collector-section-header collector-section-header--filters">
+            <div>
+                <h2 id="my-elots-title">My E-Lots</h2>
+                <p>Drafts support full CRUD. Once submitted, E-Lots become read-only while awaiting Municipal Officer verification.</p>
+            </div>
+
+            <label class="collector-inline-filter">
+                <span class="sr-only">Filter E-Lots by status</span>
+                <select id="collector-elot-status-filter">
+                    <option value="ALL">All statuses</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="PENDING_VERIFICATION">Pending Verification</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="OPEN_FOR_BIDDING">Open for Bidding</option>
+                    <option value="AWARDED">Awarded</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="collector-table-wrap">
+            <table class="collector-table collector-table--elots">
+                <thead>
+                    <tr>
+                        <th scope="col">E-Lot ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Items</th>
+                        <th scope="col">Total Weight</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="collector-elot-rows"></tbody>
+            </table>
+        </div>
+
+        <div id="collector-elot-empty" class="collector-empty-state" hidden>
+            <strong>No E-Lots found</strong>
+            <span>Create a draft from the verified items pool or change the current filter.</span>
+        </div>
     </section>
 </section>
 
-<div class="elot-dialog" data-elot-dialog hidden>
-    <section class="elot-dialog-card" role="dialog" aria-modal="true" aria-labelledby="collector-elot-dialog-title">
-        <div class="elot-dialog-header">
+<div id="collector-elot-modal" class="collector-modal" hidden>
+    <div class="collector-modal__backdrop" data-elot-modal-close></div>
+    <section class="collector-modal__dialog collector-modal__dialog--elot" role="dialog" aria-modal="true" aria-labelledby="collector-elot-modal-title">
+        <header class="collector-modal__header">
             <div>
-                <span data-dialog-eyebrow>New E-Lot</span>
-                <h2 id="collector-elot-dialog-title" data-dialog-title>Create E-Lot</h2>
-                <p data-dialog-description>Select verified items from one category and submit them for officer verification.</p>
+                <span class="collector-eyebrow">E-Lot management</span>
+                <h2 id="collector-elot-modal-title">Create E-Lot</h2>
+                <p id="collector-elot-modal-description">Choose one category and combine verified items into an E-Lot draft.</p>
             </div>
-            <button type="button" class="dialog-close" aria-label="Close E-Lot dialog" data-close-dialog>×</button>
-        </div>
-
-        <form data-create-form>
-            <div class="elot-form-grid">
-                <label class="title-field">E-Lot Title<input name="title" type="text" maxlength="80" placeholder="e.g. Office Equipment Lot" required></label>
-                <label>Category
-                    <select name="category" required>
-                        <option value="">Select category</option>
-                        <option value="DOMESTIC">Domestic E-Waste</option>
-                        <option value="OFFICE">Office E-Waste</option>
-                        <option value="INDUSTRIAL">Industrial E-Waste</option>
-                    </select>
-                </label>
-            </div>
-            <fieldset class="verified-item-selector">
-                <legend>Verified Items</legend>
-                <p>Select one or more available items from the chosen category.</p>
-                <div data-item-options></div>
-                <div class="item-selector-empty" data-item-selector-empty hidden>No available verified items in this category.</div>
-            </fieldset>
-            <p class="elot-form-error" role="alert" data-create-error hidden></p>
-            <div class="dialog-actions">
-                <button type="button" class="secondary-btn" data-close-dialog>Cancel</button>
-                <button type="submit" class="primary-btn">Submit for Verification</button>
-            </div>
-        </form>
-
-        <section data-item-pool hidden>
-            <div class="item-pool-table-wrapper">
-                <table class="item-pool-table">
-                    <thead><tr><th>Item ID</th><th>Item</th><th>Category</th><th>Weight</th><th>Availability</th></tr></thead>
-                    <tbody data-item-pool-body></tbody>
-                </table>
-            </div>
-            <div class="dialog-actions"><button type="button" class="primary-btn" data-close-dialog>Done</button></div>
-        </section>
+            <button type="button" class="collector-modal__close" aria-label="Close E-Lot dialog" data-elot-modal-close>×</button>
+        </header>
+        <div id="collector-elot-modal-body" class="collector-modal__body"></div>
     </section>
 </div>
-
-<div class="elot-toast" role="status" aria-live="polite" data-elot-toast hidden>E-Lot submitted for officer verification.</div>

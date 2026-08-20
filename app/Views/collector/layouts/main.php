@@ -1,9 +1,8 @@
 <?php
 $assetBase = htmlspecialchars($basePath . '/assets', ENT_QUOTES, 'UTF-8');
 $pageStyles = [
-    'dashboard' => 'collector/assigned-routes.css',
-    'my-requests' => 'collector/assigned-requests.css',
-    'initial-request' => 'collector/initial-request.css',
+    'dashboard' => 'collector/collection-workflow.css',
+    'my-requests' => 'collector/collection-workflow.css',
     'e-lots' => 'collector/elots.css',
 ];
 $pageScripts = [
@@ -13,6 +12,9 @@ $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $pageScript = $pageScripts[$currentPage ?? ''] ?? null;
 $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/collector/theme.css');
 $workspaceScriptVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/js/collector/collector-workspace.js');
+$pageStyleVersion = $pageStyle !== null
+    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/' . $pageStyle)
+    : null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +38,7 @@ $workspaceScriptVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/asse
     <?php if ($pageStyle !== null): ?>
         <link
             rel="stylesheet"
-            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>?v=<?= $pageStyleVersion ?>"
         >
     <?php endif; ?>
 

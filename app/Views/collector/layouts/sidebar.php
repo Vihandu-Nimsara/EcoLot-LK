@@ -7,17 +7,12 @@
     </div>
 
     <nav class="sidebar-nav">
-        <a href="<?= $baseUrl ?>/collector/initial-request" class="nav-item <?= ($currentPage ?? '') === 'initial-request' ? 'active' : '' ?>">Initial Request</a>
-        <a href="<?= $baseUrl ?>/collector/dashboard" class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">Assigned Routes</a>
+        <a href="<?= $baseUrl ?>/collector/dashboard" class="nav-item <?= ($currentPage ?? '') === 'dashboard' ? 'active' : '' ?>">Assigned Schedules</a>
         <a href="<?= $baseUrl ?>/collector/my-requests" class="nav-item <?= ($currentPage ?? '') === 'my-requests' ? 'active' : '' ?>">Assigned Requests</a>
         <a href="<?= $baseUrl ?>/collector/e-lots" class="nav-item <?= ($currentPage ?? '') === 'e-lots' ? 'active' : '' ?>">My E-Lots</a>
     </nav>
 
     <div class="sidebar-bottom">
-        <div class="sidebar-identity">
-            <strong data-collector-name>Collector</strong>
-            <span data-collector-id>—</span>
-        </div>
-        <a href="<?= $baseUrl ?>/logout" class="logout-link">Logout</a>
+        <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
     </div>
 </aside>
