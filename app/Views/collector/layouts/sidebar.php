@@ -13,10 +13,6 @@
     </nav>
 
     <div class="sidebar-bottom">
-        <div class="sidebar-identity">
-            <strong data-collector-name>Collector</strong>
-            <span data-collector-id>—</span>
-        </div>
         <a href="<?= $baseUrl ?>/login" class="logout-link">Logout</a>
     </div>
 </aside>
