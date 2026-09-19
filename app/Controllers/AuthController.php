@@ -6,19 +6,11 @@ class AuthController extends Controller
     private const DUMMY_PASSWORD_HASH =
         '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.';
 
-    private const DASHBOARD_PATHS = [
-        'ADMIN' => '/admin/dashboard',
-        'MUNICIPAL_OFFICER' => '/officer/dashboard',
-        'COLLECTOR' => '/collector/dashboard',
-        'RECYCLER' => '/recycler/dashboard',
-        'PUBLIC_USER' => '/user/dashboard',
-    ];
-
     public function login(): void
     {
         if (Auth::check()) {
             $role = Auth::role();
-            $dashboardPath = self::DASHBOARD_PATHS[$role] ?? null;
+            $dashboardPath = Auth::dashboardPath($role);
 
             if ($dashboardPath !== null) {
                 $this->redirect($dashboardPath);
@@ -53,12 +45,24 @@ class AuthController extends Controller
             return;
         }
 
+        $retryAfter = (new LoginRateLimiter())->consume(
+            (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'),
+            $mobileNumber
+        );
+        if ($retryAfter > 0) {
+            http_response_code(429);
+            header('Retry-After: ' . $retryAfter);
+            $this->renderLogin('Too many login attempts. Please try again later.', $rawMobile);
+            return;
+        }
+
         $user = (new User())->findByMobileNumber($mobileNumber);
         $passwordHash = $user === null
             ? self::DUMMY_PASSWORD_HASH
             : (string) $user['password_hash'];
 
-        if ($user === null || !password_verify($password, $passwordHash)) {
+        $validPassword = password_verify($password, $passwordHash);
+        if ($user === null || !$validPassword) {
             http_response_code(401);
             $this->renderLogin(
                 'The mobile number or password is incorrect.',
@@ -111,7 +115,7 @@ class AuthController extends Controller
             return;
         }
 
-        $dashboardPath = self::DASHBOARD_PATHS[$role] ?? null;
+        $dashboardPath = Auth::dashboardPath($role);
 
         if ($dashboardPath === null) {
             http_response_code(403);
@@ -149,6 +153,12 @@ class AuthController extends Controller
 
     public function logout(): void
     {
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Forbidden';
+            return;
+        }
+
         Auth::logout();
         $this->redirect('/login');
     }

@@ -19,9 +19,9 @@ function openModal(modal)  { modal?.classList.add('active'); }
 function closeModal(modal) { modal?.classList.remove('active'); }
 
 function esc(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
+    return String(str ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
 }
 
 // ── View modal ───────────────────────────────────────
@@ -39,7 +39,7 @@ function openViewModal(triggerEl) {
                      : status === 'Cancelled' ? 'badge-cancelled'
                      : 'badge-pending';
     document.getElementById('viewStatus').innerHTML =
-        `<span class="badge ${badgeClass}"><span class="dot"></span>${status}</span>`;
+        `<span class="badge ${badgeClass}"><span class="dot"></span>${esc(status)}</span>`;
 
     const tbody = document.getElementById('viewItemsBody');
     tbody.innerHTML = '';

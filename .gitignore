@@ -54,3 +54,6 @@ config/database.local.php
 *.7z
 *.tar
 *.gz
+
+# Shared login throttling state
+storage/login-attempts.json

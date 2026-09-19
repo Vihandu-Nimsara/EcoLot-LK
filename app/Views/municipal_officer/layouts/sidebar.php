@@ -49,9 +49,7 @@
 
     <div class="sidebar-bottom">
 
-    <a href="<?= $baseUrl ?>/logout" class="logout-link">
-        Logout
-    </a>
+    <?php require dirname(__DIR__, 2) . '/components/logout.php'; ?>
 
 </div>
 

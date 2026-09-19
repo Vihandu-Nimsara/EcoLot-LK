@@ -13,8 +13,7 @@ final class Auth
 
     public static function logout(): void
     {
-        Session::forget(self::USER_KEY);
-        Session::regenerate();
+        Session::destroy();
     }
 
     public static function check(): bool
@@ -51,29 +50,25 @@ final class Auth
         return in_array(self::role(), (array) $roles, true);
     }
 
+    public static function dashboardPath(?string $role = null): ?string
+    {
+        $config = require APP_ROOT . '/config/app.php';
+        $prefix = $config['roles'][strtolower($role ?? self::role() ?? '')]['route_prefix'] ?? null;
+        return is_string($prefix) ? rtrim($prefix, '/') . '/dashboard' : null;
+    }
+
     public static function requireRole(string $role): void
-{
-    if (!self::check()) {
-        self::redirectToLogin();
+    {
+        if (!self::check()) {
+            $config = require APP_ROOT . '/config/app.php';
+            header('Location: ' . rtrim($config['base_path'], '/') . '/login');
+            exit;
+        }
+
+        if (self::role() !== $role) {
+            http_response_code(403);
+            echo '403 Forbidden';
+            exit;
+        }
     }
-
-    if (self::role() !== $role) {
-        http_response_code(403);
-        echo '403 Forbidden';
-        exit;
-    }
-}
-
-private static function redirectToLogin(): void
-{
-    $appConfig = require APP_ROOT . '/config/app.php';
-
-    $basePath = rtrim(
-        (string) ($appConfig['base_path'] ?? ''),
-        '/'
-    );
-
-    header('Location: ' . $basePath . '/login');
-    exit;
-}
 }

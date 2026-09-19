@@ -6,6 +6,14 @@ final class User extends Model
     protected string $table = 'users';
     protected string $primaryKey = 'user_id';
 
+    public function lockForVerification(int $userId): void
+    {
+        if (!$this->db->inTransaction()) {
+            throw new LogicException('OTP operations require a transaction.');
+        }
+        $this->query('SELECT `user_id` FROM `users` WHERE `user_id` = :id FOR UPDATE', ['id' => $userId]);
+    }
+
     public function findByMobileNumber(string $mobileNumber): ?array
     {
         $result = $this->query(

@@ -28,12 +28,6 @@ final class OtpService
     {
         $now = new DateTimeImmutable('now', $this->timezone);
 
-        $this->assertSendAllowed(
-            $userId,
-            self::PURPOSE_REGISTRATION,
-            $now
-        );
-
         $plainOtp = (string) random_int(100000, 999999);
         $otpHash = password_hash($plainOtp, PASSWORD_DEFAULT);
         $expiresAt = $now
@@ -42,6 +36,9 @@ final class OtpService
 
         try {
             $this->connection->beginTransaction();
+            (new User($this->connection))->lockForVerification($userId);
+            $this->assertSendAllowed($userId, self::PURPOSE_REGISTRATION, $now);
+
 
             $this->otpModel->invalidateActiveForUser(
                 $userId,
@@ -74,6 +71,7 @@ final class OtpService
         int $userId,
         string $submittedOtp
     ): array {
+        (new User($this->connection))->lockForVerification($userId);
         $challenge = $this->otpModel->findLatestActive(
             $userId,
             self::PURPOSE_REGISTRATION

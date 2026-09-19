@@ -50,7 +50,7 @@ final class PublicRegistrationService
             }
         }
 
-        $this->validatePassword($input, $errors);
+        PasswordPolicy::validate($input['password'], $input['password_confirmation'], $errors, 'password', 'password_confirmation');
         $this->validateUniqueness($input, $mobileNumber, $errors);
 
         return [
@@ -100,31 +100,6 @@ final class PublicRegistrationService
             }
 
             throw $exception;
-        }
-    }
-
-    private function validatePassword(array $input, array &$errors): void
-    {
-        $password = $input['password'];
-
-        if ($password !== '' && preg_match('/[A-Z]/', $password) !== 1) {
-            $errors['password'][] =
-                'Password must contain at least one uppercase letter.';
-        }
-
-        if ($password !== '' && preg_match('/[a-z]/', $password) !== 1) {
-            $errors['password'][] =
-                'Password must contain at least one lowercase letter.';
-        }
-
-        if ($password !== '' && preg_match('/[0-9]/', $password) !== 1) {
-            $errors['password'][] =
-                'Password must contain at least one number.';
-        }
-
-        if ($password !== $input['password_confirmation']) {
-            $errors['password_confirmation'][] =
-                'Password confirmation does not match.';
         }
     }
 
