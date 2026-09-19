@@ -25,14 +25,7 @@ class RegistrationController extends Controller
     {
         if (Auth::check()) {
             $role = Auth::role();
-            $dashboardPaths = [
-                'ADMIN' => '/admin/dashboard',
-                'MUNICIPAL_OFFICER' => '/officer/dashboard',
-                'COLLECTOR' => '/collector/dashboard',
-                'RECYCLER' => '/recycler/dashboard',
-                'PUBLIC_USER' => '/user/dashboard',
-            ];
-            $dashboardPath = $dashboardPaths[$role] ?? null;
+            $dashboardPath = Auth::dashboardPath($role);
 
             if ($dashboardPath !== null) {
                 $this->redirect($dashboardPath);

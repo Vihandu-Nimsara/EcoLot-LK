@@ -45,6 +45,10 @@ final class Validator
         array $data,
         string $field
     ): bool {
+        if ($value !== null && !is_scalar($value)) {
+            return false;
+        }
+
         return match ($rule) {
             'required' => $value !== null && $value !== '',
             'email' => filter_var($value, FILTER_VALIDATE_EMAIL) !== false,

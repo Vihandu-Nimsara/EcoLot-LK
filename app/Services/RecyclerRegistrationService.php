@@ -51,7 +51,7 @@ final class RecyclerRegistrationService
             $errors['phone'][] = 'Enter a valid Sri Lankan mobile number.';
         }
 
-        $this->validatePassword($input, $errors);
+        PasswordPolicy::validate($input['company_password'], $input['confirm_password'], $errors, 'company_password', 'confirm_password');
         $this->validateExpiry((string) $input['licence_expiry'], $errors);
         $activities = $this->validateActivities($input['activities'], $errors);
         $categoryIds = $this->validateCapabilities(
@@ -147,27 +147,6 @@ final class RecyclerRegistrationService
             }
 
             throw $exception;
-        }
-    }
-
-    private function validatePassword(array $input, array &$errors): void
-    {
-        $password = (string) $input['company_password'];
-
-        if ($password !== '' && preg_match('/[A-Z]/', $password) !== 1) {
-            $errors['company_password'][] =
-                'Password must contain at least one uppercase letter.';
-        }
-        if ($password !== '' && preg_match('/[a-z]/', $password) !== 1) {
-            $errors['company_password'][] =
-                'Password must contain at least one lowercase letter.';
-        }
-        if ($password !== '' && preg_match('/[0-9]/', $password) !== 1) {
-            $errors['company_password'][] =
-                'Password must contain at least one number.';
-        }
-        if ($password !== (string) $input['confirm_password']) {
-            $errors['confirm_password'][] = 'Password confirmation does not match.';
         }
     }
 

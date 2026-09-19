@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 return [
     'name' => 'EcoLot LK',
-    'environment' => 'local',
-    'debug' => true,
+    'environment' => getenv('APP_ENV') ?: 'local',
+    'debug' => filter_var(getenv('APP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOL),
 
-    'base_path' => '/EcoLot-LK/public',
+    'base_path' => getenv('APP_BASE_PATH') !== false ? getenv('APP_BASE_PATH') : '/EcoLot-LK/public',
 
     'roles' => [
         'admin' => [

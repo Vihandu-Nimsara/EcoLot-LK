@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 return [
-    'host' => '127.0.0.1',
-    'port' => '3306',
-    'database' => 'ecolot_lk',
-    'username' => 'root',
-    'password' => '',
+    'host' => getenv('DB_HOST') !== false ? getenv('DB_HOST') : '127.0.0.1',
+    'port' => getenv('DB_PORT') !== false ? getenv('DB_PORT') : '3306',
+    'database' => getenv('DB_DATABASE') !== false ? getenv('DB_DATABASE') : 'ecolot_lk',
+    'username' => getenv('DB_USERNAME') !== false ? getenv('DB_USERNAME') : 'root',
+    'password' => getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '',
     'charset' => 'utf8mb4',
 ];

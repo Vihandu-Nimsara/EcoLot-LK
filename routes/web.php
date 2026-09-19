@@ -5,7 +5,6 @@ return static function (Router $router, array $app): void {
     $router->get('/', 'HomeController@index');
     $router->get('/login', 'AuthController@login');
     $router->post('/login', 'AuthController@submitLogin');
-    $router->get('/logout', 'AuthController@logout');
     $router->post('/logout', 'AuthController@logout');
 
     $router->get('/register', 'RegistrationController@index');
@@ -52,7 +51,6 @@ return static function (Router $router, array $app): void {
     });
 
     $router->group('/user', static function (Router $router): void {
-        $router->get('/dashboard', 'PublicUserController@dashboard');
         $router->get('/my-requests', 'PublicUserController@myRequests');
         $router->get('/new-request', 'PublicUserController@newRequest');
         $router->get('/feedback', 'PublicUserController@feedback');

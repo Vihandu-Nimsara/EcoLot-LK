@@ -1,0 +1,5 @@
+Options -Indexes
+RewriteEngine On
+# Only public/ is web-accessible in the XAMPP project-directory setup.
+RewriteRule ^$ public/ [R=302,L]
+RewriteRule !^public(?:/|$) - [F,L]
