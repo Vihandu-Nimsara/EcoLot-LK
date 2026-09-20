@@ -91,7 +91,7 @@ INSERT INTO `users` (
 SET @recycler_id = (SELECT `user_id` FROM `users` WHERE `mobile_number` = '94774444444');
 
 INSERT INTO `authorized_recyclers` (
-    `user_id`, `company_name`, `business_address`, `district`, `verification_status`, `verified_by_admin_user_id`, `verified_at`
+    `user_id`, `company_name`, `business_address`, `district`, `verification_status`, `reviewed_by_admin_user_id`, `reviewed_at`
 ) VALUES (
     @recycler_id, 'Green Recyclers Pvt Ltd', '45 Industrial Zone, Colombo', 'Colombo', 'VERIFIED', @admin_id, NOW()
 ) ON DUPLICATE KEY UPDATE `verification_status` = 'VERIFIED';
