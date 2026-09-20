@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('[data-pickup-request-form]');
 
     form?.addEventListener('submit', (event) => {
-        event.preventDefault();
-        alert('Prototype only — request not actually submitted.');
+        const tbody = document.querySelector('[data-items-table-body]');
+        if (!tbody || tbody.children.length === 0) {
+            event.preventDefault();
+            alert('Add at least one e-waste item before submitting.');
+        }
     });
 
     initItemsTable();
@@ -173,11 +176,12 @@ function addItemRow(category, item) {
         <td class="cell-readonly">${escapeHtml(item)}
             <input type="hidden" name="items[${rowIndex}][item]" value="${escapeHtml(item)}"></td>
         <td><input type="number" min="1" value="1" required name="items[${rowIndex}][quantity]"></td>
-        <td><input type="number" min="0" step="0.1" placeholder="e.g. 2.5" required name="items[${rowIndex}][weight]"></td>
+        <td><input type="number" min="0.1" step="0.1" placeholder="e.g. 2.5" required name="items[${rowIndex}][weight]"></td>
         <td>
             <select required name="items[${rowIndex}][condition]">
-                <option value="Working">Working</option>
-                <option value="Damaged">Damaged</option>
+                <option value="WORKING">Working</option>
+                <option value="DAMAGED">Damaged</option>
+                <option value="UNKNOWN">Unknown</option>
             </select>
         </td>
         <td><input type="text" placeholder="Optional note" name="items[${rowIndex}][note]"></td>
@@ -210,7 +214,7 @@ function updateEmptyTableState() {
 }
 
 function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, char => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[char]));
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }

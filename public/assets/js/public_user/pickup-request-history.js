@@ -10,6 +10,8 @@ const EWASTE_ITEMS = {
     'Medical E-Waste':    ['Ventilators / Insulin pumps','Hearing aids / Electric wheelchairs','Oximeters / Electronic thermometers','Ultrasound machines and probes','Centrifuges / Spectrophotometers','Electronic medical record systems','Glucometers / Weight scales'],
 };
 
+const SCHEDULE_OPTIONS = loadScheduleOptions();
+
 let editRowCounter = 0;
 let editSelectedItem = null;
 let editSelectedCategory = null;
@@ -24,6 +26,22 @@ function esc(str) {
     }[char]));
 }
 
+function titleCase(str) {
+    const s = String(str ?? '');
+    return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+function loadScheduleOptions() {
+    const dataEl = document.getElementById('scheduleOptionsData');
+    if (!dataEl) return [];
+    try {
+        return JSON.parse(dataEl.textContent || '[]');
+    } catch (error) {
+        console.error('[pickup-request-history.js] Could not parse schedule options data.', error);
+        return [];
+    }
+}
+
 // ── View modal ───────────────────────────────────────
 function openViewModal(triggerEl) {
     const row = triggerEl.closest('tr');
@@ -31,7 +49,7 @@ function openViewModal(triggerEl) {
 
     document.getElementById('viewRequestId').textContent      = row.dataset.requestId    || '';
     document.getElementById('viewPostal').textContent         = row.dataset.postal        || '';
-    document.getElementById('viewCollectionDate').textContent = row.dataset.collectionDate || '';
+    document.getElementById('viewCollectionDate').textContent = row.dataset.collectionDateLabel || '';    
     document.getElementById('viewAddress').textContent        = row.dataset.address       || '';
 
     const status = row.dataset.status || 'Pending';
@@ -56,7 +74,7 @@ function openViewModal(triggerEl) {
                 <td>${esc(item.item)}</td>
                 <td>${esc(String(item.quantity))}</td>
                 <td>${esc(String(item.weight))}</td>
-                <td>${esc(item.condition)}</td>
+                <td>${esc(titleCase(item.condition))}</td>                
                 <td>${item.note ? esc(item.note) : '<span style="color:#a0b0a8;">—</span>'}</td>`;
             tbody.appendChild(tr);
         });
@@ -65,21 +83,46 @@ function openViewModal(triggerEl) {
 }
 
 // ── Edit modal ───────────────────────────────────────
+function populateEditScheduleSelect(row) {
+    const select = document.getElementById('editCollectionDate');
+    select.innerHTML = '';
+
+    const currentScheduleId = parseInt(row.dataset.scheduleId, 10);
+    const seen = new Set();
+
+    // Always include the request's own current date first, so it's kept
+    // selected by default even if it wouldn't otherwise show as "open".
+    if (!Number.isNaN(currentScheduleId)) {
+        const opt = document.createElement('option');
+        opt.value = String(currentScheduleId);
+        opt.textContent = row.dataset.collectionDateLabel || 'Current date';
+        opt.selected = true;
+        select.appendChild(opt);
+        seen.add(currentScheduleId);
+    }
+
+    SCHEDULE_OPTIONS.forEach(schedule => {
+        if (seen.has(schedule.schedule_id)) return;
+        const opt = document.createElement('option');
+        opt.value = String(schedule.schedule_id);
+        opt.textContent = schedule.label;
+        select.appendChild(opt);
+        seen.add(schedule.schedule_id);
+    });
+}
+
 function openEditModal(triggerEl) {
     const row = triggerEl.closest('tr');
     if (!row) return;
 
     document.getElementById('editRequestId').textContent = row.dataset.requestId || '';
+    document.getElementById('editPostal').value = row.dataset.postal || '';
+    document.getElementById('editAddress').value = row.dataset.address || '';
 
-    const postalEl = document.getElementById('editPostal');
-    const addrEl   = document.getElementById('editAddress');
-    const dateEl   = document.getElementById('editCollectionDate');
-    if (postalEl) postalEl.value = row.dataset.postal   || '';
-    if (addrEl)   addrEl.value   = row.dataset.address  || '';
-    if (dateEl && row.dataset.collectionDate) {
-        const d = new Date(row.dataset.collectionDate);
-        if (!isNaN(d)) dateEl.value = d.toISOString().split('T')[0];
-    }
+    populateEditScheduleSelect(row);
+
+    const form = document.getElementById('editRequestForm');
+    form.action = `${window.location.pathname.replace(/\/$/, '')}/${row.dataset.requestPk}/update`;
 
     const tbody = document.getElementById('editItemsBody');
     tbody.innerHTML = '';
@@ -92,23 +135,25 @@ function openEditModal(triggerEl) {
     openModal(document.getElementById('editModal'));
 }
 
-function addEditRow(category, item, qty = 1, weight = '', condition = 'Working', note = '') {
+function addEditRow(category, item, qty = 1, weight = '', condition = 'WORKING', note = '') {
     editRowCounter++;
     const i = editRowCounter;
     const tbody = document.getElementById('editItemsBody');
+    const conditionValue = String(condition || 'WORKING').toUpperCase();
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td class="cell-readonly">${esc(category)}<input type="hidden" name="edit_items[${i}][category]" value="${esc(category)}"></td>
-        <td class="cell-readonly">${esc(item)}<input type="hidden" name="edit_items[${i}][item]" value="${esc(item)}"></td>
-        <td><input type="number" name="edit_items[${i}][quantity]" min="1" value="${esc(String(qty))}" required></td>
-        <td><input type="number" name="edit_items[${i}][weight]" min="0" step="0.1" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}"></td>
+        <td class="cell-readonly">${esc(category)}<input type="hidden" name="items[${i}][category]" value="${esc(category)}"></td>
+        <td class="cell-readonly">${esc(item)}<input type="hidden" name="items[${i}][item]" value="${esc(item)}"></td>
+        <td><input type="number" name="items[${i}][quantity]" min="1" value="${esc(String(qty))}" required></td>
+        <td><input type="number" name="items[${i}][weight]" min="0.1" step="0.1" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}" required></td>
         <td>
-            <select name="edit_items[${i}][condition]">
-                <option value="Working"${condition==='Working'?' selected':''}>Working</option>
-                <option value="Damaged"${condition==='Damaged'?' selected':''}>Damaged</option>
+            <select name="items[${i}][condition]">
+                <option value="WORKING"${conditionValue==='WORKING'?' selected':''}>Working</option>
+                <option value="DAMAGED"${conditionValue==='DAMAGED'?' selected':''}>Damaged</option>
+                <option value="UNKNOWN"${conditionValue==='UNKNOWN'?' selected':''}>Unknown</option>
             </select>
         </td>
-        <td><input type="text" name="edit_items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
+        <td><input type="text" name="items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
         <td class="col-delete">
             <button type="button" class="edit-row-delete" data-delete-edit-row aria-label="Remove">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -171,15 +216,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteModal   = document.getElementById('deleteModal');
     const editModal     = document.getElementById('editModal');
     const editItemModal = document.getElementById('editItemModal');
+    const deleteForm    = document.getElementById('deleteRequestForm');
 
     // Category select in sub-modal
     document.getElementById('editModalCategory')?.addEventListener('change', renderEditModalItems);
 
-    // Edit form submit
+        // Edit form submit — real POST, blocked only if there are no items
     document.getElementById('editRequestForm')?.addEventListener('submit', e => {
-        e.preventDefault();
-        alert('Prototype — changes not saved to database yet.');
-        closeModal(editModal);
+        const tbody = document.getElementById('editItemsBody');
+        if (!tbody || tbody.children.length === 0) {
+            e.preventDefault();
+            alert('Add at least one e-waste item before saving.');
+        }
+    });
+
+    // Confirm delete — real POST via the hidden form
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+        if (deleteForm.action) deleteForm.submit();
     });
 
     // Global click delegation
@@ -199,9 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── Delete button ──
         if (e.target.closest('[data-delete-request]')) {
-            const id = e.target.closest('[data-delete-request]').dataset.deleteRequest;
-            const btn = document.getElementById('confirmDeleteBtn');
-            if (btn) btn.href = `delete-request.php?id=${id}`;
+            const row = e.target.closest('tr');
+            const requestPk = row?.dataset.requestPk;
+            deleteForm.action = `${window.location.pathname.replace(/\/$/, '')}/${requestPk}/delete`;
             openModal(deleteModal);
             return;
         }

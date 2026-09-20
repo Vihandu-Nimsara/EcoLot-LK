@@ -3,6 +3,13 @@
     <h1 class="title">My Requests</h1>
     <p class="subtitle">View and track all your pickup requests.</p>
 
+    <?php if (!empty($errorMessage)): ?>
+        <div class="form-alert form-alert-error" role="alert"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+    <?php if (!empty($successMessage)): ?>
+        <div class="form-alert form-alert-success" role="status"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+
     <div class="card">
         <div class="tabs">
             <div class="tab active">All</div>
@@ -25,43 +32,59 @@
                 </tr>
             </thead>
             <tbody>
-                <tr data-request-id="REQ-2024-00012"
-                    data-status="Pending"
-                    data-submitted-date="May 20, 2024"
-                    data-collection-date="May 25, 2024"
-                    data-postal="Pannipitiya (10230)"
-                    data-address="123 Main Street, Pannipitiya"
-                    data-items='[
-                        {"category":"Domestic E-Waste","item":"LED lamps","quantity":2,"weight":"1.5","condition":"Working","note":""},
-                        {"category":"Industrial E-Waste","item":"Elevator electronic components","quantity":1,"weight":"5.0","condition":"Damaged","note":"Slight damage on casing"},
-                        {"category":"Medical E-Waste","item":"Glucometers / Weight scales","quantity":3,"weight":"1.2","condition":"Working","note":""}
-                    ]'>
-                    <td><a href="javascript:void(0)" class="view-link" data-view-btn>REQ-2024-00012</a></td>
-                    <td>May 20, 2024</td>
-                    <td>Domestic / Industrial</td>
-                    <td>7.7 kg</td>
-                    <td>6</td>
-                    <td>Mixed</td>
-                    <td><span class="badge badge-pending"><span class="dot"></span>Pending</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button type="button" class="action-btn view-btn" title="View Request" data-view-btn>
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </button>
-                            <button type="button" class="action-btn edit-btn" title="Edit Request" data-edit-request="REQ-2024-00012">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            </button>
-                            <button type="button" class="action-btn delete-btn" title="Delete Request" data-delete-request="REQ-2024-00012">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                <?php if (empty($requests)): ?>
+                    <tr>
+                        <td colspan="8" style="text-align:center;padding:24px;color:#5f7268;">
+                            You haven't submitted any pickup requests yet.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($requests as $request): ?>
+                        <tr data-request-id="<?= htmlspecialchars($request['code'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-request-pk="<?= (int) $request['request_id'] ?>"
+                            data-schedule-id="<?= (int) $request['schedule_id'] ?>"
+                            data-editable="<?= $request['is_editable'] ? '1' : '0' ?>"
+                            data-status="<?= htmlspecialchars($request['status_label'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-submitted-date="<?= htmlspecialchars($request['submitted_date'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-collection-date="<?= htmlspecialchars($request['collection_date_iso'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-collection-date-label="<?= htmlspecialchars($request['collection_date'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-postal="<?= htmlspecialchars($request['postal_label'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-address="<?= htmlspecialchars($request['address'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-items='<?= htmlspecialchars($request['items_json'], ENT_QUOTES, 'UTF-8') ?>'>
+                            <td><a href="javascript:void(0)" class="view-link" data-view-btn><?= htmlspecialchars($request['code'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                            <td><?= htmlspecialchars($request['submitted_date'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($request['category_summary'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($request['total_weight_label'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= (int) $request['total_quantity'] ?></td>
+                            <td><?= htmlspecialchars($request['condition_summary'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><span class="badge <?= htmlspecialchars($request['history_badge_class'], ENT_QUOTES, 'UTF-8') ?>"><span class="dot"></span><?= htmlspecialchars($request['status_label'], ENT_QUOTES, 'UTF-8') ?></span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <?php if ($request['is_editable']): ?>
+                                        <button type="button" class="action-btn edit-btn" title="Edit Request" data-edit-request>
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        </button>
+                                        <button type="button" class="action-btn delete-btn" title="Delete Request" data-delete-request>
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                        </button>
+                                    <?php else: ?>
+                                        <span class="action-btn action-btn-disabled" title="This request can no longer be edited">
+                                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>
+                                        </span>
+                                    <?php endif; ?>
+                                    <button type="button" class="action-btn delete-btn" title="Delete Request" data-delete-request="<?= htmlspecialchars($request['code'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
 
         <div class="pagination">
-            <span>Showing 1 to 1 of 1 requests</span>
+            <span>Showing <?= empty($requests) ? 0 : 1 ?> to <?= count($requests) ?> of <?= count($requests) ?> requests</span>
             <div class="pagenums">
                 <button type="button">‹</button>
                 <button type="button" class="active">1</button>
@@ -150,10 +173,14 @@
         <p class="modal-desc">Are you sure you want to delete this record? This action cannot be undone.</p>
         <div class="modal-actions">
             <button type="button" class="btn-modal btn-cancel" data-close-delete-modal>Cancel</button>
-            <a id="confirmDeleteBtn" href="#" class="btn-modal btn-confirm-delete">Delete</a>
-        </div>
+            <button type="button" id="confirmDeleteBtn" class="btn-modal btn-confirm-delete">Delete</button>        </div>
     </div>
 </div>
+
+<form id="deleteRequestForm" method="post" action="" style="display:none;">
+    <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
+</form>
+
 
 <!-- ═══ Edit Request Modal ═══ -->
 <div id="editModal" class="modal-overlay">
@@ -166,8 +193,8 @@
             <button type="button" class="view-modal-close" data-close-edit-modal>&times;</button>
         </div>
 
-        <form id="editRequestForm" onsubmit="event.preventDefault();">
-
+        <form id="editRequestForm" method="post" action="">
+            <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <!-- Section 1: Pickup Details -->
             <div class="view-section">
                 <div class="view-section-heading">
@@ -177,18 +204,16 @@
                 <div class="view-fields-row">
                     <div class="view-field">
                         <label>Postal Code Area</label>
-                        <input type="text" class="form-input-readonly" id="editPostal" value="Pannipitiya (10230)" readonly>
-                    </div>
+                        <input type="text" class="form-input-readonly" id="editPostal" readonly>                    </div>
                     <div class="view-field">
-                        <label>Available Collection Date</label>
-                        <input type="date" class="form-input-editable" id="editCollectionDate" value="2024-05-25">
+                        <label for="editCollectionDate">Available Collection Date</label>
+                        <select class="form-input-editable" id="editCollectionDate" name="schedule_id" required></select>
                     </div>
                     <div class="view-field"></div>
                 </div>
                 <div class="view-field view-field-full" style="margin-top:0;">
                     <label>Pickup Address</label>
-                    <textarea class="form-input-readonly" id="editAddress" rows="2" readonly>123 Main Street, Pannipitiya</textarea>
-                </div>
+                    <textarea class="form-input-readonly" id="editAddress" rows="2" readonly></textarea>                </div>
             </div>
 
             <!-- Section 2: E-waste Items (editable table) -->
@@ -267,3 +292,4 @@
         </div>
     </div>
 </div>
+<script type="application/json" id="scheduleOptionsData"><?= $scheduleOptionsJson ?? '[]' ?></script>
