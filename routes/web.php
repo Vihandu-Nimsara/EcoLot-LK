@@ -32,6 +32,10 @@ return static function (Router $router, array $app): void {
     $router->group('/officer', static function (Router $router): void {
         $router->get('/campaigns', 'MunicipalOfficerController@campaigns');
         $router->get('/area-schedules', 'MunicipalOfficerController@areaSchedules');
+        $router->post('/area-schedules', 'MunicipalOfficerController@storeAreaSchedule');
+        $router->get('/area-schedules/{id}', 'MunicipalOfficerController@showAreaSchedule');
+        $router->post('/area-schedules/{id}/update', 'MunicipalOfficerController@updateAreaSchedule');
+        $router->post('/area-schedules/{id}/delete', 'MunicipalOfficerController@deleteAreaSchedule');
         $router->get('/flagged-requests', 'MunicipalOfficerController@flaggedRequests');
         $router->get('/routes', 'MunicipalOfficerController@routes');
         $router->get('/collection-records', 'MunicipalOfficerController@collectionRecords');

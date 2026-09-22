@@ -90,3 +90,15 @@
         grid-column: auto;
     }
 }
+
+.schedule-editor { margin-top: 24px; scroll-margin-top: 24px; }
+.schedule-editor form { max-width: 760px; }
+.schedule-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+.schedule-details-grid dt { color: #66736B; font-size: .875rem; }
+.schedule-details-grid dd { margin: 5px 0 0; overflow-wrap: anywhere; }
+.schedule-notice, .schedule-errors { padding: 16px; margin-bottom: 20px; border-radius: 10px; }
+.schedule-notice { background: #E8F5EC; color: #176536; }
+.schedule-errors { background: #FFF0ED; color: #963323; }
+.schedule-errors ul { margin: 0; padding-left: 20px; }
+.schedule-table tr[hidden] { display: none; }
+.schedule-table .status { white-space: nowrap; }

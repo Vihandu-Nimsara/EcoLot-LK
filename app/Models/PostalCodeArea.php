@@ -22,4 +22,17 @@ final class PostalCodeArea extends Model
 
         return $result === false ? null : $result;
     }
+
+    public function activeAreas(): array
+    {
+        return $this->query(
+            'SELECT postal_area_id, postal_code, area_name
+            FROM postal_code_areas
+            WHERE area_status = :status
+            ORDER BY area_name ASC',
+            [
+                'status' => 'ACTIVE',
+            ]
+        )->fetchAll();
+    }
 }
