@@ -28,6 +28,7 @@ class MunicipalOfficerController extends Controller
             'campaigns' => (new MonthlyCampaign())->openCampaigns(),
             'areas' => (new PostalCodeArea())->activeAreas(),
             'schedules' => (new AreaCollectionSchedule())->getSchedulesForOfficerView(),
+            'showCreate' => $errors !== [] || ($_GET['create'] ?? '') === '1',
             'errors' => $errors,
             'old' => $old,
             'notice' => Session::pullFlash('schedule_notice'),

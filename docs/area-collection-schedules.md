@@ -1,6 +1,6 @@
 # Area collection schedules
 
-The Municipal Officer schedule page now reads and writes MySQL through the existing plain-PHP MVC code. It uses the existing layout, forms, buttons, session authentication, CSRF helper and PDO base model. The create form appears below the table, so the whole CRUD works without JavaScript. JavaScript only filters already-rendered rows.
+The Municipal Officer schedule page now reads and writes MySQL through the existing plain-PHP MVC code. It uses the existing layout, forms, buttons, session authentication, CSRF helper and PDO base model. The create form appears below the table only after clicking Create Schedule (or after validation errors), so the whole CRUD works without JavaScript. JavaScript only filters already-rendered rows.
 
 ## 1. Files changed or created
 
@@ -40,7 +40,7 @@ The existing router already supports `{id}`. It passes the matched text to the c
 
 ## 3. How the create form sends data
 
-The form uses `method="post"` and the existing configured base path. The browser sends campaign ID, postal area ID, maximum requests, cutoff date, collection date, and a hidden CSRF token. No creator or status input is offered. The Create Schedule link scrolls to the form; no script intercepts submission.
+The form uses `method="post"` and the existing configured base path. The browser sends campaign ID, postal area ID, maximum requests, cutoff date, collection date, and a hidden CSRF token. No creator or status input is offered. The Create Schedule link loads the page with `?create=1` and scrolls to the form. Cancel returns to the list with the form hidden; no script intercepts submission.
 
 ## 4. How POST reaches the controller
 

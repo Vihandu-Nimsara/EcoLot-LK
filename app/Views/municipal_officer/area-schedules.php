@@ -9,7 +9,7 @@ foreach ($schedules as $schedule) {
 <section class="area-schedules-page">
     <div class="page-toolbar">
         <div><h1>Area Collection Schedules</h1><p>Assign collection dates and capacity limits for postal-code areas.</p></div>
-        <div class="toolbar-actions"><a href="#create-schedule" class="primary-btn create-schedule-trigger">+ Create Schedule</a></div>
+        <div class="toolbar-actions"><a href="<?= $escape($scheduleUrl . '?create=1#create-schedule') ?>" class="primary-btn create-schedule-trigger">+ Create Schedule</a></div>
     </div>
     <?php if ($notice): ?><p class="schedule-notice" role="status"><?= $escape($notice) ?></p><?php endif; ?>
     <section class="scheduled-areas-card">
@@ -45,6 +45,7 @@ foreach ($schedules as $schedule) {
             </table>
         </div>
     </section>
+    <?php if ($showCreate): ?>
     <section class="scheduled-areas-card schedule-editor" id="create-schedule" aria-labelledby="create-title">
         <h2 id="create-title">Create Schedule</h2>
         <p>New schedules start as PLANNED. Dates and area cannot be changed after creation. Times use Sri Lanka time.</p>
@@ -87,7 +88,11 @@ foreach ($schedules as $schedule) {
                     <input type="date" id="schedule-collection" name="collection_date" value="<?= $escape($old['collection_date'] ?? '') ?>" required>
                 </div>
             </div>
-            <div class="schedule-dialog-actions"><button type="submit" class="primary-btn">Create Schedule</button></div>
+            <div class="schedule-dialog-actions">
+                <a class="secondary-btn" href="<?= $escape($scheduleUrl) ?>">Cancel</a>
+                <button type="submit" class="primary-btn">Create Schedule</button>
+            </div>
         </form>
     </section>
+    <?php endif; ?>
 </section>
