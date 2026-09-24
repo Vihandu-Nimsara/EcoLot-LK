@@ -2,13 +2,7 @@
    pickup-request-history.js
    ═══════════════════════════════════════════════════ */
 
-const EWASTE_ITEMS = {
-    'Domestic E-Waste':   ['LCD TVs / Monitors','LED lamps','Computer hardware','Radios, DVD players','Electric ovens / Microwave ovens','Fans / Hair dryers','Electronic exercise equipment','Mobile phones / Laptops / Chargers','Bluetooth speakers / Earbuds','Cameras / CCTV equipment'],
-    'Automobile E-Waste': ['Dashboard electronics','LED headlights','Hybrid batteries / EV batteries','Motors / Alternators','Switches','Sensors','Cables','Relays','Heaters'],
-    'Office E-Waste':     ['Photocopy machines','UPS units / UPS batteries','Printers / Scanners','Projectors / Speakers','Access control equipment (fingerprint machines)','Network equipment','Telephone / Fax / Intercom equipment','Barcode readers / POS machines'],
-    'Industrial E-Waste': ['Inverters / VFDs','CNC machines','Elevator electronic components','Sign board displays','Air conditioners','Automation equipment','Power supply units','Vending machine hardware','Solar power equipment'],
-    'Medical E-Waste':    ['Ventilators / Insulin pumps','Hearing aids / Electric wheelchairs','Oximeters / Electronic thermometers','Ultrasound machines and probes','Centrifuges / Spectrophotometers','Electronic medical record systems','Glucometers / Weight scales'],
-};
+const EWASTE_ITEMS = JSON.parse(document.getElementById('pickupCatalogue').textContent || '{}');
 
 const SCHEDULE_OPTIONS = loadScheduleOptions();
 
@@ -17,8 +11,22 @@ let editSelectedItem = null;
 let editSelectedCategory = null;
 
 // ── Helpers ──────────────────────────────────────────
-function openModal(modal)  { modal?.classList.add('active'); }
-function closeModal(modal) { modal?.classList.remove('active'); }
+const modalStack = [];
+function openModal(modal) {
+    if (!modal) return;
+    modalStack.push({ modal, trigger: document.activeElement });
+    modal.classList.add('active');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', modal.querySelector('h3')?.textContent || 'Pickup request');
+    modal.querySelector('button, select, input:not([type="hidden"])')?.focus();
+}
+function closeModal(modal) {
+    if (!modal?.classList.contains('active')) return;
+    modal.classList.remove('active');
+    const index = modalStack.findIndex(entry => entry.modal === modal);
+    if (index >= 0) modalStack.splice(index, 1)[0].trigger?.focus();
+}
 
 function esc(str) {
     return String(str ?? '').replace(/[&<>"']/g, char => ({
@@ -145,7 +153,7 @@ function addEditRow(category, item, qty = 1, weight = '', condition = 'WORKING',
         <td class="cell-readonly">${esc(category)}<input type="hidden" name="items[${i}][category]" value="${esc(category)}"></td>
         <td class="cell-readonly">${esc(item)}<input type="hidden" name="items[${i}][item]" value="${esc(item)}"></td>
         <td><input type="number" name="items[${i}][quantity]" min="1" value="${esc(String(qty))}" required></td>
-        <td><input type="number" name="items[${i}][weight]" min="0.1" step="0.1" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}" required></td>
+        <td><input type="number" name="items[${i}][weight]" min="0.001" max="9999999.999" step="0.001" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}" required></td>
         <td>
             <select name="items[${i}][condition]">
                 <option value="WORKING"${conditionValue==='WORKING'?' selected':''}>Working</option>
@@ -153,7 +161,7 @@ function addEditRow(category, item, qty = 1, weight = '', condition = 'WORKING',
                 <option value="UNKNOWN"${conditionValue==='UNKNOWN'?' selected':''}>Unknown</option>
             </select>
         </td>
-        <td><input type="text" name="items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
+        <td><input type="text" maxlength="500" name="items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
         <td class="col-delete">
             <button type="button" class="edit-row-delete" data-delete-edit-row aria-label="Remove">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -212,6 +220,30 @@ function renderEditModalItems() {
 
 // ── Single DOMContentLoaded — all event wiring ───────
 document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('editModalCategory');
+    categorySelect.innerHTML = '<option value="">Select category</option>' + Object.keys(EWASTE_ITEMS).map(category => `<option>${esc(category)}</option>`).join('');
+    const draft = JSON.parse(document.getElementById('pickupDraft').textContent || '{}');
+    const draftRow = [...document.querySelectorAll('tr[data-request-pk]')].find(row => row.dataset.requestPk === String(draft.request_id));
+    if (draftRow && draftRow.dataset.editable === '1') {
+        openEditModal(draftRow.querySelector('[data-edit-request]'));
+        document.getElementById('editCollectionDate').value = draft.schedule_id;
+        document.getElementById('editItemsBody').innerHTML = '';
+        Object.values(draft.items || {}).forEach(item => {
+            if (item && typeof item === 'object') addEditRow(item.category, item.item, item.quantity, item.weight, item.condition, item.note);
+        });
+        updateEditEmptyState();
+    }
+    document.querySelectorAll('.tabs .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tabs .tab').forEach(other => other.classList.toggle('active', other === tab));
+            document.querySelectorAll('tr[data-status]').forEach(row => {
+                const filter = tab.textContent.trim();
+                row.hidden = filter !== 'All' && (filter === 'Pending' ? !['Submitted', 'Pending Review', 'Approved'].includes(row.dataset.status) : row.dataset.status !== filter);
+            });
+            const rows = [...document.querySelectorAll('tr[data-status]')];
+            document.querySelector('[data-request-count]').textContent = `Showing ${rows.filter(row => !row.hidden).length} of ${rows.length} requests`;
+        });
+    });
     const viewModal     = document.getElementById('viewModal');
     const deleteModal   = document.getElementById('deleteModal');
     const editModal     = document.getElementById('editModal');
@@ -290,10 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escape key
     document.addEventListener('keydown', e => {
-        if (e.key !== 'Escape') return;
-        closeModal(viewModal);
-        closeModal(deleteModal);
-        closeModal(editModal);
-        closeModal(editItemModal);
+        const modal = modalStack.at(-1)?.modal;
+        if (!modal) return;
+        if (e.key === 'Escape') closeModal(modal);
+        if (e.key === 'Tab') {
+            const nodes = [...modal.querySelectorAll('button:not(:disabled), input:not([type="hidden"]), select, textarea')].filter(node => node.getClientRects().length);
+            const target = e.shiftKey && document.activeElement === nodes[0] ? nodes.at(-1)
+                : !e.shiftKey && document.activeElement === nodes.at(-1) ? nodes[0] : null;
+            if (target) { e.preventDefault(); target.focus(); }
+        }
     });
 });

@@ -338,3 +338,5 @@
     color: #c7d1cb;
     cursor: not-allowed;
 }
+/* Table display rules must not override the history filter's hidden state. */
+tr[data-request-pk][hidden] { display: none !important; }

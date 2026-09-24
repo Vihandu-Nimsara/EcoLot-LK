@@ -7,28 +7,62 @@ final class EWasteRequest extends Model
     protected string $table = 'e_waste_requests';
     protected string $primaryKey = 'request_id';
 
-        /**
-     * Creates a pickup request and its item rows in one transaction.
-     */
-    public function createWithItems(array $request, array $items): int
+    private function beginMutation(): void
     {
-        if ($items === []) {
-            throw new InvalidArgumentException('A pickup request needs at least one item.');
-        }
-
+        // Catalogue/profile reads must not freeze capacity before the schedule lock.
+        $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         $this->db->beginTransaction();
+    }
 
+    /** All inserts share the schedule lock with officer edits. */
+    public function create(array $attributes): int
+    {
+        $ownsTransaction = !$this->db->inTransaction();
+        if ($ownsTransaction) $this->beginMutation();
         try {
-            $requestId = $this->create($request);
-            $this->insertItems($requestId, $items);
-            $this->db->commit();
-
-            return $requestId;
-        } catch (Throwable $exception) {
-            $this->db->rollBack();
-            throw $exception;
+            $schedules = new AreaCollectionSchedule($this->db);
+            $schedules->lockSchedule((int) $attributes['schedule_id']);
+            $profile = (new PublicProfile($this->db))->find((int) $attributes['public_user_id']);
+            if (!$profile || !$schedules->isBookable((int) $attributes['schedule_id'], (int) $profile['postal_area_id'])) {
+                throw new DomainException('This collection date is no longer available.');
+            }
+            $id = parent::create($attributes);
+            if ($ownsTransaction) $this->db->commit();
+            return $id;
+        } catch (Throwable $error) {
+            if ($ownsTransaction && $this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
         }
     }
+
+    public function createWithItems(array $request, array $rawItems): int
+    {
+        $this->beginMutation();
+        try {
+            $items = (new EWasteItem($this->db))->validatePickupItems($rawItems);
+            $profile = (new PublicProfile($this->db))->find((int) $request['public_user_id']);
+            if (!$profile || trim((string) $profile['address']) === '') throw new DomainException('Complete your address profile before requesting pickup.');
+            $requestId = $this->create([
+                'public_user_id' => (int) $request['public_user_id'], 'schedule_id' => (int) $request['schedule_id'],
+                'pickup_address' => $profile['address'],
+            ] + $this->reviewState($items));
+            $this->insertItems($requestId, $items);
+            $this->db->commit();
+            return $requestId;
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            throw $error;
+        }
+    }
+
+    private function reviewState(array $items): array
+    {
+        $review = in_array(true, array_column($items, 'requires_review'), true);
+        return ['request_status' => $review ? 'PENDING_REVIEW' : 'SUBMITTED',
+            'risk_review_status' => $review ? 'PENDING' : 'NOT_REQUIRED',
+            'reviewed_by_officer_user_id' => null, 'reviewed_at' => null, 'review_note' => null];
+    }
+
             /**
      * All pickup requests submitted by a public user, newest first, each
      * with its collection schedule/address details and its item rows.
@@ -43,7 +77,9 @@ final class EWasteRequest extends Model
                     r.`pickup_address`,
                     r.`request_status`,
                     r.`submitted_at`,
-                    s.`collection_date`,
+                    s.`collection_date`, s.schedule_status, s.request_cutoff_at,
+                    EXISTS(SELECT 1 FROM schedule_assignments sa WHERE sa.schedule_id = s.schedule_id AND sa.unassigned_at IS NULL) AS has_assignment,
+                    EXISTS(SELECT 1 FROM schedule_collections sc WHERE sc.schedule_id = s.schedule_id) AS has_collection,
                     pa.`postal_code`,
                     pa.`area_name`
                 FROM `e_waste_requests` r
@@ -131,56 +167,65 @@ final class EWasteRequest extends Model
         ];
     }
 
-    public function findEditableForOwner(int $requestId, int $publicUserId): ?array
-{
-    $result = $this->query(
-        'SELECT r.`request_id`, r.`schedule_id`, r.`request_status`, s.`postal_area_id`
-         FROM `e_waste_requests` r
-         JOIN `area_collection_schedules` s ON s.`schedule_id` = r.`schedule_id`
-         WHERE r.`request_id` = :request_id
-           AND r.`public_user_id` = :public_user_id
-         LIMIT 1',
-        ['request_id' => $requestId, 'public_user_id' => $publicUserId]
-    )->fetch();
-
-    if ($result === false || !in_array($result['request_status'], self::EDITABLE_STATUSES, true)) {
-        return null;
+    public static function canModify(array $request): bool
+    {
+        return in_array($request['request_status'], self::EDITABLE_STATUSES, true)
+            && $request['schedule_status'] === 'OPEN'
+            && $request['request_cutoff_at'] >= (new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo')))->format('Y-m-d H:i:s')
+            && empty($request['has_assignment']) && empty($request['has_collection']);
     }
 
-    return $result;
-}
-
-public function updateScheduleAndItems(int $requestId, int $scheduleId, array $items): void
-{
-    if ($items === []) {
-        throw new InvalidArgumentException('A pickup request needs at least one item.');
+    private function lockOwned(int $requestId, int $ownerId, ?int $targetSchedule = null): array
+    {
+        $snapshot = $this->find($requestId);
+        if (!$snapshot || (int) $snapshot['public_user_id'] !== $ownerId) throw new DomainException('Request not found.');
+        $ids = array_unique([(int) $snapshot['schedule_id'], $targetSchedule ?? (int) $snapshot['schedule_id']]);
+        sort($ids, SORT_NUMERIC);
+        $schedules = new AreaCollectionSchedule($this->db);
+        foreach ($ids as $id) $schedules->lockSchedule($id);
+        $request = $this->query('SELECT * FROM e_waste_requests WHERE request_id = :id FOR UPDATE', ['id' => $requestId])->fetch();
+        if (!$request || (int) $request['public_user_id'] !== $ownerId || $request['schedule_id'] != $snapshot['schedule_id']) {
+            throw new DomainException('This request changed. Reload and try again.');
+        }
+        $schedule = $schedules->find((int) $request['schedule_id']);
+        if (!$schedule || !self::canModify($request + $schedule) || $schedules->hasStartedWork((int) $request['schedule_id'])) {
+            throw new DomainException('Only pending requests on an open schedule before its deadline and assignment can be changed.');
+        }
+        return $request;
     }
 
-    $this->db->beginTransaction();
-
-    try {
-        $this->update($requestId, ['schedule_id' => $scheduleId]);
-
-        $this->db->prepare('DELETE FROM `request_items` WHERE `request_id` = :request_id')
-            ->execute(['request_id' => $requestId]);
-
-        $this->insertItems($requestId, $items);
-
-        $this->db->commit();
-    } catch (Throwable $exception) {
-        $this->db->rollBack();
-        throw $exception;
-    }
-}
-
-public function deleteOwned(int $requestId, int $publicUserId): bool
-{
-    if ($this->findEditableForOwner($requestId, $publicUserId) === null) {
-        return false;
+    public function updateScheduleAndItems(int $requestId, int $scheduleId, array $rawItems, int $ownerId): void
+    {
+        $this->beginMutation();
+        try {
+            $this->lockOwned($requestId, $ownerId, $scheduleId);
+            $profile = (new PublicProfile($this->db))->find($ownerId);
+            if (!$profile || !(new AreaCollectionSchedule($this->db))->isBookable($scheduleId, (int) $profile['postal_area_id'], $requestId)) {
+                throw new DomainException('That collection date is no longer available.');
+            }
+            $items = (new EWasteItem($this->db))->validatePickupItems($rawItems);
+            $this->update($requestId, ['schedule_id' => $scheduleId] + $this->reviewState($items));
+            $this->query('DELETE FROM request_items WHERE request_id = :id', ['id' => $requestId]);
+            $this->insertItems($requestId, $items);
+            $this->db->commit();
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            throw $error;
+        }
     }
 
-    return $this->delete($requestId);
-}
+    public function cancelOwned(int $requestId, int $ownerId): void
+    {
+        $this->beginMutation();
+        try {
+            $this->lockOwned($requestId, $ownerId);
+            $this->update($requestId, ['request_status' => 'CANCELLED']);
+            $this->db->commit();
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            throw $error;
+        }
+    }
 
 private function insertItems(int $requestId, array $items): void
 {

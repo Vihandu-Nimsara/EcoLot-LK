@@ -66,7 +66,7 @@
             <div class="public-summary-icon weight">kg</div>
             <div>
                 <strong><?= number_format((float) $summary['recycled_weight_kg'], 1) ?> kg</strong>
-                <span>Recycled Weight</span>
+                <span>Estimated Weight of Completed Pickups</span>
             </div>
         </article>
     </div>

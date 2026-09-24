@@ -253,7 +253,13 @@ class MunicipalOfficerController extends Controller
     private function scheduleDatabaseError(PDOException $exception): string
     {
         $code = (int) ($exception->errorInfo[1] ?? 0);
-        if ($code === 1062) return 'A schedule already exists for this campaign, area and collection date.';
+        if ($code === 1062) {
+            $detail = (string) ($exception->errorInfo[2] ?? '');
+            if (str_contains($detail, "'uq_schedules_campaign_area'")) {
+                return 'The database still has the old one-schedule-per-area restriction. Apply the schedule date uniqueness migration.';
+            }
+            return 'A schedule already exists for this campaign, area and collection date.';
+        }
         if ($code === 1451) return 'This schedule is already in use and cannot be deleted.';
         error_log('Schedule operation failed: SQLSTATE ' . $exception->getCode());
         return 'The schedule could not be saved. Please reload and try again. If this continues, check the database and officer profile.';
