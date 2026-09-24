@@ -103,20 +103,25 @@ function populateEditScheduleSelect(row) {
     if (!Number.isNaN(currentScheduleId)) {
         const opt = document.createElement('option');
         opt.value = String(currentScheduleId);
-        opt.textContent = row.dataset.collectionDateLabel || 'Current date';
+        const current = SCHEDULE_OPTIONS.find(schedule => String(schedule.schedule_id) === String(currentScheduleId));
+        opt.textContent = (current?.label || row.dataset.collectionDateLabel || row.dataset.collectionDate || 'Current date') + ' (current)';
         opt.selected = true;
         select.appendChild(opt);
         seen.add(currentScheduleId);
     }
 
     SCHEDULE_OPTIONS.forEach(schedule => {
-        if (seen.has(schedule.schedule_id)) return;
+        if (seen.has(Number(schedule.schedule_id))) return;
         const opt = document.createElement('option');
         opt.value = String(schedule.schedule_id);
         opt.textContent = schedule.label;
         select.appendChild(opt);
-        seen.add(schedule.schedule_id);
+        seen.add(Number(schedule.schedule_id));
     });
+    if (!Number.isNaN(currentScheduleId)) select.value = String(currentScheduleId);
+    document.getElementById('editScheduleHint').textContent = select.options.length > 1
+        ? 'Keep your current date or choose another open date in your postal area.'
+        : 'Your current booking is retained. No other open dates with remaining capacity are available in your postal area.';
 }
 
 function openEditModal(triggerEl) {
@@ -226,7 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const draftRow = [...document.querySelectorAll('tr[data-request-pk]')].find(row => row.dataset.requestPk === String(draft.request_id));
     if (draftRow && draftRow.dataset.editable === '1') {
         openEditModal(draftRow.querySelector('[data-edit-request]'));
-        document.getElementById('editCollectionDate').value = draft.schedule_id;
+        const dateSelect = document.getElementById('editCollectionDate');
+        if ([...dateSelect.options].some(option => option.value === String(draft.schedule_id))) {
+            dateSelect.value = String(draft.schedule_id);
+        } else {
+            dateSelect.prepend(new Option('Previously selected date is unavailable — choose a date', '', true, true));
+        }
         document.getElementById('editItemsBody').innerHTML = '';
         Object.values(draft.items || {}).forEach(item => {
             if (item && typeof item === 'object') addEditRow(item.category, item.item, item.quantity, item.weight, item.condition, item.note);

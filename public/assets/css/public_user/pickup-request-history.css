@@ -340,3 +340,8 @@
 }
 /* Table display rules must not override the history filter's hidden state. */
 tr[data-request-pk][hidden] { display: none !important; }
+
+.public-user-app #editModal .view-fields-row { grid-template-columns: minmax(0, 1fr); }
+.public-user-app #editModal .view-field { min-width: 0; }
+.public-user-app #editCollectionDate { min-width: 0; max-width: 100%; }
+.public-user-app #editScheduleHint { color: var(--public-muted); line-height: 1.5; }

@@ -202,11 +202,11 @@
                     <div class="view-field">
                         <label>Postal Code Area</label>
                         <input type="text" class="form-input-readonly" id="editPostal" readonly>                    </div>
-                    <div class="view-field">
+                    <div class="view-field edit-collection-date-field">
                         <label for="editCollectionDate">Available Collection Date</label>
-                        <select class="form-input-editable" id="editCollectionDate" name="schedule_id" required></select>
+                        <select class="form-input-editable" id="editCollectionDate" name="schedule_id" aria-describedby="editScheduleHint" required></select>
+                        <small id="editScheduleHint" role="status"></small>
                     </div>
-                    <div class="view-field"></div>
                 </div>
                 <div class="view-field view-field-full" style="margin-top:0;">
                     <label>Pickup Address</label>

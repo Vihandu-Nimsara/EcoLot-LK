@@ -30,7 +30,7 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/pub
     <?php if ($pageStyle !== null): ?>
         <link
             rel="stylesheet"
-            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>?v=<?= (int) filemtime(dirname(__DIR__, 4) . '/public/assets/css/' . $pageStyle) ?>"
         >
     <?php endif; ?>
 
@@ -50,7 +50,7 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/pub
     </div>
 
     <?php if ($pageScript !== null): ?>
-        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>"></script>
+        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>?v=<?= (int) filemtime(dirname(__DIR__, 4) . '/public/assets/js/' . $pageScript) ?>"></script>
     <?php endif; ?>
 </body>
 </html>
