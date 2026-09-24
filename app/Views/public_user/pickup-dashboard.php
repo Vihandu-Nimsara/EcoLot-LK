@@ -40,32 +40,32 @@
         </div>
     </div>
 
-    <div class="public-summary-grid">
+        <div class="public-summary-grid">
         <article class="public-summary-card">
-            <div class="public-summary-icon total">12</div>
+            <div class="public-summary-icon total"><?= (int) $summary['total_requests'] ?></div>
             <div>
-                <strong>12</strong>
+                <strong><?= (int) $summary['total_requests'] ?></strong>
                 <span>Total Requests</span>
             </div>
         </article>
         <article class="public-summary-card">
-            <div class="public-summary-icon completed">7</div>
+            <div class="public-summary-icon completed"><?= (int) $summary['completed_requests'] ?></div>
             <div>
-                <strong>7</strong>
+                <strong><?= (int) $summary['completed_requests'] ?></strong>
                 <span>Completed Pickups</span>
             </div>
         </article>
         <article class="public-summary-card">
-            <div class="public-summary-icon review">2</div>
+            <div class="public-summary-icon review"><?= (int) $summary['pending_requests'] ?></div>
             <div>
-                <strong>2</strong>
+                <strong><?= (int) $summary['pending_requests'] ?></strong>
                 <span>Pending Reviews</span>
             </div>
         </article>
         <article class="public-summary-card">
             <div class="public-summary-icon weight">kg</div>
             <div>
-                <strong>41.5 kg</strong>
+                <strong><?= number_format((float) $summary['recycled_weight_kg'], 1) ?> kg</strong>
                 <span>Recycled Weight</span>
             </div>
         </article>
@@ -93,25 +93,26 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="<?= $basePath ?>/user/my-requests" class="text-link">REQ-2024-00012</a></td>
-                        <td>May 20, 2024</td>
-                        <td>IT Equipment</td>
-                        <td>8.5 kg</td>
-                        <td>3</td>
-                        <td>Working</td>
-                        <td><span class="status-badge pending">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td><a href="<?= $basePath ?>/user/my-requests" class="text-link">REQ-2024-00011</a></td>
-                        <td>May 18, 2024</td>
-                        <td>Small Appliances</td>
-                        <td>12 kg</td>
-                        <td>1</td>
-                        <td>Working</td>
-                        <td><span class="status-badge completed">Completed</span></td>
-                    </tr>
+                                <tbody>
+                    <?php if (empty($recentRequests)): ?>
+                        <tr>
+                            <td colspan="7" style="text-align:center;padding:24px;color:#5f7268;">
+                                No pickup requests submitted yet.
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($recentRequests as $request): ?>
+                            <tr>
+                                <td><a href="<?= $basePath ?>/user/my-requests" class="text-link"><?= htmlspecialchars($request['code'], ENT_QUOTES, 'UTF-8') ?></a></td>
+                                <td><?= htmlspecialchars($request['submitted_date'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($request['category_summary'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= htmlspecialchars($request['total_weight_label'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= (int) $request['total_quantity'] ?></td>
+                                <td><?= htmlspecialchars($request['condition_summary'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><span class="<?= htmlspecialchars($request['dashboard_badge_class'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($request['status_label'], ENT_QUOTES, 'UTF-8') ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

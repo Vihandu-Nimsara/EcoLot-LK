@@ -56,7 +56,10 @@ return static function (Router $router, array $app): void {
 
     $router->group('/user', static function (Router $router): void {
         $router->get('/my-requests', 'PublicUserController@myRequests');
+        $router->post('/my-requests/{id}/update', 'PublicUserController@updateRequest');
+        $router->post('/my-requests/{id}/delete', 'PublicUserController@deleteRequest');
         $router->get('/new-request', 'PublicUserController@newRequest');
+        $router->post('/new-request', 'PublicUserController@storeRequest');
         $router->get('/feedback', 'PublicUserController@feedback');
         $router->get('/profile', 'PublicUserController@profile');
     });

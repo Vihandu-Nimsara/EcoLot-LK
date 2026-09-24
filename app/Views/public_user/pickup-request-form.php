@@ -6,7 +6,16 @@
         </div>
     </div>
 
-    <form data-pickup-request-form>
+    <?php if (!empty($errorMessage)): ?>
+        <div class="form-alert form-alert-error" role="alert"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+    <?php if (!empty($successMessage)): ?>
+        <div class="form-alert form-alert-success" role="status"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+
+    <form data-pickup-request-form method="post" action="<?= $basePath ?>/user/new-request">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
         <div class="pickup-form-sections">
             <section class="surface-card">
                 <div class="card-heading">
@@ -17,22 +26,26 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="postal-code">Postal Code Area</label>
-                    <input id="postal-code" name="postal_code" type="text" value="<?= htmlspecialchars($postalAreaLabel, ENT_QUOTES, 'UTF-8') ?>" readonly>
-                </div>
-                <div class="form-field">
-                    <label for="collection-date">Available Collection Date</label>
-                    <select id="collection-date" name="schedule_id" required>
-                        <option value="">Select an available collection schedule</option>
-                        <?php foreach ($availableSchedules as $schedule): ?>
-                            <option value="<?= htmlspecialchars((string) $schedule['schedule_id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($schedule['collection_date'] . ' — ' . $schedule['campaign_name'], ENT_QUOTES, 'UTF-8') ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <?php if ($availableSchedules === []): ?><p>No open schedules with remaining capacity are available for your postal area.</p><?php endif; ?>
+                    <label for="collection-schedule">Available Collection Date</label>
+                    <?php if (!empty($schedules)): ?>
+                        <select id="collection-schedule" name="schedule_id" required>
+                            <option value="">Select a collection date</option>
+                            <?php foreach ($schedules as $schedule): ?>
+                                <option value="<?= (int) $schedule['schedule_id'] ?>">
+                                    <?= htmlspecialchars(date('l, d M Y', strtotime((string) $schedule['collection_date'])), ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: ?>
+                        <select id="collection-schedule" disabled>
+                            <option>No open collection dates for your area yet</option>
+                        </select>
+                        <p class="field-hint">Your municipal office hasn't opened a collection schedule for your area yet. Please check back later.</p>
+                    <?php endif; ?>
                 </div>
                 <div class="form-field">
                     <label for="pickup-address">Pickup Address</label>
-                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($user_address, ENT_QUOTES, 'UTF-8') ?></textarea>
+                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($address ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                 </div>
             </section>
 
