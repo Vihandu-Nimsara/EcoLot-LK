@@ -8,7 +8,7 @@ $pageStyles = [
     'profile' => 'recycler/workflow.css',
     'reports' => 'recycler/workflow.css',
 ];
-$workflowPages = ['eligible-e-lots', 'my-bids', 'awarded-e-lots'];
+$workflowPages = ['dashboard', 'eligible-e-lots', 'my-bids', 'awarded-e-lots'];
 $secondaryPageStyle = in_array($currentPage ?? '', $workflowPages, true)
     ? 'recycler/workflow.css'
     : null;
@@ -52,7 +52,7 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
             <main class="page-content">
                 <?php foreach (['bid_success', 'bid_error'] as $flashKey): ?>
                     <?php if ($message = Session::pullFlash($flashKey)): ?>
-                        <div class="workflow-card" role="<?= $flashKey === 'bid_error' ? 'alert' : 'status' ?>"><?= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') ?></div>
+                        <div class="bid-flash <?= $flashKey === 'bid_error' ? 'bid-flash-error' : 'bid-flash-success' ?>" role="<?= $flashKey === 'bid_error' ? 'alert' : 'status' ?>"><?= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') ?></div>
                     <?php endif; ?>
                 <?php endforeach; ?>
                 <?= $content ?>

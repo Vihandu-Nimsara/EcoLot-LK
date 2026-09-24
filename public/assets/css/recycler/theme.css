@@ -162,9 +162,10 @@
     margin-bottom: 20px;
 }
 
-.recycler-app :is(.bid-header, .awarded-e-lot-header) h2 {
-    color: #134029;
-    font-size: 1.375rem;
+.recycler-app :is(.bid-header, .awarded-e-lot-header) :is(h1, h2) {
+    margin: 0;
+    color: var(--recycler-text);
+    font-size: clamp(1.625rem, 2.4vw, 1.875rem);
 }
 
 .recycler-app :is(.bid-header, .awarded-e-lot-header) p {
@@ -201,7 +202,7 @@
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) {
     width: 100%;
-    min-width: 1120px;
+    min-width: 0;
     table-layout: fixed;
     border-collapse: collapse;
 }
@@ -221,6 +222,7 @@
 }
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) td {
+    overflow-wrap: anywhere;
     padding: 18px 8px;
     color: #111827;
     border-bottom: 1px solid #E5E7EB;
@@ -674,4 +676,45 @@
 
 @media (max-width: 520px) {
     .recycler-app .light-filter-controls { align-items: stretch; flex-direction: column; }
+}
+
+/* Shared bidding controls: variants follow the base rule so they retain priority. */
+.recycler-app :is(.edit-btn, .btn-action, .primary-workflow-btn, .secondary-workflow-btn, .danger-workflow-btn) {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 40px; padding: 9px 12px; border: 1px solid var(--recycler-border);
+    border-radius: 9px; font: inherit; font-size: .8125rem; font-weight: 600;
+    line-height: 1.3; text-decoration: none; white-space: normal; cursor: pointer;
+}
+.recycler-app :is(.primary-row-action, .primary-workflow-btn) { color: #fff; background: #159342; border-color: #159342; }
+.recycler-app :is(.secondary-row-action, .secondary-workflow-btn) { color: #0A5A3E; background: #fff; border-color: #C7D9CE; }
+.recycler-app :is(.danger-row-action, .danger-workflow-btn) { color: #B42318; background: #FFF5F5; border-color: #E9B5B0; }
+.recycler-app :is(.primary-row-action, .primary-workflow-btn):hover { color: #fff; background: #047857; border-color: #047857; }
+.recycler-app :is(.secondary-row-action, .secondary-workflow-btn):hover { color: #0A5A3E; background: #F0FAF4; border-color: #86D2A0; }
+.recycler-app :is(.danger-row-action, .danger-workflow-btn):hover { color: #fff; background: #B42318; border-color: #B42318; }
+.recycler-app :is(.edit-btn, .btn-action, .primary-workflow-btn, .secondary-workflow-btn, .danger-workflow-btn):focus-visible { outline: 3px solid #86D2A0; outline-offset: 3px; }
+.recycler-app .row-actions { align-items: flex-start; }
+.recycler-app .row-withdraw-form { margin: 0; display: grid; gap: 6px; }
+.recycler-app .bid-form { display: grid; gap: 16px; max-width: 640px; margin-top: 24px; }
+.recycler-app .bid-form .form-actions { margin-top: 0; }
+.recycler-app .bid-guidance { display: grid; gap: 6px; color: var(--recycler-muted); font-size: .875rem; }
+.recycler-app .bid-guidance p { margin: 0; }
+.recycler-app .withdraw-form { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--recycler-border); }
+.recycler-app .withdraw-form p { margin-bottom: 12px; }
+.recycler-app .dialog-field input { min-height: 44px; }
+.recycler-app .badge-submitted { color: #0369A1; background: #E0F2FE; }
+.recycler-app :is(.badge-winning, .badge-awarded, .badge-scheduled) { color: #92400E; background: #FEF3C7; }
+.recycler-app :is(.badge-rejected, .badge-lost) { color: #B42318; background: #FEE2E2; }
+.recycler-app :is(.badge-withdrawn, .badge-cancelled, .badge-pending) { color: #475569; background: #E2E8F0; }
+.recycler-app :is(.badge-open_for_bidding, .badge-completed) { color: #047857; background: #D1FAE5; }
+.recycler-app .bid-flash { margin-bottom: 20px; padding: 14px 18px; border: 1px solid; border-radius: 12px; }
+.recycler-app .bid-flash-success { color: #065F46; background: #ECFDF5; border-color: #A7F3D0; }
+.recycler-app .bid-flash-error { color: #991B1B; background: #FEF2F2; border-color: #FECACA; }
+.recycler-app tr[hidden] { display: none !important; }
+.recycler-app .stat-info .secondary-workflow-btn { margin-top: 14px; }
+@media (max-width: 700px) {
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td { display: block; overflow-wrap: anywhere; }
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td::before { content: none; }
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td[data-label]::before { display: block; margin-bottom: 6px; content: attr(data-label); }
+    .recycler-app .row-actions > * { flex: 1 1 100%; }
+    .recycler-app .row-withdraw-form button { width: 100%; }
 }

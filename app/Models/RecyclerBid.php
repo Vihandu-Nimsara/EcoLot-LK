@@ -75,9 +75,9 @@ final class RecyclerBid extends Model
     {
         $statement = $this->query("UPDATE recycler_bids b JOIN e_lots l ON l.e_lot_id = b.e_lot_id
             SET b.bid_amount = :amount WHERE b.bid_id = :bid AND b.recycler_user_id = :owner
-            AND b.bid_status = 'SUBMITTED' AND b.bid_amount < :increase AND " . ELot::eligibilitySql(),
-            ELot::eligibilityParameters($userId) + ['amount' => $amount, 'increase' => $amount, 'bid' => $bidId, 'owner' => $userId]);
-        if ($statement->rowCount() !== 1) throw new DomainException('Increase your own bid while the E-Lot is open and you are eligible.');
+            AND b.bid_status = 'SUBMITTED' AND b.bid_amount <> :different AND " . ELot::eligibilitySql(),
+            ELot::eligibilityParameters($userId) + ['amount' => $amount, 'different' => $amount, 'bid' => $bidId, 'owner' => $userId]);
+        if ($statement->rowCount() !== 1) throw new DomainException('Your bid could not be revised. Check that bidding is still open and you are eligible.');
     }
 
     public function withdrawOwnedSubmittedBid(int $bidId, int $userId): void

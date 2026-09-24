@@ -23,8 +23,39 @@ final class RecyclerBidService
         }
         $whole = ltrim($parts[1], '0') ?: '0';
         $fraction = str_pad($parts[2] ?? '', 2, '0');
-        if ($whole === '0' && $fraction === '00') throw new DomainException('The bid amount must be greater than zero.');
+        if (strlen($whole) < 3) throw new DomainException('Bid amount must be at least Rs. 100.00.');
         return $whole . '.' . $fraction;
+    }
+
+    // Exact decimal-string addition; null means no representable suggestion.
+    public static function suggestedAmount(?string $highest): ?string
+    {
+        if ($highest === null) return '100.00';
+        [$whole, $fraction] = explode('.', $highest . '.00');
+        $digits = str_split($whole);
+        $carry = 100;
+        for ($i = count($digits) - 1; $i >= 0 && $carry > 0; --$i) {
+            $sum = (int) $digits[$i] + $carry;
+            $digits[$i] = (string) ($sum % 10);
+            $carry = intdiv($sum, 10);
+        }
+        $whole = ($carry > 0 ? (string) $carry : '') . implode('', $digits);
+        return strlen($whole) > 12 ? null : $whole . '.' . str_pad($fraction, 2, '0');
+    }
+
+    private function requireOpenWindow(array $lot, bool $withdraw = false): void
+    {
+        // Read database time after acquiring the lot lock, not before waiting for it.
+        $now = (string) $this->db->query('SELECT CURRENT_TIMESTAMP')->fetchColumn();
+        if ($lot['bidding_close_at'] !== null && $now >= $lot['bidding_close_at']) {
+            throw new DomainException('Bidding for this E-Lot has closed.');
+        }
+        if ($lot['lot_status'] !== 'OPEN_FOR_BIDDING' || $lot['bidding_close_at'] === null) {
+            throw new DomainException('This E-Lot is not open for bidding.');
+        }
+        if (!$withdraw && ($lot['bidding_open_at'] === null || $now < $lot['bidding_open_at'])) {
+            throw new DomainException('Bidding for this E-Lot has not opened yet.');
+        }
     }
 
     public function placeBid(int $userId, int $lotId, string $amount): int
@@ -33,6 +64,7 @@ final class RecyclerBidService
         return $this->transaction(function () use ($userId, $lotId, $amount): int {
             $lot = $this->lots->lockForBidding($lotId);
             if (!$lot) throw new DomainException('E-Lot not found.', 404);
+            $this->requireOpenWindow($lot);
             $this->lockEligibility($userId, $lot);
             if (!$this->lots->isEligible($lotId, $userId)) throw new DomainException('You are not currently eligible to bid on this E-Lot, or its bidding window is closed.');
             if ($this->bids->findForRecyclerAndLot($userId, $lotId)) throw new DomainException('You already have a bid for this E-Lot. Withdrawn bids cannot be replaced.');
@@ -62,12 +94,15 @@ final class RecyclerBidService
             if (!$lot) throw new DomainException('E-Lot not found.', 404);
             $bid = $this->bids->findOwnedBid($bidId, $userId, true);
             if (!$bid || (int) $bid['e_lot_id'] !== $lotId) throw new DomainException('Bid not found.', 404);
+            if ($bid['bid_status'] === 'WITHDRAWN') throw new DomainException('This bid has already been withdrawn.');
             if ($bid['bid_status'] !== 'SUBMITTED') throw new DomainException('Only submitted bids can be changed.');
+            $this->requireOpenWindow($lot, $amount === null);
             if ($amount === null) {
                 $this->bids->withdrawOwnedSubmittedBid($bidId, $userId);
             } else {
                 $this->lockEligibility($userId, $lot);
                 if (!$this->lots->isEligible($lotId, $userId)) throw new DomainException('You are not currently eligible to revise this bid, or its bidding window is closed.');
+                if ($amount === (string) $bid['bid_amount']) throw new DomainException('Enter a different amount to revise your bid.');
                 $this->bids->reviseOwnedSubmittedBid($bidId, $userId, $amount);
             }
             return $lotId;

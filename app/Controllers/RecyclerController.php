@@ -35,7 +35,7 @@ class RecyclerController extends Controller
             $lot = $model->findVisibleForRecycler($lotId, (int) Auth::id());
             if (!$lot) { http_response_code(404); echo '404 E-Lot not found'; return; }
             $this->view('recycler/e_lot_details', ['currentPage' => 'eligible-e-lots',
-                'lot' => $lot, 'items' => $model->itemDetails($lotId)]);
+                'lot' => $lot, 'suggestedAmount' => RecyclerBidService::suggestedAmount($lot['highest_amount']), 'items' => $model->itemDetails($lotId)]);
         });
     }
 
@@ -66,6 +66,11 @@ class RecyclerController extends Controller
         try {
             $service = new RecyclerBidService();
             $userId = (int) Auth::id();
+            $owned = $action === 'place' ? null : (new RecyclerBid())->findOwnedBid($recordId, $userId);
+            $returnLotId = $action === 'place' ? $recordId : (int) ($owned['e_lot_id'] ?? 0);
+            if ($returnLotId && (new ELot())->findVisibleForRecycler($returnLotId, $userId)) {
+                $destination = '/recycler/e-lot/' . $returnLotId . '#bid-form';
+            }
             if ($action === 'place') {
                 $service->placeBid($userId, $recordId, $this->postString('bid_amount'));
                 $lotId = $recordId;

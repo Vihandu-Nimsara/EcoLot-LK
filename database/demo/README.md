@@ -15,3 +15,13 @@ ECOLOT_BID_TEST=1 DB_DATABASE=ecolot_test_bids php tests/recycler-bids-integrati
 ```
 
 Integration tests commit fixture rows because the service owns transactions. Use a disposable database; the script does not delete it or run against the application database. Tests freeze the database session clock for exact deadline boundaries.
+
+The bid form suggests the highest SUBMITTED amount plus Rs. 100, but any amount of at least Rs. 100 is allowed. Revisions may increase or decrease; unchanged amounts are rejected.
+
+To exercise lot locking with independent PHP processes against an existing isolated database:
+
+```
+ECOLOT_BID_TEST=1 DB_DATABASE=ecolot_test_bids /opt/lampp/bin/php tests/recycler-bids-concurrency.php
+```
+
+This test commits uniquely named fixture rows and requires `proc_open` and permission to observe its connections with `SHOW PROCESSLIST`. It verifies that a revision waits for a locked lot and re-reads a withdrawal committed while waiting. It does not create, drop, or rebuild databases.

@@ -2,12 +2,13 @@
     min-width: 940px;
 }
 
-.my-bids-page .bids-table :is(th, td):nth-child(1) { width: 22%; }
-.my-bids-page .bids-table :is(th, td):nth-child(2) { width: 19%; }
-.my-bids-page .bids-table :is(th, td):nth-child(3) { width: 12%; }
-.my-bids-page .bids-table :is(th, td):nth-child(4) { width: 14%; }
-.my-bids-page .bids-table :is(th, td):nth-child(5) { width: 16%; }
-.my-bids-page .bids-table :is(th, td):nth-child(6) { width: 17%; }
+.my-bids-page .bids-table :is(th, td):nth-child(1) { width: 19%; }
+.my-bids-page .bids-table :is(th, td):nth-child(2) { width: 13%; }
+.my-bids-page .bids-table :is(th, td):nth-child(3) { width: 14%; }
+.my-bids-page .bids-table :is(th, td):nth-child(4) { width: 10%; }
+.my-bids-page .bids-table :is(th, td):nth-child(5) { width: 13%; }
+.my-bids-page .bids-table :is(th, td):nth-child(6) { width: 13%; }
+.my-bids-page .bids-table :is(th, td):nth-child(7) { width: 18%; }
 .my-bids-page .money-cell {
     white-space: nowrap;
 }

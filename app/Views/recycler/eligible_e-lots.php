@@ -16,7 +16,7 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <td data-label="Category"><?= $escape($lot['category_name']) ?></td>
 <td data-label="Bidding Deadline"><?= $escape($lot['bidding_close_at']) ?></td>
 <td data-label="Active Bids"><strong><?= (int) $lot['active_count'] ?> submitted</strong><span class="table-secondary-text">Highest: <?= $lot['highest_amount'] === null ? 'No bids yet' : 'Rs. ' . number_format((float) $lot['highest_amount'], 2) ?></span></td>
-<td data-label="My Bid"><?php if ($lot['bid_id']): ?><span class="status <?= strtolower($lot['bid_status']) ?>"><?= $statuses[$lot['bid_status']] ?></span><span class="table-secondary-text">Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></span><?php else: ?>Not bid yet<?php endif; ?></td>
+<td data-label="My Bid"><?php if ($lot['bid_id']): ?><span class="badge badge-<?= strtolower($lot['bid_status']) ?>"><?= $statuses[$lot['bid_status']] ?></span><span class="table-secondary-text">Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></span><?php else: ?>Not bid yet<?php endif; ?></td>
 <td data-label="Actions"><a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $lot['e_lot_id'] ?>">View Details</a></td>
 </tr><?php endforeach; ?>
 </tbody></table></div><div class="filtered-empty-state" data-eligible-filter-empty hidden>No E-Lots match these filters.</div><?php endif; ?>
