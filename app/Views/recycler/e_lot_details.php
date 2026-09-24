@@ -22,7 +22,7 @@ $canWithdraw = (bool) $lot['can_withdraw'] && $lot['bid_status'] === 'SUBMITTED'
 <?php if ($lot['bid_id']): ?><div class="detail-item"><span class="detail-label">My bid · <?= $statuses[$lot['bid_status']] ?></span><strong>Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></strong><span>Submitted <?= $escape($lot['submitted_at']) ?></span></div><?php endif; ?>
 </div>
 <?php if ($canPlace || $canRevise): ?>
-<form method="post" action="<?= $escape($basePath) ?>/recycler/<?= $canPlace ? 'e-lot/' . (int) $lot['e_lot_id'] . '/bid' : 'bid/' . (int) $lot['bid_id'] . '/update' ?>">
+<form id="bid-form" method="post" action="<?= $escape($basePath) ?>/recycler/<?= $canPlace ? 'e-lot/' . (int) $lot['e_lot_id'] . '/bid' : 'bid/' . (int) $lot['bid_id'] . '/update' ?>">
 <input type="hidden" name="_csrf_token" value="<?= $escape(Csrf::token()) ?>">
 <label class="dialog-field"><span><?= $canPlace ? 'Your bid amount (Rs.)' : 'New bid amount (Rs.)' ?></span><input name="bid_amount" type="number" min="0.01" max="999999999999.99" step="0.01" required value="<?= $canRevise ? $escape($lot['bid_amount']) : '' ?>"></label>
 <p><?= $canPlace ? 'Enter a positive amount.' : 'Your revised amount must exceed your current bid.' ?> Your offer does not need to exceed the highest active bid.</p>

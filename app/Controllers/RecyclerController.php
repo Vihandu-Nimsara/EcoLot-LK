@@ -107,16 +107,28 @@ class RecyclerController extends Controller
     public function awardedELots(): void
     {
         Auth::requireRole('RECYCLER');
-        $this->view('recycler/awarded_e-lots', ['currentPage' => 'awarded-e-lots']);
+        $this->readPage(function (): void {
+            $this->view('recycler/awarded_e-lots', ['currentPage' => 'awarded-e-lots',
+                'awardedLots' => (new RecyclerBid())->listWinningForRecycler((int) Auth::id())]);
+        });
     }
 
     public function awardedELotDetails(string $id): void
     {
         Auth::requireRole('RECYCLER');
-        $this->view('recycler/awarded_e-lot_details', [
-            'currentPage' => 'awarded-e-lots',
-            'eLotId' => $id,
-        ]);
+        $lotId = $this->positiveId($id);
+        if ($lotId === null) return;
+        $this->readPage(function () use ($lotId): void {
+            $userId = (int) Auth::id();
+            $lots = new ELot();
+            $lot = $lots->findVisibleForRecycler($lotId, $userId);
+            if (!$lot || $lot['bid_status'] !== 'WINNING') {
+                http_response_code(404); echo '404 Awarded E-Lot not found'; return;
+            }
+            $this->view('recycler/awarded_e-lot_details', ['currentPage' => 'awarded-e-lots',
+                'lot' => $lot, 'items' => $lots->itemDetails($lotId),
+                'handover' => (new RecyclerBid())->handoverForOwnedWinningBid((int) $lot['bid_id'], $userId)]);
+        });
     }
 
     public function profile(): void

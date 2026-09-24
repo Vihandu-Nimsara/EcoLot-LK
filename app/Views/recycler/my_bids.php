@@ -13,5 +13,17 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <td data-label="My Bid"><strong>Rs. <?= number_format((float) $bid['bid_amount'], 2) ?></strong><?php if ($bid['bid_status'] === 'SUBMITTED'): ?><span class="table-secondary-text">Highest active: Rs. <?= number_format((float) $bid['highest_amount'], 2) ?></span><?php endif; ?></td>
 <td data-label="Status"><span class="badge badge-<?= strtolower($bid['bid_status']) ?>"><?= $statuses[$bid['bid_status']] ?></span></td>
 <td data-label="Submitted"><?= $escape($bid['submitted_at']) ?></td><td data-label="Bidding Deadline"><?= $escape($bid['bidding_close_at']) ?></td>
-<td data-label="Actions"><a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>">View / Manage Bid</a></td>
+<td data-label="Actions"><div class="row-actions">
+<a class="edit-btn secondary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>">View Details</a>
+<?php if ($bid['can_revise']): ?>
+<a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>#bid-form">Revise Bid</a>
+<?php endif; ?>
+<?php if ($bid['can_withdraw']): ?>
+<form method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $bid['bid_id'] ?>/withdraw">
+<input type="hidden" name="_csrf_token" value="<?= $escape(Csrf::token()) ?>">
+<button class="edit-btn secondary-row-action" type="submit">Withdraw Bid</button>
+<span class="table-secondary-text">Permanent; you cannot bid again on this E-Lot.</span>
+</form>
+<?php endif; ?>
+</div></td>
 </tr><?php endforeach; ?></tbody></table></div><div class="filtered-empty-state" data-bids-empty hidden>No bids match these filters.</div><?php endif; ?></section></section>
