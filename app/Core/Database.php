@@ -32,6 +32,8 @@ final class Database
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]
         );
+        // DATETIME values in the schema use Sri Lanka local time.
+        $this->connection->exec("SET time_zone = '+05:30'");
     }
 
     public static function getInstance(?array $config = null): self

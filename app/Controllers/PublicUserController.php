@@ -18,7 +18,14 @@ class PublicUserController extends Controller
     public function newRequest(): void
     {
         Auth::requireRole('PUBLIC_USER');
-        $this->view('public_user/pickup-request-form', ['currentPage' => 'new-request']);
+        $profile = (new PublicProfile())->find((int) Auth::id());
+        $area = $profile === null ? null : (new PostalCodeArea())->find((int) $profile['postal_area_id']);
+        $this->view('public_user/pickup-request-form', [
+            'currentPage' => 'new-request',
+            'availableSchedules' => (new AreaCollectionSchedule())->availableForPublicUser((int) Auth::id()),
+            'postalAreaLabel' => $area === null ? 'No registered postal area' : $area['area_name'] . ' (' . $area['postal_code'] . ')',
+            'user_address' => $profile['address'] ?? '',
+        ]);
     }
 
     public function feedback(): void

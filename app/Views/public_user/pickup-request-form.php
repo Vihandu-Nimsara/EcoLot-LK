@@ -18,15 +18,21 @@
 
                 <div class="form-field">
                     <label for="postal-code">Postal Code Area</label>
-                    <input id="postal-code" name="postal_code" type="text" value="Pannipitiya (10230)" readonly>
+                    <input id="postal-code" name="postal_code" type="text" value="<?= htmlspecialchars($postalAreaLabel, ENT_QUOTES, 'UTF-8') ?>" readonly>
                 </div>
                 <div class="form-field">
                     <label for="collection-date">Available Collection Date</label>
-                    <input id="collection-date" name="collection_date" type="date" required>
+                    <select id="collection-date" name="schedule_id" required>
+                        <option value="">Select an available collection schedule</option>
+                        <?php foreach ($availableSchedules as $schedule): ?>
+                            <option value="<?= htmlspecialchars((string) $schedule['schedule_id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($schedule['collection_date'] . ' — ' . $schedule['campaign_name'], ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if ($availableSchedules === []): ?><p>No open schedules with remaining capacity are available for your postal area.</p><?php endif; ?>
                 </div>
                 <div class="form-field">
                     <label for="pickup-address">Pickup Address</label>
-                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($user_address ?? '123 Main Street, Pannipitiya') ?></textarea>
+                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($user_address, ENT_QUOTES, 'UTF-8') ?></textarea>
                 </div>
             </section>
 
