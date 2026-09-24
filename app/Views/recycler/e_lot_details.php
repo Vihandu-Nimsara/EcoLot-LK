@@ -16,10 +16,10 @@ $canWithdraw = (bool) $lot['can_withdraw'] && $lot['bid_status'] === 'SUBMITTED'
 <div class="detail-item"><span class="detail-label"><?= $escape($label) ?></span><?php if ($label === 'Status'): ?><span class="badge badge-<?= strtolower($lot['lot_status']) ?>"><?= $escape($value) ?></span><?php else: ?><strong><?= $escape($value ?? 'Not set') ?></strong><?php endif; ?></div>
 <?php endforeach; ?></div></section>
 <section class="workflow-card"><h2>Collected Items</h2><p>Risk reflects the assessment recorded when the pickup was requested.</p>
-<div class="bid-table-wrapper"><table class="bid-table"><thead><tr><th>Item</th><th>Actual Quantity</th><th>Actual Weight (kg)</th><th>Actual Condition</th><th>Request-time Risk</th></tr></thead><tbody>
+<?php if (!$items): ?><div class="empty-state">No item details recorded.</div><?php else: ?>
+<div class="bid-table-wrapper"><table class="bid-table items-table"><thead><tr><th>Item</th><th>Actual Quantity</th><th>Actual Weight (kg)</th><th>Actual Condition</th><th>Request-time Risk</th></tr></thead><tbody>
 <?php foreach ($items as $item): ?><tr><td data-label="Item"><?= $escape($item['item_name']) ?></td><td data-label="Actual Quantity"><?= (int) $item['actual_quantity'] ?></td><td data-label="Actual Weight (kg)"><?= $escape($item['actual_weight_kg']) ?></td><td data-label="Actual Condition"><?= $escape($item['actual_condition']) ?></td><td data-label="Request-time Risk"><?= $escape($item['applied_risk_level']) ?></td></tr><?php endforeach; ?>
-<?php if (!$items): ?><tr><td colspan="5">No item details recorded.</td></tr><?php endif; ?>
-</tbody></table></div></section>
+</tbody></table></div><?php endif; ?></section>
 <section class="workflow-card"><h2>Bidding</h2><div class="detail-grid">
 <div class="detail-item"><span class="detail-label">Highest active bid</span><strong><?= $lot['highest_amount'] === null ? 'No bids yet' : 'Rs. ' . number_format((float) $lot['highest_amount'], 2) ?></strong></div>
 <div class="detail-item"><span class="detail-label">Submitted bid count</span><strong><?= (int) $lot['active_count'] ?></strong></div>

@@ -12,7 +12,7 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <td data-label="Category"><?= $escape($bid['category_name']) ?></td>
 <td data-label="My Bid"><strong>Rs. <?= number_format((float) $bid['bid_amount'], 2) ?></strong><?php if ($bid['bid_status'] === 'SUBMITTED'): ?><span class="table-secondary-text">Highest active: Rs. <?= number_format((float) $bid['highest_amount'], 2) ?></span><?php endif; ?></td>
 <td data-label="Status"><span class="badge badge-<?= strtolower($bid['bid_status']) ?>"><?= $statuses[$bid['bid_status']] ?></span></td>
-<td data-label="Submitted"><?= $escape($bid['submitted_at']) ?></td><td data-label="Bidding Deadline"><?= $escape($bid['bidding_close_at']) ?></td>
+<td data-label="Submitted"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $bid['submitted_at'])) ?>"><?= $escape(substr($bid['submitted_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($bid['submitted_at'], 11, 5)) ?></span></time></td><td data-label="Bidding Deadline"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $bid['bidding_close_at'])) ?>"><?= $escape(substr($bid['bidding_close_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($bid['bidding_close_at'], 11, 5)) ?></span></time></td>
 <td data-label="Actions"><div class="row-actions">
 <a class="edit-btn secondary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>">View Details</a>
 <?php if ($bid['can_revise']): ?>

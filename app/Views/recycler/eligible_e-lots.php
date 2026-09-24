@@ -14,7 +14,7 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <tr data-eligible-row data-search="<?= $escape($lot['lot_code'] . ' ' . $lot['title'] . ' ' . $lot['category_name']) ?>" data-category="<?= $escape($lot['category_name']) ?>">
 <td data-label="E-Lot"><strong class="table-primary-text"><?= $escape($lot['lot_code']) ?></strong><span class="table-secondary-text"><?= $escape($lot['title']) ?></span></td>
 <td data-label="Category"><?= $escape($lot['category_name']) ?></td>
-<td data-label="Bidding Deadline"><?= $escape($lot['bidding_close_at']) ?></td>
+<td data-label="Bidding Deadline"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $lot['bidding_close_at'])) ?>"><?= $escape(substr($lot['bidding_close_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($lot['bidding_close_at'], 11, 5)) ?></span></time></td>
 <td data-label="Active Bids"><strong><?= (int) $lot['active_count'] ?> submitted</strong><span class="table-secondary-text">Highest: <?= $lot['highest_amount'] === null ? 'No bids yet' : 'Rs. ' . number_format((float) $lot['highest_amount'], 2) ?></span></td>
 <td data-label="My Bid"><?php if ($lot['bid_id']): ?><span class="badge badge-<?= strtolower($lot['bid_status']) ?>"><?= $statuses[$lot['bid_status']] ?></span><span class="table-secondary-text">Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></span><?php else: ?>Not bid yet<?php endif; ?></td>
 <td data-label="Actions"><a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $lot['e_lot_id'] ?>">View Details</a></td>
