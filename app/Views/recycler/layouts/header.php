@@ -11,9 +11,9 @@
 
     <div class="header-right">
         <div class="profile">
-            <div class="avatar">AS</div>
+            <div class="avatar" aria-hidden="true">R</div>
             <div class="profile-info">
-                <span class="name">Anjana Silva</span>
+                <span class="name"><?= htmlspecialchars((string) (Auth::user()['name'] ?? 'Recycler'), ENT_QUOTES, 'UTF-8') ?></span>
                 <span class="role">Recycler</span>
             </div>
         </div>

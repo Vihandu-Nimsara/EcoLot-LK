@@ -44,6 +44,9 @@ return static function (Router $router, array $app): void {
         $router->get('/eligible-e-lots', 'RecyclerController@eligibleELots');
         $router->get('/e-lot/{id}', 'RecyclerController@eLotDetails');
         $router->get('/my-bids', 'RecyclerController@myBids');
+        $router->post('/e-lot/{id}/bid', 'RecyclerController@placeBid');
+        $router->post('/bid/{id}/update', 'RecyclerController@updateBid');
+        $router->post('/bid/{id}/withdraw', 'RecyclerController@withdrawBid');
         $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
         $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
         $router->get('/profile', 'RecyclerController@profile');

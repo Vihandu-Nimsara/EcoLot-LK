@@ -50,6 +50,11 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
             <?php include __DIR__ . '/header.php'; ?>
 
             <main class="page-content">
+                <?php foreach (['bid_success', 'bid_error'] as $flashKey): ?>
+                    <?php if ($message = Session::pullFlash($flashKey)): ?>
+                        <div class="workflow-card" role="<?= $flashKey === 'bid_error' ? 'alert' : 'status' ?>"><?= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') ?></div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
                 <?= $content ?>
             </main>
         </div>
