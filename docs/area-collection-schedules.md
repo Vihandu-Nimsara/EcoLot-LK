@@ -1,3 +1,13 @@
+# Current CRUD safeguards (September 2026)
+
+The create form now opens in a modal. OPEN schedules display their request intake separately: Accepting requests, Full, or Deadline passed. Expiry does not automatically rewrite the stored status.
+
+PLANNED and CLOSED can become OPEN only while the cut-off has not passed. PLANNED, OPEN and CLOSED can become CANCELLED only without active assignments, collection submissions, or completed requests. Cancelling changes SUBMITTED, PENDING_REVIEW and APPROVED requests to CANCELLED in the same transaction; existing rejected/cancelled records and all history remain. Cancellation does not send notifications or reschedule requests. COMPLETED and CANCELLED schedules reject edits on the server and hide the edit form.
+
+Collector assignment/start/submission/verification database integration remains outside this CRUD implementation; existing browser prototypes do not establish those persisted transitions.
+
+The original implementation walkthrough below describes the initial version; its inline-create and older status/edit rules are superseded by this section.
+
 # Area collection schedules
 
 The Municipal Officer schedule page now reads and writes MySQL through the existing plain-PHP MVC code. It uses the existing layout, forms, buttons, session authentication, CSRF helper and PDO base model. The create form appears below the table only after clicking Create Schedule (or after validation errors), so the whole CRUD works without JavaScript. JavaScript only filters already-rendered rows.

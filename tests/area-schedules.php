@@ -120,12 +120,16 @@ try {
     }
     verify($invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CLOSED'], $id), 'OPEN -> CLOSED failed');
     verify($invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'OPEN'], $id), 'CLOSED -> OPEN before cutoff failed');
-    verify($invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CANCELLED'], $id), 'OPEN -> CANCELLED failed');
+    verify($invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CLOSED'], $id), 'Close before cancellation failed');
+    verify($invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CANCELLED'], $id), 'CLOSED -> CANCELLED failed');
     verify(!$invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'OPEN'], $id), 'CANCELLED reopened');
+    verify(!$invoke('updateAreaSchedule', ['request_capacity' => '6', 'schedule_status' => 'CANCELLED'], $id), 'Cancelled capacity edited');
+    verify((int) $db->query("SELECT COUNT(*) FROM e_waste_requests WHERE schedule_id = $id AND request_status IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')")->fetchColumn() === 0, 'Cancellation left pending requests');
+    verify($model->countActiveRequests($id) === 0, 'Cancelled requests still counted');
     verify($invoke('storeAreaSchedule', array_replace($valid, ['collection_date' => "$month-25"])), 'Cancelled schedule consumed limit');
     verify(!$invoke('storeAreaSchedule', $valid), 'Cancelled duplicate date accepted');
     $details = $model->getScheduleDetails($id);
-    verify($details['created_by_name'] === '<script>Officer</script>' && (int) $details['active_request_count'] === 2 && $details['area_name'] === 'Area One', 'JOIN details wrong');
+    verify($details['created_by_name'] === '<script>Officer</script>' && (int) $details['active_request_count'] === 0 && $details['area_name'] === 'Area One', 'JOIN details wrong');
     $otherId = (int) $db->query('SELECT schedule_id FROM area_collection_schedules WHERE postal_area_id = 2')->fetchColumn();
     $model->update($otherId, ['schedule_status' => 'OPEN']);
     try { $requests->create(['public_user_id' => 2, 'schedule_id' => $otherId, 'pickup_address' => 'Test']); throw new RuntimeException('Wrong area accepted'); } catch (DomainException $expected) {}
@@ -133,6 +137,8 @@ try {
     $unusedId = (int) $db->query("SELECT schedule_id FROM area_collection_schedules WHERE collection_date = '$month-20'")->fetchColumn();
     $db->exec("INSERT INTO schedule_assignments (schedule_id, collector_user_id, assigned_by_officer_user_id) VALUES ($unusedId, 3, 1)");
     verify(!$invoke('deleteAreaSchedule', [], $unusedId), 'Assigned schedule deleted');
+    verify(!$invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CANCELLED'], $unusedId), 'Assigned work cancelled');
+    verify($model->find($unusedId)['schedule_status'] === 'PLANNED', 'Failed cancellation changed status');
     $db->exec("INSERT INTO schedule_collections (schedule_id, submitted_by_collector_user_id) VALUES ($unusedId, 3)");
     verify($model->hasCollectionSubmission($unusedId), 'Collection check missing');
     $db->exec("DELETE FROM schedule_assignments WHERE schedule_id = $unusedId");
@@ -143,6 +149,12 @@ try {
     $boundary = new DateTimeImmutable($sample['request_cutoff_at'], new DateTimeZone('Asia/Colombo'));
     verify(in_array('OPEN', AreaCollectionSchedule::manualStatuses($sample, $boundary), true), 'Exact cutoff rejected');
     verify(!in_array('OPEN', AreaCollectionSchedule::manualStatuses($sample, $boundary->modify('+1 second')), true), 'Past cutoff accepted');
+    $expiredPlanned = ['schedule_status' => 'PLANNED', 'request_cutoff_at' => '2000-01-01 23:59:59'];
+    verify(!in_array('OPEN', AreaCollectionSchedule::manualStatuses($expiredPlanned), true), 'Expired planned schedule opens');
+    verify(in_array('CANCELLED', AreaCollectionSchedule::manualStatuses($sample, $boundary->modify('+1 second')), true), 'Closed schedule cannot cancel');
+    verify(AreaCollectionSchedule::intakeLabel(['schedule_status' => 'OPEN', 'request_cutoff_at' => '2000-01-01 23:59:59', 'active_request_count' => 0, 'request_capacity' => 5]) === 'Deadline passed', 'Expired intake label missing');
+    $model->update($unusedId, ['schedule_status' => 'COMPLETED']);
+    verify(!$invoke('updateAreaSchedule', ['request_capacity' => '6', 'schedule_status' => 'COMPLETED'], $unusedId), 'Completed capacity edited');
     foreach (['ASSIGNED', 'IN_PROGRESS', 'COLLECTION_SUBMITTED', 'COMPLETED', 'CANCELLED'] as $state) {
         verify(AreaCollectionSchedule::manualStatuses(['schedule_status' => $state] + $sample) === [$state], 'Workflow state editable');
     }

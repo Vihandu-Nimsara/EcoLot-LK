@@ -183,6 +183,9 @@ class MunicipalOfficerController extends Controller
             $errors = $model->transaction(function () use ($model, $number, $capacity, $input): array {
                 $schedule = $model->lockSchedule($number);
                 if ($schedule === null) return ['Collection schedule not found.'];
+                if (in_array($schedule['schedule_status'], ['COMPLETED', 'CANCELLED'], true)) {
+                    return ['Completed and cancelled schedules are read-only.'];
+                }
                 $errors = [];
                 $count = $model->countActiveRequests($number);
                 if ($capacity === null) {
@@ -191,9 +194,13 @@ class MunicipalOfficerController extends Controller
                     $errors[] = "Maximum requests cannot be lower than the {$count} existing requests.";
                 }
                 if (!in_array($input['schedule_status'], AreaCollectionSchedule::manualStatuses($schedule), true)) {
-                    $errors[] = 'This status transition is not allowed. A closed schedule can reopen only before its request cut-off has passed.';
+                    $errors[] = 'This status transition is not allowed. A schedule can open only before its request cut-off has passed.';
+                }
+                if ($input['schedule_status'] === 'CANCELLED' && $model->hasStartedWork($number)) {
+                    $errors[] = 'Cannot cancel a schedule with an active assignment or recorded collection work.';
                 }
                 if ($errors === []) {
+                    if ($input['schedule_status'] === 'CANCELLED') $model->cancelPendingRequests($number);
                     // Explicit allowlist: no other submitted fields can change the record.
                     $model->update($number, ['request_capacity' => $capacity, 'schedule_status' => $input['schedule_status']]);
                 }

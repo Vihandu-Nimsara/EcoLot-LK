@@ -36,7 +36,7 @@ foreach ($schedules as $schedule) {
                             <td><?= $escape($schedule['collection_date']) ?></td>
                             <td><?= $escape($schedule['request_cutoff_at']) ?></td>
                             <td><?= $escape($schedule['active_request_count']) ?> / <?= $escape($schedule['request_capacity']) ?></td>
-                            <td><span class="status <?= $escape(strtolower($schedule['schedule_status'])) ?>"><?= $escape($schedule['schedule_status']) ?></span></td>
+                            <td><span class="status <?= $escape(strtolower($schedule['schedule_status'])) ?>"><?= $escape($schedule['schedule_status']) ?></span><?php if ($intake = AreaCollectionSchedule::intakeLabel($schedule)): ?><br><small><?= $escape($intake) ?></small><?php endif; ?></td>
                             <td><a class="edit-btn" href="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id']) ?>">View / Edit</a></td>
                         </tr>
                     <?php endforeach; ?>
@@ -45,9 +45,11 @@ foreach ($schedules as $schedule) {
             </table>
         </div>
     </section>
-    <?php if ($showCreate): ?>
-    <section class="scheduled-areas-card schedule-editor" id="create-schedule" aria-labelledby="create-title">
-        <h2 id="create-title">Create Schedule</h2>
+    <dialog class="schedule-create-dialog schedule-dialog-card officer-dialog-card" id="create-schedule" aria-labelledby="create-title" <?= $showCreate ? 'open' : '' ?>>
+        <div class="officer-dialog-header">
+            <h2 id="create-title">Create Schedule</h2>
+            <a href="<?= $escape($scheduleUrl) ?>" class="officer-dialog-close" data-close-schedule aria-label="Close create schedule">×</a>
+        </div>
         <p>New schedules start as PLANNED. Dates and area cannot be changed after creation. Times use Sri Lanka time.</p>
         <?php if ($errors !== []): ?>
             <div class="schedule-errors" role="alert"><ul><?php foreach ($errors as $error): ?><li><?= $escape($error) ?></li><?php endforeach; ?></ul></div>
@@ -88,11 +90,10 @@ foreach ($schedules as $schedule) {
                     <input type="date" id="schedule-collection" name="collection_date" value="<?= $escape($old['collection_date'] ?? '') ?>" required>
                 </div>
             </div>
-            <div class="schedule-dialog-actions">
-                <a class="secondary-btn" href="<?= $escape($scheduleUrl) ?>">Cancel</a>
+            <div class="schedule-dialog-actions officer-dialog-actions">
+                <a class="secondary-btn" data-close-schedule href="<?= $escape($scheduleUrl) ?>">Cancel</a>
                 <button type="submit" class="primary-btn">Create Schedule</button>
             </div>
         </form>
-    </section>
-    <?php endif; ?>
+    </dialog>
 </section>

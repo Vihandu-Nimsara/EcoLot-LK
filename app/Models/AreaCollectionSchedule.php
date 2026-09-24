@@ -127,13 +127,37 @@ final class AreaCollectionSchedule extends Model
         return (bool) $this->query('SELECT 1 FROM schedule_collections WHERE schedule_id = :id LIMIT 1', ['id' => $id])->fetchColumn();
     }
 
+    public function hasStartedWork(int $id): bool
+    {
+        return $this->hasCollectionSubmission($id) || (bool) $this->query(
+            "SELECT 1 FROM schedule_assignments WHERE schedule_id = :id AND unassigned_at IS NULL LIMIT 1", ['id' => $id]
+        )->fetchColumn() || (bool) $this->query(
+            "SELECT 1 FROM e_waste_requests WHERE schedule_id = :id AND request_status = 'COMPLETED' LIMIT 1", ['id' => $id]
+        )->fetchColumn();
+    }
+
+    public function cancelPendingRequests(int $id): void
+    {
+        $this->query("UPDATE e_waste_requests SET request_status = 'CANCELLED'
+            WHERE schedule_id = :id AND request_status IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')", ['id' => $id]);
+    }
+
+    public static function intakeLabel(array $schedule): string
+    {
+        if ($schedule['schedule_status'] !== 'OPEN') return '';
+        $now = new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo'));
+        if ($now->format('Y-m-d H:i:s') > $schedule['request_cutoff_at']) return 'Deadline passed';
+        return (int) $schedule['active_request_count'] >= (int) $schedule['request_capacity'] ? 'Full' : 'Accepting requests';
+    }
+
     public static function manualStatuses(array $schedule, ?DateTimeImmutable $now = null): array
     {
         $now ??= new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo'));
+        $beforeCutoff = $now->setTimezone(new DateTimeZone('Asia/Colombo'))->format('Y-m-d H:i:s') <= $schedule['request_cutoff_at'];
         $next = match ($schedule['schedule_status']) {
-            'PLANNED' => ['OPEN', 'CANCELLED'],
+            'PLANNED' => $beforeCutoff ? ['OPEN', 'CANCELLED'] : ['CANCELLED'],
             'OPEN' => ['CLOSED', 'CANCELLED'],
-            'CLOSED' => $now->setTimezone(new DateTimeZone('Asia/Colombo'))->format('Y-m-d H:i:s') <= $schedule['request_cutoff_at'] ? ['OPEN'] : [],
+            'CLOSED' => $beforeCutoff ? ['OPEN', 'CANCELLED'] : ['CANCELLED'],
             default => [],
         };
         // Keeping the current state permits capacity-only edits.
