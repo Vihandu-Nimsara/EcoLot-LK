@@ -118,25 +118,57 @@ CREATE TABLE IF NOT EXISTS `authorized_recyclers` (
     `company_name` VARCHAR(180) NOT NULL,
     `business_address` VARCHAR(500) NOT NULL,
     `district` VARCHAR(100) NOT NULL,
-    `verification_status` ENUM('PENDING', 'VERIFIED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
-    `verified_by_admin_user_id` BIGINT UNSIGNED NULL,
-    `verified_at` DATETIME NULL,
+    `verification_status` ENUM('PENDING', 'VERIFIED', 'REJECTED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+    `reviewed_by_admin_user_id` BIGINT UNSIGNED NULL,
+    `reviewed_at` DATETIME NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `review_note` VARCHAR(500) NULL,
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `uq_authorized_recyclers_company_name` (`company_name`),
     KEY `idx_recyclers_verification_status` (`verification_status`),
     CONSTRAINT `fk_authorized_recyclers_user`
         FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
         ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `fk_authorized_recyclers_verified_by_admin`
-        FOREIGN KEY (`verified_by_admin_user_id`) REFERENCES `administrators` (`user_id`)
+    CONSTRAINT `fk_authorized_recyclers_reviewed_by_admin`
+        FOREIGN KEY (`reviewed_by_admin_user_id`) REFERENCES `administrators` (`user_id`)
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT `chk_recycler_verification_audit`
         CHECK (
-            (`verification_status` = 'PENDING' AND `verified_by_admin_user_id` IS NULL AND `verified_at` IS NULL)
+            (`verification_status` = 'PENDING'
+                AND `reviewed_by_admin_user_id` IS NULL
+                AND `reviewed_at` IS NULL
+                AND `review_note` IS NULL)
             OR
-            (`verification_status` IN ('VERIFIED', 'REJECTED') AND `verified_by_admin_user_id` IS NOT NULL AND `verified_at` IS NOT NULL)
+            (`verification_status` = 'VERIFIED'
+                AND `reviewed_by_admin_user_id` IS NOT NULL
+                AND `reviewed_at` IS NOT NULL)
+            OR
+            (`verification_status` IN ('REJECTED', 'SUSPENDED')
+                AND `reviewed_by_admin_user_id` IS NOT NULL
+                AND `reviewed_at` IS NOT NULL
+                AND `review_note` IS NOT NULL)
         )
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- Audit trail
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+    `audit_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `actor_user_id` BIGINT UNSIGNED NULL,
+    `action_type` VARCHAR(100) NOT NULL,
+    `entity_type` VARCHAR(100) NOT NULL,
+    `entity_id` BIGINT UNSIGNED NULL,
+    `details` TEXT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`audit_id`),
+    KEY `idx_audit_logs_actor_created` (`actor_user_id`, `created_at`),
+    KEY `idx_audit_logs_entity` (`entity_type`, `entity_id`),
+    KEY `idx_audit_logs_created_at` (`created_at`),
+    CONSTRAINT `fk_audit_logs_actor_user`
+        FOREIGN KEY (`actor_user_id`) REFERENCES `users` (`user_id`)
+        ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- =========================================================
@@ -170,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `e_waste_items` (
 CREATE TABLE IF NOT EXISTS `risk_rules` (
     `risk_rule_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `waste_item_id` BIGINT UNSIGNED NOT NULL,
-    `condition_type` VARCHAR(80) NOT NULL,
+    `condition_type` ENUM('WORKING', 'DAMAGED', 'UNKNOWN') NOT NULL,
     `risk_level` ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL,
     `action_note` VARCHAR(500) NOT NULL,
     `rule_status` ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
@@ -215,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `area_collection_schedules` (
     ) NOT NULL DEFAULT 'PLANNED',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`schedule_id`),
-    UNIQUE KEY `uq_schedules_campaign_area` (`campaign_id`, `postal_area_id`),
+    UNIQUE KEY `uq_schedules_campaign_area_date` (`campaign_id`, `postal_area_id`, `collection_date`),
     KEY `idx_schedules_date_status` (`collection_date`, `schedule_status`),
     CONSTRAINT `fk_schedules_campaign`
         FOREIGN KEY (`campaign_id`) REFERENCES `monthly_campaigns` (`campaign_id`)
@@ -310,7 +342,7 @@ CREATE TABLE IF NOT EXISTS `request_items` (
     `request_id` BIGINT UNSIGNED NOT NULL,
     `waste_item_id` BIGINT UNSIGNED NOT NULL,
     `quantity` INT UNSIGNED NOT NULL,
-    `estimated_weight_kg` DECIMAL(10,3) UNSIGNED NOT NULL,
+    `estimated_weight_kg` DECIMAL(10,3) UNSIGNED NULL,
     `item_condition` ENUM('WORKING', 'DAMAGED', 'UNKNOWN') NOT NULL,
     `condition_note` VARCHAR(500) NULL,
     `applied_risk_level` ENUM('LOW', 'MEDIUM', 'HIGH') NOT NULL,
@@ -327,7 +359,7 @@ CREATE TABLE IF NOT EXISTS `request_items` (
     CONSTRAINT `chk_request_items_quantity`
         CHECK (`quantity` > 0),
     CONSTRAINT `chk_request_items_weight`
-        CHECK (`estimated_weight_kg` > 0)
+        CHECK (`estimated_weight_kg` IS NULL OR `estimated_weight_kg` > 0)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `complaint_feedback` (
@@ -365,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `recycler_licenses` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `license_number` VARCHAR(100) NOT NULL,
     `expiry_date` DATE NOT NULL,
-    `license_status` ENUM('PENDING', 'VALID', 'EXPIRED', 'REVOKED') NOT NULL DEFAULT 'PENDING',
+    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED') NOT NULL DEFAULT 'PENDING',
     `document_path` VARCHAR(500) NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`license_id`),
@@ -380,7 +412,7 @@ CREATE TABLE IF NOT EXISTS `recycler_capabilities` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `category_id` BIGINT UNSIGNED NOT NULL,
     `can_handle_high_risk` BOOLEAN NOT NULL DEFAULT FALSE,
-    `capability_status` ENUM('PENDING', 'APPROVED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+    `capability_status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
     PRIMARY KEY (`recycler_user_id`, `category_id`),
     KEY `idx_recycler_capabilities_category` (`category_id`, `capability_status`),
     CONSTRAINT `fk_recycler_capabilities_recycler`
@@ -402,7 +434,7 @@ CREATE TABLE IF NOT EXISTS `recycler_authorized_activities` (
         'RECYCLING',
         'DISPOSAL'
     ) NOT NULL,
-    `activity_status` ENUM('PENDING', 'APPROVED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+    `activity_status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`activity_id`),
     UNIQUE KEY `uq_recycler_authorized_activity` (`recycler_user_id`, `activity_type`),
@@ -450,7 +482,7 @@ CREATE TABLE IF NOT EXISTS `collection_records` (
     `schedule_collection_id` BIGINT UNSIGNED NOT NULL,
     `request_id` BIGINT UNSIGNED NOT NULL,
     `pickup_result` ENUM('COLLECTED', 'PARTIAL', 'NOT_COLLECTED') NOT NULL,
-    `collected_at` DATETIME NOT NULL,
+    `pickup_attempted_at` DATETIME NOT NULL,
     `collector_note` VARCHAR(500) NULL,
     PRIMARY KEY (`collection_record_id`),
     UNIQUE KEY `uq_collection_records_request` (`request_id`),
@@ -469,14 +501,16 @@ CREATE TABLE IF NOT EXISTS `collection_record_items` (
     `collection_record_id` BIGINT UNSIGNED NOT NULL,
     `request_item_id` BIGINT UNSIGNED NOT NULL,
     `actual_quantity` INT UNSIGNED NOT NULL,
-    `actual_weight_kg` DECIMAL(10,3) UNSIGNED NOT NULL,
-    `actual_condition` ENUM('WORKING', 'DAMAGED', 'UNKNOWN') NOT NULL,
+    `actual_weight_kg` DECIMAL(10,3) UNSIGNED NULL,
+    `actual_condition` ENUM('WORKING', 'DAMAGED', 'UNKNOWN') NULL,
     `item_result` ENUM('COLLECTED', 'PARTIAL', 'NOT_COLLECTED') NOT NULL,
     `notes` VARCHAR(500) NULL,
+    `actual_risk_level` ENUM('LOW', 'MEDIUM', 'HIGH') NULL,
     PRIMARY KEY (`record_item_id`),
     UNIQUE KEY `uq_collection_record_items_request_item` (`request_item_id`),
     KEY `idx_collection_record_items_record` (`collection_record_id`),
     KEY `idx_collection_record_items_result` (`item_result`),
+    KEY `idx_collection_record_items_risk` (`actual_risk_level`),
     CONSTRAINT `fk_collection_record_items_record`
         FOREIGN KEY (`collection_record_id`) REFERENCES `collection_records` (`collection_record_id`)
         ON UPDATE CASCADE ON DELETE CASCADE,
@@ -485,9 +519,22 @@ CREATE TABLE IF NOT EXISTS `collection_record_items` (
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT `chk_collection_record_items_values`
         CHECK (
-            (`item_result` = 'NOT_COLLECTED' AND `actual_quantity` = 0 AND `actual_weight_kg` = 0)
+            (
+                `item_result` = 'NOT_COLLECTED'
+                AND `actual_quantity` = 0
+                AND (`actual_weight_kg` IS NULL OR `actual_weight_kg` = 0)
+                AND `actual_condition` IS NULL
+                AND `actual_risk_level` IS NULL
+            )
             OR
-            (`item_result` IN ('COLLECTED', 'PARTIAL') AND `actual_quantity` > 0 AND `actual_weight_kg` > 0)
+            (
+                `item_result` IN ('COLLECTED', 'PARTIAL')
+                AND `actual_quantity` > 0
+                AND `actual_weight_kg` IS NOT NULL
+                AND `actual_weight_kg` > 0
+                AND `actual_condition` IS NOT NULL
+                AND `actual_risk_level` IS NOT NULL
+            )
         )
 ) ENGINE=InnoDB;
 
@@ -665,22 +712,47 @@ CREATE TRIGGER `trg_schedule_assignments_one_active_bi`
 BEFORE INSERT ON `schedule_assignments`
 FOR EACH ROW
 BEGIN
+    DECLARE v_collection_date DATE;
+
+    SELECT `collection_date`
+      INTO v_collection_date
+      FROM `area_collection_schedules`
+     WHERE `schedule_id` = NEW.`schedule_id`;
+
     IF NEW.`unassigned_at` IS NULL
        AND EXISTS (
            SELECT 1 FROM `schedule_assignments`
            WHERE `schedule_id` = NEW.`schedule_id`
              AND `unassigned_at` IS NULL
        ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A schedule can have only one active collector assignment';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A schedule can have only one active collector and vehicle assignment';
+    END IF;
+
+    IF NEW.`unassigned_at` IS NULL
+       AND EXISTS (
+           SELECT 1
+             FROM `schedule_assignments` sa
+             JOIN `area_collection_schedules` s
+               ON s.`schedule_id` = sa.`schedule_id`
+            WHERE sa.`collector_user_id` = NEW.`collector_user_id`
+              AND sa.`unassigned_at` IS NULL
+              AND s.`collection_date` = v_collection_date
+       ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The collector already has an active assignment on this collection date';
     END IF;
 
     IF NEW.`vehicle_id` IS NOT NULL
+       AND NEW.`unassigned_at` IS NULL
        AND EXISTS (
-           SELECT 1 FROM `schedule_assignments`
-           WHERE `vehicle_id` = NEW.`vehicle_id`
-             AND `unassigned_at` IS NULL
+           SELECT 1
+             FROM `schedule_assignments` sa
+             JOIN `area_collection_schedules` s
+               ON s.`schedule_id` = sa.`schedule_id`
+            WHERE sa.`vehicle_id` = NEW.`vehicle_id`
+              AND sa.`unassigned_at` IS NULL
+              AND s.`collection_date` = v_collection_date
        ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The vehicle already has an active assignment';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The vehicle already has an active assignment on this collection date';
     END IF;
 END$$
 
@@ -689,6 +761,13 @@ CREATE TRIGGER `trg_schedule_assignments_one_active_bu`
 BEFORE UPDATE ON `schedule_assignments`
 FOR EACH ROW
 BEGIN
+    DECLARE v_collection_date DATE;
+
+    SELECT `collection_date`
+      INTO v_collection_date
+      FROM `area_collection_schedules`
+     WHERE `schedule_id` = NEW.`schedule_id`;
+
     IF NEW.`unassigned_at` IS NULL
        AND EXISTS (
            SELECT 1 FROM `schedule_assignments`
@@ -696,17 +775,36 @@ BEGIN
              AND `unassigned_at` IS NULL
              AND `assignment_id` <> OLD.`assignment_id`
        ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A schedule can have only one active collector assignment';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A schedule can have only one active collector and vehicle assignment';
     END IF;
 
-    IF NEW.`vehicle_id` IS NOT NULL AND NEW.`unassigned_at` IS NULL
+    IF NEW.`unassigned_at` IS NULL
        AND EXISTS (
-           SELECT 1 FROM `schedule_assignments`
-           WHERE `vehicle_id` = NEW.`vehicle_id`
-             AND `unassigned_at` IS NULL
-             AND `assignment_id` <> OLD.`assignment_id`
+           SELECT 1
+             FROM `schedule_assignments` sa
+             JOIN `area_collection_schedules` s
+               ON s.`schedule_id` = sa.`schedule_id`
+            WHERE sa.`collector_user_id` = NEW.`collector_user_id`
+              AND sa.`unassigned_at` IS NULL
+              AND sa.`assignment_id` <> OLD.`assignment_id`
+              AND s.`collection_date` = v_collection_date
        ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The vehicle already has an active assignment';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The collector already has an active assignment on this collection date';
+    END IF;
+
+    IF NEW.`vehicle_id` IS NOT NULL
+       AND NEW.`unassigned_at` IS NULL
+       AND EXISTS (
+           SELECT 1
+             FROM `schedule_assignments` sa
+             JOIN `area_collection_schedules` s
+               ON s.`schedule_id` = sa.`schedule_id`
+            WHERE sa.`vehicle_id` = NEW.`vehicle_id`
+              AND sa.`unassigned_at` IS NULL
+              AND sa.`assignment_id` <> OLD.`assignment_id`
+              AND s.`collection_date` = v_collection_date
+       ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The vehicle already has an active assignment on this collection date';
     END IF;
 END$$
 
@@ -913,6 +1011,10 @@ BEGIN
     DECLARE v_can_high_risk BOOLEAN;
     DECLARE v_has_high_risk BOOLEAN;
 
+    IF NEW.`bid_status` <> 'SUBMITTED' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A new recycler bid must start with SUBMITTED status';
+    END IF;
+
     SELECT `lot_status`, `bidding_open_at`, `bidding_close_at`, `category_id`
       INTO v_lot_status, v_open_at, v_close_at, v_category_id
       FROM `e_lots`
@@ -939,9 +1041,8 @@ BEGIN
         SELECT 1
           FROM `e_lot_items` eli
           JOIN `collection_record_items` cri ON cri.`record_item_id` = eli.`record_item_id`
-          JOIN `request_items` ri ON ri.`request_item_id` = cri.`request_item_id`
          WHERE eli.`e_lot_id` = NEW.`e_lot_id`
-           AND ri.`applied_risk_level` = 'HIGH'
+           AND cri.`actual_risk_level` = 'HIGH'
     ) INTO v_has_high_risk;
 
     IF v_lot_status <> 'OPEN_FOR_BIDDING'
@@ -978,11 +1079,89 @@ BEGIN
     END IF;
 END$$
 
+DROP TRIGGER IF EXISTS `trg_recycler_bids_rules_bu`$$
 DROP TRIGGER IF EXISTS `trg_recycler_bids_one_winner_bu`$$
-CREATE TRIGGER `trg_recycler_bids_one_winner_bu`
+CREATE TRIGGER `trg_recycler_bids_rules_bu`
 BEFORE UPDATE ON `recycler_bids`
 FOR EACH ROW
 BEGIN
+    DECLARE v_lot_status VARCHAR(30);
+    DECLARE v_open_at DATETIME;
+    DECLARE v_close_at DATETIME;
+    DECLARE v_category_id BIGINT UNSIGNED;
+    DECLARE v_recycler_status VARCHAR(20);
+    DECLARE v_license_count INT;
+    DECLARE v_capability_count INT;
+    DECLARE v_can_high_risk BOOLEAN;
+    DECLARE v_has_high_risk BOOLEAN;
+
+    IF NEW.`e_lot_id` <> OLD.`e_lot_id`
+       OR NEW.`recycler_user_id` <> OLD.`recycler_user_id` THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A bid cannot be moved to another E-Lot or recycler';
+    END IF;
+
+    IF NEW.`bid_amount` <> OLD.`bid_amount` THEN
+        IF OLD.`bid_status` <> 'SUBMITTED' OR NEW.`bid_status` <> 'SUBMITTED' THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only a submitted bid can be updated';
+        END IF;
+
+        SELECT `lot_status`, `bidding_open_at`, `bidding_close_at`, `category_id`
+          INTO v_lot_status, v_open_at, v_close_at, v_category_id
+          FROM `e_lots`
+         WHERE `e_lot_id` = NEW.`e_lot_id`;
+
+        SELECT `verification_status`
+          INTO v_recycler_status
+          FROM `authorized_recyclers`
+         WHERE `user_id` = NEW.`recycler_user_id`;
+
+        SELECT COUNT(*)
+          INTO v_license_count
+          FROM `recycler_licenses`
+         WHERE `recycler_user_id` = NEW.`recycler_user_id`
+           AND `license_status` = 'VALID'
+           AND `expiry_date` >= CURRENT_DATE;
+
+        SELECT COUNT(*), COALESCE(MAX(`can_handle_high_risk`), FALSE)
+          INTO v_capability_count, v_can_high_risk
+          FROM `recycler_capabilities`
+         WHERE `recycler_user_id` = NEW.`recycler_user_id`
+           AND `category_id` = v_category_id
+           AND `capability_status` = 'APPROVED';
+
+        SELECT EXISTS (
+            SELECT 1
+              FROM `e_lot_items` eli
+              JOIN `collection_record_items` cri
+                ON cri.`record_item_id` = eli.`record_item_id`
+             WHERE eli.`e_lot_id` = NEW.`e_lot_id`
+               AND cri.`actual_risk_level` = 'HIGH'
+        ) INTO v_has_high_risk;
+
+        IF v_lot_status <> 'OPEN_FOR_BIDDING'
+           OR CURRENT_TIMESTAMP < v_open_at
+           OR CURRENT_TIMESTAMP > v_close_at THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The E-Lot is not currently open for bid updates';
+        END IF;
+        IF v_recycler_status <> 'VERIFIED' THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Only verified recyclers can update bids';
+        END IF;
+        IF v_license_count = 0 THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A valid recycler licence is required to update a bid';
+        END IF;
+        IF v_capability_count = 0 THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Recycler capability does not match the E-Lot category';
+        END IF;
+        IF v_has_high_risk AND NOT v_can_high_risk THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'High-risk handling capability is required for this E-Lot';
+        END IF;
+    END IF;
+
+    IF NEW.`bid_status` IN ('WINNING', 'REJECTED')
+       AND (NEW.`reviewed_by_officer_user_id` IS NULL OR NEW.`reviewed_at` IS NULL) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Reviewed bid statuses require officer review details';
+    END IF;
+
     IF NEW.`bid_status` = 'WINNING'
        AND EXISTS (
            SELECT 1 FROM `recycler_bids`
@@ -1000,11 +1179,64 @@ BEFORE INSERT ON `handover_records`
 FOR EACH ROW
 BEGIN
     IF NOT EXISTS (
-        SELECT 1 FROM `recycler_bids`
-        WHERE `bid_id` = NEW.`winning_bid_id`
-          AND `bid_status` = 'WINNING'
+        SELECT 1
+          FROM `recycler_bids` rb
+          JOIN `e_lots` el ON el.`e_lot_id` = rb.`e_lot_id`
+         WHERE rb.`bid_id` = NEW.`winning_bid_id`
+           AND rb.`bid_status` = 'WINNING'
+           AND el.`lot_status` = 'AWARDED'
     ) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A handover requires a winning recycler bid';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A handover requires a winning bid from an AWARDED E-Lot';
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS `trg_handover_winning_bid_bu`$$
+CREATE TRIGGER `trg_handover_winning_bid_bu`
+BEFORE UPDATE ON `handover_records`
+FOR EACH ROW
+BEGIN
+    IF NEW.`winning_bid_id` <> OLD.`winning_bid_id` THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A handover cannot be moved to another winning bid';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+          FROM `recycler_bids` rb
+          JOIN `e_lots` el ON el.`e_lot_id` = rb.`e_lot_id`
+         WHERE rb.`bid_id` = NEW.`winning_bid_id`
+           AND rb.`bid_status` = 'WINNING'
+           AND el.`lot_status` IN ('AWARDED', 'COMPLETED')
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A handover requires a valid winning bid';
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS `trg_handover_complete_e_lot_ai`$$
+CREATE TRIGGER `trg_handover_complete_e_lot_ai`
+AFTER INSERT ON `handover_records`
+FOR EACH ROW
+BEGIN
+    IF NEW.`handover_status` = 'COMPLETED' THEN
+        UPDATE `e_lots` el
+        JOIN `recycler_bids` rb ON rb.`e_lot_id` = el.`e_lot_id`
+           SET el.`lot_status` = 'COMPLETED'
+         WHERE rb.`bid_id` = NEW.`winning_bid_id`
+           AND rb.`bid_status` = 'WINNING';
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS `trg_handover_complete_e_lot_au`$$
+CREATE TRIGGER `trg_handover_complete_e_lot_au`
+AFTER UPDATE ON `handover_records`
+FOR EACH ROW
+BEGIN
+    IF NEW.`handover_status` = 'COMPLETED'
+       AND OLD.`handover_status` <> 'COMPLETED' THEN
+        UPDATE `e_lots` el
+        JOIN `recycler_bids` rb ON rb.`e_lot_id` = el.`e_lot_id`
+           SET el.`lot_status` = 'COMPLETED'
+         WHERE rb.`bid_id` = NEW.`winning_bid_id`
+           AND rb.`bid_status` = 'WINNING';
     END IF;
 END$$
 
