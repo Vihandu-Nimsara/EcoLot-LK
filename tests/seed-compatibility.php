@@ -2,18 +2,9 @@
 declare(strict_types=1);
 
 // Run against an isolated, disposable database; never writes the application database.
-// php -d session.save_path=/tmp tests/area-schedules.php
+// php -d session.save_path=/tmp tests/seed-compatibility.php
 // The configured DB account needs CREATE/DROP DATABASE privileges.
-define('APP_ROOT', dirname(__DIR__));
-spl_autoload_register(static function (string $class): void {
-    foreach (['Core', 'Controllers', 'Models'] as $directory) {
-        $file = APP_ROOT . '/app/' . $directory . '/' . $class . '.php';
-        if (is_file($file)) { require_once $file; return; }
-    }
-});
-function verify(bool $condition, string $message): void {
-    if (!$condition) throw new RuntimeException($message);
-}
+require_once __DIR__ . '/support/bootstrap.php';
 Session::start();
 Session::put('auth_user', ['id' => 2, 'role' => 'PUBLIC_USER']);
 set_error_handler(static function ($severity, $message, $file, $line): never {
@@ -25,17 +16,7 @@ $database = 'ecolot_schedule_test_' . bin2hex(random_bytes(6));
 $db->exec("CREATE DATABASE `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 try {
     $db->exec("USE `$database`");
-    $schema = file_get_contents(APP_ROOT . '/database/schema.sql');
-    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS `ecolot_lk`.*?;/s', '', $schema);
-    $schema = str_replace('USE `ecolot_lk`;', '', $schema);
-    [$tables, $triggers] = explode('DELIMITER $$', $schema, 2);
-    foreach (explode(';', $tables) as $sql) {
-        if (trim($sql) !== '') $db->exec($sql);
-    }
-    $triggers = str_replace('DELIMITER ;', '', $triggers);
-    foreach (explode('$$', $triggers) as $sql) {
-        if (trim($sql) !== '') $db->exec($sql);
-    }
+    TestDatabase::loadSchema($db);
     $seed = file_get_contents(APP_ROOT . '/database/seed.sql');
     $seed = str_replace('USE `ecolot_lk`;', '', $seed);
     $seed = preg_replace('/^--.*$/m', '', $seed);

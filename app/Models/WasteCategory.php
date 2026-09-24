@@ -56,7 +56,8 @@ final class WasteCategory extends Model
 
         return array_map('intval', $statement->fetchAll(PDO::FETCH_COLUMN));
     }
-        public function findActiveByName(string $categoryName): ?array
+
+    public function findActiveByName(string $categoryName): ?array
     {
         $result = $this->query(
             'SELECT `category_id`, `category_name`

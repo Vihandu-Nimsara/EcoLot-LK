@@ -22,9 +22,13 @@ final class EWasteItem extends Model
         }
         $items = [];
         foreach ($rawItems as $raw) {
-            if (!is_array($raw)) throw new DomainException('Invalid item details.');
+            if (!is_array($raw)) {
+                throw new DomainException('Invalid item details.');
+            }
             foreach (['category', 'item', 'quantity', 'weight', 'condition', 'note'] as $key) {
-                if (isset($raw[$key]) && !is_scalar($raw[$key])) throw new DomainException('Invalid item details.');
+                if (isset($raw[$key]) && !is_scalar($raw[$key])) {
+                    throw new DomainException('Invalid item details.');
+                }
             }
             $condition = strtoupper(trim((string) ($raw['condition'] ?? '')));
             $quantity = filter_var($raw['quantity'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 4294967295]]);
@@ -45,11 +49,18 @@ final class EWasteItem extends Model
                     'condition' => $condition, 'category' => trim((string) ($raw['category'] ?? '')),
                     'item' => trim((string) ($raw['item'] ?? '')),
                 ])->fetch();
-            if (!$item) throw new DomainException('An item is unavailable. Select an item from the current catalogue.');
-            $items[] = ['waste_item_id' => (int) $item['waste_item_id'], 'quantity' => $quantity,
-                'estimated_weight_kg' => $weight, 'item_condition' => $condition,
-                'condition_note' => $note === '' ? null : $note, 'applied_risk_level' => $item['applied_risk'],
-                'requires_review' => $item['collection_status'] === 'REVIEW_REQUIRED' || $item['applied_risk'] === 'HIGH'];
+            if (!$item) {
+                throw new DomainException('An item is unavailable. Select an item from the current catalogue.');
+            }
+            $items[] = [
+                'waste_item_id' => (int) $item['waste_item_id'],
+                'quantity' => $quantity,
+                'estimated_weight_kg' => $weight,
+                'item_condition' => $condition,
+                'condition_note' => $note === '' ? null : $note,
+                'applied_risk_level' => $item['applied_risk'],
+                'requires_review' => $item['collection_status'] === 'REVIEW_REQUIRED' || $item['applied_risk'] === 'HIGH',
+            ];
         }
         return $items;
     }

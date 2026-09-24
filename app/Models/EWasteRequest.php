@@ -14,11 +14,26 @@ final class EWasteRequest extends Model
         $this->db->beginTransaction();
     }
 
+    private function mutate(callable $operation): mixed
+    {
+        $this->beginMutation();
+        try {
+            $result = $operation();
+            $this->db->commit();
+            return $result;
+        } catch (Throwable $error) {
+            $this->db->rollBack();
+            throw $error;
+        }
+    }
+
     /** All inserts share the schedule lock with officer edits. */
     public function create(array $attributes): int
     {
         $ownsTransaction = !$this->db->inTransaction();
-        if ($ownsTransaction) $this->beginMutation();
+        if ($ownsTransaction) {
+            $this->beginMutation();
+        }
         try {
             $schedules = new AreaCollectionSchedule($this->db);
             $schedules->lockSchedule((int) $attributes['schedule_id']);
@@ -27,43 +42,49 @@ final class EWasteRequest extends Model
                 throw new DomainException('This collection date is no longer available.');
             }
             $id = parent::create($attributes);
-            if ($ownsTransaction) $this->db->commit();
+            if ($ownsTransaction) {
+                $this->db->commit();
+            }
             return $id;
         } catch (Throwable $error) {
-            if ($ownsTransaction && $this->db->inTransaction()) $this->db->rollBack();
+            if ($ownsTransaction && $this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             throw $error;
         }
     }
 
     public function createWithItems(array $request, array $rawItems): int
     {
-        $this->beginMutation();
-        try {
+        return $this->mutate(function () use ($request, $rawItems): int {
             $items = (new EWasteItem($this->db))->validatePickupItems($rawItems);
             $profile = (new PublicProfile($this->db))->find((int) $request['public_user_id']);
-            if (!$profile || trim((string) $profile['address']) === '') throw new DomainException('Complete your address profile before requesting pickup.');
+            if (!$profile || trim((string) $profile['address']) === '') {
+                throw new DomainException('Complete your address profile before requesting pickup.');
+            }
             $requestId = $this->create([
-                'public_user_id' => (int) $request['public_user_id'], 'schedule_id' => (int) $request['schedule_id'],
+                'public_user_id' => (int) $request['public_user_id'],
+                'schedule_id' => (int) $request['schedule_id'],
                 'pickup_address' => $profile['address'],
             ] + $this->reviewState($items));
             $this->insertItems($requestId, $items);
-            $this->db->commit();
             return $requestId;
-        } catch (Throwable $error) {
-            $this->db->rollBack();
-            throw $error;
-        }
+        });
     }
 
     private function reviewState(array $items): array
     {
         $review = in_array(true, array_column($items, 'requires_review'), true);
-        return ['request_status' => $review ? 'PENDING_REVIEW' : 'SUBMITTED',
+        return [
+            'request_status' => $review ? 'PENDING_REVIEW' : 'SUBMITTED',
             'risk_review_status' => $review ? 'PENDING' : 'NOT_REQUIRED',
-            'reviewed_by_officer_user_id' => null, 'reviewed_at' => null, 'review_note' => null];
+            'reviewed_by_officer_user_id' => null,
+            'reviewed_at' => null,
+            'review_note' => null,
+        ];
     }
 
-            /**
+    /**
      * All pickup requests submitted by a public user, newest first, each
      * with its collection schedule/address details and its item rows.
      *
@@ -134,7 +155,7 @@ final class EWasteRequest extends Model
     /**
      * Dashboard summary counters for a public user: total requests,
      * completed pickups, requests still pending review, and total
-     * recycled weight (kg) across completed pickups.
+     * estimated weight (kg) across completed pickups.
      *
      * @return array{total_requests: int, completed_requests: int, pending_requests: int, recycled_weight_kg: float}
      */
@@ -178,11 +199,15 @@ final class EWasteRequest extends Model
     private function lockOwned(int $requestId, int $ownerId, ?int $targetSchedule = null): array
     {
         $snapshot = $this->find($requestId);
-        if (!$snapshot || (int) $snapshot['public_user_id'] !== $ownerId) throw new DomainException('Request not found.');
+        if (!$snapshot || (int) $snapshot['public_user_id'] !== $ownerId) {
+            throw new DomainException('Request not found.');
+        }
         $ids = array_unique([(int) $snapshot['schedule_id'], $targetSchedule ?? (int) $snapshot['schedule_id']]);
         sort($ids, SORT_NUMERIC);
         $schedules = new AreaCollectionSchedule($this->db);
-        foreach ($ids as $id) $schedules->lockSchedule($id);
+        foreach ($ids as $id) {
+            $schedules->lockSchedule($id);
+        }
         $request = $this->query('SELECT * FROM e_waste_requests WHERE request_id = :id FOR UPDATE', ['id' => $requestId])->fetch();
         if (!$request || (int) $request['public_user_id'] !== $ownerId || $request['schedule_id'] != $snapshot['schedule_id']) {
             throw new DomainException('This request changed. Reload and try again.');
@@ -196,8 +221,7 @@ final class EWasteRequest extends Model
 
     public function updateScheduleAndItems(int $requestId, int $scheduleId, array $rawItems, int $ownerId): void
     {
-        $this->beginMutation();
-        try {
+        $this->mutate(function () use ($requestId, $scheduleId, $rawItems, $ownerId): void {
             $this->lockOwned($requestId, $ownerId, $scheduleId);
             $profile = (new PublicProfile($this->db))->find($ownerId);
             if (!$profile || !(new AreaCollectionSchedule($this->db))->isBookable($scheduleId, (int) $profile['postal_area_id'], $requestId)) {
@@ -207,49 +231,38 @@ final class EWasteRequest extends Model
             $this->update($requestId, ['schedule_id' => $scheduleId] + $this->reviewState($items));
             $this->query('DELETE FROM request_items WHERE request_id = :id', ['id' => $requestId]);
             $this->insertItems($requestId, $items);
-            $this->db->commit();
-        } catch (Throwable $error) {
-            $this->db->rollBack();
-            throw $error;
-        }
+        });
     }
 
     public function cancelOwned(int $requestId, int $ownerId): void
     {
-        $this->beginMutation();
-        try {
+        $this->mutate(function () use ($requestId, $ownerId): void {
             $this->lockOwned($requestId, $ownerId);
             $this->update($requestId, ['request_status' => 'CANCELLED']);
-            $this->db->commit();
-        } catch (Throwable $error) {
-            $this->db->rollBack();
-            throw $error;
+        });
+    }
+
+    private function insertItems(int $requestId, array $items): void
+    {
+        $itemStatement = $this->db->prepare(
+            'INSERT INTO `request_items`
+                (`request_id`, `waste_item_id`, `quantity`, `estimated_weight_kg`,
+                 `item_condition`, `condition_note`, `applied_risk_level`)
+             VALUES
+                (:request_id, :waste_item_id, :quantity, :estimated_weight_kg,
+                 :item_condition, :condition_note, :applied_risk_level)'
+        );
+
+        foreach ($items as $item) {
+            $itemStatement->execute([
+                'request_id' => $requestId,
+                'waste_item_id' => $item['waste_item_id'],
+                'quantity' => $item['quantity'],
+                'estimated_weight_kg' => $item['estimated_weight_kg'],
+                'item_condition' => $item['item_condition'],
+                'condition_note' => $item['condition_note'],
+                'applied_risk_level' => $item['applied_risk_level'],
+            ]);
         }
     }
-
-private function insertItems(int $requestId, array $items): void
-{
-    $itemStatement = $this->db->prepare(
-        'INSERT INTO `request_items`
-            (`request_id`, `waste_item_id`, `quantity`, `estimated_weight_kg`,
-             `item_condition`, `condition_note`, `applied_risk_level`)
-         VALUES
-            (:request_id, :waste_item_id, :quantity, :estimated_weight_kg,
-             :item_condition, :condition_note, :applied_risk_level)'
-    );
-
-    foreach ($items as $item) {
-        $itemStatement->execute([
-            'request_id' => $requestId,
-            'waste_item_id' => $item['waste_item_id'],
-            'quantity' => $item['quantity'],
-            'estimated_weight_kg' => $item['estimated_weight_kg'],
-            'item_condition' => $item['item_condition'],
-            'condition_note' => $item['condition_note'],
-            'applied_risk_level' => $item['applied_risk_level'],
-        ]);
-    }
 }
-
-    }
-
