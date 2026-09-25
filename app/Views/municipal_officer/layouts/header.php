@@ -2,7 +2,7 @@
 
     <div class="header-left">
         <h1>Officer Workspace</h1>
-        <p>Manage campaigns, schedules, requests, routes, collections, and E-Lots.</p>
+        <p>Manage campaigns, schedules, requests, collection assignments, collections, and E-Lots.</p>
     </div>
 
     <div class="header-right">

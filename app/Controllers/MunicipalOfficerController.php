@@ -99,7 +99,7 @@ class MunicipalOfficerController extends Controller
         if ($cutoff !== null && $collection !== null && $cutoff >= $collection) {
             $errors[] = 'The request cut-off date must be before the collection date.';
         }
-        if ($collection !== null && $collection < new DateTimeImmutable('today', new DateTimeZone('Asia/Colombo'))) {
+        if ($collection !== null && $collection < $today) {
             $errors[] = 'The collection date cannot be in the past.';
         }
         if ($errors === []) {
@@ -291,10 +291,10 @@ class MunicipalOfficerController extends Controller
         $this->view('municipal_officer/flagged-requests', ['currentPage' => 'flagged-requests']);
     }
 
-    public function routes(): void
+    public function collectionAssignments(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/routes', ['currentPage' => 'routes']);
+        $this->view('municipal_officer/collection-assignments', ['currentPage' => 'collection-assignments']);
     }
 
     public function collectionRecords(): void

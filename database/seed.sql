@@ -194,6 +194,18 @@ INSERT INTO `municipal_officers` (`user_id`)
 SELECT @officer_id WHERE @officer_id IS NOT NULL
 ON DUPLICATE KEY UPDATE `user_id` = VALUES(`user_id`);
 
+-- October 2026 demo campaign for Area Collection Schedule CRUD
+-- Re-importing ensures this demo campaign is available and OPEN.
+INSERT INTO `monthly_campaigns` (
+    `created_by_officer_user_id`, `campaign_name`, `campaign_month`, `campaign_status`
+)
+SELECT
+    @officer_id, 'October 2026 E-Waste Collection Campaign', '2026-10-01', 'OPEN'
+WHERE @officer_id IS NOT NULL
+ON DUPLICATE KEY UPDATE
+    `campaign_name` = VALUES(`campaign_name`),
+    `campaign_status` = 'OPEN';
+
 -- 3. Collector
 INSERT INTO `users` (
     `full_name`, `mobile_number`, `email`, `password_hash`, `role`, `account_status`, `mobile_verified_at`

@@ -51,6 +51,7 @@ try {
         ['request_capacity' => '4294967296'], ['request_capacity' => str_repeat('9', 40)],
         ['collection_date' => "2030-02-10\0"], ['collection_date' => '2030-02-30'], ['collection_date' => '2000-01-10'],
         ['collection_date' => "$month-10 trailing"], ['collection_date' => '2099-01-10'],
+        ['request_cutoff_date' => '2000-01-01'],
         ['request_cutoff_date' => "$month-10"], ['request_cutoff_date' => "$month-11"],
     ] as $change) {
         verify(!$invoke('storeAreaSchedule', array_replace($valid, $change)), 'Invalid create accepted: ' . json_encode($change));
