@@ -96,10 +96,6 @@ class MunicipalOfficerController extends Controller
         if ($collection === null) {
             $errors[] = 'Please select a valid collection date.';
         }
-        $today = new DateTimeImmutable('today', new DateTimeZone('Asia/Colombo'));
-        if ($cutoff !== null && $cutoff < $today) {
-            $errors[] = 'The request cut-off date cannot be in the past.';
-        }
         if ($cutoff !== null && $collection !== null && $cutoff >= $collection) {
             $errors[] = 'The request cut-off date must be before the collection date.';
         }

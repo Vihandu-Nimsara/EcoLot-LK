@@ -5,8 +5,7 @@
 -- This file adds missing records. It does not reset the database.
 -- Re-imports preserve names, passwords, account states, addresses and review history.
 -- Exception: PDF-excluded items remain DO_NOT_COLLECT.
--- One October 2026 OPEN demo campaign is created for Area Collection Schedule CRUD.
--- No schedules, pickup requests or fabricated risk rules are created.
+-- No campaigns, schedules, pickup requests or fabricated risk rules are created.
 -- Demo logins (local development only), password: Password123
 --   Admin: 0771111111 | Officer: 0772222222 | Collector: 0773333333
 --   Recycler: 0774444444 | Public user: 0775555555
