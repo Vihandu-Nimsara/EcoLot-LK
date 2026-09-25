@@ -1,0 +1,124 @@
+const assert = require('node:assert/strict');
+const { spawn, execFileSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const root = path.resolve(__dirname, '..');
+const php = process.env.PHP_BINARY || 'php';
+const run = args => execFileSync(php, args, {cwd: root, encoding: 'utf8'});
+(async () => {
+ const fixture = JSON.parse(run(['tests/browser-fixture.php']));
+ const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ecolot-browser-'));
+ let server, browser;
+ let output = '';
+ try {
+  const listener = require('node:net').createServer();
+  await new Promise(resolve => listener.listen(0, '127.0.0.1', resolve));
+  const port = listener.address().port;
+  await new Promise(resolve => listener.close(resolve));
+  const base = `http://127.0.0.1:${port}`;
+  server = spawn(php, ['-d', `session.save_path=${temp}`, '-S', `127.0.0.1:${port}`, '-t', 'public', 'tests/browser-router.php'], {cwd: root, detached: true, env: {...process.env, PHP_CLI_SERVER_WORKERS: '4', DB_DATABASE: fixture.database, APP_BASE_PATH: '', APP_DEBUG: 'true'}});
+  server.stderr.on('data', data => output += data);
+  for (let i=0;i<60;i++) { try { if ((await fetch(`${base}/login`)).ok) break; } catch {} await new Promise(r=>setTimeout(r,100)); }
+  browser = await chromium.launch({headless:true, executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+  const errors=[];
+  const context = async () => {
+   const c=await browser.newContext();
+   await c.route('https://**', route=>route.abort());
+   const page=await c.newPage(); page.setDefaultNavigationTimeout(15000); page.on('pageerror', e=>errors.push(e.message));
+   return page;
+  };
+  const officer=await context(), user=await context();
+  async function login(page, mobile) {
+   await page.goto(`${base}/login`, {waitUntil:'domcontentloaded'});
+   await page.locator('[name=mobile_number]').fill(mobile);
+   await page.locator('[name=password]').fill('BrowserTest123!');
+   await Promise.all([page.waitForURL('**/dashboard'),page.locator('button[type=submit]').click()]);
+  }
+  await login(officer,'0772222222');
+  await officer.goto(`${base}/officer/area-schedules`);
+  async function createSchedule(day) {
+   await officer.locator('.create-schedule-trigger').click();
+   assert(await officer.locator('#create-schedule').evaluate(el=>el.matches(':modal')));
+   await officer.locator('#schedule-campaign').selectOption({label:`Browser Test Campaign — ${fixture.month}`});
+   await officer.locator('#schedule-area').selectOption({label:'Wellawatte — 11100'});
+   await officer.locator('#schedule-capacity').fill('2');
+   await officer.locator('#schedule-cutoff').fill(`${fixture.month}-08`);
+   await officer.locator('#schedule-collection').fill(`${fixture.month}-${day}`);
+   await Promise.all([officer.waitForNavigation(), officer.locator('#create-schedule button[type=submit]').click()]);
+  }
+  await createSchedule('10');
+  await createSchedule('20');
+  assert.equal(await officer.locator('tbody tr[data-campaign-id]').count(),2);
+  await createSchedule('25');
+  assert.match(await officer.locator('.schedule-errors').innerText(),/maximum of 2/);
+  assert(await officer.locator('#create-schedule').evaluate(el=>el.matches(':modal')));
+  await officer.locator('#create-schedule [data-close-schedule]').first().click();
+  await officer.locator('tbody tr').filter({hasText:`${fixture.month}-10`}).locator('a').click();
+  const scheduleURL=officer.url();
+  await officer.locator('#edit-status').selectOption('OPEN');
+  await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Save Changes'}).click()]);
+  await login(user,'0775555555');
+  await user.goto(`${base}/user/new-request`);
+  await user.locator('[name=schedule_id]').selectOption({index:1});
+  await user.locator('[data-open-item-modal]').click();
+  await user.locator('[data-modal-category]').selectOption('Domestic E-Waste');
+  await user.getByLabel('LED lamps',{exact:true}).check();
+  await user.locator('[data-confirm-add-item]').click();
+  await user.locator('[name$="[weight]"]').fill('1.25');
+  await Promise.all([user.waitForURL('**/my-requests'),user.getByRole('button',{name:'Submit Request',exact:true}).click()]);
+  assert.equal(await user.locator('tr[data-request-pk]').count(),1);
+  await user.locator('[data-view-btn]').first().click();
+  assert.match(await user.locator('#viewItemsBody').innerText(),/LED lamps/);
+  await user.keyboard.press('Escape');
+  await user.locator('[data-edit-request]').click();
+  const savedSchedule = await user.locator('tr[data-request-pk]').getAttribute('data-schedule-id');
+  assert.equal(await user.locator('#editCollectionDate').inputValue(), savedSchedule);
+  assert.match(await user.locator('#editCollectionDate option:checked').innerText(), /current/);
+  await user.setViewportSize({width:390,height:844});
+  assert.equal(await user.locator('#editCollectionDate').inputValue(), savedSchedule);
+  assert(await user.locator('#editCollectionDate').evaluate(el=>el.getBoundingClientRect().right <= window.innerWidth));
+  await user.setViewportSize({width:1280,height:720});
+  const failedEdit = await user.locator('#editRequestForm').evaluate(form => ({action:form.action, fields:Object.fromEntries(new FormData(form))}));
+  failedEdit.fields.schedule_id = '999999';
+  const rejected = await user.request.post(failedEdit.action, {form:failedEdit.fields, maxRedirects:0});
+  assert.equal(rejected.status(),303);
+  await user.goto(`${base}/user/my-requests`);
+  assert(await user.locator('#editModal').isVisible());
+  assert.equal(await user.locator('#editCollectionDate').inputValue(),'');
+  assert.match(await user.locator('#editCollectionDate option:checked').innerText(),/unavailable/);
+  await user.locator('#editCollectionDate').selectOption(savedSchedule);
+  await user.locator('#editItemsBody [name$="[quantity]"]').fill('3');
+  await Promise.all([user.waitForNavigation(),user.locator('#editRequestForm button[type=submit]').click()]);
+  assert.match(await user.locator('tr[data-request-pk]').innerText(),/3/);
+  await officer.goto(scheduleURL);
+  await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Permanently Delete Schedule'}).click()]);
+  assert.match(await officer.locator('.schedule-errors').innerText(),/cannot be deleted/);
+  await user.locator('[data-delete-request]').click();
+  await Promise.all([user.waitForNavigation(),user.locator('#confirmDeleteBtn').click()]);
+  assert.match(await user.locator('tr[data-request-pk]').innerText(),/Cancelled/);
+  await user.getByRole('button',{name:'Pending',exact:true}).click();
+  assert.equal(await user.locator('tr[data-request-pk]:visible').count(),0);
+  await user.getByRole('button',{name:'Cancelled',exact:true}).click();
+  assert.equal(await user.locator('tr[data-request-pk]:visible').count(),1);
+  await officer.goto(`${base}/officer/area-schedules`);
+  await officer.locator('tbody tr').filter({hasText:`${fixture.month}-20`}).locator('a').click();
+  await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Permanently Delete Schedule'}).click()]);
+  assert.equal(await officer.locator('tbody tr[data-campaign-id]').count(),1);
+  await user.setViewportSize({width:390,height:844});
+  await user.goto(`${base}/user/new-request`);
+  await user.locator('[data-open-item-modal]').click();
+  assert(await user.locator('[data-item-modal]').isVisible());
+  await user.keyboard.press('Escape');
+  assert.equal(await user.locator('[data-item-modal]').isVisible(),false);
+  assert.deepEqual(errors,[]);
+  assert(!/Fatal error|Unhandled application error/.test(output),output);
+  console.log('PASS: real-browser officer create/open/limit/delete and public create/view/edit/cancel/filter/mobile popup flows');
+ } catch (error) { console.error(output.split('\n').slice(-25).join('\n')); throw error; } finally {
+  await browser?.close();
+  if(server) {process.kill(-server.pid, 'SIGTERM'); await new Promise(r=>server.once('exit',r));}
+  run(['tests/browser-fixture.php','drop',fixture.database]);
+  fs.rmSync(temp,{recursive:true,force:true});
+ }
+})().catch(error=>{console.error(error);process.exitCode=1});

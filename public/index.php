@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-define('APP_ROOT', dirname(__DIR__));
+require_once dirname(__DIR__) . '/app/autoload.php';
 
 $app = require APP_ROOT . '/config/app.php';
 
@@ -17,25 +17,6 @@ set_exception_handler(static function (Throwable $exception) use ($app): void {
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-
-
-spl_autoload_register(static function (string $class): void {
-    $directories = [
-        APP_ROOT . '/app/Core/',
-        APP_ROOT . '/app/Controllers/',
-        APP_ROOT . '/app/Models/',
-        APP_ROOT . '/app/Services/',
-    ];
-
-    foreach ($directories as $directory) {
-        $file = $directory . $class . '.php';
-
-        if (is_file($file)) {
-            require_once $file;
-            return;
-        }
-    }
-});
 
 $router = new Router((string) ($app['base_path'] ?? ''));
 

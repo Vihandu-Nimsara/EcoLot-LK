@@ -10,7 +10,7 @@ $pageStyles = [
     'recycler-details' => 'admin/recycler-details.css'
 ];
 $pageStyle = $pageStyles[$pageStylePage ?? $currentPage ?? ''] ?? null;
-$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/admin/theme.css');
+$themeVersion = Asset::version('css/admin/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,18 +35,11 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/adm
 </head>
 
 <body class="admin-app">
-    <div class="app-layout">
-        <?php include __DIR__ . '/sidebar.php'; ?>
-        <button class="workspace-overlay" type="button" aria-label="Close navigation" data-nav-close></button>
-
-        <div class="main-content">
-            <?php include __DIR__ . '/header.php'; ?>
-
-            <main class="page-content">
-                <?= $content ?>
-            </main>
-        </div>
-    </div>
+    <?php
+    $workspaceLayoutDirectory = __DIR__;
+    $workspaceNavigationOverlay = true;
+    require dirname(__DIR__, 2) . '/components/workspace-body.php';
+    ?>
     <?php include __DIR__ . '/action-dialog.php'; ?>
     <script src="<?= $assetBase ?>/js/admin/frontend-demo.js"></script>
 </body>

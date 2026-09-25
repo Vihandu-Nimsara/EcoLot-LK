@@ -12,10 +12,11 @@
 
     <div class="card">
         <div class="tabs">
-            <div class="tab active">All</div>
-            <div class="tab">Pending</div>
-            <div class="tab">Completed</div>
-            <div class="tab">Cancelled</div>
+            <button type="button" class="tab active">All</button>
+            <button type="button" class="tab">Pending</button>
+            <button type="button" class="tab">Completed</button>
+            <button type="button" class="tab">Cancelled</button>
+            <button type="button" class="tab">Rejected</button>
         </div>
 
         <table>
@@ -24,7 +25,7 @@
                     <th>Request ID</th>
                     <th>Date</th>
                     <th>Category</th>
-                    <th>Estimated Weight</th>
+                    <th>Estimated Total Weight</th>
                     <th>Quantity</th>
                     <th>Condition</th>
                     <th>Status</th>
@@ -67,7 +68,7 @@
                                         <button type="button" class="action-btn edit-btn" title="Edit Request" data-edit-request>
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                         </button>
-                                        <button type="button" class="action-btn delete-btn" title="Delete Request" data-delete-request>
+                                        <button type="button" class="action-btn delete-btn" title="Cancel Request" data-delete-request>
                                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                                         </button>
                                     <?php else: ?>
@@ -84,12 +85,8 @@
         </table>
 
         <div class="pagination">
-            <span>Showing <?= empty($requests) ? 0 : 1 ?> to <?= count($requests) ?> of <?= count($requests) ?> requests</span>
-            <div class="pagenums">
-                <button type="button">‹</button>
-                <button type="button" class="active">1</button>
-                <button type="button">›</button>
-            </div>
+            <span data-request-count>Showing <?= empty($requests) ? 0 : 1 ?> to <?= count($requests) ?> of <?= count($requests) ?> requests</span>
+
         </div>
     </div>
 </div>
@@ -146,7 +143,7 @@
                             <th>Category</th>
                             <th>Item</th>
                             <th>Quantity</th>
-                            <th>Estimated Weight (kg)</th>
+                            <th>Total Row Weight (kg)</th>
                             <th>Condition</th>
                             <th>Note</th>
                         </tr>
@@ -169,11 +166,11 @@
         <div class="modal-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
-        <h3 class="modal-title">Delete Request?</h3>
-        <p class="modal-desc">Are you sure you want to delete this record? This action cannot be undone.</p>
+        <h3 class="modal-title">Cancel Request?</h3>
+        <p class="modal-desc">Cancel this pickup request? Its details will remain in your history.</p>
         <div class="modal-actions">
-            <button type="button" class="btn-modal btn-cancel" data-close-delete-modal>Cancel</button>
-            <button type="button" id="confirmDeleteBtn" class="btn-modal btn-confirm-delete">Delete</button>        </div>
+            <button type="button" class="btn-modal btn-cancel" data-close-delete-modal>Keep Request</button>
+            <button type="button" id="confirmDeleteBtn" class="btn-modal btn-confirm-delete">Cancel Request</button>        </div>
     </div>
 </div>
 
@@ -205,11 +202,11 @@
                     <div class="view-field">
                         <label>Postal Code Area</label>
                         <input type="text" class="form-input-readonly" id="editPostal" readonly>                    </div>
-                    <div class="view-field">
+                    <div class="view-field edit-collection-date-field">
                         <label for="editCollectionDate">Available Collection Date</label>
-                        <select class="form-input-editable" id="editCollectionDate" name="schedule_id" required></select>
+                        <select class="form-input-editable" id="editCollectionDate" name="schedule_id" aria-describedby="editScheduleHint" required></select>
+                        <small id="editScheduleHint" role="status"></small>
                     </div>
-                    <div class="view-field"></div>
                 </div>
                 <div class="view-field view-field-full" style="margin-top:0;">
                     <label>Pickup Address</label>
@@ -230,7 +227,7 @@
                                 <th>Category</th>
                                 <th>Item</th>
                                 <th>Quantity</th>
-                                <th>Estimated Weight (kg)</th>
+                                <th>Total Row Weight (kg)</th>
                                 <th>Condition</th>
                                 <th>Note</th>
                                 <th class="col-delete"></th>
@@ -272,11 +269,7 @@
                 <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--public-muted);margin-bottom:6px;">Category</label>
                 <select id="editModalCategory" style="width:100%;padding:9px 10px;border:1px solid var(--public-border);border-radius:8px;font-size:14px;">
                     <option value="">Select category</option>
-                    <option value="Domestic E-Waste">Domestic E-Waste</option>
-                    <option value="Automobile E-Waste">Automobile E-Waste</option>
-                    <option value="Office E-Waste">Office E-Waste</option>
-                    <option value="Industrial E-Waste">Industrial E-Waste</option>
-                    <option value="Medical E-Waste">Medical E-Waste</option>
+                    <?php foreach (array_keys($catalogue) as $category): ?><option><?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?>
                 </select>
             </div>
             <div>
@@ -293,3 +286,5 @@
     </div>
 </div>
 <script type="application/json" id="scheduleOptionsData"><?= $scheduleOptionsJson ?? '[]' ?></script>
+<script type="application/json" id="pickupCatalogue"><?= json_encode($catalogue ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<script type="application/json" id="pickupDraft"><?= json_encode($draft ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
