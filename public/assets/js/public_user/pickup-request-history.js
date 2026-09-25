@@ -2,26 +2,52 @@
    pickup-request-history.js
    ═══════════════════════════════════════════════════ */
 
-const EWASTE_ITEMS = {
-    'Domestic E-Waste':   ['LCD TVs / Monitors','LED lamps','Computer hardware','Radios, DVD players','Electric ovens / Microwave ovens','Fans / Hair dryers','Electronic exercise equipment','Mobile phones / Laptops / Chargers','Bluetooth speakers / Earbuds','Cameras / CCTV equipment'],
-    'Automobile E-Waste': ['Dashboard electronics','LED headlights','Hybrid batteries / EV batteries','Motors / Alternators','Switches','Sensors','Cables','Relays','Heaters'],
-    'Office E-Waste':     ['Photocopy machines','UPS units / UPS batteries','Printers / Scanners','Projectors / Speakers','Access control equipment (fingerprint machines)','Network equipment','Telephone / Fax / Intercom equipment','Barcode readers / POS machines'],
-    'Industrial E-Waste': ['Inverters / VFDs','CNC machines','Elevator electronic components','Sign board displays','Air conditioners','Automation equipment','Power supply units','Vending machine hardware','Solar power equipment'],
-    'Medical E-Waste':    ['Ventilators / Insulin pumps','Hearing aids / Electric wheelchairs','Oximeters / Electronic thermometers','Ultrasound machines and probes','Centrifuges / Spectrophotometers','Electronic medical record systems','Glucometers / Weight scales'],
-};
+const EWASTE_ITEMS = JSON.parse(document.getElementById('pickupCatalogue').textContent || '{}');
+
+const SCHEDULE_OPTIONS = loadScheduleOptions();
 
 let editRowCounter = 0;
 let editSelectedItem = null;
 let editSelectedCategory = null;
 
 // ── Helpers ──────────────────────────────────────────
-function openModal(modal)  { modal?.classList.add('active'); }
-function closeModal(modal) { modal?.classList.remove('active'); }
+const modalStack = [];
+function openModal(modal) {
+    if (!modal) return;
+    modalStack.push({ modal, trigger: document.activeElement });
+    modal.classList.add('active');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', modal.querySelector('h3')?.textContent || 'Pickup request');
+    modal.querySelector('button, select, input:not([type="hidden"])')?.focus();
+}
+function closeModal(modal) {
+    if (!modal?.classList.contains('active')) return;
+    modal.classList.remove('active');
+    const index = modalStack.findIndex(entry => entry.modal === modal);
+    if (index >= 0) modalStack.splice(index, 1)[0].trigger?.focus();
+}
 
 function esc(str) {
     return String(str ?? '').replace(/[&<>"']/g, char => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[char]));
+}
+
+function titleCase(str) {
+    const s = String(str ?? '');
+    return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+function loadScheduleOptions() {
+    const dataEl = document.getElementById('scheduleOptionsData');
+    if (!dataEl) return [];
+    try {
+        return JSON.parse(dataEl.textContent || '[]');
+    } catch (error) {
+        console.error('[pickup-request-history.js] Could not parse schedule options data.', error);
+        return [];
+    }
 }
 
 // ── View modal ───────────────────────────────────────
@@ -31,7 +57,7 @@ function openViewModal(triggerEl) {
 
     document.getElementById('viewRequestId').textContent      = row.dataset.requestId    || '';
     document.getElementById('viewPostal').textContent         = row.dataset.postal        || '';
-    document.getElementById('viewCollectionDate').textContent = row.dataset.collectionDate || '';
+    document.getElementById('viewCollectionDate').textContent = row.dataset.collectionDateLabel || '';    
     document.getElementById('viewAddress').textContent        = row.dataset.address       || '';
 
     const status = row.dataset.status || 'Pending';
@@ -56,7 +82,7 @@ function openViewModal(triggerEl) {
                 <td>${esc(item.item)}</td>
                 <td>${esc(String(item.quantity))}</td>
                 <td>${esc(String(item.weight))}</td>
-                <td>${esc(item.condition)}</td>
+                <td>${esc(titleCase(item.condition))}</td>                
                 <td>${item.note ? esc(item.note) : '<span style="color:#a0b0a8;">—</span>'}</td>`;
             tbody.appendChild(tr);
         });
@@ -65,21 +91,51 @@ function openViewModal(triggerEl) {
 }
 
 // ── Edit modal ───────────────────────────────────────
+function populateEditScheduleSelect(row) {
+    const select = document.getElementById('editCollectionDate');
+    select.innerHTML = '';
+
+    const currentScheduleId = parseInt(row.dataset.scheduleId, 10);
+    const seen = new Set();
+
+    // Always include the request's own current date first, so it's kept
+    // selected by default even if it wouldn't otherwise show as "open".
+    if (!Number.isNaN(currentScheduleId)) {
+        const opt = document.createElement('option');
+        opt.value = String(currentScheduleId);
+        const current = SCHEDULE_OPTIONS.find(schedule => String(schedule.schedule_id) === String(currentScheduleId));
+        opt.textContent = (current?.label || row.dataset.collectionDateLabel || row.dataset.collectionDate || 'Current date') + ' (current)';
+        opt.selected = true;
+        select.appendChild(opt);
+        seen.add(currentScheduleId);
+    }
+
+    SCHEDULE_OPTIONS.forEach(schedule => {
+        if (seen.has(Number(schedule.schedule_id))) return;
+        const opt = document.createElement('option');
+        opt.value = String(schedule.schedule_id);
+        opt.textContent = schedule.label;
+        select.appendChild(opt);
+        seen.add(Number(schedule.schedule_id));
+    });
+    if (!Number.isNaN(currentScheduleId)) select.value = String(currentScheduleId);
+    document.getElementById('editScheduleHint').textContent = select.options.length > 1
+        ? 'Keep your current date or choose another open date in your postal area.'
+        : 'Your current booking is retained. No other open dates with remaining capacity are available in your postal area.';
+}
+
 function openEditModal(triggerEl) {
     const row = triggerEl.closest('tr');
     if (!row) return;
 
     document.getElementById('editRequestId').textContent = row.dataset.requestId || '';
+    document.getElementById('editPostal').value = row.dataset.postal || '';
+    document.getElementById('editAddress').value = row.dataset.address || '';
 
-    const postalEl = document.getElementById('editPostal');
-    const addrEl   = document.getElementById('editAddress');
-    const dateEl   = document.getElementById('editCollectionDate');
-    if (postalEl) postalEl.value = row.dataset.postal   || '';
-    if (addrEl)   addrEl.value   = row.dataset.address  || '';
-    if (dateEl && row.dataset.collectionDate) {
-        const d = new Date(row.dataset.collectionDate);
-        if (!isNaN(d)) dateEl.value = d.toISOString().split('T')[0];
-    }
+    populateEditScheduleSelect(row);
+
+    const form = document.getElementById('editRequestForm');
+    form.action = `${window.location.pathname.replace(/\/$/, '')}/${row.dataset.requestPk}/update`;
 
     const tbody = document.getElementById('editItemsBody');
     tbody.innerHTML = '';
@@ -92,23 +148,25 @@ function openEditModal(triggerEl) {
     openModal(document.getElementById('editModal'));
 }
 
-function addEditRow(category, item, qty = 1, weight = '', condition = 'Working', note = '') {
+function addEditRow(category, item, qty = 1, weight = '', condition = 'WORKING', note = '') {
     editRowCounter++;
     const i = editRowCounter;
     const tbody = document.getElementById('editItemsBody');
+    const conditionValue = String(condition || 'WORKING').toUpperCase();
     const tr = document.createElement('tr');
     tr.innerHTML = `
-        <td class="cell-readonly">${esc(category)}<input type="hidden" name="edit_items[${i}][category]" value="${esc(category)}"></td>
-        <td class="cell-readonly">${esc(item)}<input type="hidden" name="edit_items[${i}][item]" value="${esc(item)}"></td>
-        <td><input type="number" name="edit_items[${i}][quantity]" min="1" value="${esc(String(qty))}" required></td>
-        <td><input type="number" name="edit_items[${i}][weight]" min="0" step="0.1" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}"></td>
+        <td class="cell-readonly">${esc(category)}<input type="hidden" name="items[${i}][category]" value="${esc(category)}"></td>
+        <td class="cell-readonly">${esc(item)}<input type="hidden" name="items[${i}][item]" value="${esc(item)}"></td>
+        <td><input type="number" name="items[${i}][quantity]" min="1" value="${esc(String(qty))}" required></td>
+        <td><input type="number" name="items[${i}][weight]" min="0.001" max="9999999.999" step="0.001" placeholder="e.g. 2.5" value="${weight ? esc(String(weight)) : ''}" required></td>
         <td>
-            <select name="edit_items[${i}][condition]">
-                <option value="Working"${condition==='Working'?' selected':''}>Working</option>
-                <option value="Damaged"${condition==='Damaged'?' selected':''}>Damaged</option>
+            <select name="items[${i}][condition]">
+                <option value="WORKING"${conditionValue==='WORKING'?' selected':''}>Working</option>
+                <option value="DAMAGED"${conditionValue==='DAMAGED'?' selected':''}>Damaged</option>
+                <option value="UNKNOWN"${conditionValue==='UNKNOWN'?' selected':''}>Unknown</option>
             </select>
         </td>
-        <td><input type="text" name="edit_items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
+        <td><input type="text" maxlength="500" name="items[${i}][note]" placeholder="Optional note" value="${note ? esc(note) : ''}"></td>
         <td class="col-delete">
             <button type="button" class="edit-row-delete" data-delete-edit-row aria-label="Remove">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -167,19 +225,56 @@ function renderEditModalItems() {
 
 // ── Single DOMContentLoaded — all event wiring ───────
 document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('editModalCategory');
+    categorySelect.innerHTML = '<option value="">Select category</option>' + Object.keys(EWASTE_ITEMS).map(category => `<option>${esc(category)}</option>`).join('');
+    const draft = JSON.parse(document.getElementById('pickupDraft').textContent || '{}');
+    const draftRow = [...document.querySelectorAll('tr[data-request-pk]')].find(row => row.dataset.requestPk === String(draft.request_id));
+    if (draftRow && draftRow.dataset.editable === '1') {
+        openEditModal(draftRow.querySelector('[data-edit-request]'));
+        const dateSelect = document.getElementById('editCollectionDate');
+        if ([...dateSelect.options].some(option => option.value === String(draft.schedule_id))) {
+            dateSelect.value = String(draft.schedule_id);
+        } else {
+            dateSelect.prepend(new Option('Previously selected date is unavailable — choose a date', '', true, true));
+        }
+        document.getElementById('editItemsBody').innerHTML = '';
+        Object.values(draft.items || {}).forEach(item => {
+            if (item && typeof item === 'object') addEditRow(item.category, item.item, item.quantity, item.weight, item.condition, item.note);
+        });
+        updateEditEmptyState();
+    }
+    document.querySelectorAll('.tabs .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tabs .tab').forEach(other => other.classList.toggle('active', other === tab));
+            document.querySelectorAll('tr[data-status]').forEach(row => {
+                const filter = tab.textContent.trim();
+                row.hidden = filter !== 'All' && (filter === 'Pending' ? !['Submitted', 'Pending Review', 'Approved'].includes(row.dataset.status) : row.dataset.status !== filter);
+            });
+            const rows = [...document.querySelectorAll('tr[data-status]')];
+            document.querySelector('[data-request-count]').textContent = `Showing ${rows.filter(row => !row.hidden).length} of ${rows.length} requests`;
+        });
+    });
     const viewModal     = document.getElementById('viewModal');
     const deleteModal   = document.getElementById('deleteModal');
     const editModal     = document.getElementById('editModal');
     const editItemModal = document.getElementById('editItemModal');
+    const deleteForm    = document.getElementById('deleteRequestForm');
 
     // Category select in sub-modal
     document.getElementById('editModalCategory')?.addEventListener('change', renderEditModalItems);
 
-    // Edit form submit
+        // Edit form submit — real POST, blocked only if there are no items
     document.getElementById('editRequestForm')?.addEventListener('submit', e => {
-        e.preventDefault();
-        alert('Prototype — changes not saved to database yet.');
-        closeModal(editModal);
+        const tbody = document.getElementById('editItemsBody');
+        if (!tbody || tbody.children.length === 0) {
+            e.preventDefault();
+            alert('Add at least one e-waste item before saving.');
+        }
+    });
+
+    // Confirm delete — real POST via the hidden form
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', () => {
+        if (deleteForm.action) deleteForm.submit();
     });
 
     // Global click delegation
@@ -199,9 +294,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── Delete button ──
         if (e.target.closest('[data-delete-request]')) {
-            const id = e.target.closest('[data-delete-request]').dataset.deleteRequest;
-            const btn = document.getElementById('confirmDeleteBtn');
-            if (btn) btn.href = `delete-request.php?id=${id}`;
+            const row = e.target.closest('tr');
+            const requestPk = row?.dataset.requestPk;
+            deleteForm.action = `${window.location.pathname.replace(/\/$/, '')}/${requestPk}/delete`;
             openModal(deleteModal);
             return;
         }
@@ -237,10 +332,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Escape key
     document.addEventListener('keydown', e => {
-        if (e.key !== 'Escape') return;
-        closeModal(viewModal);
-        closeModal(deleteModal);
-        closeModal(editModal);
-        closeModal(editItemModal);
+        const modal = modalStack.at(-1)?.modal;
+        if (!modal) return;
+        if (e.key === 'Escape') closeModal(modal);
+        if (e.key === 'Tab') {
+            const nodes = [...modal.querySelectorAll('button:not(:disabled), input:not([type="hidden"]), select, textarea')].filter(node => node.getClientRects().length);
+            const target = e.shiftKey && document.activeElement === nodes[0] ? nodes.at(-1)
+                : !e.shiftKey && document.activeElement === nodes.at(-1) ? nodes[0] : null;
+            if (target) { e.preventDefault(); target.focus(); }
+        }
     });
 });

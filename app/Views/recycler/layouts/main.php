@@ -13,7 +13,7 @@ $secondaryPageStyle = in_array($currentPage ?? '', $workflowPages, true)
     ? 'recycler/workflow.css'
     : null;
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
-$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/recycler/theme.css');
+$themeVersion = Asset::version('css/recycler/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,18 +42,11 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
 </head>
 
 <body class="recycler-app">
-    <div class="app-layout">
-        <?php include __DIR__ . '/sidebar.php'; ?>
-        <button class="workspace-overlay" type="button" aria-label="Close navigation" data-nav-close></button>
-
-        <div class="main-content">
-            <?php include __DIR__ . '/header.php'; ?>
-
-            <main class="page-content">
-                <?= $content ?>
-            </main>
-        </div>
-    </div>
+    <?php
+    $workspaceLayoutDirectory = __DIR__;
+    $workspaceNavigationOverlay = true;
+    require dirname(__DIR__, 2) . '/components/workspace-body.php';
+    ?>
     <?php include __DIR__ . '/action-dialog.php'; ?>
     <script src="<?= $assetBase ?>/js/recycler/frontend-demo.js"></script>
 </body>

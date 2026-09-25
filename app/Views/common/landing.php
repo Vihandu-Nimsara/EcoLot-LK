@@ -146,7 +146,7 @@ $safeBase = htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8');
                     <article class="role-card role-card-council">
                         <span class="role-label">For councils</span>
                         <h3>Manage the full cycle</h3>
-                        <p>Plan area schedules, coordinate routes, verify pickups, create E-Lots, and review bids.</p>
+                        <p>Plan area schedules, coordinate collection assignments, verify pickups, create E-Lots, and review bids.</p>
                     </article>
                     <article class="role-card role-card-recycler" id="recyclers">
                         <span class="role-label">For recyclers</span>

@@ -164,6 +164,35 @@ final class AreaCollectionSchedule extends Model
         return array_merge([$schedule['schedule_status']], $next);
     }
 
+    public function openForPostalArea(int $postalAreaId): array
+    {
+        return $this->query($this->officerSelect() . "
+            WHERE s.postal_area_id = :area_id AND s.schedule_status = 'OPEN'
+              AND s.request_cutoff_at >= :now
+            HAVING active_request_count < request_capacity
+            ORDER BY s.collection_date, s.schedule_id", [
+                'area_id' => $postalAreaId,
+                'now' => (new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo')))->format('Y-m-d H:i:s'),
+            ])->fetchAll();
+    }
+
+    public function isBookable(int $scheduleId, int $postalAreaId, ?int $requestId = null): bool
+    {
+        // An existing request does not consume an additional slot when edited.
+        return (bool) $this->query("SELECT 1 FROM area_collection_schedules s
+            WHERE s.schedule_id = :schedule_id AND s.postal_area_id = :area_id
+              AND s.schedule_status = 'OPEN' AND s.request_cutoff_at >= :now
+              AND (SELECT COUNT(*) FROM e_waste_requests r
+                   WHERE r.schedule_id = s.schedule_id
+                     AND r.request_status NOT IN ('CANCELLED', 'REJECTED')
+                     AND r.request_id <> :request_id) < s.request_capacity", [
+                'schedule_id' => $scheduleId,
+                'area_id' => $postalAreaId,
+                'now' => (new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo')))->format('Y-m-d H:i:s'),
+                'request_id' => $requestId ?? 0,
+            ])->fetchColumn();
+    }
+
     public function availableForPublicUser(int $userId): array
     {
         return $this->query($this->officerSelect() . "

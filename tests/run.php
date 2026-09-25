@@ -1,16 +1,7 @@
 <?php
 declare(strict_types=1);
 
-define('APP_ROOT', dirname(__DIR__));
-spl_autoload_register(static function (string $class): void {
-    foreach (['Core', 'Controllers', 'Services', 'Models'] as $directory) {
-        $file = APP_ROOT . '/app/' . $directory . '/' . $class . '.php';
-        if (is_file($file)) {
-            require_once $file;
-            return;
-        }
-    }
-});
+require_once __DIR__ . '/support/bootstrap.php';
 function check(bool $condition, string $message): void {
     if (!$condition) {
         throw new RuntimeException($message);

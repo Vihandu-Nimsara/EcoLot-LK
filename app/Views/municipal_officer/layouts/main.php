@@ -5,7 +5,7 @@ $pageStyles = [
     'campaigns' => 'municipal_officer/campaigns.css',
     'area-schedules' => 'municipal_officer/area-schedules.css',
     'flagged-requests' => 'municipal_officer/flagged-requests.css',
-    'routes' => 'municipal_officer/routes.css',
+    'collection-assignments' => 'municipal_officer/collection-assignments.css',
     'collection-records' => 'municipal_officer/collection-records.css',
     'e-lots' => 'municipal_officer/elots.css',
     'feedback' => 'municipal_officer/feedback.css',
@@ -15,7 +15,7 @@ $pageScripts = [
     'campaigns' => 'municipal_officer/campaigns.js',
     'area-schedules' => 'municipal_officer/area-schedules.js',
     'flagged-requests' => 'municipal_officer/flagged-requests.js',
-    'routes' => 'municipal_officer/routes.js',
+    'collection-assignments' => 'municipal_officer/collection-assignments.js',
     'collection-records' => 'municipal_officer/collection-records.js',
     'e-lots' => 'municipal_officer/elots.js',
     'feedback' => 'municipal_officer/feedback.js',
@@ -24,12 +24,12 @@ $pageScripts = [
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $pageScript = $pageScripts[$currentPage ?? ''] ?? null;
 $pageStyleVersion = $pageStyle !== null
-    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/' . $pageStyle)
+    ? Asset::version('css/' . $pageStyle)
     : null;
 $pageScriptVersion = $pageScript !== null
-    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/js/' . $pageScript)
+    ? Asset::version('js/' . $pageScript)
     : null;
-$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/municipal_officer/theme.css');
+$themeVersion = Asset::version('css/municipal_officer/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,17 +54,11 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/mun
 </head>
 
 <body class="officer-app">
-    <div class="app-layout">
-        <?php include __DIR__ . '/sidebar.php'; ?>
-
-        <div class="main-content">
-            <?php include __DIR__ . '/header.php'; ?>
-
-            <main class="page-content">
-                <?= $content ?>
-            </main>
-        </div>
-    </div>
+    <?php
+    $workspaceLayoutDirectory = __DIR__;
+    $workspaceNavigationOverlay = false;
+    require dirname(__DIR__, 2) . '/components/workspace-body.php';
+    ?>
 
     <?php if ($pageScript !== null): ?>
         <script

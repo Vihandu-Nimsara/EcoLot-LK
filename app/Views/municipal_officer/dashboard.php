@@ -20,7 +20,7 @@
         <div class="stat-card">
             <div class="stat-icon route">🚚</div>
             <div class="stat-info">
-                <span>Planned Routes</span>
+                <span>Pending Assignments</span>
                 <h2>1</h2>
             </div>
         </div>

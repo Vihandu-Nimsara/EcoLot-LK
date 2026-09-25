@@ -227,3 +227,29 @@
         margin-bottom: 10px;
     }
 }
+
+.public-user-app .form-alert {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.public-user-app .form-alert-error {
+    color: #8A1C13;
+    background: #FFF1F0;
+    border: 1px solid #F3B7B2;
+}
+
+.public-user-app .form-alert-success {
+    color: #176a39;
+    background: #e9f8ee;
+    border: 1px solid #bfe6cb;
+}
+
+.public-user-app .field-hint {
+    margin: 6px 0 0;
+    font-size: 0.8rem;
+    color: var(--public-text-muted, #6b7280);
+}

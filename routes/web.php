@@ -37,7 +37,9 @@ return static function (Router $router, array $app): void {
         $router->post('/area-schedules/{id}/update', 'MunicipalOfficerController@updateAreaSchedule');
         $router->post('/area-schedules/{id}/delete', 'MunicipalOfficerController@deleteAreaSchedule');
         $router->get('/flagged-requests', 'MunicipalOfficerController@flaggedRequests');
-        $router->get('/routes', 'MunicipalOfficerController@routes');
+        $router->get('/collection-assignments', 'MunicipalOfficerController@collectionAssignments');
+        // Backward-compatible alias for older bookmarks during the transition.
+        $router->get('/routes', 'MunicipalOfficerController@collectionAssignments');
         $router->get('/collection-records', 'MunicipalOfficerController@collectionRecords');
         $router->get('/e-lots', 'MunicipalOfficerController@eLots');
         $router->get('/feedback', 'MunicipalOfficerController@feedback');
@@ -56,7 +58,10 @@ return static function (Router $router, array $app): void {
 
     $router->group('/user', static function (Router $router): void {
         $router->get('/my-requests', 'PublicUserController@myRequests');
+        $router->post('/my-requests/{id}/update', 'PublicUserController@updateRequest');
+        $router->post('/my-requests/{id}/delete', 'PublicUserController@deleteRequest');
         $router->get('/new-request', 'PublicUserController@newRequest');
+        $router->post('/new-request', 'PublicUserController@storeRequest');
         $router->get('/feedback', 'PublicUserController@feedback');
         $router->get('/profile', 'PublicUserController@profile');
     });

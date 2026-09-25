@@ -81,15 +81,29 @@ class MunicipalOfficerController extends Controller
         $cutoff = $this->parseDate($input['request_cutoff_date']);
         $collection = $this->parseDate($input['collection_date']);
         $errors = [];
-        if ($campaignId === null) $errors[] = 'Please select a valid monthly campaign.';
-        if ($areaId === null) $errors[] = 'Please select a valid postal-code area.';
-        if ($capacity === null) $errors[] = 'Maximum requests must be a positive integer within the database limit (4294967295).';
-        if ($cutoff === null) $errors[] = 'Please select a valid request cut-off date.';
-        if ($collection === null) $errors[] = 'Please select a valid collection date.';
+        if ($campaignId === null) {
+            $errors[] = 'Please select a valid monthly campaign.';
+        }
+        if ($areaId === null) {
+            $errors[] = 'Please select a valid postal-code area.';
+        }
+        if ($capacity === null) {
+            $errors[] = 'Maximum requests must be a positive integer within the database limit (4294967295).';
+        }
+        if ($cutoff === null) {
+            $errors[] = 'Please select a valid request cut-off date.';
+        }
+        if ($collection === null) {
+            $errors[] = 'Please select a valid collection date.';
+        }
+        $today = new DateTimeImmutable('today', new DateTimeZone('Asia/Colombo'));
+        if ($cutoff !== null && $cutoff < $today) {
+            $errors[] = 'The request cut-off date cannot be in the past.';
+        }
         if ($cutoff !== null && $collection !== null && $cutoff >= $collection) {
             $errors[] = 'The request cut-off date must be before the collection date.';
         }
-        if ($collection !== null && $collection < new DateTimeImmutable('today', new DateTimeZone('Asia/Colombo'))) {
+        if ($collection !== null && $collection < $today) {
             $errors[] = 'The collection date cannot be in the past.';
         }
         if ($errors === []) {
@@ -169,7 +183,9 @@ class MunicipalOfficerController extends Controller
     public function updateAreaSchedule(string $id): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        if (!$this->scheduleCsrf()) return;
+        if (!$this->scheduleCsrf()) {
+            return;
+        }
         $number = $this->positiveInteger($id);
         if ($number === null) {
             http_response_code(404);
@@ -182,7 +198,9 @@ class MunicipalOfficerController extends Controller
         try {
             $errors = $model->transaction(function () use ($model, $number, $capacity, $input): array {
                 $schedule = $model->lockSchedule($number);
-                if ($schedule === null) return ['Collection schedule not found.'];
+                if ($schedule === null) {
+                    return ['Collection schedule not found.'];
+                }
                 if (in_array($schedule['schedule_status'], ['COMPLETED', 'CANCELLED'], true)) {
                     return ['Completed and cancelled schedules are read-only.'];
                 }
@@ -200,7 +218,9 @@ class MunicipalOfficerController extends Controller
                     $errors[] = 'Cannot cancel a schedule with an active assignment or recorded collection work.';
                 }
                 if ($errors === []) {
-                    if ($input['schedule_status'] === 'CANCELLED') $model->cancelPendingRequests($number);
+                    if ($input['schedule_status'] === 'CANCELLED') {
+                        $model->cancelPendingRequests($number);
+                    }
                     // Explicit allowlist: no other submitted fields can change the record.
                     $model->update($number, ['request_capacity' => $capacity, 'schedule_status' => $input['schedule_status']]);
                 }
@@ -221,7 +241,9 @@ class MunicipalOfficerController extends Controller
     public function deleteAreaSchedule(string $id): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        if (!$this->scheduleCsrf()) return;
+        if (!$this->scheduleCsrf()) {
+            return;
+        }
         $number = $this->positiveInteger($id);
         if ($number === null) {
             http_response_code(404);
@@ -231,7 +253,9 @@ class MunicipalOfficerController extends Controller
         $model = new AreaCollectionSchedule();
         try {
             $errors = $model->transaction(function () use ($model, $number): array {
-                if ($model->lockSchedule($number) === null) return ['Collection schedule not found.'];
+                if ($model->lockSchedule($number) === null) {
+                    return ['Collection schedule not found.'];
+                }
                 if ($model->hasRequests($number) || $model->hasAssignments($number) || $model->hasCollectionSubmission($number)) {
                     return ['This schedule cannot be deleted because it already contains requests, assignments, or collection records. Cancel the schedule instead where its status permits.'];
                 }
@@ -253,7 +277,13 @@ class MunicipalOfficerController extends Controller
     private function scheduleDatabaseError(PDOException $exception): string
     {
         $code = (int) ($exception->errorInfo[1] ?? 0);
-        if ($code === 1062) return 'A schedule already exists for this campaign, area and collection date.';
+        if ($code === 1062) {
+            $detail = (string) ($exception->errorInfo[2] ?? '');
+            if (str_contains($detail, "'uq_schedules_campaign_area'")) {
+                return 'The database still has the old one-schedule-per-area restriction. Apply the schedule date uniqueness migration.';
+            }
+            return 'A schedule already exists for this campaign, area and collection date.';
+        }
         if ($code === 1451) return 'This schedule is already in use and cannot be deleted.';
         error_log('Schedule operation failed: SQLSTATE ' . $exception->getCode());
         return 'The schedule could not be saved. Please reload and try again. If this continues, check the database and officer profile.';
@@ -265,10 +295,10 @@ class MunicipalOfficerController extends Controller
         $this->view('municipal_officer/flagged-requests', ['currentPage' => 'flagged-requests']);
     }
 
-    public function routes(): void
+    public function collectionAssignments(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/routes', ['currentPage' => 'routes']);
+        $this->view('municipal_officer/collection-assignments', ['currentPage' => 'collection-assignments']);
     }
 
     public function collectionRecords(): void

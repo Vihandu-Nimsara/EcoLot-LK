@@ -4,22 +4,13 @@ declare(strict_types=1);
 // Run against an isolated, disposable database; never writes the application database.
 // php -d session.save_path=/tmp tests/area-schedules.php
 // The configured DB account needs CREATE/DROP DATABASE privileges.
-define('APP_ROOT', dirname(__DIR__));
-spl_autoload_register(static function (string $class): void {
-    foreach (['Core', 'Controllers', 'Models'] as $directory) {
-        $file = APP_ROOT . '/app/' . $directory . '/' . $class . '.php';
-        if (is_file($file)) { require_once $file; return; }
-    }
-});
+require_once __DIR__ . '/support/bootstrap.php';
 final class ScheduleTestRedirect extends RuntimeException {}
 final class ScheduleTestController extends MunicipalOfficerController
 {
     public array $data = [];
     public function view(string $view, array $data = [], ?string $layout = null): void { $this->data = $data; }
     protected function redirect(string $path, int $status = 303): never { throw new ScheduleTestRedirect($path); }
-}
-function verify(bool $condition, string $message): void {
-    if (!$condition) throw new RuntimeException($message);
 }
 if (($argv[1] ?? '') === '--role-guard') {
     Session::start();
@@ -39,28 +30,8 @@ $database = 'ecolot_schedule_test_' . bin2hex(random_bytes(6));
 $db->exec("CREATE DATABASE `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 try {
     $db->exec("USE `$database`");
-    $schema = file_get_contents(APP_ROOT . '/database/schema.sql');
-    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS `ecolot_lk`.*?;/s', '', $schema);
-    $schema = str_replace('USE `ecolot_lk`;', '', $schema);
-    [$tables, $triggers] = explode('DELIMITER $$', $schema, 2);
-    foreach (explode(';', $tables) as $sql) {
-        if (trim($sql) !== '') $db->exec($sql);
-    }
-    $triggers = str_replace('DELIMITER ;', '', $triggers);
-    foreach (explode('$$', $triggers) as $sql) {
-        if (trim($sql) !== '') $db->exec($sql);
-    }
-    $db->exec("INSERT INTO users (user_id, full_name, mobile_number, password_hash, role) VALUES
-        (1, '<script>Officer</script>', '0771234567', 'unused', 'MUNICIPAL_OFFICER'),
-        (2, 'Public', '0771234568', 'unused', 'PUBLIC_USER'),
-        (3, 'Collector', '0771234569', 'unused', 'COLLECTOR')");
-    $db->exec('INSERT INTO municipal_officers VALUES (1)');
-    $db->exec('INSERT INTO collectors VALUES (3)');
-    $db->exec("INSERT INTO postal_code_areas VALUES (1, '00100', 'Area One', 'ACTIVE'), (2, '00200', 'Area Two', 'ACTIVE'), (3, '00300', 'Inactive', 'INACTIVE')");
-    $db->exec("INSERT INTO public_profiles VALUES (2, 1, 'Test address')");
-    $month = (new DateTimeImmutable('first day of next month', new DateTimeZone('Asia/Colombo')))->format('Y-m');
-    $statement = $db->prepare("INSERT INTO monthly_campaigns (campaign_id, created_by_officer_user_id, campaign_name, campaign_month, campaign_status) VALUES (1, 1, '<b>Campaign</b>', ?, 'OPEN'), (2, 1, 'Closed', '2000-01-01', 'CLOSED')");
-    $statement->execute([$month . '-01']);
+    TestDatabase::loadSchema($db);
+    $month = TestDatabase::seedScheduleActors($db);
     $controller = new ScheduleTestController();
     $model = new AreaCollectionSchedule();
     $valid = ['campaign_id' => '1', 'postal_area_id' => '1', 'request_capacity' => '5', 'request_cutoff_date' => "$month-08", 'collection_date' => "$month-10"];
@@ -80,6 +51,7 @@ try {
         ['request_capacity' => '4294967296'], ['request_capacity' => str_repeat('9', 40)],
         ['collection_date' => "2030-02-10\0"], ['collection_date' => '2030-02-30'], ['collection_date' => '2000-01-10'],
         ['collection_date' => "$month-10 trailing"], ['collection_date' => '2099-01-10'],
+        ['request_cutoff_date' => '2000-01-01'],
         ['request_cutoff_date' => "$month-10"], ['request_cutoff_date' => "$month-11"],
     ] as $change) {
         verify(!$invoke('storeAreaSchedule', array_replace($valid, $change)), 'Invalid create accepted: ' . json_encode($change));
