@@ -44,7 +44,7 @@ final class RecyclerBid extends Model
 
     public function handoverForOwnedWinningBid(int $bidId, int $recyclerUserId): ?array
     {
-        return $this->query("SELECT h.handover_status, h.handover_date FROM handover_records h
+        return $this->query("SELECT h.handover_status, h.handover_date, h.remarks FROM handover_records h
             JOIN recycler_bids b ON b.bid_id = h.winning_bid_id
             WHERE b.bid_id = :bid AND b.recycler_user_id = :owner AND b.bid_status = 'WINNING'",
             ['bid' => $bidId, 'owner' => $recyclerUserId])->fetch() ?: null;

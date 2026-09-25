@@ -32,6 +32,15 @@ final class AuthorizedRecycler extends Model
         return $result === false ? null : $result;
     }
 
+    public function profileForRecycler(int $userId): ?array
+    {
+        return $this->query("SELECT r.company_name, r.business_address, r.district,
+            u.full_name, u.mobile_number, u.email
+            FROM authorized_recyclers r JOIN users u ON u.user_id = r.user_id
+            WHERE r.user_id = :owner AND u.role = 'RECYCLER'",
+            ['owner' => $userId])->fetch() ?: null;
+    }
+
     /** Read-only compliance data for the authenticated Recycler dashboard. */
     public function dashboardCompliance(int $userId): ?array
     {

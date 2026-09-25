@@ -142,7 +142,16 @@ class RecyclerController extends Controller
     public function profile(): void
     {
         Auth::requireRole('RECYCLER');
-        $this->view('recycler/profile', ['currentPage' => 'profile']);
+        $this->readPage(function (): void {
+            $userId = (int) Auth::id();
+            $recycler = new AuthorizedRecycler();
+            $this->view('recycler/profile', [
+                'currentPage' => 'profile',
+                'profile' => $recycler->profileForRecycler($userId),
+                'compliance' => $recycler->dashboardCompliance($userId),
+                'capabilities' => $recycler->capabilitiesForRecycler($userId),
+            ]);
+        });
     }
 
     public function reports(): void

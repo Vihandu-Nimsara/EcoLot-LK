@@ -17,7 +17,7 @@ $canWithdraw = (bool) $lot['can_withdraw'] && $lot['bid_status'] === 'SUBMITTED'
 <div class="detail-item"><span class="detail-label"><?= $escape($label) ?></span><?php if ($label === 'Status'): ?><span class="badge badge-<?= strtolower($lot['lot_status']) ?>"><?= $escape($value) ?></span><?php else: ?><strong class="detail-value"><?= $escape($value ?? 'Not set') ?></strong><?php endif; ?></div>
 <?php endforeach; ?></div></section>
 <section class="workflow-card bidding-information-card"><div class="workflow-section-header"><h2>Bidding Information</h2><p>Anonymous context from currently submitted bids. The Municipal Officer selects the winner.</p></div><div class="detail-grid">
-<div class="detail-item"><span class="detail-label">Highest active bid</span><strong><?= $lot['highest_amount'] === null ? 'No bids yet' : 'Rs. ' . number_format((float) $lot['highest_amount'], 2) ?></strong></div>
+<div class="detail-item"><span class="detail-label">Highest active bid</span><strong><?= $lot['highest_amount'] === null ? 'No active submitted bids' : 'Rs. ' . number_format((float) $lot['highest_amount'], 2) ?></strong></div>
 <div class="detail-item"><span class="detail-label">Submitted bid count</span><strong><?= (int) $lot['active_count'] ?></strong></div>
 <?php if ($lot['bid_id']): ?><div class="detail-item"><span class="detail-label">My bid · <span class="badge badge-<?= strtolower($lot['bid_status']) ?>"><?= $statuses[$lot['bid_status']] ?></span></span><strong>Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></strong><span>Submitted <?= $escape($lot['submitted_at']) ?></span></div><?php endif; ?>
 </div>
