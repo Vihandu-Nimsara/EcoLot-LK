@@ -162,10 +162,11 @@
     margin-bottom: 20px;
 }
 
-.recycler-app :is(.bid-header, .awarded-e-lot-header) :is(h1, h2) {
+.recycler-app :is(.bid-header, .awarded-e-lot-header) h2,
+.recycler-app :is(.my-bids-page, .awarded-e-lots-page) h1 {
     margin: 0;
-    color: var(--recycler-text);
-    font-size: clamp(1.625rem, 2.4vw, 1.875rem);
+    color: #134029;
+    font-size: 1.375rem;
 }
 
 .recycler-app :is(.bid-header, .awarded-e-lot-header) p {
@@ -181,7 +182,7 @@
 .recycler-app .filter-result { margin: -7px 0 16px; color: var(--recycler-muted); font-size: .8125rem; }
 .recycler-app .filtered-empty-state { margin-top: 16px; padding: 28px 18px; color: var(--recycler-muted); background: #f8fbf9; border: 1px dashed #cbdad0; border-radius: 12px; text-align: center; }
 .recycler-app .filtered-empty-state[hidden] { display: none; }
-.recycler-app .light-filter { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; padding: 12px 14px; background: #fff; border: 1px solid var(--recycler-border); border-radius: 14px; }
+.recycler-app .light-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; padding: 12px 14px; background: #fff; border: 1px solid var(--recycler-border); border-radius: 14px; }
 .recycler-app .quick-filters { display: flex; flex-wrap: wrap; gap: 7px; }
 .recycler-app .quick-filter { min-height: 36px; padding: 7px 12px; color: #3f5046; background: #f7faf8; border: 1px solid #d8e2db; border-radius: 999px; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
 .recycler-app .quick-filter[aria-pressed="true"] { color: #fff; background: var(--recycler-green-600); border-color: var(--recycler-green-600); box-shadow: 0 3px 8px rgba(21,147,66,.18); }
@@ -192,13 +193,13 @@
 .recycler-app :is(.bid-table-wrapper, .table-responsive) {
     width: 100%;
     max-width: 100%;
-    padding: 0;
+    padding: 10px;
     container-type: inline-size;
     overflow-x: auto;
     background: #FFFFFF;
     border: 1px solid var(--recycler-border);
     border-radius: 18px;
-    box-shadow: none;
+    box-shadow: var(--recycler-shadow);
 }
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) {
@@ -213,7 +214,7 @@
 }
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) th {
-    padding: 14px 12px;
+    padding: 16px 8px;
     color: #047857;
     font-size: 0.75rem;
     font-weight: 600;
@@ -224,7 +225,7 @@
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) td {
     overflow-wrap: anywhere;
-    padding: 16px 12px;
+    padding: 18px 8px;
     font-variant-numeric: tabular-nums;
     color: #111827;
     border-bottom: 1px solid #E5E7EB;
@@ -624,6 +625,14 @@
         flex-direction: column;
     }
 
+    .recycler-app :is(.bid-table-wrapper, .table-responsive) {
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
     .recycler-app .light-filter { align-items: stretch; flex-direction: column; }
     .recycler-app .light-filter-controls { width: 100%; margin-left: 0; }
     .recycler-app .light-filter-controls .filter-field { flex: 1; }
@@ -664,7 +673,7 @@
 .recycler-app .detail-item > strong + span { display: block; margin-top: 6px; }
 .recycler-app .items-table :is(th, td):first-child { width: 28%; }
 .recycler-app .items-table :is(th, td):not(:first-child) { width: 18%; }
-.recycler-app .light-filter-controls { margin-left: 0; }
+
 .recycler-app .row-withdraw-form { margin: 0; display: grid; gap: 6px; }
 .recycler-app .bid-form { display: grid; gap: 16px; max-width: 640px; margin-top: 24px; }
 .recycler-app .bid-form .form-actions { margin-top: 0; }
@@ -693,10 +702,13 @@
     }
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) thead { display: none; }
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) tr {
-        padding: 16px;
-        border-bottom: 1px solid var(--recycler-border);
+        margin-bottom: 14px;
+        padding: 14px;
+        background: #fff;
+        border: 1px solid var(--recycler-border);
+        border-radius: 14px;
     }
-    .recycler-app :is(.bid-table, .bids-table, .awarded-table) tr:last-child { border-bottom: 0; }
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) tr:last-child { margin-bottom: 0; }
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) td {
         width: 100% !important;
         padding: 10px 0;

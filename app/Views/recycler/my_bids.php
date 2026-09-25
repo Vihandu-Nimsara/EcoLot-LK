@@ -3,7 +3,13 @@ $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QU
 $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost', 'WITHDRAWN' => 'Withdrawn'];
 ?>
 <section class="my-bids-page"><section class="bid-card"><div class="bid-header"><div><h1>My Bids</h1><p>Your submitted bids and complete bid history.</p></div></div>
-<form class="light-filter" data-client-filter data-rows="[data-bid-row]" data-empty="[data-bids-empty]" data-result="[data-bids-result]"><div class="light-filter-controls"><div class="filter-field"><label for="bid-search">Search bids</label><input id="bid-search" name="search" type="search" placeholder="Lot code, title or category"></div><div class="filter-field"><label for="bid-status">Status</label><select id="bid-status" name="status"><option value="">All Statuses</option><?php foreach ($statuses as $value => $label): ?><option value="<?= $value ?>"><?= $label ?></option><?php endforeach; ?></select></div></div></form>
+<form class="light-filter" data-client-filter data-rows="[data-bid-row]" data-empty="[data-bids-empty]" data-result="[data-bids-result]">
+<div class="quick-filters" role="group" aria-label="Filter bids by status">
+<?php foreach (['' => 'All'] + $statuses as $value => $label): ?>
+<button class="quick-filter" type="button" aria-pressed="<?= $value === '' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="<?= $value ?>"><?= $label ?></button>
+<?php endforeach; ?></div>
+<div class="light-filter-controls"><div class="filter-field"><label for="bid-search">Search bids</label><input id="bid-search" name="search" type="search" placeholder="Lot code, title or category"></div></div>
+</form>
 <p class="filter-result" data-bids-result role="status" aria-live="polite"></p>
 <?php if (!$bids): ?><div class="empty-state">You have not placed any bids.</div><?php else: ?>
 <div class="bid-table-wrapper"><table class="bids-table"><thead><tr><th>E-Lot</th><th>Category</th><th>My Bid</th><th>Status</th><th>Submitted</th><th>Bidding Deadline</th><th>Actions</th></tr></thead><tbody>

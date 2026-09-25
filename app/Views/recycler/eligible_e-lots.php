@@ -5,13 +5,17 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <section class="eligible-bid-page"><section class="bid-card">
 <div class="bid-header"><div><h1>Eligible Open E-Lots</h1><p>E-Lots currently matching your verified account, licence and approved handling capabilities.</p></div></div>
 <form class="light-filter" data-client-filter data-rows="[data-eligible-row]" data-empty="[data-eligible-filter-empty]" data-result="[data-eligible-result]">
+<div class="quick-filters" role="group" aria-label="Filter by my bid status">
+<?php foreach (['' => 'All', 'NONE' => 'Not Bid Yet', 'SUBMITTED' => 'Bid Submitted'] as $value => $label): ?>
+<button class="quick-filter" type="button" aria-pressed="<?= $value === '' ? 'true' : 'false' ?>" data-filter-name="bid" data-filter-value="<?= $value ?>"><?= $label ?></button>
+<?php endforeach; ?></div>
 <div class="light-filter-controls"><div class="filter-field"><label for="eligible-search">Search E-Lots</label><input id="eligible-search" name="search" type="search" placeholder="Lot code, title or category"></div>
 <div class="filter-field"><label for="eligible-category">Category</label><select id="eligible-category" name="category"><option value="">All Categories</option><?php foreach (array_unique(array_column($lots, 'category_name')) as $category): ?><option><?= $escape($category) ?></option><?php endforeach; ?></select></div></div></form>
 <p class="filter-result" data-eligible-result role="status" aria-live="polite"></p>
 <?php if (!$lots): ?><div class="empty-state">No eligible E-Lots are available.</div><?php else: ?>
 <div class="bid-table-wrapper"><table class="bid-table"><thead><tr><th>E-Lot</th><th>Category</th><th>Bidding Deadline</th><th>Active Bids</th><th>My Bid</th><th>Actions</th></tr></thead><tbody>
 <?php foreach ($lots as $lot): ?>
-<tr data-eligible-row data-search="<?= $escape($lot['lot_code'] . ' ' . $lot['title'] . ' ' . $lot['category_name']) ?>" data-category="<?= $escape($lot['category_name']) ?>">
+<tr data-eligible-row data-bid="<?= $escape($lot['bid_status'] ?? 'NONE') ?>" data-search="<?= $escape($lot['lot_code'] . ' ' . $lot['title'] . ' ' . $lot['category_name']) ?>" data-category="<?= $escape($lot['category_name']) ?>">
 <td data-label="E-Lot"><strong class="table-primary-text"><?= $escape($lot['lot_code']) ?></strong><span class="table-secondary-text"><?= $escape($lot['title']) ?></span></td>
 <td data-label="Category"><?= $escape($lot['category_name']) ?></td>
 <td data-label="Bidding Deadline"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $lot['bidding_close_at'])) ?>"><?= $escape(substr($lot['bidding_close_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($lot['bidding_close_at'], 11, 5)) ?></span></time></td>
