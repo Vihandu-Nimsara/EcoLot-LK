@@ -8,11 +8,14 @@ class RecyclerController extends Controller
         Auth::requireRole('RECYCLER');
         $this->readPage(function (): void {
             $userId = (int) Auth::id();
-            $bids = (new RecyclerBid())->listForRecycler($userId);
-            $this->view('recycler/dashboard', ['currentPage' => 'dashboard',
+            $data = $this->reportingData($userId);
+            $recycler = new AuthorizedRecycler();
+            $this->view('recycler/dashboard', $data + [
+                'currentPage' => 'dashboard',
                 'eligibleCount' => count((new ELot())->eligibleForRecycler($userId)),
-                'bidCount' => count($bids),
-                'wonCount' => count(array_filter($bids, static fn (array $bid): bool => $bid['bid_status'] === 'WINNING'))]);
+                'compliance' => $recycler->dashboardCompliance($userId),
+                'capabilities' => $recycler->capabilitiesForRecycler($userId),
+            ]);
         });
     }
 
@@ -145,6 +148,32 @@ class RecyclerController extends Controller
     public function reports(): void
     {
         Auth::requireRole('RECYCLER');
-        $this->view('recycler/reports', ['currentPage' => 'reports']);
+        $this->readPage(function (): void {
+            $this->view('recycler/reports', $this->reportingData((int) Auth::id()) + ['currentPage' => 'reports']);
+        });
+    }
+
+    /** Current records, not an audit log: no revision or withdrawal times are inferred. */
+    private function reportingData(int $userId): array
+    {
+        $model = new RecyclerBid();
+        $bids = $model->listForRecycler($userId);
+        $awards = $model->listWinningForRecycler($userId);
+        $statuses = array_count_values(array_column($bids, 'bid_status'));
+        return [
+            'bidCount' => count($bids),
+            'submittedCount' => $statuses['SUBMITTED'] ?? 0,
+            'wonCount' => $statuses['WINNING'] ?? 0,
+            'rejectedCount' => $statuses['REJECTED'] ?? 0,
+            'withdrawnCount' => $statuses['WITHDRAWN'] ?? 0,
+            'awardedCount' => count($awards),
+            // Only recorded pending/scheduled handovers are counted as awaiting.
+            'awaitingCount' => count(array_filter($awards, static fn (array $award): bool =>
+                in_array($award['handover_status'], ['PENDING', 'SCHEDULED'], true))),
+            'handedCount' => count(array_filter($awards, static fn (array $award): bool =>
+                $award['handover_status'] === 'COMPLETED')),
+            'recentBids' => array_slice($bids, 0, 5),
+            'recentAwards' => array_slice($awards, 0, 5),
+        ];
     }
 }
