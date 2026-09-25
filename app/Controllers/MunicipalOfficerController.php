@@ -80,6 +80,7 @@ class MunicipalOfficerController extends Controller
         $capacity = $this->positiveInteger($input['request_capacity'], 4294967295);
         $cutoff = $this->parseDate($input['request_cutoff_date']);
         $collection = $this->parseDate($input['collection_date']);
+        $today = new DateTimeImmutable('today', new DateTimeZone('Asia/Colombo'));
         $errors = [];
         if ($campaignId === null) {
             $errors[] = 'Please select a valid monthly campaign.';
@@ -98,6 +99,9 @@ class MunicipalOfficerController extends Controller
         }
         if ($cutoff !== null && $collection !== null && $cutoff >= $collection) {
             $errors[] = 'The request cut-off date must be before the collection date.';
+        }
+        if ($cutoff !== null && $cutoff < $today) {
+            $errors[] = 'The request cut-off date cannot be in the past.';
         }
         if ($collection !== null && $collection < $today) {
             $errors[] = 'The collection date cannot be in the past.';

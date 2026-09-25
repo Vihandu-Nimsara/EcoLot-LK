@@ -452,8 +452,8 @@ CREATE TABLE IF NOT EXISTS `schedule_collections` (
     `schedule_collection_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `schedule_id` BIGINT UNSIGNED NOT NULL,
     `submitted_by_collector_user_id` BIGINT UNSIGNED NOT NULL,
-    `verification_status` ENUM('PENDING', 'VERIFIED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
-    `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `verification_status` ENUM('DRAFT', 'PENDING', 'VERIFIED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
+    `submitted_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
     `verified_by_officer_user_id` BIGINT UNSIGNED NULL,
     `verified_at` DATETIME NULL,
     `verification_note` VARCHAR(500) NULL,
@@ -471,7 +471,9 @@ CREATE TABLE IF NOT EXISTS `schedule_collections` (
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT `chk_schedule_collections_verification_audit`
         CHECK (
-            (`verification_status` = 'PENDING' AND `verified_by_officer_user_id` IS NULL AND `verified_at` IS NULL)
+            (`verification_status` = 'DRAFT' AND `submitted_at` IS NULL AND `verified_by_officer_user_id` IS NULL AND `verified_at` IS NULL)
+            OR
+            (`verification_status` = 'PENDING' AND `submitted_at` IS NOT NULL AND `verified_by_officer_user_id` IS NULL AND `verified_at` IS NULL)
             OR
             (`verification_status` IN ('VERIFIED', 'REJECTED') AND `verified_by_officer_user_id` IS NOT NULL AND `verified_at` IS NOT NULL)
         )

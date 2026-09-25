@@ -7,6 +7,7 @@ $phpTests = [
     'run.php',
     'otp-locking.php',
     'area-schedules.php',
+    'collector-crud.php',
     'public-pickup-crud.php',
     'public-pickup-pages.php',
     'pickup-concurrency.php',
@@ -28,5 +29,6 @@ foreach ($phpTests as $test) {
 $run(['node', __DIR__ . '/escaping.js']);
 if (in_array('--browser', $argv, true)) {
     $run(['node', __DIR__ . '/pickup-browser.cjs']);
+    $run(['node', __DIR__ . '/collector-browser.cjs']);
 }
 echo "PASS: complete regression suite\n";
