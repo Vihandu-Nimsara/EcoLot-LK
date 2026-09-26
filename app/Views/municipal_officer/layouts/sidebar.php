@@ -24,9 +24,9 @@
    class="nav-item <?= ($currentPage ?? '') === 'flagged-requests' ? 'active' : '' ?>">
     Flagged Requests
 </a>
-        <a href="<?= $baseUrl ?>/officer/routes"
-   class="nav-item <?= ($currentPage ?? '') === 'routes' ? 'active' : '' ?>">
-    Routes
+        <a href="<?= $baseUrl ?>/officer/collection-assignments"
+   class="nav-item <?= ($currentPage ?? '') === 'collection-assignments' ? 'active' : '' ?>">
+    Collection Assignments
 </a>
         <a href="<?= $baseUrl ?>/officer/collection-records"
    class="nav-item <?= ($currentPage ?? '') === 'collection-records' ? 'active' : '' ?>">

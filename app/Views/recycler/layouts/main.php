@@ -8,12 +8,12 @@ $pageStyles = [
     'profile' => 'recycler/workflow.css',
     'reports' => 'recycler/workflow.css',
 ];
-$workflowPages = ['dashboard', 'eligible-e-lots', 'my-bids', 'awarded-e-lots'];
+$workflowPages = ['eligible-e-lots', 'my-bids', 'awarded-e-lots'];
 $secondaryPageStyle = in_array($currentPage ?? '', $workflowPages, true)
     ? 'recycler/workflow.css'
     : null;
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
-$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/recycler/theme.css');
+$themeVersion = Asset::version('css/recycler/theme.css');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,23 +42,11 @@ $themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/rec
 </head>
 
 <body class="recycler-app">
-    <div class="app-layout">
-        <?php include __DIR__ . '/sidebar.php'; ?>
-        <button class="workspace-overlay" type="button" aria-label="Close navigation" data-nav-close></button>
-
-        <div class="main-content">
-            <?php include __DIR__ . '/header.php'; ?>
-
-            <main class="page-content">
-                <?php foreach (['bid_success', 'bid_error'] as $flashKey): ?>
-                    <?php if ($message = Session::pullFlash($flashKey)): ?>
-                        <div class="bid-flash <?= $flashKey === 'bid_error' ? 'bid-flash-error' : 'bid-flash-success' ?>" role="<?= $flashKey === 'bid_error' ? 'alert' : 'status' ?>"><?= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') ?></div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                <?= $content ?>
-            </main>
-        </div>
-    </div>
+    <?php
+    $workspaceLayoutDirectory = __DIR__;
+    $workspaceNavigationOverlay = true;
+    require dirname(__DIR__, 2) . '/components/workspace-body.php';
+    ?>
     <?php include __DIR__ . '/action-dialog.php'; ?>
     <script src="<?= $assetBase ?>/js/recycler/frontend-demo.js"></script>
 </body>

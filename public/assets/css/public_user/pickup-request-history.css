@@ -306,4 +306,42 @@
 .public-user-app .modal-item-option:last-child { border-bottom: none; }
 .public-user-app .modal-item-option:hover,
 .public-user-app .modal-item-option.selected { background: var(--public-green-50); }
-.public-user-app .modal-item-option input[type="radio"] { width: auto; accent-color: var(--public-green-600); }
+.public-user-app .modal-item-option input[type="radio"] { width: auto; accent-color: var(--public-green-600); 
+}
+
+.public-user-app .form-alert {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.public-user-app .form-alert-error {
+    color: #8A1C13;
+    background: #FFF1F0;
+    border: 1px solid #F3B7B2;
+}
+
+.public-user-app .form-alert-success {
+    color: #176a39;
+    background: #e9f8ee;
+    border: 1px solid #bfe6cb;
+}
+
+.public-user-app .action-btn-disabled {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #c7d1cb;
+    cursor: not-allowed;
+}
+/* Table display rules must not override the history filter's hidden state. */
+tr[data-request-pk][hidden] { display: none !important; }
+
+.public-user-app #editModal .view-fields-row { grid-template-columns: minmax(0, 1fr); }
+.public-user-app #editModal .view-field { min-width: 0; }
+.public-user-app #editCollectionDate { min-width: 0; max-width: 100%; }
+.public-user-app #editScheduleHint { color: var(--public-muted); line-height: 1.5; }

@@ -1,0 +1,30 @@
+{
+  "changed_files": [
+    "app/Controllers/CollectorController.php",
+    "app/Models/CollectionRecord.php",
+    "app/Models/CollectionRecordItem.php",
+    "app/Views/collector/assigned-requests.php",
+    "app/Views/collector/assigned-schedules.php",
+    "app/Views/collector/collection-record.php",
+    "app/Views/collector/dashboard.php",
+    "app/Views/collector/error.php",
+    "app/Views/collector/layouts/main.php",
+    "app/Views/collector/layouts/sidebar.php",
+    "docs/collector-collection-record-crud.md",
+    "public/assets/css/collector/collection-workflow.css",
+    "routes/web.php",
+    "tests/collector-browser.cjs",
+    "tests/collector-crud.php"
+  ],
+  "deleted_files": [
+    "app/Models/CollectionRoute.php",
+    "app/Views/collector/assigned-routes.php",
+    "app/Views/collector/initial-request.php",
+    "app/Views/collector/partials/request-details-modal.php"
+  ],
+  "unchanged_by_task": [
+    "database/seed.sql",
+    "My E-Lots and E-Lot routes/models/views/JS"
+  ],
+  "note": "Apply deletions explicitly. Full suite seed parsing failure documented in docs/collector-collection-record-crud.md."
+}

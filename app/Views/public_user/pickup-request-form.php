@@ -6,7 +6,16 @@
         </div>
     </div>
 
-    <form data-pickup-request-form>
+    <?php if (!empty($errorMessage)): ?>
+        <div class="form-alert form-alert-error" role="alert"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+    <?php if (!empty($successMessage)): ?>
+        <div class="form-alert form-alert-success" role="status"><?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?></div>
+    <?php endif; ?>
+
+    <form data-pickup-request-form method="post" action="<?= $basePath ?>/user/new-request">
+        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
         <div class="pickup-form-sections">
             <section class="surface-card">
                 <div class="card-heading">
@@ -17,16 +26,27 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="postal-code">Postal Code Area</label>
-                    <input id="postal-code" name="postal_code" type="text" value="Pannipitiya (10230)" readonly>
-                </div>
-                <div class="form-field">
-                    <label for="collection-date">Available Collection Date</label>
-                    <input id="collection-date" name="collection_date" type="date" required>
+                    <?php if ($postalArea): ?><p>Postal area: <?= htmlspecialchars($postalArea['area_name'] . ' (' . $postalArea['postal_code'] . ')', ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
+                    <label for="collection-schedule">Available Collection Date</label>
+                    <?php if (!empty($schedules)): ?>
+                        <select id="collection-schedule" name="schedule_id" required>
+                            <option value="">Select a collection date</option>
+                            <?php foreach ($schedules as $schedule): ?>
+                                <option value="<?= (int) $schedule['schedule_id'] ?>">
+                                    <?= htmlspecialchars(date('l, d M Y', strtotime((string) $schedule['collection_date'])) . ' — Requests close ' . $schedule['request_cutoff_at'] . ' (Sri Lanka)', ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: ?>
+                        <select id="collection-schedule" disabled>
+                            <option>No open collection dates for your area yet</option>
+                        </select>
+                        <p class="field-hint">Your municipal office hasn't opened a collection schedule for your area yet. Please check back later.</p>
+                    <?php endif; ?>
                 </div>
                 <div class="form-field">
                     <label for="pickup-address">Pickup Address</label>
-                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($user_address ?? '123 Main Street, Pannipitiya') ?></textarea>
+                    <textarea id="pickup-address" name="pickup_address" rows="2" readonly><?= htmlspecialchars($address ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
                 </div>
             </section>
 
@@ -45,7 +65,7 @@
                                 <th>Category</th>
                                 <th>Item</th>
                                 <th>Quantity</th>
-                                <th>Estimated Weight (kg)</th>
+                                <th>Total Row Weight (kg)</th>
                                 <th>Condition</th>
                                 <th>Note</th>
                                 <th class="col-delete"></th>
@@ -64,9 +84,12 @@
                 </button>
             </section>
 
+            <?php if (empty($catalogue)): ?><p>No collectable items are currently available. Please contact your municipal office.</p><?php endif; ?>
+            <?php if (trim($address ?? '') === ''): ?><p>Your pickup address is missing. Please complete your profile through the municipal office before submitting.</p><?php endif; ?>
+            <p>Enter the combined estimated weight for all units in each row. Items requiring review will be checked by an officer.</p>
             <div class="form-actions">
                 <a href="<?= $basePath ?>/user/dashboard" class="secondary-btn">Cancel</a>
-                <button type="submit" class="primary-btn">Submit Request</button>
+                <button type="submit" class="primary-btn" <?= empty($schedules) || empty($catalogue) || trim($address ?? '') === '' ? 'disabled' : '' ?>>Submit Request</button>
             </div>
         </div>
     </form>
@@ -83,11 +106,7 @@
                     <label for="modal-category-select">Category</label>
                     <select id="modal-category-select" data-modal-category>
                         <option value="">Select category</option>
-                        <option value="Domestic E-Waste">Domestic E-Waste</option>
-                        <option value="Automobile E-Waste">Automobile E-Waste</option>
-                        <option value="Office E-Waste">Office E-Waste</option>
-                        <option value="Industrial E-Waste">Industrial E-Waste</option>
-                        <option value="Medical E-Waste">Medical E-Waste</option>
+                        <?php foreach (array_keys($catalogue) as $category): ?><option><?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?></option><?php endforeach; ?>
                     </select>
                 </div>
                 <div class="form-field" style="margin-bottom:0;">
@@ -104,3 +123,5 @@
         </div>
     </div>
 </section>
+<script type="application/json" id="pickupCatalogue"><?= json_encode($catalogue ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<script type="application/json" id="pickupDraft"><?= json_encode($draft ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>

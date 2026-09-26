@@ -6,7 +6,31 @@ final class LoginRateLimiter
 {
     public function __construct(private ?string $path = null)
     {
-        $this->path ??= APP_ROOT . '/storage/login-attempts.json';
+        if ($this->path !== null) return;
+        $preferred = APP_ROOT . '/storage/login-attempts.json';
+        if (is_file($preferred) ? is_writable($preferred) : is_writable(dirname($preferred))) {
+            $this->path = $preferred;
+            return;
+        }
+
+        // Apache may run as a different user from the repository owner.
+        // Keep a stable, private store shared by that user's PHP workers.
+        $owner = function_exists('posix_geteuid') ? (string) posix_geteuid() : 'php';
+        $temporaryRoot = sys_get_temp_dir();
+        // macOS launchers can pass a user's private TMPDIR to Apache.
+        if (!is_writable($temporaryRoot) && PHP_OS_FAMILY !== 'Windows') $temporaryRoot = '/tmp';
+        $directory = rtrim($temporaryRoot, DIRECTORY_SEPARATOR) . '/ecolot-login-'
+            . hash('sha256', APP_ROOT . ':' . $owner);
+        if (!is_dir($directory) && !@mkdir($directory, 0700) && !is_dir($directory)) {
+            throw new RuntimeException('Login rate-limit runtime directory is unavailable.');
+        }
+        clearstatcache(true, $directory);
+        if (is_link($directory) || !is_writable($directory)
+            || (fileperms($directory) & 0077) !== 0
+            || (function_exists('posix_geteuid') && fileowner($directory) !== posix_geteuid())) {
+            throw new RuntimeException('Login rate-limit runtime directory is not private.');
+        }
+        $this->path = $directory . '/login-attempts.json';
     }
 
     public function consume(string $address, string $mobile, ?int $now = null): int

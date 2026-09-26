@@ -2,7 +2,7 @@
 $assetBase = htmlspecialchars($basePath . '/assets', ENT_QUOTES, 'UTF-8');
 $pageStyles = [
     'dashboard' => 'collector/collection-workflow.css',
-    'my-requests' => 'collector/collection-workflow.css',
+    'schedules' => 'collector/collection-workflow.css',
     'e-lots' => 'collector/elots.css',
 ];
 $pageScripts = [
@@ -10,10 +10,10 @@ $pageScripts = [
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $pageScript = $pageScripts[$currentPage ?? ''] ?? null;
-$themeVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/collector/theme.css');
-$workspaceScriptVersion = (string) filemtime(dirname(__DIR__, 4) . '/public/assets/js/collector/collector-workspace.js');
+$themeVersion = Asset::version('css/collector/theme.css');
+$workspaceScriptVersion = Asset::version('js/collector/collector-workspace.js');
 $pageStyleVersion = $pageStyle !== null
-    ? (string) filemtime(dirname(__DIR__, 4) . '/public/assets/css/' . $pageStyle)
+    ? Asset::version('css/' . $pageStyle)
     : null;
 ?>
 <!DOCTYPE html>
@@ -36,17 +36,11 @@ $pageStyleVersion = $pageStyle !== null
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
 </head>
 <body class="collector-app">
-    <div class="app-layout">
-        <?php include __DIR__ . '/sidebar.php'; ?>
-
-        <div class="main-content">
-            <?php include __DIR__ . '/header.php'; ?>
-
-            <main class="page-content">
-                <?= $content ?>
-            </main>
-        </div>
-    </div>
+    <?php
+    $workspaceLayoutDirectory = __DIR__;
+    $workspaceNavigationOverlay = false;
+    require dirname(__DIR__, 2) . '/components/workspace-body.php';
+    ?>
 
     <script src="<?= $assetBase ?>/js/collector/collector-workspace.js?v=<?= $workspaceScriptVersion ?>"></script>
     <?php if ($pageScript !== null): ?>

@@ -1,347 +1,99 @@
+<?php
+$escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$scheduleUrl = $basePath . '/officer/area-schedules';
+$filterCampaigns = [];
+foreach ($schedules as $schedule) {
+    $filterCampaigns[$schedule['campaign_id']] = $schedule['campaign_name'] . ' — ' . substr($schedule['campaign_month'], 0, 7);
+}
+?>
 <section class="area-schedules-page">
-
     <div class="page-toolbar">
-
-        <div>
-            <h1>Area Collection Schedules</h1>
-
-            <p>
-                Assign collection dates and capacity limits for postal-code areas.
-            </p>
-        </div>
-
-        <div class="toolbar-actions">
-            <button type="button" class="primary-btn create-schedule-trigger" data-open-schedule-dialog>
-                <span aria-hidden="true">+</span>
-                Create Schedule
-            </button>
-        </div>
-
+        <div><h1>Area Collection Schedules</h1><p>Assign collection dates and capacity limits for postal-code areas.</p></div>
+        <div class="toolbar-actions"><a href="<?= $escape($scheduleUrl . '?create=1#create-schedule') ?>" class="primary-btn create-schedule-trigger">+ Create Schedule</a></div>
     </div>
-
+    <?php if ($notice): ?><p class="schedule-notice" role="status"><?= $escape($notice) ?></p><?php endif; ?>
     <section class="scheduled-areas-card">
-
         <div class="scheduled-areas-header">
-
-            <div>
-
-                <h2>
-                    Scheduled Area Dates
-                </h2>
-
-                <p>
-                    View and manage collection schedules for the selected campaign.
-                </p>
-
-            </div>
-
+            <div><h2>Scheduled Area Dates</h2><p>View and manage collection schedules.</p></div>
             <div class="campaign-filter">
-
-                <label for="campaign-filter">
-                    Campaign
-                </label>
-
+                <label for="campaign-filter">Campaign</label>
                 <select id="campaign-filter">
-
-                    <option>
-                        All Campaigns
-                    </option>
-
-                    <option>
-                        Colombo Municipal E-Waste Campaign — 8/2026
-                    </option>
-
+                    <option value="">All Campaigns</option>
+                    <?php foreach ($filterCampaigns as $id => $label): ?>
+                        <option value="<?= $escape($id) ?>"><?= $escape($label) ?></option>
+                    <?php endforeach; ?>
                 </select>
-
             </div>
-
         </div>
-
         <div class="schedule-table-wrapper">
-
             <table class="schedule-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Schedule ID</th>
-
-                        <th>Campaign</th>
-
-                        <th>Area</th>
-
-                        <th>Postal Code</th>
-
-                        <th>Collection Date</th>
-
-                        <th>Cut-off Date</th>
-
-                        <th>Requests</th>
-
-                        <th>Capacity</th>
-
-                        <th>Status</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody data-schedule-table-body>
-
-                    <tr>
-
-                        <td>SCH-0010</td>
-
-                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
-
-                        <td>Wellawatte</td>
-
-                        <td>11100</td>
-
-                        <td>30 Aug 2026</td>
-
-                        <td>20 Aug 2026</td>
-
-                        <td>0</td>
-
-                        <td>30</td>
-
-                        <td>
-
-                            <span class="status open">
-                                OPEN
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="edit-btn">
-                                Edit
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>SCH-0009</td>
-
-                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
-
-                        <td>Rajagiriya</td>
-
-                        <td>10800</td>
-
-                        <td>23 Aug 2026</td>
-
-                        <td>13 Aug 2026</td>
-
-                        <td>3</td>
-
-                        <td>35</td>
-
-                        <td>
-
-                            <span class="status open">
-                                OPEN
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="edit-btn">
-                                Edit
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>SCH-0008</td>
-
-                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
-
-                        <td>Narahenpita</td>
-
-                        <td>10600</td>
-
-                        <td>19 Aug 2026</td>
-
-                        <td>10 Aug 2026</td>
-
-                        <td>2</td>
-
-                        <td>55</td>
-
-                        <td>
-
-                            <span class="status open">
-                                OPEN
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="edit-btn">
-                                Edit
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>SCH-0007</td>
-
-                        <td>Colombo Municipal E-Waste Campaign<br>8/2026</td>
-
-                        <td>Kollupitiya</td>
-
-                        <td>10500</td>
-
-                        <td>16 Aug 2026</td>
-
-                        <td>10 Aug 2026</td>
-
-                        <td>3</td>
-
-                        <td>45</td>
-
-                        <td>
-
-                            <span class="status open">
-                                OPEN
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="edit-btn">
-                                Edit
-                            </button>
-
-                        </td>
-
-                    </tr>
-
+                <thead><tr><th>Campaign</th><th>Postal Code Area</th><th>Collection Date</th><th>Request Cut-off</th><th>Requests / Maximum</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                    <?php foreach ($schedules as $schedule): ?>
+                        <tr data-campaign-id="<?= $escape($schedule['campaign_id']) ?>">
+                            <td><?= $escape($schedule['campaign_name']) ?><br><?= $escape(substr($schedule['campaign_month'], 0, 7)) ?></td>
+                            <td><?= $escape($schedule['area_name']) ?><br><?= $escape($schedule['postal_code']) ?></td>
+                            <td><?= $escape($schedule['collection_date']) ?></td>
+                            <td><?= $escape($schedule['request_cutoff_at']) ?></td>
+                            <td><?= $escape($schedule['active_request_count']) ?> / <?= $escape($schedule['request_capacity']) ?></td>
+                            <td><span class="status <?= $escape(strtolower($schedule['schedule_status'])) ?>"><?= $escape($schedule['schedule_status']) ?></span><?php if ($intake = AreaCollectionSchedule::intakeLabel($schedule)): ?><br><small><?= $escape($intake) ?></small><?php endif; ?></td>
+                            <td><a class="edit-btn" href="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id']) ?>">View / Edit</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if ($schedules === []): ?><tr><td colspan="7">No collection schedules yet.</td></tr><?php endif; ?>
                 </tbody>
-
             </table>
-
         </div>
-
     </section>
-
-</section>
-
-<div class="schedule-dialog officer-dialog" data-schedule-dialog hidden>
-    <section
-        class="schedule-dialog-card officer-dialog-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="schedule-dialog-title"
-    >
-        <div class="schedule-dialog-header officer-dialog-header">
-            <div>
-                <span class="dialog-eyebrow" data-schedule-dialog-eyebrow>New area schedule</span>
-                <h2 id="schedule-dialog-title" data-schedule-dialog-title>Create Schedule</h2>
-                <p data-schedule-dialog-description>Assign a collection date and request capacity to a postal-code area.</p>
-            </div>
-
-            <button
-                type="button"
-                class="schedule-dialog-close officer-dialog-close"
-                aria-label="Close schedule form"
-                data-close-schedule-dialog
-            >×</button>
+    <dialog class="schedule-create-dialog schedule-dialog-card officer-dialog-card" id="create-schedule" aria-labelledby="create-title" <?= $showCreate ? 'open' : '' ?>>
+        <div class="officer-dialog-header">
+            <h2 id="create-title">Create Schedule</h2>
+            <a href="<?= $escape($scheduleUrl) ?>" class="officer-dialog-close" data-close-schedule aria-label="Close create schedule">×</a>
         </div>
-
-        <form class="schedule-create-form" data-schedule-form>
+        <p>New schedules start as PLANNED. Dates and area cannot be changed after creation. Times use Sri Lanka time.</p>
+        <?php if ($errors !== []): ?>
+            <div class="schedule-errors" role="alert"><ul><?php foreach ($errors as $error): ?><li><?= $escape($error) ?></li><?php endforeach; ?></ul></div>
+        <?php endif; ?>
+        <form class="schedule-create-form" method="post" action="<?= $escape($scheduleUrl) ?>">
+            <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
             <div class="form-group">
                 <label for="schedule-campaign">Monthly Campaign</label>
-                <select id="schedule-campaign" name="campaign" required>
-                    <option value="">Select campaign</option>
-                    <option
-                        value="colombo-2026-08"
-                        data-campaign-name="Colombo Municipal E-Waste Campaign"
-                        data-campaign-period="2026-08"
-                    >Colombo Municipal E-Waste Campaign — 8/2026</option>
+                <select id="schedule-campaign" name="campaign_id" required>
+                    <option value="">Select an open campaign</option>
+                    <?php foreach ($campaigns as $campaign): ?>
+                        <option value="<?= $escape($campaign['campaign_id']) ?>" <?= (string) ($old['campaign_id'] ?? '') === (string) $campaign['campaign_id'] ? 'selected' : '' ?>><?= $escape($campaign['campaign_name'] . ' — ' . substr($campaign['campaign_month'], 0, 7)) ?></option>
+                    <?php endforeach; ?>
                 </select>
+                <?php if ($campaigns === []): ?><small>No open campaigns are available.</small><?php endif; ?>
             </div>
-
             <div class="schedule-form-grid">
                 <div class="form-group">
-                    <label for="schedule-area">Postal-code Area</label>
-                    <select id="schedule-area" name="area" required>
-                        <option value="">Select area</option>
-                        <option value="11100" data-area-name="Wellawatte">Wellawatte — 11100</option>
-                        <option value="10800" data-area-name="Rajagiriya">Rajagiriya — 10800</option>
-                        <option value="10600" data-area-name="Narahenpita">Narahenpita — 10600</option>
-                        <option value="10500" data-area-name="Kollupitiya">Kollupitiya — 10500</option>
-                        <option value="00800" data-area-name="Borella">Borella — 00800</option>
-                        <option value="00700" data-area-name="Cinnamon Gardens">Cinnamon Gardens — 00700</option>
+                    <label for="schedule-area">Postal Code Area</label>
+                    <select id="schedule-area" name="postal_area_id" required>
+                        <option value="">Select an active area</option>
+                        <?php foreach ($areas as $area): ?>
+                            <option value="<?= $escape($area['postal_area_id']) ?>" <?= (string) ($old['postal_area_id'] ?? '') === (string) $area['postal_area_id'] ? 'selected' : '' ?>><?= $escape($area['area_name'] . ' — ' . $area['postal_code']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="schedule-capacity">Maximum Public Requests</label>
-                    <input
-                        type="number"
-                        id="schedule-capacity"
-                        name="capacity"
-                        value="30"
-                        min="1"
-                        max="500"
-                        required
-                    >
+                    <label for="schedule-capacity">Maximum Requests</label>
+                    <input type="number" id="schedule-capacity" name="request_capacity" min="1" max="4294967295" step="1" value="<?= $escape($old['request_capacity'] ?? '') ?>" required>
                 </div>
-
                 <div class="form-group">
                     <label for="schedule-cutoff">Request Cut-off Date</label>
-                    <input type="date" id="schedule-cutoff" name="cutoff" required>
+                    <input type="date" id="schedule-cutoff" name="request_cutoff_date" value="<?= $escape($old['request_cutoff_date'] ?? '') ?>" required>
+                    <small>Requests close at 23:59:59 on this date.</small>
                 </div>
-
                 <div class="form-group">
-                    <label for="schedule-collection-date">Collection Date</label>
-                    <input
-                        type="date"
-                        id="schedule-collection-date"
-                        name="collection_date"
-                        required
-                    >
-                </div>
-
-                <div class="form-group schedule-status-field">
-                    <label for="schedule-status">Schedule Status</label>
-                    <select id="schedule-status" name="status" required>
-                        <option value="OPEN">OPEN</option>
-                        <option value="CLOSED">CLOSED</option>
-                    </select>
-                    <small>New schedules normally start open. FULL is calculated from request capacity.</small>
+                    <label for="schedule-collection">Collection Date</label>
+                    <input type="date" id="schedule-collection" name="collection_date" value="<?= $escape($old['collection_date'] ?? '') ?>" required>
                 </div>
             </div>
-
-            <p class="schedule-form-error officer-form-error" role="alert" data-schedule-form-error hidden></p>
-
             <div class="schedule-dialog-actions officer-dialog-actions">
-                <button type="button" class="secondary-btn" data-close-schedule-dialog>Cancel</button>
-                <button type="submit" class="primary-btn" data-schedule-submit>Create Schedule</button>
+                <a class="secondary-btn" data-close-schedule href="<?= $escape($scheduleUrl) ?>">Cancel</a>
+                <button type="submit" class="primary-btn">Create Schedule</button>
             </div>
         </form>
-    </section>
-</div>
-
-<div class="schedule-toast officer-toast" role="status" aria-live="polite" data-schedule-toast hidden>
-    <span data-schedule-toast-message>Schedule created and added to the list.</span>
-</div>
+    </dialog>
+</section>

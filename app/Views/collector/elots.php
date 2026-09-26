@@ -7,17 +7,17 @@ declare(strict_types=1);
         <div>
             <span class="collector-eyebrow">Verified collection output</span>
             <h1>My E-Lots</h1>
-            <p>Create E-Lot drafts from verified collection items, update them before submission, and track their verification lifecycle.</p>
+            <p>Manage browser-local E-Lot drafts. Changes stay in this browser and are not sent to a Municipal Officer.</p>
         </div>
 
         <button id="collector-create-elot" class="collector-primary-button" type="button">Create E-Lot</button>
     </header>
 
-    <div id="elot-feedback" class="collector-feedback" role="status" aria-live="polite" hidden></div>
+    <div id="elot-feedback" class="collector-feedback collector-feedback--success" role="status" aria-live="polite" hidden></div>
 
     <section class="collector-elot-summary" aria-label="E-Lot summary">
         <article>
-            <span>Verified Items</span>
+            <span>Available Items</span>
             <strong id="elot-verified-item-count">0</strong>
         </article>
         <article>
@@ -29,7 +29,7 @@ declare(strict_types=1);
             <strong id="elot-pending-count">0</strong>
         </article>
         <article>
-            <span>Open / Awarded</span>
+            <span>Open / Awarded / Processing</span>
             <strong id="elot-active-count">0</strong>
         </article>
     </section>
@@ -38,7 +38,7 @@ declare(strict_types=1);
         <div class="collector-section-header">
             <div>
                 <h2 id="verified-items-title">Verified Items Pool</h2>
-                <p>Only officer-verified collected items should become available for E-Lot creation.</p>
+                <p>This browser-local preview includes example items for preparing E-Lot drafts.</p>
             </div>
             <span id="elot-available-weight" class="collector-count-pill">0.00 kg available</span>
         </div>
@@ -64,7 +64,7 @@ declare(strict_types=1);
         <div class="collector-section-header collector-section-header--filters">
             <div>
                 <h2 id="my-elots-title">My E-Lots</h2>
-                <p>Drafts support full CRUD. Once submitted, E-Lots become read-only while awaiting Municipal Officer verification.</p>
+                <p>Create, edit, or delete local drafts. Marking a draft as submitted makes it read-only in this browser only.</p>
             </div>
 
             <label class="collector-inline-filter">
@@ -92,7 +92,7 @@ declare(strict_types=1);
                         <th scope="col">Items</th>
                         <th scope="col">Total Weight</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Action</th>
+                        <th scope="col" class="collector-action-column">Action</th>
                     </tr>
                 </thead>
                 <tbody id="collector-elot-rows"></tbody>
