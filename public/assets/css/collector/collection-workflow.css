@@ -1,5 +1,6 @@
 .collector-workspace,
-.collector-elots {
+.collector-elots,
+.collector-app .collector-modal {
     --collector-green-950: #073f2d;
     --collector-green-900: #0a573e;
     --collector-green-700: #16894c;
@@ -902,4 +903,117 @@
     .collector-modal-actions > * {
         width: 100%;
     }
+}
+/* Server-rendered collection CRUD uses the existing workspace palette. */
+.collector-detail-card { padding: 24px; margin-bottom: 24px; }
+.collector-details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; margin: 20px 0; }
+.collector-details-grid dd { margin: 6px 0; overflow-wrap: anywhere; }
+.collector-details-grid dt { font-weight: 600; }
+.collector-record-form fieldset { border: 1px solid #dce5e0; border-radius: 12px; padding: 20px; min-width: 0; }
+.collector-record-form label { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.collector-record-form input, .collector-record-form select, .collector-record-form textarea { width: 100%; box-sizing: border-box; border: 1px solid #cad8d0; border-radius: 8px; padding: 10px; font: inherit; }
+.collector-record-form :disabled { color: #526159; background: #f3f6f4; opacity: 1; cursor: not-allowed; }
+.collector-item-fields { margin: 16px 0; }
+.collector-inline-form { display: inline-block; }
+
+.collector-final-schedules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.collector-final-schedules .collector-detail-card { margin: 0; }
+.collector-workspace progress { display: block; width: 100%; accent-color: #157347; margin: 8px 0 16px; }
+.collector-workspace .collector-count-pill { white-space: normal; }
+@media (max-width: 700px) {
+    body.collector-app .app-layout { flex-direction: column; }
+    body.collector-app .sidebar { display: flex; position: static; width: 100%; height: auto; min-height: 0; padding: 10px 12px; gap: 8px; }
+    body.collector-app .sidebar-logo { display: none; }
+    body.collector-app .sidebar-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+    body.collector-app .sidebar-bottom { margin-top: 0; padding-top: 0; }
+}
+
+.collector-workspace a.collector-primary-button, .collector-workspace a.collector-secondary-button { text-decoration: none; }
+
+/* Shared action and field treatment for Collector pages and dialogs. */
+.collector-app :is(.collector-link-button, .collector-table-action, .collector-primary-button,
+.collector-secondary-button, .collector-danger-button, .collector-modal-button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    max-width: 100%;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    text-align: center;
+    text-decoration: none;
+    word-break: normal;
+    overflow-wrap: normal;
+}
+.collector-app .collector-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 190px;
+}
+.collector-app .collector-row-actions > :is(a, button, form) { flex-shrink: 0; }
+.collector-app .collector-row-actions :is(a, button) { white-space: nowrap; }
+.collector-app .collector-action-column { width: 220px; min-width: 220px; }
+.collector-app .collector-feedback--error {
+    color: #9d2f26;
+    background: #fff1ef;
+    border-color: #f1d0cc;
+}
+.collector-app .collector-feedback--success {
+    color: #1a6742;
+    background: #eaf8ef;
+    border-color: #cfe8d8;
+}
+.collector-app .collector-status { white-space: normal; line-height: 1.4; }
+.collector-app .collector-status--not-recorded {
+    color: #526159;
+    background: #f3f6f4;
+    border: 1px solid #dce5e0;
+}
+.collector-app :is(.collector-record-form label, .collector-elot-field) {
+    gap: 6px;
+    margin-bottom: 14px;
+    min-width: 0;
+    color: #516058;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+.collector-app .collector-elot-field > span { font-size: inherit; font-weight: inherit; }
+.collector-app :is(.collector-record-form, .collector-elot-field) :is(input, select, textarea) {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #cfdcd2;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+.collector-app :is(.collector-record-form, .collector-elot-field) textarea {
+    min-height: 78px;
+    resize: vertical;
+}
+.collector-app :is(.collector-record-form, .collector-elot-field) :is(input, select, textarea):is(:disabled, [readonly]) {
+    color: #526159;
+    background: #f3f6f4;
+    cursor: not-allowed;
+}
+.collector-app .collector-modal :is(input, select, textarea):focus-visible {
+    outline: 3px solid rgba(34, 167, 90, 0.18);
+    outline-offset: 2px;
+}
+.collector-app .collector-record-form p { color: var(--collector-muted); font-size: 0.875rem; }
+.collector-app .collector-details-grid > * { min-width: 0; }
+.collector-app .collector-elot-detail-grid strong,
+.collector-app .collector-elot-detail-list { overflow-wrap: anywhere; }
+@media (max-width: 620px) {
+    .collector-app .collector-detail-card { padding: 16px; }
+    .collector-app .collector-details-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .collector-app .collector-record-form fieldset { padding: 12px; }
+    .collector-app .collector-record-form legend { max-width: 100%; overflow-wrap: anywhere; }
+    .collector-app .collector-modal-actions button { width: 100%; }
 }

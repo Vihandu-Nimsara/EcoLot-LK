@@ -1,6 +1,6 @@
 <?php
 // Only for php -S launched by the isolated browser test harness.
-if (PHP_SAPI !== 'cli-server' || !str_starts_with(getenv('DB_DATABASE') ?: '', 'ecolot_browser_test_')) {
+if (PHP_SAPI !== 'cli-server' || !preg_match('/^ecolot_(?:browser|collector)_test_[a-f0-9]{12}$/D', getenv('DB_DATABASE') ?: '')) {
     http_response_code(404); exit;
 }
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);

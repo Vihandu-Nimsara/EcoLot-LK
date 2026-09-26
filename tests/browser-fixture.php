@@ -18,7 +18,7 @@ try {
     $db->prepare('UPDATE users SET password_hash = ?, mobile_verified_at = NOW()')->execute([password_hash('BrowserTest123!', PASSWORD_DEFAULT)]);
     $month = (new DateTimeImmutable('first day of next month', new DateTimeZone('Asia/Colombo')))->format('Y-m');
     $officer = (int) $db->query('SELECT user_id FROM municipal_officers LIMIT 1')->fetchColumn();
-    $db->prepare("INSERT INTO monthly_campaigns (created_by_officer_user_id, campaign_name, campaign_month, campaign_status) VALUES (?, 'Browser Test Campaign', ?, 'OPEN')")->execute([$officer, "$month-01"]);
+    $db->prepare("INSERT INTO monthly_campaigns (created_by_officer_user_id, campaign_name, campaign_month, campaign_status) VALUES (?, 'Browser Test Campaign', ?, 'OPEN') ON DUPLICATE KEY UPDATE campaign_name = VALUES(campaign_name), campaign_status = 'OPEN'")->execute([$officer, "$month-01"]);
     echo json_encode(['database' => $name, 'month' => $month]);
 } catch (Throwable $error) {
     $db->exec("DROP DATABASE `$name`");
