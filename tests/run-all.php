@@ -5,6 +5,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $phpTests = [
     'run.php',
+    'login-rate-limit-storage.php',
     'otp-locking.php',
     'area-schedules.php',
     'collector-crud.php',
