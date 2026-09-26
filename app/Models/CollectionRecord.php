@@ -24,9 +24,48 @@ final class CollectionRecord extends Model
             AND (sc.schedule_collection_id IS NULL OR sc.submitted_by_collector_user_id = :owner)";
     }
 
-    public function assignedRequests(int $collectorId): array
+    public function assignedRequests(int $collectorId, ?int $scheduleId = null): array
     {
-        return $this->query($this->requestSelect() . ' ORDER BY s.collection_date, r.request_id', ['collector' => $collectorId, 'owner' => $collectorId])->fetchAll();
+        return $this->query($this->requestSelect() . ($scheduleId === null ? '' : ' AND s.schedule_id = :schedule') . ' ORDER BY s.collection_date, r.request_id',
+            ['collector' => $collectorId, 'owner' => $collectorId] + ($scheduleId === null ? [] : ['schedule' => $scheduleId]))->fetchAll();
+    }
+
+    public function assignedSchedules(int $collectorId): array
+    {
+        return $this->query("SELECT s.*, pa.area_name, v.vehicle_number, v.vehicle_type,
+            sc.verification_status,
+            (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id
+                AND r.request_status NOT IN ('CANCELLED', 'REJECTED')) AS request_count,
+            (SELECT COUNT(*) FROM e_waste_requests r JOIN collection_records cr ON cr.request_id = r.request_id
+                WHERE r.schedule_id = s.schedule_id AND r.request_status NOT IN ('CANCELLED', 'REJECTED')) AS processed_count
+            FROM area_collection_schedules s
+            JOIN schedule_assignments sa ON sa.schedule_id = s.schedule_id AND sa.unassigned_at IS NULL
+            JOIN postal_code_areas pa ON pa.postal_area_id = s.postal_area_id
+            LEFT JOIN vehicles v ON v.vehicle_id = sa.vehicle_id
+            LEFT JOIN schedule_collections sc ON sc.schedule_id = s.schedule_id
+            WHERE sa.collector_user_id = :collector
+                AND (sc.schedule_collection_id IS NULL OR sc.submitted_by_collector_user_id = :owner)
+            ORDER BY CASE s.schedule_status WHEN 'IN_PROGRESS' THEN 0 WHEN 'ASSIGNED' THEN 1 ELSE 2 END, s.collection_date, s.schedule_id", ['collector' => $collectorId, 'owner' => $collectorId])->fetchAll();
+    }
+
+    public function assignedSchedule(int $scheduleId, int $collectorId): ?array
+    {
+        foreach ($this->assignedSchedules($collectorId) as $schedule) {
+            if ((int) $schedule['schedule_id'] === $scheduleId) return $schedule;
+        }
+        return null;
+    }
+
+    public static function canSubmit(array $schedule, array $requests): bool
+    {
+        if (!in_array($schedule['schedule_status'], ['ASSIGNED', 'IN_PROGRESS'], true)
+            || !in_array($schedule['verification_status'], [null, 'DRAFT'], true)) return false;
+        $active = array_filter($requests, static fn ($r) => !in_array($r['request_status'], ['CANCELLED', 'REJECTED'], true));
+        if (!$active) return false;
+        foreach ($active as $request) {
+            if (!$request['collection_record_id'] || !self::editable($request)) return false;
+        }
+        return true;
     }
 
     public function assignedRequest(int $requestId, int $collectorId): ?array
@@ -49,6 +88,16 @@ final class CollectionRecord extends Model
             && in_array($request['verification_status'], [null, 'DRAFT'], true)
             && in_array($request['request_status'], ['SUBMITTED', 'APPROVED'], true)
             && in_array($request['risk_review_status'], ['NOT_REQUIRED', 'APPROVED'], true);
+    }
+
+    public static function label(?string $status): string
+    {
+        return match ($status) {
+            'PENDING', 'COLLECTION_SUBMITTED', 'SUBMITTED' => 'Submitted for Municipal Officer Verification',
+            'NOT RECORDED' => 'Not recorded',
+            null => 'Not started',
+            default => ucfirst(strtolower(str_replace('_', ' ', $status))),
+        };
     }
 
     public static function status(array $request): string
@@ -92,14 +141,13 @@ final class CollectionRecord extends Model
                 throw new DomainException('A record already exists or the record does not belong to this request.');
             }
             $validator = new Validator();
-            if (!$validator->validate($input, ['pickup_result' => ['required', 'in:COLLECTED,PARTIAL,NOT_COLLECTED'], 'collector_note' => ['max:500']])) {
-                throw new DomainException('Choose a valid pickup result and use at most 500 characters for notes.');
+            if (!$validator->validate($input, ['collector_note' => ['max:500']])) {
+                throw new DomainException('Use at most 500 characters for notes.');
             }
             $items = new CollectionRecordItem($this->db);
             $rows = $items->validated($requestId, $input['items'] ?? null);
             $results = array_unique(array_column($rows, 'item_result'));
             $result = count($results) === 1 ? reset($results) : 'PARTIAL';
-            if ($input['pickup_result'] !== $result) throw new DomainException('Pickup result must match the actual item quantities.');
             $attributes = ['pickup_result' => $result, 'collector_note' => trim((string) ($input['collector_note'] ?? '')) ?: null];
             if ($recordId === null) {
                 $batchId = (new ScheduleCollection($this->db))->draft((int) $request['schedule_id'], $collectorId);
@@ -109,6 +157,9 @@ final class CollectionRecord extends Model
                 $this->update($recordId, $attributes);
             }
             $items->replaceForRecord($recordId, $rows);
+            if ($request['schedule_status'] === 'ASSIGNED') {
+                (new AreaCollectionSchedule($this->db))->update((int) $request['schedule_id'], ['schedule_status' => 'IN_PROGRESS']);
+            }
             return $recordId;
         });
     }
@@ -130,8 +181,7 @@ final class CollectionRecord extends Model
         $this->transaction(function () use ($scheduleId, $collectorId): void {
             $batches = new ScheduleCollection($this->db);
             $batches->lockAssigned($scheduleId, $collectorId);
-            $requests = array_values(array_filter($this->assignedRequests($collectorId), static fn ($r) => (int) $r['schedule_id'] === $scheduleId
-                && !in_array($r['request_status'], ['CANCELLED', 'REJECTED'], true)));
+            $requests = array_values(array_filter($this->assignedRequests($collectorId, $scheduleId), static fn ($r) => !in_array($r['request_status'], ['CANCELLED', 'REJECTED'], true)));
             if (!$requests) throw new DomainException('This schedule has no requests to submit.');
             foreach ($requests as $request) {
                 if (!self::editable($request) || !$request['collection_record_id']) {

@@ -3,13 +3,43 @@ declare(strict_types=1);
 
 class CollectorController extends Controller
 {
-    public function dashboard(): void { $this->myRequests(); }
+    public function dashboard(): void
+    {
+        Auth::requireRole('COLLECTOR');
+        $this->view('collector/dashboard', ['currentPage' => 'dashboard', 'schedules' => (new CollectionRecord())->assignedSchedules((int) Auth::id())]);
+    }
 
     public function myRequests(): void
     {
         Auth::requireRole('COLLECTOR');
+        $this->redirect('/collector/schedules');
+    }
+
+    public function schedules(): void
+    {
+        Auth::requireRole('COLLECTOR');
+        $this->view('collector/assigned-schedules', [
+            'currentPage' => 'schedules', 'schedules' => (new CollectionRecord())->assignedSchedules((int) Auth::id()),
+            'notice' => Session::pullFlash('collection_notice'), 'error' => Session::pullFlash('collection_error'),
+        ]);
+    }
+
+    public function showSchedule(string $id): void
+    {
+        Auth::requireRole('COLLECTOR');
+        $model = new CollectionRecord();
+        try {
+            $schedule = $model->assignedSchedule($this->id($id), (int) Auth::id());
+            if (!$schedule) throw new DomainException('Assigned schedule not found.');
+        } catch (DomainException $error) {
+            http_response_code(404);
+            $this->view('collector/error', ['currentPage' => 'schedules', 'message' => 'Assigned schedule not found.']);
+            return;
+        }
+        $requests = $model->assignedRequests((int) Auth::id(), (int) $schedule['schedule_id']);
         $this->view('collector/assigned-requests', [
-            'currentPage' => 'my-requests', 'requests' => (new CollectionRecord())->assignedRequests((int) Auth::id()),
+            'currentPage' => 'schedules', 'schedule' => $schedule, 'requests' => $requests,
+            'canSubmit' => CollectionRecord::canSubmit($schedule, $requests),
             'csrfToken' => Csrf::token(), 'notice' => Session::pullFlash('collection_notice'),
             'error' => Session::pullFlash('collection_error'),
         ]);
@@ -20,6 +50,12 @@ class CollectorController extends Controller
         $id = ctype_digit($value) ? filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) : false;
         if ($id === false) throw new DomainException('Invalid record, request or schedule ID.');
         return $id;
+    }
+
+    public function legacyRequest(string $id): void
+    {
+        Auth::requireRole('COLLECTOR');
+        $this->redirect('/collector/requests/' . rawurlencode($id));
     }
 
     public function showRequest(string $id): void { $this->details($id, false); }
@@ -34,11 +70,11 @@ class CollectorController extends Controller
             if (!$request) throw new DomainException('Collection request not found.');
         } catch (DomainException $error) {
             http_response_code(404);
-            echo 'Collection request not found.';
+            $this->view('collector/error', ['currentPage' => 'schedules', 'message' => 'Collection request not found.']);
             return;
         }
         $this->view('collector/collection-record', [
-            'currentPage' => 'my-requests', 'request' => $request, 'csrfToken' => Csrf::token(),
+            'currentPage' => 'schedules', 'request' => $request, 'csrfToken' => Csrf::token(),
             'editable' => CollectionRecord::editable($request), 'error' => Session::pullFlash('collection_error'),
             'notice' => Session::pullFlash('collection_notice'), 'old' => Session::pullFlash('collection_input') ?? [],
         ]);
@@ -54,25 +90,29 @@ class CollectorController extends Controller
         Auth::requireRole('COLLECTOR');
         if (!$this->hasValidCsrfToken()) {
             http_response_code(403);
-            echo 'Your session expired. Reload the collection page and try again.';
+            $this->view('collector/error', ['currentPage' => 'schedules', 'message' => 'Your session expired. Open your schedule and try again.']);
             return;
         }
-        $destination = '/collector/my-requests';
+        $destination = '/collector/schedules';
         try {
             $model = new CollectionRecord();
             $collectorId = (int) Auth::id();
             $number = $id === null ? null : $this->id($id);
             if ($action === 'submit') {
+                $destination = '/collector/schedules/' . $number;
                 $model->submitSchedule($number, $collectorId);
                 Session::flash('collection_notice', 'Schedule submitted for Municipal Officer verification. All collection records are now read-only.');
             } elseif ($action === 'delete') {
+                $record = $model->ownedRecord($number, $collectorId);
+                if (!$record) throw new DomainException('Collection record not found.');
+                $destination = '/collector/schedules/' . $record['schedule_id'];
                 $model->deleteDraft($number, $collectorId);
                 Session::flash('collection_notice', 'Draft collection record permanently deleted.');
             } else {
                 if ($action === 'create') {
                     $requestId = $this->id($this->postString('request_id'));
                     if (!$model->assignedRequest($requestId, $collectorId)) throw new DomainException('Assigned request not found.');
-                    $destination = '/collector/my-requests/' . $requestId;
+                    $destination = '/collector/requests/' . $requestId;
                 } else {
                     $record = $model->ownedRecord($number, $collectorId);
                     if (!$record) throw new DomainException('Collection record not found.');
@@ -99,7 +139,7 @@ class CollectorController extends Controller
     public function initialRequest(): void
     {
         Auth::requireRole('COLLECTOR');
-        $this->redirect('/collector/my-requests');
+        $this->redirect('/collector/schedules');
     }
 
     public function eLots(): void

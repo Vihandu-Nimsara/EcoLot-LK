@@ -6,8 +6,8 @@ $value = static fn ($candidate, $fallback = '') => is_scalar($candidate) ? $cand
 ?>
 <section class="collector-workspace">
     <header class="collector-page-heading"><div><span class="collector-eyebrow">Collection workspace</span><h1>Collection Record · Request #<?= $escape($request['request_id']) ?></h1>
-        <p><?= $escape(CollectionRecord::status($request)) ?><?= $request['collection_submitted_at'] ? ' · Submitted ' . $escape($request['collection_submitted_at']) : '' ?></p></div>
-        <a class="collector-secondary-button" href="<?= $escape($basePath . '/collector/my-requests') ?>">Back to Assigned Requests</a></header>
+        <p><?= $escape(CollectionRecord::label(CollectionRecord::status($request))) ?><?= $request['collection_submitted_at'] ? ' · Submitted ' . $escape($request['collection_submitted_at']) : '' ?></p></div>
+        <a class="collector-secondary-button" href="<?= $escape($basePath . '/collector/schedules/' . $request['schedule_id']) ?>">Back to Schedule</a></header>
     <?php if ($error): ?><p class="collector-feedback" role="alert"><?= $escape($error) ?></p><?php endif; ?>
     <?php if ($notice): ?><p class="collector-feedback" role="status"><?= $escape($notice) ?></p><?php endif; ?>
     <section class="collector-table-card collector-detail-card"><h2>Original Request Details — Read Only</h2>
@@ -15,13 +15,13 @@ $value = static fn ($candidate, $fallback = '') => is_scalar($candidate) ? $cand
             <div><dt>Pickup address</dt><dd><?= $escape($request['pickup_address']) ?></dd></div>
             <div><dt>Schedule / Collection date</dt><dd>#<?= $escape($request['schedule_id']) ?> / <?= $escape($request['collection_date']) ?></dd></div>
             <div><dt>Area</dt><dd><?= $escape($request['area_name']) ?></dd></div>
-            <div><dt>Request / Risk review</dt><dd><?= $escape($request['request_status']) ?> / <?= $escape($request['risk_review_status']) ?></dd></div></dl>
+            <div><dt>Request / Risk review</dt><dd><?= $escape(ucfirst(strtolower(str_replace('_', ' ', $request['request_status'])))) ?> / <?= $escape(ucfirst(strtolower(str_replace('_', ' ', $request['risk_review_status'])))) ?></dd></div></dl>
         <div class="collector-table-wrap"><table class="collector-table"><thead><tr><th>Item</th><th>Requested Quantity</th><th>Estimated Weight (kg)</th><th>Requested Condition</th><th>Condition Note</th></tr></thead><tbody>
         <?php foreach ($request['items'] as $item): ?><tr><td><?= $escape($item['item_name']) ?></td><td><?= $escape($item['quantity']) ?></td><td><?= $escape($item['estimated_weight_kg']) ?></td><td><?= $escape($item['item_condition']) ?></td><td><?= $escape($item['condition_note']) ?></td></tr><?php endforeach; ?>
         </tbody></table></div>
     </section>
     <section class="collector-table-card collector-detail-card"><h2>Collection Record</h2>
-        <?php if (!$editable): ?><p>This request is read-only. Submitted records cannot be edited or deleted.</p><?php endif; ?>
+        <?php if (!$editable): ?><p>This request is read-only. Submitted records and requests awaiting Officer review cannot be changed.</p><?php endif; ?>
         <?php if ($request['verification_note']): ?><p>Officer note: <?= $escape($request['verification_note']) ?></p><?php endif; ?>
         <form id="collection-form" class="collector-record-form" method="post" action="<?= $escape($recordUrl . ($recordId ? '/update' : '')) ?>">
             <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
@@ -37,17 +37,14 @@ $value = static fn ($candidate, $fallback = '') => is_scalar($candidate) ? $cand
                     </select></label>
                     <label>Item notes<textarea maxlength="500" name="items[<?= $escape($itemId) ?>][notes]"><?= $escape($value($prior['notes'] ?? $item['notes'])) ?></textarea></label>
                 </div></fieldset><?php endforeach; ?>
-                <label>Pickup result<select required name="pickup_result"><option value="">Choose result</option>
-                    <?php foreach (['COLLECTED', 'PARTIAL', 'NOT_COLLECTED'] as $result): ?><option value="<?= $result ?>" <?= ($editable ? ($old['pickup_result'] ?? $request['pickup_result']) : $request['pickup_result']) === $result ? 'selected' : '' ?>><?= $result ?></option><?php endforeach; ?>
-                </select></label>
+                <p>Pickup result is calculated from the recorded item quantities: <?= $escape(CollectionRecord::label($request['pickup_result'])) ?></p>
                 <label>Collector notes<textarea name="collector_note" maxlength="500"><?= $escape($editable ? ($old['collector_note'] ?? $request['collector_note']) : $request['collector_note']) ?></textarea></label>
                 <?php if ($editable): ?><button type="submit" class="collector-primary-button"><?= $recordId ? 'Save Changes' : 'Save Draft' ?></button><?php endif; ?>
             </fieldset>
         </form>
         <?php if ($recordId && $editable): ?>
         <div class="collector-modal-actions">
-            <form method="post" action="<?= $escape($recordUrl . '/delete') ?>" data-confirm="Permanently delete this draft collection record?"><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><button class="collector-secondary-button" type="submit">Delete</button></form>
-            <form method="post" action="<?= $escape($basePath . '/collector/schedules/' . $request['schedule_id'] . '/submit') ?>" data-confirm="Submit all saved records in this schedule? Unsaved changes are not included. All records will become read-only."><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><button class="collector-primary-button" type="submit">Submit Schedule for Verification</button></form>
+            <form method="post" action="<?= $escape($recordUrl . '/delete') ?>" data-confirm="Permanently delete this draft collection record?"><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><button class="collector-secondary-button" type="submit">Delete Draft</button></form>
         </div><?php endif; ?>
     </section>
 </section>

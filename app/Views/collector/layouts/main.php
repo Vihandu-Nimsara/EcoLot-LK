@@ -2,7 +2,7 @@
 $assetBase = htmlspecialchars($basePath . '/assets', ENT_QUOTES, 'UTF-8');
 $pageStyles = [
     'dashboard' => 'collector/collection-workflow.css',
-    'my-requests' => 'collector/collection-workflow.css',
+    'schedules' => 'collector/collection-workflow.css',
     'e-lots' => 'collector/elots.css',
 ];
 $pageScripts = [

@@ -38,15 +38,15 @@ try {
     $db->exec("INSERT INTO e_waste_items (waste_item_id,category_id,item_name) VALUES (1,1,'Test device')");
     $db->exec("INSERT INTO risk_rules (waste_item_id,condition_type,risk_level,action_note) VALUES (1,'DAMAGED','HIGH','Test rule')");
     $schedules = new AreaCollectionSchedule($db);
-    for ($i = 1; $i <= 2; $i++) {
+    for ($i = 1; $i <= 3; $i++) {
         $sid = $schedules->create(['campaign_id'=>1, 'postal_area_id'=>1, 'created_by_officer_user_id'=>1,
-            'collection_date'=>"$month-" . ($i === 1 ? '10' : '20'), 'request_cutoff_at'=>"$month-08 23:59:59", 'request_capacity'=>10, 'schedule_status'=>'OPEN']);
+            'collection_date'=>"$month-" . ($i === 1 ? '10' : ($i === 2 ? '20' : '25')), 'request_cutoff_at'=>"$month-08 23:59:59", 'request_capacity'=>10, 'schedule_status'=>'OPEN']);
         for ($j = 1; $j <= 2; $j++) {
             $rid = (new EWasteRequest($db))->create(['public_user_id'=>2,'schedule_id'=>$sid,'pickup_address'=>'<script>address</script>','request_status'=>'APPROVED']);
             $db->prepare("INSERT INTO request_items (request_id,waste_item_id,quantity,item_condition,applied_risk_level) VALUES (?,1,2,'UNKNOWN','LOW')")->execute([$rid]);
         }
         $schedules->update($sid, ['schedule_status'=>'ASSIGNED']);
-        $db->prepare('INSERT INTO schedule_assignments (schedule_id,collector_user_id,assigned_by_officer_user_id) VALUES (?,?,1)')->execute([$sid, $i === 1 ? 3 : 4]);
+        $db->prepare('INSERT INTO schedule_assignments (schedule_id,collector_user_id,assigned_by_officer_user_id) VALUES (?,?,1)')->execute([$sid, $i === 2 ? 4 : 3]);
     }
     if (($argv[1] ?? '') === '--fixture') {
         $keep = true; echo json_encode(['database'=>$name]); exit;
@@ -64,7 +64,21 @@ try {
     };
     $valid = ['request_id'=>'1', 'pickup_result'=>'COLLECTED','collector_note'=>'<b>actual note</b>',
         'items'=>[1=>['actual_quantity'=>'2','actual_weight_kg'=>'1.250','actual_condition'=>'DAMAGED','notes'=>'Collected']]];
-    $controller->myRequests();
+    foreach ([[], $model->assignedSchedules(4)] as $dashboardSchedules) {
+        ob_start(); (new Controller())->view('collector/dashboard', ['currentPage'=>'dashboard', 'schedules'=>$dashboardSchedules]); $dashboardHtml=ob_get_clean();
+        verify(str_contains($dashboardHtml, 'Next Assignment'), 'Zero/one dashboard failed');
+    }
+    $controller->dashboard();
+    verify(count($controller->data['schedules']) === 2, 'Dashboard multiple schedules');
+    $controller->schedules();
+    verify(count($controller->data['schedules']) === 2, 'Multiple schedules missing');
+    verify($invoke('myRequests') === '/collector/schedules', 'Legacy redirect');
+    $controller->showSchedule('3');
+    verify(array_column($controller->data['requests'], 'request_id') === [5,6], 'Workspace isolation');
+    ob_start(); $controller->showSchedule('2'); ob_end_clean();
+    verify(http_response_code() === 404, 'Foreign workspace access');
+    $controller->showSchedule('1');
+    verify(!$controller->data['canSubmit'], 'Incomplete submission enabled');
     verify(count($controller->data['requests']) === 2, 'Own list only');
     verify($model->assignedRequest(3, 3) === null, 'Foreign request visible');
     foreach (['3','0','-1','1e0','999999999999999999999999'] as $id) {
@@ -75,7 +89,7 @@ try {
         verify(http_response_code() === 403, 'CSRF not rejected: '.$method);
     }
     $invalid = [
-        ['request_id'=>'3'], ['request_id'=>'0'], ['pickup_result'=>'BAD'], ['pickup_result'=>['COLLECTED']], ['collector_note'=>['bad']],
+        ['request_id'=>'3'], ['request_id'=>'0'], ['collector_note'=>['bad']],
         ['collector_note'=>str_repeat('x',501)], ['items'=>[]], ['items'=>'bad'],
         ['items'=>[3=>$valid['items'][1]]],
     ];
@@ -88,7 +102,9 @@ try {
         verify(Session::pullFlash('collection_error') !== null, 'Missing validation feedback');
     }
     verify((int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn() === 0, 'Failed create left parent');
-    $invoke('storeRecord',$valid+['collector_user_id'=>4,'verification_status'=>'VERIFIED']);
+    $invoke('storeRecord',array_replace($valid,['pickup_result'=>'NOT_COLLECTED'])+['collector_user_id'=>4,'verification_status'=>'VERIFIED']);
+    verify($schedules->find(1)['schedule_status'] === 'IN_PROGRESS', 'Work did not start schedule');
+    verify($model->all()[0]['pickup_result'] === 'COLLECTED', 'Browser result was trusted');
     $recordId = (int)$model->all()[0]['collection_record_id'];
     $record = $model->ownedRecord($recordId,3);
     verify(CollectionRecord::status($record)==='DRAFT' && $record['collection_submitted_at']===null, 'New record not draft');
@@ -112,9 +128,14 @@ try {
     verify($model->find($recordId)===null && (int)$db->query('SELECT COUNT(*) FROM collection_record_items')->fetchColumn()===0,'Draft delete did not cascade');
     $invoke('storeRecord',$valid);
     $recordId = (int)$model->all()[0]['collection_record_id'];
-    $second = ['request_id'=>'2','pickup_result'=>'NOT_COLLECTED','items'=>[2=>['actual_quantity'=>'0','actual_weight_kg'=>'','actual_condition'=>'','notes'=>'Nobody home']]];
+    $second = ['request_id'=>'2','pickup_result'=>'NOT_COLLECTED','items'=>[2=>['actual_quantity'=>'0','actual_weight_kg'=>'','actual_condition'=>'DAMAGED','notes'=>'Nobody home']]];
     $invoke('storeRecord',$second);
+    verify($model->assignedRequest(2,3)['items'][0]['actual_condition'] === null, 'Uncollected condition was not normalized');
     verify(count($model->all())===2 && (int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn()===1,'One parent per schedule violated');
+    $controller->showSchedule('1'); verify($controller->data['canSubmit'], 'Complete schedule not ready');
+    $db->exec("UPDATE e_waste_requests SET risk_review_status='PENDING' WHERE request_id=2");
+    $invoke('submitSchedule',[],'1'); verify(Session::pullFlash('collection_error')!==null, 'Pending review submitted');
+    $db->exec("UPDATE e_waste_requests SET risk_review_status='NOT_REQUIRED' WHERE request_id=2");
     $before = $db->query('SELECT * FROM e_waste_requests ORDER BY request_id')->fetchAll();
     $invoke('submitSchedule',[],'1');
     verify(Session::pullFlash('collection_error')===null,'Valid submission failed');
@@ -123,7 +144,7 @@ try {
     verify($schedules->find(1)['schedule_status']==='COLLECTION_SUBMITTED','Schedule state not advanced');
     $controller->showRecord((string)$recordId); verify(!$controller->data['editable'],'Submitted view editable');
     ob_start(); (new Controller())->view('collector/collection-record',$controller->data); $html=ob_get_clean();
-    verify(!str_contains($html,'Save Changes') && !str_contains($html,'>Delete</button>') && !str_contains($html,'>Submit Schedule'),'Submitted mutation buttons visible');
+    verify(!str_contains($html,'Save Changes') && !str_contains($html,'>Delete Draft</button>') && !str_contains($html,'>Submit Schedule'),'Submitted mutation buttons visible');
     $snapshot=$db->query('SELECT * FROM collection_record_items ORDER BY record_item_id')->fetchAll();
     foreach (['updateRecord','deleteRecord'] as $method) {
         $invoke($method,$partial,(string)$recordId); verify(Session::pullFlash('collection_error')!==null,'Submitted mutation accepted');
@@ -139,7 +160,7 @@ try {
         verify(Session::pullFlash('collection_error')!==null, 'Officer outcome editable by collector');
     }
     $db->exec("UPDATE schedule_assignments SET unassigned_at=DATE_ADD(assigned_at,INTERVAL 1 SECOND) WHERE schedule_id=1");
-    verify($model->assignedRequests(3)===[] && $model->ownedRecord($recordId,3)===null,'Revoked assignment retained access');
+    verify($model->assignedRequests(3,1)===[] && $model->ownedRecord($recordId,3)===null,'Revoked assignment retained access');
     // Migration compatibility: restore the original parent definition, apply migration, preserve submitted data.
     $db->exec("ALTER TABLE schedule_collections DROP CONSTRAINT chk_schedule_collections_verification_audit,
         MODIFY verification_status ENUM('PENDING','VERIFIED','REJECTED') NOT NULL DEFAULT 'PENDING',
@@ -150,7 +171,7 @@ try {
     $batchBefore=$db->query('SELECT * FROM schedule_collections')->fetchAll();
     $db->exec(file_get_contents(APP_ROOT.'/database/migrations/20260925_collector_collection_record_crud.sql'));
     verify($batchBefore===$db->query('SELECT * FROM schedule_collections')->fetchAll(),'Migration changed existing submission');
-    foreach (['myRequests','showRequest','showRecord','storeRecord','updateRecord','deleteRecord','submitSchedule'] as $method) foreach (['guest','wrong'] as $role) {
+    foreach (['dashboard','schedules','showSchedule','myRequests','showRequest','showRecord','storeRecord','updateRecord','deleteRecord','submitSchedule'] as $method) foreach (['guest','wrong'] as $role) {
         $command=escapeshellarg(PHP_BINARY).' -d session.save_path='.escapeshellarg(sys_get_temp_dir()).' '.escapeshellarg(__FILE__).' --guard '.escapeshellarg($role).' '.escapeshellarg($method);
         $output=shell_exec($command); verify(!str_contains($output,'UNPROTECTED'),'Role guard missing');
         if ($role==='wrong') verify(str_contains($output,'403'),'Wrong role not forbidden');

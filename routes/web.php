@@ -67,8 +67,11 @@ return static function (Router $router, array $app): void {
     });
 
     $router->group('/collector', static function (Router $router): void {
+        $router->get('/schedules', 'CollectorController@schedules');
+        $router->get('/schedules/{id}', 'CollectorController@showSchedule');
         $router->get('/my-requests', 'CollectorController@myRequests');
-        $router->get('/my-requests/{id}', 'CollectorController@showRequest');
+        $router->get('/requests/{id}', 'CollectorController@showRequest');
+        $router->get('/my-requests/{id}', 'CollectorController@legacyRequest');
         $router->post('/collection-records', 'CollectorController@storeRecord');
         $router->get('/collection-records/{id}', 'CollectorController@showRecord');
         $router->post('/collection-records/{id}/update', 'CollectorController@updateRecord');

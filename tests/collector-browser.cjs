@@ -32,7 +32,17 @@ const run = args => execFileSync(php, ['-d', `session.save_path=${os.tmpdir()}`,
         await page.locator('[name=mobile_number]').fill('0771234569');
         await page.locator('[name=password]').fill('BrowserTest123!');
         await Promise.all([page.waitForURL('**/dashboard'),page.locator('button[type=submit]').click()]);
-        await page.getByRole('link',{name:'Assigned Requests',exact:true}).click();
+        assert.equal(await page.locator('.collector-page-heading h1').innerText(),'Dashboard');
+        await page.locator('.sidebar-nav').getByRole('link',{name:'Assigned Schedules',exact:true}).click();
+        assert.equal(await page.getByRole('link',{name:'Open Schedule',exact:true}).count(),2);
+        await page.getByRole('link',{name:'Open Schedule',exact:true}).last().click();
+        assert.match(page.url(), /schedules\/3$/);
+        assert.match(await page.locator('tbody').innerText(), /#5/);
+        await page.getByRole('link',{name:'Back to Assigned Schedules'}).click();
+        await page.getByRole('link',{name:'Open Schedule',exact:true}).first().click();
+        assert(await page.getByRole('button',{name:'Submit Schedule for Verification'}).isDisabled());
+        assert.equal((await context.request.get(`${base}/collector/schedules/2`)).status(),404);
+        await page.screenshot({path:'/tmp/ecolot-final-workspace.png',fullPage:true});
         assert.equal(await page.locator('tbody tr').count(),2);
         const foreign=await context.request.get(`${base}/collector/my-requests/3`); assert.equal(foreign.status(),404);
         await page.getByRole('link',{name:'Record Collection',exact:true}).first().click();
@@ -40,7 +50,7 @@ const run = args => execFileSync(php, ['-d', `session.save_path=${os.tmpdir()}`,
             await page.locator('[name="items[1][actual_quantity]"]').fill(quantity);
             await page.locator('[name="items[1][actual_weight_kg]"]').fill(weight);
             await page.locator('[name="items[1][actual_condition]"]').selectOption('DAMAGED');
-            await page.locator('[name=pickup_result]').selectOption(result);
+
         }
         const click=async name=>Promise.all([page.waitForNavigation(),page.getByRole('button',{name,exact:true}).click()]);
         await fill('2','1.250','COLLECTED'); await click('Save Draft');
@@ -49,22 +59,23 @@ const run = args => execFileSync(php, ['-d', `session.save_path=${os.tmpdir()}`,
         await fill('1','0.500','PARTIAL'); await click('Save Changes');
         await page.reload(); assert.equal(await page.locator('[name="items[1][actual_quantity]"]').inputValue(),'1');
         await page.screenshot({path:'/tmp/ecolot-collector-draft.png',fullPage:true});
-        await click('Delete');
+        await click('Delete Draft');
         assert.equal((await context.request.get(recordURL)).status(),404);
         await page.getByRole('link',{name:'Record Collection',exact:true}).first().click();
         await fill('2','1.250','COLLECTED'); await click('Save Draft');
         const savedURL=page.url();
-        await page.getByRole('link',{name:'Back to Assigned Requests'}).click();
+        await page.getByRole('link',{name:'Back to Schedule'}).click();
         await page.getByRole('link',{name:'Record Collection',exact:true}).click();
         await page.locator('[name="items[2][actual_quantity]"]').fill('0');
-        await page.locator('[name=pickup_result]').selectOption('NOT_COLLECTED');
+
         await click('Save Draft');
+        await page.getByRole('link',{name:'Back to Schedule',exact:true}).click();
         await click('Submit Schedule for Verification');
         assert.match(await page.locator('[role=status]').innerText(),/read-only/);
         await page.goto(savedURL); await page.reload();
         assert.equal(await page.getByRole('button',{name:'Save Changes',exact:true}).count(),0);
-        assert.equal(await page.getByRole('button',{name:'Delete',exact:true}).count(),0);
-        assert(await page.locator('[name=pickup_result]').isDisabled());
+        assert.equal(await page.getByRole('button',{name:'Delete Draft',exact:true}).count(),0);
+        assert(await page.locator('[name="items[1][actual_quantity]"]').isDisabled());
         const token=await page.locator('[name=_csrf_token]').first().inputValue();
         const badCSRF=await context.request.post(`${savedURL}/delete`,{form:{_csrf_token:'bad'}}); assert.equal(badCSRF.status(),403);
         await context.request.post(`${savedURL}/delete`,{form:{_csrf_token:token},maxRedirects:0});
@@ -73,6 +84,14 @@ const run = args => execFileSync(php, ['-d', `session.save_path=${os.tmpdir()}`,
         await page.setViewportSize({width:390,height:844});
         await page.screenshot({path:'/tmp/ecolot-collector-submitted-mobile.png',fullPage:true});
         assert.equal(await page.evaluate(()=>localStorage.length),0);
+        await page.locator('.sidebar-nav').getByRole('link',{name:'Dashboard',exact:true}).click();
+        await page.locator('.sidebar-nav').getByRole('link',{name:'Assigned Schedules',exact:true}).click();
+        const lotsLink=await page.locator('.sidebar-nav').getByRole('link',{name:'My E-Lots',exact:true}).getAttribute('href');
+        assert.equal((await context.request.get(base+lotsLink)).status(),200);
+        assert.equal((await context.request.get(`${base}/collector/initial-request`)).status(),200);
+        assert.equal((await context.request.get(`${base}/collector/my-requests`)).status(),200);
+        await page.getByRole('button',{name:'Logout',exact:true}).click();
+        await page.waitForURL('**/login');
         assert.deepEqual(errors,[]);
         assert(!/PHP (Warning|Fatal|Notice)/.test(output),output);
         console.log('PASS: Collector browser login, navigation, MySQL persistence after reload, create/edit/delete, schedule submit, read-only, forged request, CSRF, mobile rendering and no localStorage');

@@ -914,3 +914,17 @@
 .collector-record-form :disabled { color: #334a40; opacity: 1; }
 .collector-item-fields { margin: 16px 0; }
 .collector-inline-form { display: inline-block; }
+
+.collector-final-schedules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.collector-final-schedules .collector-detail-card { margin: 0; }
+.collector-workspace progress { display: block; width: 100%; accent-color: #157347; margin: 8px 0 16px; }
+.collector-workspace .collector-count-pill { white-space: normal; }
+@media (max-width: 700px) {
+    body.collector-app:has(.collector-workspace) .app-layout { flex-direction: column; }
+    body.collector-app:has(.collector-workspace) .sidebar { display: flex; position: static; width: 100%; height: auto; min-height: 0; padding: 10px 12px; gap: 8px; }
+    body.collector-app:has(.collector-workspace) .sidebar-logo { display: none; }
+    body.collector-app:has(.collector-workspace) .sidebar-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+    body.collector-app:has(.collector-workspace) .sidebar-bottom { margin-top: 0; padding-top: 0; }
+}
+
+.collector-workspace a.collector-primary-button, .collector-workspace a.collector-secondary-button { text-decoration: none; }

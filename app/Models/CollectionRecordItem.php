@@ -44,8 +44,8 @@ final class CollectionRecordItem extends Model
             if ($qty > 0 && ($weight === '' || (float) $weight <= 0 || $condition === '')) {
                 throw new DomainException('Collected items require positive weight and an actual condition.');
             }
-            if ($qty === 0 && (($weight !== '' && (float) $weight != 0) || $condition !== '')) {
-                throw new DomainException('Uncollected items require zero/blank weight and no actual condition.');
+            if ($qty === 0 && $weight !== '' && (float) $weight != 0) {
+                throw new DomainException('Uncollected items require zero or blank weight.');
             }
             $risk = null;
             if ($qty > 0) {
