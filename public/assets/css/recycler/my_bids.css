@@ -1,48 +1,66 @@
-.my-bids-page .bids-table {
-    min-width: 940px;
+/* Keep action labels intact even when the shared table cells allow long text to wrap. */
+.recycler-app .my-bids-page .row-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
 }
 
-.my-bids-page .bids-table :is(th, td):nth-child(1) { width: 22%; }
-.my-bids-page .bids-table :is(th, td):nth-child(2) { width: 19%; }
-.my-bids-page .bids-table :is(th, td):nth-child(3) { width: 12%; }
-.my-bids-page .bids-table :is(th, td):nth-child(4) { width: 14%; }
-.my-bids-page .bids-table :is(th, td):nth-child(5) { width: 16%; }
-.my-bids-page .bids-table :is(th, td):nth-child(6) { width: 17%; }
-.my-bids-page .money-cell {
+.recycler-app .my-bids-page .row-actions .edit-btn {
+    display: inline-flex;
+    width: 100%;
+    min-width: 110px;
+    min-height: 40px;
     white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
 }
 
-.my-bids-page .bid-position {
-    display: block;
-    width: fit-content;
-    margin-top: 6px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: .6875rem;
-    font-weight: 600;
+.recycler-app .my-bids-page .row-withdraw-form {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 8px;
 }
 
-.my-bids-page .bid-position.leading { color: #047857; background: #ECFDF3; }
-.my-bids-page .bid-position.outbid { color: #9A3412; background: #FFF7ED; }
-
-.badge-submitted {
-    color: #0369A1;
-    background: #E0F2FE;
+.recycler-app .my-bids-page .row-withdraw-form .table-secondary-text {
+    overflow-wrap: normal;
+    word-break: normal;
+    font-size: .75rem;
 }
 
-.badge-open,
-.badge-completed {
-    color: #047857;
-    background: #D1FAE5;
+.recycler-app .my-bids-page .badge { white-space: nowrap; overflow-wrap: normal; }
+
+/* The shared container query can activate at desktop widths beside the sidebar.
+   Retain real table layout here; scroll only when these seven columns cannot fit. */
+@media (min-width: 701px) {
+    .recycler-app .my-bids-page .bids-table {
+        display: table;
+        width: 100%;
+        min-width: 1040px;
+        table-layout: fixed;
+    }
+    .recycler-app .my-bids-page .bids-table thead { display: table-header-group; }
+    .recycler-app .my-bids-page .bids-table tbody { display: table-row-group; }
+    .recycler-app .my-bids-page .bids-table tr { display: table-row; padding: 0; }
+    .recycler-app .my-bids-page .bids-table :is(th, td) {
+        display: table-cell;
+        padding: 14px 12px;
+        vertical-align: middle;
+    }
+    .recycler-app .my-bids-page .bids-table td { border-bottom: 1px solid var(--recycler-border); }
+    .recycler-app .my-bids-page .bids-table td::before { display: none; content: none; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(1) { width: 19% !important; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(2) { width: 10% !important; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(3) { width: 14% !important; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(4) { width: 10% !important; text-align: center; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(5) { width: 10% !important; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(6) { width: 11% !important; }
+    .recycler-app .my-bids-page .bids-table :is(th, td):nth-child(7) { width: 26% !important; min-width: 260px; }
+    .recycler-app .my-bids-page .table-primary-text { white-space: nowrap; }
 }
 
-.badge-winning,
-.badge-awarded {
-    color: #B45309;
-    background: #FEF3C7;
-}
-
-.badge-processing {
-    color: #6D28D9;
-    background: #EDE9FE;
+@media (max-width: 700px) {
+    .recycler-app .my-bids-page .row-actions,
+    .recycler-app .my-bids-page .row-withdraw-form { grid-template-columns: minmax(0, 1fr); }
+    .recycler-app .my-bids-page .row-actions .edit-btn { min-height: 44px; }
 }

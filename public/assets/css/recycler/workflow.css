@@ -283,3 +283,10 @@
         flex: 1 1 100%;
     }
 }
+
+/* Reports retains the baseline grid and tables without affecting other workflows. */
+.recycler-reports-page .report-grid + .workflow-card { margin-top: 20px; }
+.recycler-reports-page .workflow-table { table-layout: fixed; }
+.recycler-reports-page .workflow-table :is(th, td) { vertical-align: middle; overflow-wrap: anywhere; }
+.recycler-reports-page .workflow-table :is(th, td):nth-child(2) { width: 36%; }
+.recycler-reports-page .workflow-table td a { color: var(--recycler-green-800); font-weight: 600; }

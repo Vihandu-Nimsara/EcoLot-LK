@@ -162,7 +162,9 @@
     margin-bottom: 20px;
 }
 
-.recycler-app :is(.bid-header, .awarded-e-lot-header) h2 {
+.recycler-app :is(.bid-header, .awarded-e-lot-header) h2,
+.recycler-app :is(.my-bids-page, .awarded-e-lots-page) h1 {
+    margin: 0;
     color: #134029;
     font-size: 1.375rem;
 }
@@ -180,7 +182,7 @@
 .recycler-app .filter-result { margin: -7px 0 16px; color: var(--recycler-muted); font-size: .8125rem; }
 .recycler-app .filtered-empty-state { margin-top: 16px; padding: 28px 18px; color: var(--recycler-muted); background: #f8fbf9; border: 1px dashed #cbdad0; border-radius: 12px; text-align: center; }
 .recycler-app .filtered-empty-state[hidden] { display: none; }
-.recycler-app .light-filter { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; padding: 12px 14px; background: #fff; border: 1px solid var(--recycler-border); border-radius: 14px; }
+.recycler-app .light-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; padding: 12px 14px; background: #fff; border: 1px solid var(--recycler-border); border-radius: 14px; }
 .recycler-app .quick-filters { display: flex; flex-wrap: wrap; gap: 7px; }
 .recycler-app .quick-filter { min-height: 36px; padding: 7px 12px; color: #3f5046; background: #f7faf8; border: 1px solid #d8e2db; border-radius: 999px; font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
 .recycler-app .quick-filter[aria-pressed="true"] { color: #fff; background: var(--recycler-green-600); border-color: var(--recycler-green-600); box-shadow: 0 3px 8px rgba(21,147,66,.18); }
@@ -192,6 +194,7 @@
     width: 100%;
     max-width: 100%;
     padding: 10px;
+    container-type: inline-size;
     overflow-x: auto;
     background: #FFFFFF;
     border: 1px solid var(--recycler-border);
@@ -201,7 +204,7 @@
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) {
     width: 100%;
-    min-width: 1120px;
+    min-width: 0;
     table-layout: fixed;
     border-collapse: collapse;
 }
@@ -221,7 +224,9 @@
 }
 
 .recycler-app :is(.bid-table, .bids-table, .awarded-table) td {
+    overflow-wrap: anywhere;
     padding: 18px 8px;
+    font-variant-numeric: tabular-nums;
     color: #111827;
     border-bottom: 1px solid #E5E7EB;
     font-size: 0.875rem;
@@ -592,10 +597,19 @@
     }
 
     .recycler-app .top-header {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 12px;
         width: calc(100% - 24px);
         margin: 12px auto;
         padding: 14px 16px;
     }
+
+    .recycler-app .header-left { min-width: 0; }
+    .recycler-app .header-right { grid-column: 1 / -1; }
+    .recycler-app .profile { max-width: 100%; }
+    .recycler-app .profile-info { min-width: 0; overflow-wrap: anywhere; }
+    .recycler-app .avatar { flex-shrink: 0; }
 
     .recycler-app .page-content {
         padding: 20px 12px 32px;
@@ -611,67 +625,107 @@
         flex-direction: column;
     }
 
-    .recycler-app .light-filter { align-items: stretch; flex-direction: column; }
-    .recycler-app .light-filter-controls { width: 100%; margin-left: 0; }
-    .recycler-app .light-filter-controls .filter-field { flex: 1; }
-    .recycler-app .light-filter .filter-field :is(input,select) { width: 100%; min-width: 0; }
-
     .recycler-app :is(.bid-table-wrapper, .table-responsive) {
         padding: 0;
-        overflow: visible;
         background: transparent;
         border: 0;
         border-radius: 0;
         box-shadow: none;
     }
 
+    .recycler-app .light-filter { align-items: stretch; flex-direction: column; }
+    .recycler-app .light-filter-controls { width: 100%; margin-left: 0; }
+    .recycler-app .light-filter-controls .filter-field { flex: 1; }
+    .recycler-app .light-filter .filter-field :is(input,select) { width: 100%; min-width: 0; }
+}
+
+@media (max-width: 520px) {
+    .recycler-app .light-filter-controls { align-items: stretch; flex-direction: column; }
+}
+
+/* Shared bidding controls: variants follow the base rule so they retain priority. */
+.recycler-app :is(.edit-btn, .btn-action, .primary-workflow-btn, .secondary-workflow-btn, .danger-workflow-btn) {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 40px; padding: 9px 12px; border: 1px solid var(--recycler-border);
+    border-radius: 9px; font: inherit; font-size: .8125rem; font-weight: 600;
+    line-height: 1.3; text-decoration: none; white-space: normal; cursor: pointer;
+}
+.recycler-app :is(.primary-row-action, .primary-workflow-btn) { color: #fff; background: #159342; border-color: #159342; }
+.recycler-app :is(.secondary-row-action, .secondary-workflow-btn) { color: #0A5A3E; background: #fff; border-color: #C7D9CE; }
+.recycler-app :is(.danger-row-action, .danger-workflow-btn) { color: #B42318; background: #FFF5F5; border-color: #E9B5B0; }
+.recycler-app :is(.primary-row-action, .primary-workflow-btn):hover { color: #fff; background: #047857; border-color: #047857; }
+.recycler-app :is(.secondary-row-action, .secondary-workflow-btn):hover { color: #0A5A3E; background: #F0FAF4; border-color: #86D2A0; }
+.recycler-app :is(.danger-row-action, .danger-workflow-btn):hover { color: #fff; background: #B42318; border-color: #B42318; }
+.recycler-app :is(.edit-btn, .btn-action, .primary-workflow-btn, .secondary-workflow-btn, .danger-workflow-btn):focus-visible { outline: 3px solid #86D2A0; outline-offset: 3px; }
+.recycler-app .row-actions { display: grid; gap: 8px; width: 100%; }
+.recycler-app .row-actions > * { min-width: 0; width: 100%; }
+.recycler-app :is(.edit-btn, .btn-action) { max-width: 100%; text-align: center; }
+.recycler-app .row-withdraw-form .table-secondary-text { margin: 0; line-height: 1.5; }
+.recycler-app .badge { min-height: 26px; line-height: 1.3; white-space: normal; }
+.recycler-app .table-date { display: block; white-space: nowrap; font-size: .8125rem; }
+.recycler-app :is(.empty-state, .filtered-empty-state) {
+    padding: 28px 18px; color: var(--recycler-muted); background: #f8fbf9;
+    border: 1px dashed #cbdad0; border-radius: 12px; text-align: center;
+}
+.recycler-app .workflow-card > .bid-table-wrapper { margin-top: 18px; }
+.recycler-app .workflow-page + .workflow-page { margin-top: 20px; }
+.recycler-app .detail-item > strong { display: block; overflow-wrap: anywhere; }
+.recycler-app .detail-item > strong + span { display: block; margin-top: 6px; }
+.recycler-app .items-table :is(th, td):first-child { width: 28%; }
+.recycler-app .items-table :is(th, td):not(:first-child) { width: 18%; }
+
+.recycler-app .row-withdraw-form { margin: 0; display: grid; gap: 6px; }
+.recycler-app .bid-form { display: grid; gap: 16px; max-width: 640px; margin-top: 24px; }
+.recycler-app .bid-form .form-actions { margin-top: 0; }
+.recycler-app .bid-guidance { display: grid; gap: 6px; color: var(--recycler-muted); font-size: .875rem; }
+.recycler-app .bid-guidance p { margin: 0; }
+.recycler-app .withdraw-form { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--recycler-border); }
+.recycler-app .withdraw-form p { margin-bottom: 12px; }
+.recycler-app .dialog-field input { min-height: 44px; }
+.recycler-app .badge-submitted { color: #0369A1; background: #E0F2FE; }
+.recycler-app :is(.badge-winning, .badge-awarded, .badge-scheduled) { color: #92400E; background: #FEF3C7; }
+.recycler-app :is(.badge-rejected, .badge-lost) { color: #B42318; background: #FEE2E2; }
+.recycler-app :is(.badge-withdrawn, .badge-cancelled, .badge-pending) { color: #475569; background: #E2E8F0; }
+.recycler-app :is(.badge-open_for_bidding, .badge-completed) { color: #047857; background: #D1FAE5; }
+.recycler-app .bid-flash { margin-bottom: 20px; padding: 14px 18px; border: 1px solid; border-radius: 12px; }
+.recycler-app .bid-flash-success { color: #065F46; background: #ECFDF5; border-color: #A7F3D0; }
+.recycler-app .bid-flash-error { color: #991B1B; background: #FEF2F2; border-color: #FECACA; }
+.recycler-app tr[hidden] { display: none !important; }
+.recycler-app .stat-info .secondary-workflow-btn { margin-top: 14px; }
+/* Switch at the available table width, including when the sidebar is visible. */
+@container (max-width: 880px) {
     .recycler-app :is(.bid-table, .bids-table, .awarded-table),
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) :is(tbody, tr, td) {
         display: block;
         width: 100%;
         min-width: 0;
     }
-
-    .recycler-app :is(.bid-table, .bids-table, .awarded-table) thead {
-        display: none;
-    }
-
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) thead { display: none; }
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) tr {
         margin-bottom: 14px;
         padding: 14px;
-        background: #FFFFFF;
-        border: 1px solid #E5E7EB;
+        background: #fff;
+        border: 1px solid var(--recycler-border);
         border-radius: 14px;
     }
-
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) tr:last-child { margin-bottom: 0; }
     .recycler-app :is(.bid-table, .bids-table, .awarded-table) td {
-        display: grid;
-        grid-template-columns: 110px minmax(0, 1fr);
-        gap: 12px;
         width: 100% !important;
-        padding: 8px 0;
-        border-bottom: 1px solid #F0F2F4;
-        font-size: 0.75rem;
-        text-align: left !important;
+        padding: 10px 0;
+        border: 0;
+        text-align: left;
     }
-
-    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td:last-child {
-        border-bottom: 0;
-    }
-
-    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td::before {
-        color: #047857;
-        font-size: 0.6875rem;
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) td[data-label]::before {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--recycler-green-800);
+        font-size: .75rem;
         font-weight: 600;
-        content: attr(data-label) ":";
+        content: attr(data-label);
     }
-
-    .recycler-app .badge {
-        width: fit-content;
-        white-space: nowrap;
+    .recycler-app :is(.bid-table, .bids-table, .awarded-table) :is(.edit-btn, .btn-action) {
+        width: 100%;
+        min-height: 44px;
     }
-}
-
-@media (max-width: 520px) {
-    .recycler-app .light-filter-controls { align-items: stretch; flex-direction: column; }
+    .recycler-app .row-actions { max-width: none; }
 }

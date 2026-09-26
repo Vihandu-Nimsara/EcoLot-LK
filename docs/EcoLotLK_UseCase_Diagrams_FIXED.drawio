@@ -1,0 +1,437 @@
+<mxfile host="app.diagrams.net" agent="ChatGPT" pages="5">
+  <diagram id="public_user_use_case_diagram" name="Public User Use Case Diagram">
+    <mxGraphModel dx="1413" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#0F3D2E;" value="Public User Use Case Diagram" vertex="1">
+          <mxGeometry height="35" width="700" x="470" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F3D2E;strokeWidth=2;fontColor=#0F3D2E;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=10;" value="EcoLot LK System" vertex="1">
+          <mxGeometry height="770" width="920" x="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=none;strokeColor=#0F3D2E;fontColor=#173B34;fontSize=15;fontStyle=1;" value="Public User" vertex="1">
+          <mxGeometry height="100" width="100" x="55" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_0" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Register Public Account" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_0" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Login / Logout" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_1" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Account Profile" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_2" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Available Collection Schedules" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="356" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_3" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Submit E-Waste Collection Request" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_4" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="uc_4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Request Status &amp; History" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="504" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_5" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Update Eligible Request" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="578" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_6" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Cancel Eligible Request" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="652" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_7" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Submit Complaint / Feedback" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="726" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_8" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_otp" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Verify Mobile via OTP" vertex="1">
+          <mxGeometry height="48" width="230" x="920" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_otp" edge="1" parent="1" source="uc_0" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;strokeColor=#0F3D2E;fontColor=#0F3D2E;fontSize=12;labelBackgroundColor=#FFFFFF;" target="inc_otp" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_items" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Add E-Waste Items" vertex="1">
+          <mxGeometry height="48" width="230" x="890" y="436" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_items" edge="1" parent="1" source="uc_4" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;strokeColor=#0F3D2E;fontColor=#0F3D2E;fontSize=12;labelBackgroundColor=#FFFFFF;" target="inc_items" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="external" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF3;strokeColor=#0F3D2E;strokeWidth=1.6;fontColor=#173B34;fontSize=13;fontStyle=1;" value="&lt;&lt;external system&gt;&gt;&#xa;Notify.lk SMS API" vertex="1">
+          <mxGeometry height="62" width="135" x="967.5" y="281" as="geometry" />
+        </mxCell>
+        <mxCell id="external_edge" edge="1" parent="1" source="inc_otp" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="external" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="municipal_officer_use_case_diagram" name="Municipal Officer Use Case Diagram">
+    <mxGraphModel dx="1614" dy="943" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1020" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#0F3D2E;" value="Municipal Officer Use Case Diagram" vertex="1">
+          <mxGeometry height="35" width="700" x="370" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F3D2E;strokeWidth=2;fontColor=#0F3D2E;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=10;" value="EcoLot LK System" vertex="1">
+          <mxGeometry height="890" width="690" x="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=none;strokeColor=#0F3D2E;fontColor=#173B34;fontSize=15;fontStyle=1;" value="Municipal Officer" vertex="1">
+          <mxGeometry height="100" width="100" x="55" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_0" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Login / Logout" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_0" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Monthly Campaigns" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="183.1818181818182" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_1" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Area Collection Schedules" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="251.36363636363637" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_2" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Review Flagged Requests" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="319.54545454545456" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_3" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Assign Collectors &amp; Vehicles" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="387.72727272727275" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_4" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Verify Collection Submissions" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="455.90909090909093" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_5" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Verify / Reject E-Lots" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="524.0909090909091" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_6" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Open E-Lots for Bidding" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="592.2727272727273" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_7" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0.025;entryY=0.6;entryDx=0;entryDy=0;entryPerimeter=0;" target="uc_7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Review Bids &amp; Award E-Lot" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="660.4545454545455" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_8" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_9" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Record E-Lot Handover" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="728.6363636363637" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_9" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_10" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Review Feedback &amp; Respond" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="796.8181818181819" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_10" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_11" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Municipal Reports" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_11" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="collector_use_case_diagram" name="Collector Use Case Diagram">
+    <mxGraphModel dx="1413" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#0F3D2E;" value="Collector Use Case Diagram" vertex="1">
+          <mxGeometry height="35" width="510" x="490" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F3D2E;strokeWidth=2;fontColor=#0F3D2E;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=10;" value="EcoLot LK System" vertex="1">
+          <mxGeometry height="770" width="940" x="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=none;strokeColor=#0F3D2E;fontColor=#173B34;fontSize=15;fontStyle=1;" value="Collector" vertex="1">
+          <mxGeometry height="100" width="100" x="55" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_0" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Login / Logout" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_0" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Assigned Collection Schedules" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_1" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Assigned Requests" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_2" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Record Collection Details" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="356" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_3" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Submit Schedule Collection for Verification" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_4" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="uc_4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Create E-Lot Draft from Verified Items" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="504" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_5" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Edit / Delete E-Lot Draft" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="578" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_6" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Submit E-Lot for Officer Verification" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="652" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_7" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View E-Lot Verification Status" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="726" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_8" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_pickup" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Record Pickup Result" vertex="1">
+          <mxGeometry height="48" width="230" x="930" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_pickup" edge="1" parent="1" source="uc_3" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;strokeColor=#0F3D2E;fontColor=#0F3D2E;fontSize=12;labelBackgroundColor=#FFFFFF;" target="inc_pickup" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_actuals" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Record Actual Quantity, Weight &amp; Condition" vertex="1">
+          <mxGeometry height="48" width="230" x="930" y="402" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_actuals" edge="1" parent="1" source="uc_3" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;strokeColor=#0F3D2E;fontColor=#0F3D2E;fontSize=12;labelBackgroundColor=#FFFFFF;" target="inc_actuals" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="authorized_recycler_use_case_diagram" name="Authorized Recycler Use Case Diagram">
+    <mxGraphModel dx="1614" dy="943" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1020" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#0F3D2E;" value="Authorized Recycler Use Case Diagram" vertex="1">
+          <mxGeometry height="35" width="700" x="390" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F3D2E;strokeWidth=2;fontColor=#0F3D2E;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=10;" value="EcoLot LK System" vertex="1">
+          <mxGeometry height="890" width="850" x="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=none;strokeColor=#0F3D2E;fontColor=#173B34;fontSize=15;fontStyle=1;" value="Authorized Recycler" vertex="1">
+          <mxGeometry height="100" width="100" x="55" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_0" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Register Recycler Application" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_0" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Login / Logout" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="183.1818181818182" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_1" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="547.11" y="232.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uc_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Recycler Profile" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="251.36363636363637" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_2" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Submit / Update Licence &amp; Capability Information" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="319.54545454545456" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_3" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Application / Verification Status" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="387.72727272727275" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_4" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Eligible E-Lots" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="455.90909090909093" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_5" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View E-Lot Details" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="524.0909090909091" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_6" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="uc_6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Place Bid" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="592.2727272727273" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_7" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Revise Bid Before Deadline" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="660.4545454545455" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_8" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_9" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Bid Status" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="728.6363636363637" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_9" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_10" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Awarded E-Lots &amp; Handover Information" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="796.8181818181819" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_10" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_11" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Recycler Activity Summary" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_11" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc_otp" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Verify Mobile via OTP" vertex="1">
+          <mxGeometry height="41.74" width="200" x="880" y="117" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_otp" edge="1" parent="1" source="uc_0" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;strokeColor=#0F3D2E;fontColor=#0F3D2E;fontSize=12;labelBackgroundColor=#FFFFFF;" target="inc_otp" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="external" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFDF3;strokeColor=#0F3D2E;strokeWidth=1.6;fontColor=#173B34;fontSize=13;fontStyle=1;" value="&lt;&lt;external system&gt;&gt;&#xa;Notify.lk SMS API" vertex="1">
+          <mxGeometry height="62" width="135" x="912.5" y="245.36" as="geometry" />
+        </mxCell>
+        <mxCell id="external_edge" edge="1" parent="1" source="inc_otp" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="external" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="administrator_use_case_diagram" name="Administrator Use Case Diagram">
+    <mxGraphModel dx="1413" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#0F3D2E;" value="Administrator Use Case Diagram" vertex="1">
+          <mxGeometry height="35" width="700" x="350" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0F3D2E;strokeWidth=2;fontColor=#0F3D2E;fontSize=16;fontStyle=1;verticalAlign=top;align=left;spacingTop=8;spacingLeft=10;" value="EcoLot LK System" vertex="1">
+          <mxGeometry height="770" width="690" x="240" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=none;strokeColor=#0F3D2E;fontColor=#173B34;fontSize=15;fontStyle=1;" value="Administrator" vertex="1">
+          <mxGeometry height="100" width="100" x="55" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_0" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Login / Logout" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_0" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_0" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage User &amp; Staff Accounts" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_1" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Postal Code Areas" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="282" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_2" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage Waste Categories &amp; E-Waste Items" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="356" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_3" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Manage E-Waste Item Rules" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_4" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;" target="uc_4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_5" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Review Recycler Applications" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="504" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_5" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_6" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Review Licence &amp; Capability Information" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="578" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_6" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_7" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="Verify / Reject Recycler" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="652" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_7" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_8" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#F7FBF8;strokeColor=#0F3D2E;strokeWidth=1.8;fontColor=#173B34;fontSize=14;align=center;verticalAlign=middle;" value="View Reports &amp; Audit Records" vertex="1">
+          <mxGeometry height="50" width="390" x="390" y="726" as="geometry" />
+        </mxCell>
+        <mxCell id="assoc_8" edge="1" parent="1" source="actor" style="endArrow=none;html=1;rounded=0;strokeColor=#5B7774;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="uc_8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

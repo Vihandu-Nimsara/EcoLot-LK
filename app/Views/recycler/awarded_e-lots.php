@@ -1,63 +1,19 @@
-<?php
-$awardedLots = [
-    ['code'=>'DEMO-FIX-LOT-AWARDED-001','title'=>'Awarded Lot - Printers and Circuit Boards','category'=>'Demo Consumer Electronics','qty'=>9,'weight'=>'118.00 kg','amount'=>'132,000.00','status'=>'AWARDED','class'=>'badge-awarded'],
-    ['code'=>'DEMO-FIX-LOT-HANDED-OVER-001','title'=>'Handed Over Lot - Desktop Computers','category'=>'Office E-Waste','qty'=>10,'weight'=>'76.00 kg','amount'=>'74,500.00','status'=>'HANDED_OVER','class'=>'badge-handed-over'],
-    ['code'=>'DEMO-FIX-LOT-PROCESSING-001','title'=>'Processing Lot - Lithium Batteries','category'=>'Demo Battery and Circuit Boards','qty'=>16,'weight'=>'64.00 kg','amount'=>'88,000.00','status'=>'PROCESSING','class'=>'badge-processing'],
-    ['code'=>'DEMO-FIX-LOT-COMPLETED-001','title'=>'Completed Lot - Routers','category'=>'Demo Consumer Electronics','qty'=>24,'weight'=>'18.00 kg','amount'=>'29,500.00','status'=>'COMPLETED','class'=>'badge-completed'],
-    ['code'=>'DEMO-LOT-003','title'=>'Demo Awarded Lot - Printers and Monitors','category'=>'Demo Consumer Electronics','qty'=>8,'weight'=>'110.00 kg','amount'=>'126,000.00','status'=>'AWARDED','class'=>'badge-awarded'],
-    ['code'=>'DEMO-LOT-004','title'=>'Demo Processing Lot - Lithium Batteries','category'=>'Demo Battery and Circuit Boards','qty'=>18,'weight'=>'62.00 kg','amount'=>'99,000.00','status'=>'PROCESSING','class'=>'badge-processing'],
-];
-?>
-<section class="awarded-e-lots-page">
-    <section class="awarded-e-lot-card">
-        <div class="awarded-e-lot-header">
-            <div>
-                <h2>My Awarded E-Lots</h2>
-                <p>Track handover and processing progress for E-Lots awarded to your company.</p>
-            </div>
-        </div>
-
-        <form class="light-filter" data-client-filter data-rows="[data-awarded-row]" data-empty="[data-awarded-empty]" data-result="[data-awarded-result]">
-            <div class="quick-filters" role="group" aria-label="Filter awarded E-Lots by lifecycle status">
-                <button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button>
-                <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="AWARDED">Awarded</button>
-                <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="HANDED_OVER">Handed Over</button>
-                <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="PROCESSING">Processing</button>
-                <button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="COMPLETED">Completed</button>
-            </div>
-            <div class="light-filter-controls">
-                <div class="filter-field">
-                    <label for="awarded-search">Search E-Lots</label>
-                    <input id="awarded-search" name="search" type="search" placeholder="Code, title or category">
-                </div>
-            </div>
-        </form>
-
-        <p class="filter-result" data-awarded-result role="status" aria-live="polite"></p>
-
-        <?php if ($awardedLots === []): ?>
-            <div class="empty-state">No awarded E-Lots are available.</div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="awarded-table">
-                    <thead>
-                        <tr><th>E-Lot</th><th>Category</th><th>Waste</th><th>Winning Bid</th><th>Status</th><th>Action</th></tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($awardedLots as $lot): ?>
-                        <tr data-awarded-row data-search="<?= htmlspecialchars($lot['code'].' '.$lot['title'].' '.$lot['category']) ?>" data-status="<?= $lot['status'] ?>">
-                            <td data-label="E-Lot"><strong class="table-primary-text"><?= htmlspecialchars($lot['code']) ?></strong><span class="table-secondary-text"><?= htmlspecialchars($lot['title']) ?></span></td>
-                            <td data-label="Category"><?= htmlspecialchars($lot['category']) ?></td>
-                            <td data-label="Waste"><strong><?= $lot['qty'] ?> items</strong><span class="table-secondary-text"><?= $lot['weight'] ?></span></td>
-                            <td data-label="Winning Bid">Rs. <?= $lot['amount'] ?></td>
-                            <td data-label="Status"><span class="badge <?= $lot['class'] ?>"><?= ucwords(strtolower(str_replace('_', ' ', $lot['status']))) ?></span></td>
-                            <td data-label="Action"><a class="btn-action primary-row-action" href="<?= htmlspecialchars($basePath) ?>/recycler/awarded-e-lot/<?= rawurlencode($lot['code']) ?>">View Details</a></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="filtered-empty-state" data-awarded-empty hidden>No awarded E-Lots match the selected filters.</div>
-        <?php endif; ?>
-    </section>
-</section>
+<?php $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); ?>
+<section class="awarded-e-lots-page"><section class="awarded-e-lot-card">
+<div class="awarded-e-lot-header"><div><h1>My Awarded E-Lots</h1><p>Your winning bids, selected by the Municipal Officer.</p></div></div>
+<form class="light-filter" data-client-filter data-rows="[data-awarded-row]" data-empty="[data-awarded-empty]" data-result="[data-awarded-result]"><div class="quick-filters" role="group" aria-label="Filter by recorded handover status">
+<?php foreach (['' => 'All', 'PENDING' => 'Pending', 'SCHEDULED' => 'Scheduled', 'COMPLETED' => 'Handed Over', 'CANCELLED' => 'Cancelled'] as $value => $label): ?>
+<button class="quick-filter" type="button" aria-pressed="<?= $value === '' ? 'true' : 'false' ?>" data-filter-name="handover" data-filter-value="<?= $value ?>"><?= $label ?></button>
+<?php endforeach; ?></div>
+<div class="light-filter-controls"><div class="filter-field"><label for="awarded-search">Search E-Lots</label><input id="awarded-search" name="search" type="search" placeholder="Code, title or category"></div></div></form>
+<p class="filter-result" data-awarded-result role="status" aria-live="polite"></p>
+<?php if (!$awardedLots): ?><div class="empty-state">You have no winning bids.</div><?php else: ?>
+<div class="table-responsive"><table class="awarded-table"><thead><tr><th>E-Lot</th><th>Category</th><th>Winning Bid</th><th>Lot Status</th><th>Handover</th><th>Action</th></tr></thead><tbody>
+<?php foreach ($awardedLots as $lot): ?>
+<tr data-awarded-row data-handover="<?= $escape($lot['handover_status'] ?? '') ?>" data-search="<?= $escape($lot['lot_code'] . ' ' . $lot['title'] . ' ' . $lot['category_name']) ?>">
+<td data-label="E-Lot"><strong class="table-primary-text"><?= $escape($lot['lot_code']) ?></strong><span class="table-secondary-text"><?= $escape($lot['title']) ?></span></td>
+<td data-label="Category"><?= $escape($lot['category_name']) ?></td><td data-label="Winning Bid">Rs. <?= number_format((float) $lot['bid_amount'], 2) ?></td>
+<td data-label="Lot Status"><span class="badge badge-<?= strtolower($lot['lot_status']) ?>"><?= $escape(ucwords(strtolower(str_replace('_', ' ', $lot['lot_status'])))) ?></span></td><td data-label="Handover"><span class="badge badge-<?= strtolower($lot['handover_status'] ?? 'pending') ?>"><?= $escape(ucfirst(strtolower($lot['handover_status'] ?? 'Not recorded'))) ?></span></td>
+<td data-label="Action"><a class="btn-action primary-row-action" href="<?= $escape($basePath) ?>/recycler/awarded-e-lot/<?= (int) $lot['e_lot_id'] ?>">View Details</a></td>
+</tr><?php endforeach; ?></tbody></table></div><div class="filtered-empty-state" data-awarded-empty hidden>No awarded E-Lots match these filters.</div><?php endif; ?>
+</section></section>

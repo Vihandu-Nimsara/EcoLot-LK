@@ -1,0 +1,733 @@
+<mxfile host="app.diagrams.net" pages="8">
+  <diagram id="p1" name="01 - Overall Activity Overview">
+    <mxGraphModel dx="1738" dy="1015" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Overall Activity Overview" vertex="1">
+          <mxGeometry height="60" width="1700" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="890" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login / Register" vertex="1">
+          <mxGeometry height="55" width="230" x="790" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="auth" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;verticalAlign=middle;" value="Authenticated?" vertex="1">
+          <mxGeometry height="95" width="190" x="810" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="role" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Identify Role" vertex="1">
+          <mxGeometry height="55" width="220" x="795" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="login" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="login" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="auth" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="auth" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="role" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bad" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Show error / retry" vertex="1">
+          <mxGeometry height="55" width="190" x="485" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="auth" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="bad" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="bad" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="login" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="207.46" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pu" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;align=center;verticalAlign=middle;" value="Public User" vertex="1">
+          <mxGeometry height="58" width="250" x="120" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="pum" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Requests • status • feedback" vertex="1">
+          <mxGeometry height="72" width="270" x="110" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="brpu" edge="1" parent="1" source="role" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="pu" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="245.08" y="450.08" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmpu" edge="1" parent="1" source="pu" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="pum" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;align=center;verticalAlign=middle;" value="Municipal Officer" vertex="1">
+          <mxGeometry height="58" width="250" x="450" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="mom" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Campaigns • schedules • reviews • handover" vertex="1">
+          <mxGeometry height="72" width="270" x="440" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="brmo" edge="1" parent="1" source="role" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="mo" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmmo" edge="1" parent="1" source="mo" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="mom" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="co" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;align=center;verticalAlign=middle;" value="Collector" vertex="1">
+          <mxGeometry height="58" width="250" x="780" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="com" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Assigned pickups • collection • E-Lots" vertex="1">
+          <mxGeometry height="72" width="270" x="770" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="brco" edge="1" parent="1" source="role" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="co" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmco" edge="1" parent="1" source="co" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="com" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="re" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;align=center;verticalAlign=middle;" value="Authorized Recycler" vertex="1">
+          <mxGeometry height="58" width="250" x="1110" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="rem" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Eligible E-Lots • bids • handover" vertex="1">
+          <mxGeometry height="72" width="270" x="1100" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="brre" edge="1" parent="1" source="role" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="re" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmre" edge="1" parent="1" source="re" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="rem" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ad" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;align=center;verticalAlign=middle;" value="Administrator" vertex="1">
+          <mxGeometry height="58" width="250" x="1440" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="adm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Users • recycler verification • master data • audit" vertex="1">
+          <mxGeometry height="72" width="270" x="1430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="brad" edge="1" parent="1" source="role" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="ad" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1565.08" y="450.08" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmad" edge="1" parent="1" source="ad" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="adm" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="logout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="55" width="230" x="790" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="lopu" edge="1" parent="1" source="pum" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="logout" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="696.08" />
+              <mxPoint x="410" y="877.46" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lomo" edge="1" parent="1" source="mom" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="logout" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="740" y="696.08" />
+              <mxPoint x="740" y="860.08" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="loco" edge="1" parent="1" source="com" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="logout" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="905.08" y="820" />
+              <mxPoint x="905.08" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lore" edge="1" parent="1" source="rem" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="logout" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="696.08" />
+              <mxPoint x="1080" y="860.08" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="load" edge="1" parent="1" source="adm" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="logout" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1565.08" y="780.08" />
+              <mxPoint x="1120" y="780.08" />
+              <mxPoint x="1120" y="880.08" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="890" y="935" as="geometry" />
+        </mxCell>
+        <mxCell id="lend" edge="1" parent="1" source="logout" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p2" name="02 - Public User">
+    <mxGraphModel dx="2055" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Public User Activity" vertex="1">
+          <mxGeometry height="60" width="1400" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login and open Public User dashboard" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View OPEN schedules for registered Postal Code Area" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Select preferred collection date" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Enter pickup address and e-waste items" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="System validates cutoff, capacity, item policy and risk" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;verticalAlign=middle;" value="Municipal review required?" vertex="1">
+          <mxGeometry height="105" width="270" x="555" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Submit / wait for officer decision when flagged" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="788" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a7" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View request status / history" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Update or cancel before allowed deadline" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="972" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Submit complaint / feedback when needed" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1064" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1156" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="a10" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a11" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="no" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380.09" y="700" />
+              <mxPoint x="380.09" y="860" />
+              <mxPoint x="650.09" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p3" name="03 - Municipal Officer">
+    <mxGraphModel dx="2511" dy="1467" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1450" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Municipal Officer Activity" vertex="1">
+          <mxGeometry height="60" width="1500" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login and open Municipal Officer dashboard" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Create / close Monthly Campaign" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Create / view / edit / delete Area Collection Schedules" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Open schedule for Public User requests" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Review flagged / hazardous requests when required" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="After cutoff, assign one active Collector + Vehicle" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Verify or reject submitted Schedule Collection" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="752" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Verify / reject Collector-created E-Lot" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="844" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Open approved E-Lot for bidding" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="936" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Review submitted bids and select winning bid" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1028" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Record digital handover" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="a10" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Completed handover → E-Lot COMPLETED" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1212" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="a11" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a12" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1304" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="a12" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a13" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="1380" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a13" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p4" name="04 - Collector">
+    <mxGraphModel dx="1329" dy="776" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Collector Activity" vertex="1">
+          <mxGeometry height="60" width="1400" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login and view assigned schedule" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View approved pickup requests / stops" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Attempt pickup for each request" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Record COLLECTED / PARTIAL / NOT_COLLECTED result" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="For collected items record actual quantity, weight, condition and actual risk" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Submit Schedule Collection" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;verticalAlign=middle;" value="Officer verified collection?" vertex="1">
+          <mxGeometry height="105" width="270" x="555" y="752" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Create categorized E-Lot from verified collected items" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Submit E-Lot for officer verification" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="972" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a9" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1064" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a10" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fix" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Correct records and resubmit" vertex="1">
+          <mxGeometry height="55" width="250" x="160" y="777" as="geometry" />
+        </mxCell>
+        <mxCell id="no" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="fix" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="back" edge="1" parent="1" source="fix" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320.09" y="689.09" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p5" name="05 - Authorized Recycler">
+    <mxGraphModel dx="2055" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1150" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Authorized Recycler Activity" vertex="1">
+          <mxGeometry height="60" width="1400" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Register and submit recycler compliance details" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Administrator verifies recycler / licence / capabilities / activities" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login as VERIFIED Authorized Recycler" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View eligible OPEN_FOR_BIDDING E-Lots" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Submit one bid per E-Lot" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Update same bid before deadline when needed" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View bid status" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="752" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;verticalAlign=middle;" value="Winning bid?" vertex="1">
+          <mxGeometry height="105" width="270" x="555" y="844" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Participate in digital handover" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="972" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a9" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Handover completed → E-Lot COMPLETED" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1064" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="1156" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="a10" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a11" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a11" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lose" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a11" value="No">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390.09" y="896.55" />
+              <mxPoint x="390.09" y="1130" />
+              <mxPoint x="660.09" y="1130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p6" name="06 - Administrator">
+    <mxGraphModel dx="1738" dy="1015" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1050" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Administrator Activity" vertex="1">
+          <mxGeometry height="60" width="1400" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Login and open Administrator dashboard" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Create / update / deactivate Municipal Officer and Collector accounts" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Review Recycler registration" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Verify / reject / suspend recycler licence, capabilities and authorized activities" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Manage Waste Categories and E-Waste Items" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Manage Risk Rules" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="View system reports and Audit Logs" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="752" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="844" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="a7" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="946" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a8" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p7" name="07 - Sign-in (Login)">
+    <mxGraphModel dx="1413" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Sign-in (Login) Activity" vertex="1">
+          <mxGeometry height="60" width="1300" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Open login page" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Enter mobile number and password" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="System validates credentials and account status" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;verticalAlign=middle;" value="Valid and active?" vertex="1">
+          <mxGeometry height="105" width="270" x="555" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Regenerate session ID and create authenticated session" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="604" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Redirect to correct role dashboard" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="696" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="798" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a6" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="err" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=center;verticalAlign=middle;arcSize=12;" value="Show generic error and retry" vertex="1">
+          <mxGeometry height="55" width="250" x="160" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="no" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="err" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="retry" edge="1" parent="1" source="err" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="285" y="321" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p8" name="08 - Sign-out (Logout)">
+    <mxGraphModel dx="1413" dy="825" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#173f35;strokeColor=#0f2b24;fontColor=#ffffff;fontSize=22;fontStyle=1;align=center;verticalAlign=middle;" value="EcoLot LK — Sign-out (Logout) Activity" vertex="1">
+          <mxGeometry height="60" width="1300" x="100" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1f4d3f;strokeColor=#173f35;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="676" y="131" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="User is on an authenticated page" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="s" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Click Logout" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="292" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a1" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="System validates POST request and CSRF token" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a2" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e7f0fa;strokeColor=#5b83b3;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Clear authentication / session state" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a3" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eaf5ef;strokeColor=#4f8a70;fontSize=13;align=center;verticalAlign=middle;arcSize=12;" value="Redirect to login page" vertex="1">
+          <mxGeometry height="58" width="520" x="430" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="a5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffffff;strokeColor=#1f4d3f;strokeWidth=3;" value="" vertex="1">
+          <mxGeometry height="28" width="28" x="675" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="ee" edge="1" parent="1" source="a5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;endArrow=block;endFill=1;strokeWidth=1.4;" target="end" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

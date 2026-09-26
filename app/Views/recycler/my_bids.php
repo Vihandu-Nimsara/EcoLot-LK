@@ -1,28 +1,35 @@
 <?php
-$bids = [
- ['id'=>8,'code'=>'DEMO-FIX-LOT-OPEN-001','title'=>'Open Lot - Laptops and Monitors','council'=>'Colombo Metro Council','category'=>'Office E-Waste','myBid'=>94500,'highestBid'=>94500,'totalBids'=>5,'bidPosition'=>'LEADING','bid_status'=>'Submitted','bid_class'=>'badge-submitted','lot_status'=>'Open for Bidding','lot_class'=>'badge-open','period'=>'2026-08-05 → 2026-08-25','submitted'=>'2026-08-09'],
- ['id'=>9,'code'=>'DEMO-FIX-LOT-OPEN-002','title'=>'Open Lot - Mobile Phones and Routers','council'=>'Colombo Metro Council','category'=>'Demo Consumer Electronics','myBid'=>38200,'highestBid'=>38200,'totalBids'=>3,'bidPosition'=>'LEADING','bid_status'=>'Submitted','bid_class'=>'badge-submitted','lot_status'=>'Open for Bidding','lot_class'=>'badge-open','period'=>'2026-08-05 → 2026-08-22','submitted'=>'2026-08-09'],
- ['id'=>10,'code'=>'DEMO-FIX-LOT-AWARDED-001','title'=>'Awarded Lot - Printers and Circuit Boards','council'=>'Colombo Metro Council','category'=>'Demo Consumer Electronics','amount'=>'132,000.00','bid_status'=>'Won','bid_class'=>'badge-winning','lot_status'=>'Awarded','lot_class'=>'badge-awarded','period'=>'2026-06-20 → 2026-06-28','submitted'=>'2026-06-21'],
- ['id'=>11,'code'=>'DEMO-FIX-LOT-PROCESSING-001','title'=>'Processing Lot - Lithium Batteries','council'=>'Colombo Metro Council','category'=>'Demo Battery and Circuit Boards','amount'=>'88,000.00','bid_status'=>'Won','bid_class'=>'badge-winning','lot_status'=>'Processing','lot_class'=>'badge-processing','period'=>'2026-06-15 → 2026-06-22','submitted'=>'2026-06-16'],
- ['id'=>12,'code'=>'DEMO-FIX-LOT-COMPLETED-001','title'=>'Completed Lot - Routers','council'=>'Colombo Metro Council','category'=>'Demo Consumer Electronics','amount'=>'29,500.00','bid_status'=>'Won','bid_class'=>'badge-winning','lot_status'=>'Completed','lot_class'=>'badge-completed','period'=>'2026-05-31 → 2026-06-08','submitted'=>'2026-06-01'],
- ['id'=>3,'code'=>'DEMO-LOT-002','title'=>'Demo Open Lot - Phones and Routers','council'=>'Demo Colombo Metro Council','category'=>'Demo Consumer Electronics','myBid'=>48200,'highestBid'=>51000,'totalBids'=>4,'bidPosition'=>'OUTBID','bid_status'=>'Submitted','bid_class'=>'badge-submitted','lot_status'=>'Open for Bidding','lot_class'=>'badge-open','period'=>'2026-08-05 → 2026-08-20','submitted'=>'2026-08-08'],
- ['id'=>4,'code'=>'DEMO-LOT-003','title'=>'Demo Awarded Lot - Printers and Monitors','council'=>'Demo Colombo Metro Council','category'=>'Demo Consumer Electronics','amount'=>'126,000.00','bid_status'=>'Won','bid_class'=>'badge-winning','lot_status'=>'Awarded','lot_class'=>'badge-awarded','period'=>'2026-06-20 → 2026-06-28','submitted'=>'2026-06-21'],
- ['id'=>6,'code'=>'DEMO-LOT-004','title'=>'Demo Processing Lot - Lithium Batteries','council'=>'Demo Colombo Metro Council','category'=>'Demo Battery and Circuit Boards','amount'=>'99,000.00','bid_status'=>'Won','bid_class'=>'badge-winning','lot_status'=>'Processing','lot_class'=>'badge-processing','period'=>'2026-06-14 → 2026-06-22','submitted'=>'2026-06-15'],
-];
-$today = new DateTimeImmutable('today');
+$escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+$statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost', 'WITHDRAWN' => 'Withdrawn'];
 ?>
-<section class="my-bids-page"><section class="bid-card">
- <div class="bid-header"><div><h2>My Bids</h2><p>Track every bid submitted by your company.</p></div></div>
- <form class="light-filter" data-client-filter data-rows="[data-bid-row]" data-empty="[data-bids-filter-empty]" data-result="[data-bids-filter-result]"><div class="quick-filters" role="group" aria-label="Filter bids by status"><button class="quick-filter" type="button" aria-pressed="true" data-filter-name="status" data-filter-value="">All</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Submitted">Submitted</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Won">Won</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Lost">Lost</button><button class="quick-filter" type="button" aria-pressed="false" data-filter-name="status" data-filter-value="Withdrawn">Withdrawn</button></div><div class="light-filter-controls"><div class="filter-field"><label for="my-bids-search">Search bids</label><input id="my-bids-search" name="search" type="search" placeholder="Code, title or category"></div></div></form>
- <p class="filter-result" data-bids-filter-result role="status" aria-live="polite"></p><p class="page-notice" data-page-notice tabindex="-1" hidden></p>
- <?php if ($bids === []): ?><div class="empty-state">No bids are available.</div><?php else: ?><div class="table-responsive"><table class="bids-table"><thead><tr><th>Bid / E-Lot</th><th>Category / Council</th><th>Bid Amount</th><th>Status</th><th>Timeline</th><th>Actions</th></tr></thead><tbody>
- <?php foreach ($bids as $bid): $deadline = trim(explode('→', $bid['period'])[1] ?? ''); $editable = $bid['bid_status'] === 'Submitted' && $deadline !== '' && new DateTimeImmutable($deadline) >= $today; $isOpenSubmitted = $bid['bid_status'] === 'Submitted' && $bid['lot_status'] === 'Open for Bidding'; ?>
- <tr data-bid-row data-search="<?= htmlspecialchars($bid['code'].' '.$bid['title'].' '.$bid['category']) ?>" data-status="<?= htmlspecialchars($bid['bid_status']) ?>">
-  <td data-label="Bid / E-Lot"><strong class="table-primary-text">#<?= $bid['id'] ?> · <?= htmlspecialchars($bid['code']) ?></strong><span class="table-secondary-text"><?= htmlspecialchars($bid['title']) ?></span></td>
-  <td data-label="Category / Council"><strong><?= htmlspecialchars($bid['category']) ?></strong><span class="table-secondary-text"><?= htmlspecialchars($bid['council']) ?></span></td>
-  <td data-label="Bid Amount" class="money-cell">Rs. <?= isset($bid['myBid']) ? number_format($bid['myBid']) : htmlspecialchars($bid['amount']) ?><?php if ($isOpenSubmitted): ?><span class="table-secondary-text">Highest: Rs. <?= number_format($bid['highestBid']) ?></span><?php endif; ?></td>
-  <td data-label="Status"><span class="badge <?= $bid['bid_class'] ?>"><?= htmlspecialchars($bid['bid_status']) ?></span><?php if ($isOpenSubmitted): ?><span class="bid-position <?= strtolower($bid['bidPosition']) ?>"><?= ucfirst(strtolower($bid['bidPosition'])) ?></span><?php else: ?><span class="table-secondary-text"><span class="badge <?= $bid['lot_class'] ?>"><?= htmlspecialchars($bid['lot_status']) ?></span></span><?php endif; ?></td>
-  <td data-label="Timeline"><strong>Submitted <?= htmlspecialchars($bid['submitted']) ?></strong><span class="table-secondary-text"><?= htmlspecialchars($bid['period']) ?></span></td>
-  <td data-label="Actions"><div class="row-actions"><button class="btn-action primary-row-action" type="button" data-recycler-dialog="view-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-title="<?= htmlspecialchars($bid['title']) ?>" data-category="<?= htmlspecialchars($bid['category']) ?>" data-bid-amount="<?= isset($bid['myBid']) ? $bid['myBid'] : str_replace(',', '', $bid['amount']) ?>" data-highest-bid="<?= $bid['highestBid'] ?? '' ?>" data-total-bids="<?= $bid['totalBids'] ?? '' ?>" data-bid-position="<?= htmlspecialchars($isOpenSubmitted ? $bid['bidPosition'] : '') ?>" data-bid-status="<?= htmlspecialchars($bid['bid_status']) ?>" data-submitted="<?= htmlspecialchars($bid['submitted']) ?>" data-deadline="<?= htmlspecialchars($deadline) ?>" data-remarks="Collection and compliant processing included.">View Bid</button><?php if ($editable): ?><button class="btn-action secondary-row-action" type="button" data-recycler-dialog="edit-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>" data-title="<?= htmlspecialchars($bid['title']) ?>" data-category="<?= htmlspecialchars($bid['category']) ?>" data-bid-amount="<?= $bid['myBid'] ?>" data-highest-bid="<?= $bid['highestBid'] ?>" data-total-bids="<?= $bid['totalBids'] ?>" data-bid-position="<?= htmlspecialchars($bid['bidPosition']) ?>" data-remarks="Collection and compliant processing included.">Edit Bid</button><button class="btn-action secondary-row-action" type="button" data-recycler-dialog="withdraw-bid" data-elot-code="<?= htmlspecialchars($bid['code']) ?>">Withdraw</button><?php endif; ?></div></td>
- </tr><?php endforeach; ?></tbody></table></div><div class="filtered-empty-state" data-bids-filter-empty hidden>No bids match the selected filters.</div><?php endif; ?>
-</section></section>
+<section class="my-bids-page"><section class="bid-card"><div class="bid-header"><div><h1>My Bids</h1><p>Your submitted bids and complete bid history.</p></div></div>
+<form class="light-filter" data-client-filter data-rows="[data-bid-row]" data-empty="[data-bids-empty]" data-result="[data-bids-result]">
+<div class="quick-filters" role="group" aria-label="Filter bids by status">
+<?php foreach (['' => 'All'] + $statuses as $value => $label): ?>
+<button class="quick-filter" type="button" aria-pressed="<?= $value === '' ? 'true' : 'false' ?>" data-filter-name="status" data-filter-value="<?= $value ?>"><?= $label ?></button>
+<?php endforeach; ?></div>
+<div class="light-filter-controls"><div class="filter-field"><label for="bid-search">Search bids</label><input id="bid-search" name="search" type="search" placeholder="Lot code, title or category"></div></div>
+</form>
+<p class="filter-result" data-bids-result role="status" aria-live="polite"></p>
+<?php if (!$bids): ?><div class="empty-state">You have not placed any bids.</div><?php else: ?>
+<div class="bid-table-wrapper"><table class="bids-table"><thead><tr><th>E-Lot</th><th>Category</th><th>My Bid</th><th>Status</th><th>Submitted</th><th>Bidding Deadline</th><th>Actions</th></tr></thead><tbody>
+<?php foreach ($bids as $bid): ?><tr data-bid-row data-search="<?= $escape($bid['lot_code'] . ' ' . $bid['title'] . ' ' . $bid['category_name']) ?>" data-status="<?= $escape($bid['bid_status']) ?>">
+<td data-label="E-Lot"><strong class="table-primary-text"><?= $escape($bid['lot_code']) ?></strong><span class="table-secondary-text"><?= $escape($bid['title']) ?></span></td>
+<td data-label="Category"><?= $escape($bid['category_name']) ?></td>
+<td data-label="My Bid"><strong>Rs. <?= number_format((float) $bid['bid_amount'], 2) ?></strong><?php if ($bid['bid_status'] === 'SUBMITTED'): ?><span class="table-secondary-text">Highest active: Rs. <?= number_format((float) $bid['highest_amount'], 2) ?></span><?php endif; ?></td>
+<td data-label="Status"><span class="badge badge-<?= strtolower($bid['bid_status']) ?>"><?= $statuses[$bid['bid_status']] ?></span></td>
+<td data-label="Submitted"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $bid['submitted_at'])) ?>"><?= $escape(substr($bid['submitted_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($bid['submitted_at'], 11, 5)) ?></span></time></td><td data-label="Bidding Deadline"><time class="table-date" datetime="<?= $escape(str_replace(' ', 'T', $bid['bidding_close_at'])) ?>"><?= $escape(substr($bid['bidding_close_at'], 0, 10)) ?><span class="table-secondary-text"><?= $escape(substr($bid['bidding_close_at'], 11, 5)) ?></span></time></td>
+<td data-label="Actions"><div class="row-actions">
+<a class="edit-btn secondary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>">View Details</a>
+<?php if ($bid['can_revise']): ?>
+<a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>#bid-form">Revise Bid</a>
+<?php endif; ?>
+<?php if ($bid['can_withdraw']): ?>
+<form class="row-withdraw-form" method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $bid['bid_id'] ?>/withdraw">
+<input type="hidden" name="_csrf_token" value="<?= $escape(Csrf::token()) ?>">
+<button class="edit-btn danger-row-action" type="submit">Withdraw Bid</button>
+<span class="table-secondary-text">Permanent; you cannot bid again on this E-Lot.</span>
+</form>
+<?php endif; ?>
+</div></td>
+</tr><?php endforeach; ?></tbody></table></div><div class="filtered-empty-state" data-bids-empty hidden>No bids match these filters.</div><?php endif; ?></section></section>
