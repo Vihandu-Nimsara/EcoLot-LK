@@ -165,7 +165,7 @@
                     <button type="button" class="collector-table-action" data-elot-view="${escapeHtml(lot.id)}">View</button>
                     <button type="button" class="collector-table-action" data-elot-edit="${escapeHtml(lot.id)}">Edit</button>
                     <button type="button" class="collector-table-action" data-elot-submit="${escapeHtml(lot.id)}">Submit</button>
-                    <button type="button" class="collector-table-action" data-elot-delete="${escapeHtml(lot.id)}">Delete</button>
+                    <button type="button" class="collector-danger-button" data-elot-delete="${escapeHtml(lot.id)}">Delete</button>
                 </div>
             `;
         }
@@ -227,7 +227,7 @@
 
         if (title) title.textContent = readOnly ? `E-Lot Details — ${existing?.id || ''}` : existing ? `Edit E-Lot — ${existing.id}` : 'Create E-Lot';
         if (description) description.textContent = readOnly
-            ? 'Review the E-Lot composition and current lifecycle status.'
+            ? 'Review the E-Lot composition and its browser-local status.'
             : 'Choose one category and combine verified items into an E-Lot draft.';
 
         if (readOnly && existing) {
@@ -389,7 +389,7 @@
         if (index >= 0) lots[index] = next;
         else lots.push(next);
         saveLots(lots);
-        showFeedback(`${next.id} draft saved.`);
+        showFeedback(`${next.id} draft saved in this browser.`);
         closeModal();
         renderAll();
     };
@@ -403,10 +403,10 @@
             window.alert('This E-Lot has no verified items.');
             return;
         }
-        if (!window.confirm(`Submit ${lotId} for Municipal Officer verification? It becomes read-only after submission.`)) return;
+        if (!window.confirm(`Mark ${lotId} as submitted in this browser? It becomes read-only here; nothing is sent to a Municipal Officer.`)) return;
         lots[index] = { ...lots[index], status: 'PENDING_VERIFICATION', submittedAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
         saveLots(lots);
-        showFeedback(`${lotId} submitted for verification.`);
+        showFeedback(`${lotId} marked as submitted in this browser only.`);
         renderAll();
     };
 
@@ -414,9 +414,9 @@
         const lots = getLots();
         const lot = lots.find((entry) => entry.id === lotId);
         if (!lot || !['DRAFT', 'REJECTED'].includes(lot.status)) return;
-        if (!window.confirm(`Delete draft ${lotId}? Its verified items will return to the available pool.`)) return;
+        if (!window.confirm(`Delete local draft ${lotId} from this browser? Its verified items will return to the available pool.`)) return;
         saveLots(lots.filter((entry) => entry.id !== lotId));
-        showFeedback(`${lotId} draft deleted.`);
+        showFeedback(`${lotId} local draft deleted from this browser.`);
         renderAll();
     };
 

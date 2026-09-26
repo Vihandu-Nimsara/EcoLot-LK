@@ -8,16 +8,16 @@ $value = static fn ($candidate, $fallback = '') => is_scalar($candidate) ? $cand
     <header class="collector-page-heading"><div><span class="collector-eyebrow">Collection workspace</span><h1>Collection Record · Request #<?= $escape($request['request_id']) ?></h1>
         <p><?= $escape(CollectionRecord::label(CollectionRecord::status($request))) ?><?= $request['collection_submitted_at'] ? ' · Submitted ' . $escape($request['collection_submitted_at']) : '' ?></p></div>
         <a class="collector-secondary-button" href="<?= $escape($basePath . '/collector/schedules/' . $request['schedule_id']) ?>">Back to Schedule</a></header>
-    <?php if ($error): ?><p class="collector-feedback" role="alert"><?= $escape($error) ?></p><?php endif; ?>
-    <?php if ($notice): ?><p class="collector-feedback" role="status"><?= $escape($notice) ?></p><?php endif; ?>
+    <?php if ($error): ?><p class="collector-feedback collector-feedback--error" role="alert"><?= $escape($error) ?></p><?php endif; ?>
+    <?php if ($notice): ?><p class="collector-feedback collector-feedback--success" role="status"><?= $escape($notice) ?></p><?php endif; ?>
     <section class="collector-table-card collector-detail-card"><h2>Original Request Details — Read Only</h2>
         <dl class="collector-details-grid"><div><dt>Public user</dt><dd><?= $escape($request['full_name']) ?></dd></div>
             <div><dt>Pickup address</dt><dd><?= $escape($request['pickup_address']) ?></dd></div>
             <div><dt>Schedule / Collection date</dt><dd>#<?= $escape($request['schedule_id']) ?> / <?= $escape($request['collection_date']) ?></dd></div>
             <div><dt>Area</dt><dd><?= $escape($request['area_name']) ?></dd></div>
             <div><dt>Request / Risk review</dt><dd><?= $escape(ucfirst(strtolower(str_replace('_', ' ', $request['request_status'])))) ?> / <?= $escape(ucfirst(strtolower(str_replace('_', ' ', $request['risk_review_status'])))) ?></dd></div></dl>
-        <div class="collector-table-wrap"><table class="collector-table"><thead><tr><th>Item</th><th>Requested Quantity</th><th>Estimated Weight (kg)</th><th>Requested Condition</th><th>Condition Note</th></tr></thead><tbody>
-        <?php foreach ($request['items'] as $item): ?><tr><td><?= $escape($item['item_name']) ?></td><td><?= $escape($item['quantity']) ?></td><td><?= $escape($item['estimated_weight_kg']) ?></td><td><?= $escape($item['item_condition']) ?></td><td><?= $escape($item['condition_note']) ?></td></tr><?php endforeach; ?>
+        <div class="collector-table-wrap"><table class="collector-table"><thead><tr><th scope="col">Item</th><th scope="col">Requested Quantity</th><th scope="col">Estimated Weight (kg)</th><th scope="col">Requested Condition</th><th scope="col">Condition Note</th></tr></thead><tbody>
+        <?php foreach ($request['items'] as $item): ?><tr><td><?= $escape($item['item_name']) ?></td><td><?= $escape($item['quantity']) ?></td><td><?= $escape($item['estimated_weight_kg']) ?></td><td><?= $escape(ucfirst(strtolower(str_replace('_', ' ', $item['item_condition'])))) ?></td><td><?= $escape($item['condition_note']) ?></td></tr><?php endforeach; ?>
         </tbody></table></div>
     </section>
     <section class="collector-table-card collector-detail-card"><h2>Collection Record</h2>
@@ -44,7 +44,7 @@ $value = static fn ($candidate, $fallback = '') => is_scalar($candidate) ? $cand
         </form>
         <?php if ($recordId && $editable): ?>
         <div class="collector-modal-actions">
-            <form method="post" action="<?= $escape($recordUrl . '/delete') ?>" data-confirm="Permanently delete this draft collection record?"><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><button class="collector-secondary-button" type="submit">Delete Draft</button></form>
+            <form method="post" action="<?= $escape($recordUrl . '/delete') ?>" data-confirm="Permanently delete this draft collection record?"><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><button class="collector-danger-button" type="submit">Delete Draft</button></form>
         </div><?php endif; ?>
     </section>
 </section>

@@ -361,3 +361,14 @@
         padding: 18px;
     }
 }
+
+.collector-app .top-header { gap: 16px; }
+.collector-app :is(.header-left, .header-right, .profile, .profile-info) { min-width: 0; }
+.collector-app .profile { max-width: 100%; }
+.collector-app .profile-info { overflow-wrap: anywhere; }
+.collector-app .avatar { flex-shrink: 0; }
+@media (max-width: 700px) {
+    .collector-app .main-content { width: 100%; }
+    .collector-app .top-header { flex-direction: column; align-items: stretch; }
+    .collector-app .header-right { justify-content: flex-start; }
+}
