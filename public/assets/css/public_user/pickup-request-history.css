@@ -194,7 +194,8 @@
     background: var(--public-green-50);
     padding: 11px 14px;
     border-bottom: 1.5px solid var(--public-border);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 .public-user-app .view-items-table td {
     padding: 12px 14px;
