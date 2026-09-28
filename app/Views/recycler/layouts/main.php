@@ -48,7 +48,7 @@ $themeVersion = Asset::version('css/recycler/theme.css');
     require dirname(__DIR__, 2) . '/components/workspace-body.php';
     ?>
     <?php include __DIR__ . '/action-dialog.php'; ?>
-    <script src="<?= $assetBase ?>/js/recycler/frontend-demo.js"></script>
+    <script src="<?= $assetBase ?>/js/recycler/frontend-demo.js?v=<?= Asset::version('js/recycler/frontend-demo.js') ?>"></script>
 </body>
 
 </html>

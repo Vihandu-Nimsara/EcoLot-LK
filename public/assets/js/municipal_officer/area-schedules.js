@@ -1,4 +1,9 @@
 (() => {
+    document.addEventListener('submit', (event) => {
+        const message = event.target.dataset.confirm;
+        if (message && !window.confirm(message)) event.preventDefault();
+    });
+
     // Progressive enhancement only. PHP renders and persists all schedules.
     const dialog = document.querySelector('#create-schedule');
     const trigger = document.querySelector('.create-schedule-trigger');

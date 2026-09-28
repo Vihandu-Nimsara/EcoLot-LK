@@ -25,7 +25,7 @@ $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost
 <a class="edit-btn primary-row-action" href="<?= $escape($basePath) ?>/recycler/e-lot/<?= (int) $bid['e_lot_id'] ?>#bid-form">Revise Bid</a>
 <?php endif; ?>
 <?php if ($bid['can_withdraw']): ?>
-<form class="row-withdraw-form" method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $bid['bid_id'] ?>/withdraw">
+<form class="row-withdraw-form" method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $bid['bid_id'] ?>/withdraw" data-confirm="Withdraw this bid? You cannot undo this or bid again on this E-Lot.">
 <input type="hidden" name="_csrf_token" value="<?= $escape(Csrf::token()) ?>">
 <button class="edit-btn danger-row-action" type="submit">Withdraw Bid</button>
 <span class="table-secondary-text">Permanent; you cannot bid again on this E-Lot.</span>

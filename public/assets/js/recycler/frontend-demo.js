@@ -1,6 +1,11 @@
 (function () {
     "use strict";
 
+    document.addEventListener("submit", (event) => {
+        const message = event.target.dataset.confirm;
+        if (message && !window.confirm(message)) event.preventDefault();
+    });
+
     const body = document.body;
     const navToggle = document.querySelector("[data-nav-toggle]");
     const navClose = document.querySelector("[data-nav-close]");

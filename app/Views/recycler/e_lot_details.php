@@ -53,7 +53,7 @@ $canWithdraw = (bool) $lot['can_withdraw'] && $lot['bid_status'] === 'SUBMITTED'
 </form>
 <?php endif; ?>
 <?php if ($canWithdraw): ?>
-<form class="withdraw-form" method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $lot['bid_id'] ?>/withdraw">
+<form class="withdraw-form" method="post" action="<?= $escape($basePath) ?>/recycler/bid/<?= (int) $lot['bid_id'] ?>/withdraw" data-confirm="Withdraw this bid? You cannot undo this or bid again on this E-Lot.">
 <input type="hidden" name="_csrf_token" value="<?= $escape(Csrf::token()) ?>">
 <p>Withdrawal is permanent. You cannot place another bid on this E-Lot.</p><button class="danger-workflow-btn" type="submit">Withdraw Bid</button>
 </form>

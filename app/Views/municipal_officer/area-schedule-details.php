@@ -62,7 +62,7 @@ $details = [
     <?php endif; ?>
     <section class="scheduled-areas-card schedule-editor">
         <h2>Delete Unused Schedule</h2><p>Permanent deletion is allowed only when there have been no requests, assignments, or collection records.</p>
-        <form method="post" action="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id'] . '/delete') ?>">
+        <form method="post" action="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id'] . '/delete') ?>" data-confirm="Permanently delete this unused collection schedule? This cannot be undone.">
             <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
             <button class="secondary-btn" type="submit">Permanently Delete Schedule</button>
         </form>
