@@ -1823,6 +1823,118 @@ SELECT @cri_sep_raj_network_id, @lot_off_completed_id
 WHERE @cri_sep_raj_network_id IS NOT NULL AND @lot_off_completed_id IS NOT NULL
 ON DUPLICATE KEY UPDATE `e_lot_id` = VALUES(`e_lot_id`);
 
+-- 16.5 Two unbid demo lots for recycler 94774444444.
+-- Use dedicated LOW-risk source items in the verified historical collections.
+-- Natural keys keep reruns safe. No bids are pre-created or removed.
+
+SET @demo_dom_item_id = (
+    SELECT `waste_item_id` FROM `e_waste_items`
+    WHERE `category_id` = @domestic_category_id AND `item_name` = 'LCD TVs / Monitors' LIMIT 1
+);
+INSERT INTO `request_items` (
+    `request_id`, `waste_item_id`, `quantity`, `estimated_weight_kg`,
+    `item_condition`, `applied_risk_level`, `condition_note`
+)
+SELECT @req_sep_wel_id, @demo_dom_item_id, 2, 5.000, 'WORKING', 'LOW',
+       'DEMO ONLY - synthetic source for DEMO-260928-2-d572'
+WHERE @req_sep_wel_id IS NOT NULL AND @demo_dom_item_id IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM `request_items`
+      WHERE `request_id` = @req_sep_wel_id AND `waste_item_id` = @demo_dom_item_id
+  );
+SET @demo_dom_request_item_id = (
+    SELECT `request_item_id` FROM `request_items`
+    WHERE `request_id` = @req_sep_wel_id AND `waste_item_id` = @demo_dom_item_id LIMIT 1
+);
+INSERT INTO `collection_record_items` (
+    `collection_record_id`, `request_item_id`, `actual_quantity`, `actual_weight_kg`,
+    `actual_condition`, `item_result`, `actual_risk_level`, `notes`
+)
+SELECT @cr_sep_wel_id, @demo_dom_request_item_id, 2, 5.000,
+       'WORKING', 'COLLECTED', 'LOW', 'DEMO ONLY - bidding practice'
+WHERE @cr_sep_wel_id IS NOT NULL AND @demo_dom_request_item_id IS NOT NULL
+ON DUPLICATE KEY UPDATE `record_item_id` = `record_item_id`;
+SET @demo_dom_record_item_id = (
+    SELECT `record_item_id` FROM `collection_record_items`
+    WHERE `request_item_id` = @demo_dom_request_item_id LIMIT 1
+);
+INSERT INTO `e_lots` (
+    `lot_code`, `created_by_collector_user_id`, `category_id`, `title`, `lot_status`,
+    `verified_by_officer_user_id`, `verified_at`, `verification_note`,
+    `bidding_open_at`, `bidding_close_at`
+)
+SELECT 'DEMO-260928-2-d572', @collector_1_id, @domestic_category_id,
+       'Demo Domestic E-Waste - LCD TVs / Monitors', 'OPEN_FOR_BIDDING',
+       @officer_id, CURRENT_TIMESTAMP, 'DEMO ONLY - bidding practice',
+       DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 MINUTE),
+       DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY)
+WHERE @demo_dom_record_item_id IS NOT NULL AND @officer_id IS NOT NULL
+ON DUPLICATE KEY UPDATE
+    `bidding_open_at` = IF(`lot_status` = 'OPEN_FOR_BIDDING', VALUES(`bidding_open_at`), `bidding_open_at`),
+    `bidding_close_at` = IF(`lot_status` = 'OPEN_FOR_BIDDING', VALUES(`bidding_close_at`), `bidding_close_at`);
+SET @demo_dom_lot_id = (
+    SELECT `e_lot_id` FROM `e_lots` WHERE `lot_code` = 'DEMO-260928-2-d572' LIMIT 1
+);
+INSERT INTO `e_lot_items` (`record_item_id`, `e_lot_id`)
+SELECT @demo_dom_record_item_id, @demo_dom_lot_id
+WHERE @demo_dom_record_item_id IS NOT NULL AND @demo_dom_lot_id IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM `e_lot_items` WHERE `e_lot_id` = @demo_dom_lot_id)
+ON DUPLICATE KEY UPDATE `record_item_id` = `record_item_id`;
+
+SET @demo_off_item_id = (
+    SELECT `waste_item_id` FROM `e_waste_items`
+    WHERE `category_id` = @office_category_id AND `item_name` = 'Photocopy machines' LIMIT 1
+);
+INSERT INTO `request_items` (
+    `request_id`, `waste_item_id`, `quantity`, `estimated_weight_kg`,
+    `item_condition`, `applied_risk_level`, `condition_note`
+)
+SELECT @req_sep_raj_id, @demo_off_item_id, 2, 5.000, 'WORKING', 'LOW',
+       'DEMO ONLY - synthetic source for DEMO-260928-5-efb5'
+WHERE @req_sep_raj_id IS NOT NULL AND @demo_off_item_id IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM `request_items`
+      WHERE `request_id` = @req_sep_raj_id AND `waste_item_id` = @demo_off_item_id
+  );
+SET @demo_off_request_item_id = (
+    SELECT `request_item_id` FROM `request_items`
+    WHERE `request_id` = @req_sep_raj_id AND `waste_item_id` = @demo_off_item_id LIMIT 1
+);
+INSERT INTO `collection_record_items` (
+    `collection_record_id`, `request_item_id`, `actual_quantity`, `actual_weight_kg`,
+    `actual_condition`, `item_result`, `actual_risk_level`, `notes`
+)
+SELECT @cr_sep_raj_id, @demo_off_request_item_id, 2, 5.000,
+       'WORKING', 'COLLECTED', 'LOW', 'DEMO ONLY - bidding practice'
+WHERE @cr_sep_raj_id IS NOT NULL AND @demo_off_request_item_id IS NOT NULL
+ON DUPLICATE KEY UPDATE `record_item_id` = `record_item_id`;
+SET @demo_off_record_item_id = (
+    SELECT `record_item_id` FROM `collection_record_items`
+    WHERE `request_item_id` = @demo_off_request_item_id LIMIT 1
+);
+INSERT INTO `e_lots` (
+    `lot_code`, `created_by_collector_user_id`, `category_id`, `title`, `lot_status`,
+    `verified_by_officer_user_id`, `verified_at`, `verification_note`,
+    `bidding_open_at`, `bidding_close_at`
+)
+SELECT 'DEMO-260928-5-efb5', @collector_2_id, @office_category_id,
+       'Demo Office E-Waste - Photocopy machines', 'OPEN_FOR_BIDDING',
+       @officer_id, CURRENT_TIMESTAMP, 'DEMO ONLY - bidding practice',
+       DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 MINUTE),
+       DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 7 DAY)
+WHERE @demo_off_record_item_id IS NOT NULL AND @officer_id IS NOT NULL
+ON DUPLICATE KEY UPDATE
+    `bidding_open_at` = IF(`lot_status` = 'OPEN_FOR_BIDDING', VALUES(`bidding_open_at`), `bidding_open_at`),
+    `bidding_close_at` = IF(`lot_status` = 'OPEN_FOR_BIDDING', VALUES(`bidding_close_at`), `bidding_close_at`);
+SET @demo_off_lot_id = (
+    SELECT `e_lot_id` FROM `e_lots` WHERE `lot_code` = 'DEMO-260928-5-efb5' LIMIT 1
+);
+INSERT INTO `e_lot_items` (`record_item_id`, `e_lot_id`)
+SELECT @demo_off_record_item_id, @demo_off_lot_id
+WHERE @demo_off_record_item_id IS NOT NULL AND @demo_off_lot_id IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM `e_lot_items` WHERE `e_lot_id` = @demo_off_lot_id)
+ON DUPLICATE KEY UPDATE `record_item_id` = `record_item_id`;
+
 -- =========================================================
 -- 17. Recycler bids, award and digital handover
 -- =========================================================
@@ -2064,6 +2176,9 @@ COMMIT;
 --   This demonstrates multiple assignments plus Collection Record CRUD.
 --
 -- Recycler 1:
+--   DEMO-260928-2-d572 -> Domestic LCD TVs / Monitors, open with no initial bid
+--   DEMO-260928-5-efb5 -> Office Photocopy machines, open with no initial bid
+--   Both demo bidding windows run for seven days from seed import.
 --   ELOT-DOM-2026-001 -> OPEN_FOR_BIDDING with one editable SUBMITTED bid
 --   ELOT-OFF-2026-002 -> historical WINNING bid + COMPLETED handover
 --
