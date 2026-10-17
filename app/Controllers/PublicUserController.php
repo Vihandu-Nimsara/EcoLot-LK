@@ -203,10 +203,120 @@ class PublicUserController extends Controller
         $this->redirect('/user/feedback');
     }
 
-    public function profile(): void
+        public function profile(): void
     {
         Auth::requireRole('PUBLIC_USER');
-        $this->view('public_user/account-profile', ['currentPage' => 'profile']);
+
+        $userId = (int) Auth::id();
+        $profile = (new PublicProfile())->find($userId);
+        $area = $profile !== null
+            ? (new PostalCodeArea())->find((int) $profile['postal_area_id'])
+            : null;
+
+        $this->view('public_user/account-profile', [
+            'currentPage' => 'profile',
+            'user' => (new User())->find($userId) ?? [],
+            'profile' => $profile ?? [],
+            'postalLabel' => $area !== null
+                ? sprintf('%s (%s)', $area['area_name'], $area['postal_code'])
+                : '',
+            'csrfToken' => Csrf::token(),
+            'errorMessage' => Session::pullFlash('profile_error'),
+            'successMessage' => Session::pullFlash('profile_success'),
+            'openForm' => (string) Session::pullFlash('profile_open', ''),
+        ]);
+    }
+
+    public function changePassword(): void
+    {
+        Auth::requireRole('PUBLIC_USER');
+        Session::flash('profile_open', 'password');
+
+        if (!$this->hasValidCsrfToken()) {
+            Session::flash('profile_error', 'Your session expired. Please try again.');
+            $this->redirect('/user/profile');
+        }
+
+        // Passwords are read raw (not trimmed) so spaces are kept.
+        $current = (string) ($_POST['current_password'] ?? '');
+        $new = (string) ($_POST['new_password'] ?? '');
+        $confirm = (string) ($_POST['confirm_password'] ?? '');
+        $userId = (int) Auth::id();
+
+        try {
+            $users = new User();
+            $user = $users->find($userId);
+
+            if ($user === null || !password_verify($current, (string) $user['password_hash'])) {
+                throw new DomainException('Your current password is incorrect.');
+            }
+            if (strlen($new) < 8) {
+                throw new DomainException('New password must be at least 8 characters.');
+            }
+
+            $errors = [];
+            PasswordPolicy::validate($new, $confirm, $errors, 'new_password', 'confirm_password');
+            if ($errors !== []) {
+                throw new DomainException((string) (array_values($errors)[0][0] ?? 'Invalid password.'));
+            }
+            if (hash_equals($current, $new)) {
+                throw new DomainException('New password must be different from your current password.');
+            }
+
+            $users->updatePassword($userId, $new);
+        } catch (DomainException $error) {
+            Session::flash('profile_error', $error->getMessage());
+            $this->redirect('/user/profile');
+        } catch (Throwable $error) {
+            error_log('Password change failed: ' . $error->getMessage());
+            Session::flash('profile_error', 'Could not change your password. Please try again.');
+            $this->redirect('/user/profile');
+        }
+
+        Session::pullFlash('profile_open');
+        Session::regenerate();
+        Csrf::regenerate();
+        Session::flash('profile_success', 'Your password has been changed.');
+        $this->redirect('/user/profile');
+    }
+
+    public function deleteAccount(): void
+    {
+        Auth::requireRole('PUBLIC_USER');
+        Session::flash('profile_open', 'delete');
+
+        if (!$this->hasValidCsrfToken()) {
+            Session::flash('profile_error', 'Your session expired. Please try again.');
+            $this->redirect('/user/profile');
+        }
+
+        $password = (string) ($_POST['delete_password'] ?? '');
+        $userId = (int) Auth::id();
+
+        try {
+            $users = new User();
+            $user = $users->find($userId);
+
+            if ($user === null || !password_verify($password, (string) $user['password_hash'])) {
+                throw new DomainException('Your password is incorrect.');
+            }
+            if ($users->hasActivePickupRequests($userId)) {
+                throw new DomainException('You still have active pickup requests. Cancel them or wait until they are completed.');
+            }
+            if (!$users->disablePublicAccount($userId)) {
+                throw new DomainException('Your account could not be deleted right now.');
+            }
+        } catch (DomainException $error) {
+            Session::flash('profile_error', $error->getMessage());
+            $this->redirect('/user/profile');
+        } catch (Throwable $error) {
+            error_log('Account delete failed: ' . $error->getMessage());
+            Session::flash('profile_error', 'Could not delete your account. Please try again.');
+            $this->redirect('/user/profile');
+        }
+
+        Auth::logout();
+        $this->redirect('/login');
     }
 
     /**

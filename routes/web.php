@@ -68,6 +68,8 @@ return static function (Router $router, array $app): void {
         $router->get('/feedback', 'PublicUserController@feedback');
         $router->post('/feedback', 'PublicUserController@storeFeedback');
         $router->get('/profile', 'PublicUserController@profile');
+        $router->post('/profile/password', 'PublicUserController@changePassword');
+        $router->post('/profile/delete', 'PublicUserController@deleteAccount');
     });
 
     $router->group('/collector', static function (Router $router): void {
