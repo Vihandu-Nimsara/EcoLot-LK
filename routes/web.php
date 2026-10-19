@@ -66,6 +66,7 @@ return static function (Router $router, array $app): void {
         $router->get('/new-request', 'PublicUserController@newRequest');
         $router->post('/new-request', 'PublicUserController@storeRequest');
         $router->get('/feedback', 'PublicUserController@feedback');
+        $router->post('/feedback', 'PublicUserController@storeFeedback');
         $router->get('/profile', 'PublicUserController@profile');
     });
 

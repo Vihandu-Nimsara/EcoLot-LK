@@ -132,10 +132,75 @@ class PublicUserController extends Controller
         $this->redirect('/user/my-requests');
     }
 
-    public function feedback(): void
+        public function feedback(): void
     {
         Auth::requireRole('PUBLIC_USER');
-        $this->view('public_user/feedback-form', ['currentPage' => 'feedback']);
+
+        $publicUserId = (int) Auth::id();
+        $draft = Session::pullFlash('feedback_draft', []);
+
+        $this->view('public_user/feedback-form', [
+            'currentPage' => 'feedback',
+            'requests' => array_map(
+                [self::class, 'presentRequest'],
+                (new EWasteRequest())->forPublicUser($publicUserId)
+            ),
+            'history' => (new ComplaintFeedback())->forPublicUser($publicUserId),
+            'draft' => is_array($draft) ? $draft : [],
+            'csrfToken' => Csrf::token(),
+            'errorMessage' => Session::pullFlash('feedback_error'),
+            'successMessage' => Session::pullFlash('feedback_success'),
+        ]);
+    }
+
+    public function storeFeedback(): void
+    {
+        Auth::requireRole('PUBLIC_USER');
+
+        $draft = [
+            'feedback_type' => strtoupper($this->postString('feedback_type')),
+            'related_request' => $this->postString('related_request'),
+            'message' => $this->postString('message'),
+        ];
+        Session::flash('feedback_draft', $draft);
+
+        if (!$this->hasValidCsrfToken()) {
+            Session::flash('feedback_error', 'Your session expired. Please try again.');
+            $this->redirect('/user/feedback');
+        }
+
+        try {
+            $requestId = null;
+            if ($draft['related_request'] !== '') {
+                $requestId = filter_var(
+                    $draft['related_request'],
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['min_range' => 1]]
+                );
+                if ($requestId === false) {
+                    throw new DomainException('Choose a valid related request.');
+                }
+            }
+
+            (new ComplaintFeedback())->submit(
+                (int) Auth::id(),
+                $draft['feedback_type'],
+                $requestId,
+                $draft['message']
+            );
+        } catch (DomainException $error) {
+            Session::flash('feedback_error', $error->getMessage());
+            $this->redirect('/user/feedback');
+        } catch (Throwable $error) {
+            error_log('Feedback failed: ' . $error->getMessage());
+            Session::flash('feedback_error', 'Could not send your feedback. Please try again.');
+            $this->redirect('/user/feedback');
+        }
+
+        Session::pullFlash('feedback_draft');
+        Csrf::regenerate();
+        Session::flash('feedback_success', 'Thank you! Your feedback has been sent.');
+        $this->redirect('/user/feedback');
     }
 
     public function profile(): void
