@@ -86,4 +86,41 @@ final class User extends Model
 
         return $statement->rowCount() === 1;
     }
+
+        public function updatePassword(int $userId, string $newPassword): bool
+    {
+        return $this->update($userId, [
+            'password_hash' => password_hash($newPassword, PASSWORD_DEFAULT),
+            'must_change_password' => 0,
+        ]);
+    }
+
+    public function hasActivePickupRequests(int $userId): bool
+    {
+        return (bool) $this->query(
+            "SELECT 1 FROM `e_waste_requests`
+             WHERE `public_user_id` = :user_id
+               AND `request_status` IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')
+             LIMIT 1",
+            ['user_id' => $userId]
+        )->fetch();
+    }
+
+    public function disablePublicAccount(int $userId): bool
+    {
+        $statement = $this->query(
+            "UPDATE `users` SET `account_status` = 'DISABLED'
+             WHERE `user_id` = :user_id
+               AND `role` = 'PUBLIC_USER'
+               AND `account_status` = 'ACTIVE'
+               AND NOT EXISTS (
+                   SELECT 1 FROM `e_waste_requests` r
+                   WHERE r.`public_user_id` = :request_user_id
+                     AND r.`request_status` IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')
+               )",
+            ['user_id' => $userId, 'request_user_id' => $userId]
+        );
+
+        return $statement->rowCount() === 1;
+    }
 }

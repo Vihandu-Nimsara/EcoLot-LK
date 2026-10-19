@@ -12,6 +12,7 @@ $pageScripts = [
     'my-requests' => 'public_user/pickup-request-history.js',
     'new-request' => 'public_user/pickup-request-form.js',
     'feedback' => 'public_user/feedback-form.js',
+    'profile' => 'public_user/account-profile.js',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
 $pageScript = $pageScripts[$currentPage ?? ''] ?? null;
