@@ -60,5 +60,35 @@ final class AuthorizedRecycler extends Model
             WHERE rc.recycler_user_id = :owner ORDER BY c.category_name",
             ['owner' => $userId])->fetchAll();
     }
+
+    public function verificationList(): array
+{
+    return $this->query(
+        "SELECT
+            r.user_id AS recycler_id,
+            r.company_name,
+            r.business_address,
+            r.district,
+            r.submitted_at,
+            r.verification_status AS status,
+            u.full_name AS contact_person,
+            u.email,
+            u.mobile_number AS phone,
+            l.license_number AS license_no,
+            l.expiry_date AS license_expiry
+        FROM authorized_recyclers r
+        JOIN users u
+            ON u.user_id = r.user_id
+        LEFT JOIN recycler_licenses l
+            ON l.license_id = (
+                SELECT l2.license_id
+                FROM recycler_licenses l2
+                WHERE l2.recycler_user_id = r.user_id
+                ORDER BY l2.submitted_at DESC, l2.license_id DESC
+                LIMIT 1
+            )
+        ORDER BY r.submitted_at DESC"
+    )->fetchAll();
+}
 }
 
