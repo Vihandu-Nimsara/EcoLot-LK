@@ -18,7 +18,11 @@ class AdminController extends Controller
     public function recyclerVerification(): void
     {
         Auth::requireRole('ADMIN');
-        $this->view('admin/recycler-verification', ['currentPage' => 'recycler-verification']);
+        $recyclerProfiles = (new AuthorizedRecycler())->verificationList(); 
+        $this->view('admin/recycler-verification', 
+        ['currentPage' => 'recycler-verification',
+        'recyclerProfiles' => $recyclerProfiles,
+        ]);
     }
 
     public function recyclerDetails(string $id): void
