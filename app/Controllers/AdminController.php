@@ -28,10 +28,25 @@ class AdminController extends Controller
     public function recyclerDetails(string $id): void
     {
         Auth::requireRole('ADMIN');
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+        IF ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            $this->view('admin/recycler-details', [
+                'currentPage' => 'recycler-verification',
+                'recyclerId' => null,
+            ]);
+            return;
+        }
+
+        $recyclerProfile = (new AuthorizedRecycler())->verificationDetails($recyclerId);
+
+        if ($recycler === null) {
+            http_response_code(404);
+        }
+
         $this->view('admin/recycler-details', [
-            'currentPage' => 'recycler-verification',
-            'pageStylePage' => 'recycler-details',
-            'recyclerId' => $id,
+        'currentPage' => 'recycler-verification',
+        'recycler' => $recycler,
         ]);
     }
 

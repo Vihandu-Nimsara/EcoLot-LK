@@ -62,7 +62,7 @@ final class AuthorizedRecycler extends Model
     }
 
     public function verificationList(): array
-{
+    {
     return $this->query(
         "SELECT
             r.user_id AS recycler_id,
@@ -89,6 +89,29 @@ final class AuthorizedRecycler extends Model
             )
         ORDER BY r.submitted_at DESC"
     )->fetchAll();
-}
+    }
+
+    public function verificationDetails(int $recyclerID): ?array
+    {
+        $result = $thi->query(
+            "SELECT 
+                r.user_id AS recycler_id,
+                r.company_name,
+                r.business_address,
+                r.district,
+                r.verificaion_status,
+                r.submitted_at,
+                u.full_name AS contact_person,
+                u.email,
+                u.mobile_number AS phone,
+            FROM autherized_recyclers r
+            JOIN users u ON u.user_id = r.user_id
+            WHERE r.user_id = :recycler_id
+            LIMIT 1", 
+            ['recycler_id' => $recyclerId]
+        )->fetch();
+
+        return $result === false ? null : $result;
+    }
 }
 
