@@ -14,7 +14,7 @@ $allowedFilters = [
 ];
 
 if (!in_array($currentFilter, $allowedFilters, true)) {
-    $currentFilter = 'PENDING';
+    $currentFilter = 'ALL';
 }
 
 
@@ -26,101 +26,6 @@ if (!in_array($currentFilter, $allowedFilters, true)) {
 ========================================================= */
 
 $allRecyclerProfiles = $recyclerProfiles ?? $recyclers ?? [];
-
-
-/* =========================================================
-   TEMPORARY DEMO DATA
-
-   Database/controller data නැත්නම් විතරක් මේ sample data
-   page එකේ පෙන්වනවා.
-
-   Later backend connect කළාම මේ block එක remove කරන්න පුළුවන්.
-========================================================= */
-
-if (empty($allRecyclerProfiles)) {
-
-    $allRecyclerProfiles = [
-
-        [
-            'recycler_id' => 1,
-            'company_name' => 'GreenCycle Lanka Pvt Ltd',
-            'contact_person' => 'Anjana Silva',
-            'email' => 'anjana@greencycle.lk',
-            'phone' => '077 234 5678',
-            'district' => 'Colombo',
-            'license_no' => 'SWML/2026/001',
-            'license_expiry' => '2027-06-30',
-            'submitted_at' => '2026-07-02 09:30:00',
-            'status' => 'VERIFIED'
-        ],
-
-        [
-            'recycler_id' => 2,
-            'company_name' => 'E-Waste Recovery Colombo',
-            'contact_person' => 'Nimal Perera',
-            'email' => 'nimal@ewasterecovery.lk',
-            'phone' => '071 456 7890',
-            'district' => 'Colombo',
-            'license_no' => 'SWML/2026/002',
-            'license_expiry' => '2027-04-18',
-            'submitted_at' => '2026-07-03 11:15:00',
-            'status' => 'VERIFIED'
-        ],
-
-        [
-            'recycler_id' => 3,
-            'company_name' => 'SafeDispose Electronics',
-            'contact_person' => 'Kavindi Fernando',
-            'email' => 'kavindi@safedispose.lk',
-            'phone' => '076 876 5432',
-            'district' => 'Gampaha',
-            'license_no' => 'SWML/2026/003',
-            'license_expiry' => '2027-03-22',
-            'submitted_at' => '2026-07-04 14:20:00',
-            'status' => 'VERIFIED'
-        ],
-
-        [
-            'recycler_id' => 4,
-            'company_name' => 'Eco Recyclers Pvt Ltd',
-            'contact_person' => 'Tharindu Jayasinghe',
-            'email' => 'tharindu@ecorecyclers.lk',
-            'phone' => '075 345 9087',
-            'district' => 'Kalutara',
-            'license_no' => 'SWML/2026/004',
-            'license_expiry' => '2027-08-15',
-            'submitted_at' => '2026-07-05 10:45:00',
-            'status' => 'VERIFIED'
-        ],
-
-        [
-            'recycler_id' => 5,
-            'company_name' => 'Ceylon Tech Recyclers',
-            'contact_person' => 'Isuru Bandara',
-            'email' => 'isuru@ceylontechrecyclers.lk',
-            'phone' => '078 112 3344',
-            'district' => 'Kandy',
-            'license_no' => 'SWML/2026/005',
-            'license_expiry' => '2027-02-10',
-            'submitted_at' => '2026-07-09 08:55:00',
-            'status' => 'PENDING'
-        ],
-
-        [
-            'recycler_id' => 6,
-            'company_name' => 'Urban Eco Metals',
-            'contact_person' => 'Malith Gunawardena',
-            'email' => 'malith@urbaneco.lk',
-            'phone' => '070 998 7766',
-            'district' => 'Galle',
-            'license_no' => 'SWML/2026/006',
-            'license_expiry' => '2026-01-12',
-            'submitted_at' => '2026-07-06 16:10:00',
-            'status' => 'REJECTED'
-        ]
-
-    ];
-}
 
 
 /* =========================================================
