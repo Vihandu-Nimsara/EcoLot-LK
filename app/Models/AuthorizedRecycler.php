@@ -52,13 +52,21 @@ final class AuthorizedRecycler extends Model
             ['owner' => $userId])->fetch() ?: null;
     }
 
-    public function capabilitiesForRecycler(int $userId): array
+    public function capabilitiesForRecycler(int $recyclerId): array
     {
-        return $this->query("SELECT c.category_name, rc.capability_status
+        return $this->query(
+            "SELECT 
+                rc.category_id,
+                wc.category_name,
+                rc.can_handle_high_risk,
+                rc.capability_status
             FROM recycler_capabilities rc
-            JOIN waste_categories c ON c.category_id = rc.category_id
-            WHERE rc.recycler_user_id = :owner ORDER BY c.category_name",
-            ['owner' => $userId])->fetchAll();
+            JOIN waste_categories wc 
+            ON wc.category_id = rc.category_id
+            WHERE rc.recycler_user_id = :recycler_id
+            ORDER BY wc.category_name",
+            ['recycler_id' => $recyclerId]
+        )->fetchAll();
     }
 
     public function verificationList(): array
@@ -93,7 +101,7 @@ final class AuthorizedRecycler extends Model
 
     public function verificationDetails(int $recyclerID): ?array
     {
-        $result = $thi->query(
+        $result = $this->query(
             "SELECT 
                 r.user_id AS recycler_id,
                 r.company_name,
@@ -111,6 +119,24 @@ final class AuthorizedRecycler extends Model
             ['recycler_id' => $recyclerId]
         )->fetch();
 
+        return $result === false ? null : $result;
+    }
+
+    public function latestLicenseForRecycler(int $recyclerId): ?array
+    {
+        $result = $this->query(
+            "SELECT license_id,
+                license_number AS license_no,
+                expiry_date AS license_expiry,
+                license_status,
+                document_path,
+                submitted_at
+            FROM recycler_licenses
+            WHERE recycler_user_id = :recycler_id
+            ORDER BY submitted_at DESC, license_id DESC
+            LIMIT 1",
+            ['recycler_id' => $recyclerId]
+        )->fetch();
         return $result === false ? null : $result;
     }
 }

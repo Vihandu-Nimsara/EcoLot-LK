@@ -29,24 +29,39 @@ class AdminController extends Controller
     {
         Auth::requireRole('ADMIN');
         $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
-        IF ($recyclerId === false || $recyclerId <= 0) {
+        if ($recyclerId === false || $recyclerId <= 0) {
             http_response_code(404);
             $this->view('admin/recycler-details', [
                 'currentPage' => 'recycler-verification',
-                'recyclerId' => null,
+                'recycler' => null,
+                'license' => null,
+                'capabilities' => [],
             ]);
             return;
         }
-
-        $recyclerProfile = (new AuthorizedRecycler())->verificationDetails($recyclerId);
-
+                
+        $model = new AuthorizedRecycler();
+        $recycler = $model->verificationDetails($recyclerId);
+        
         if ($recycler === null) {
             http_response_code(404);
+            $this->view('admin/recycler-details', [
+                'currentPage' => 'recycler-verification',
+                'recycler' => null,
+                'license' => null,
+                'capabilities' => [],
+            ]);
+            return;
         }
-
+            
+        $license =$model->latestLicenseForRecycler($recyclerId);
+        $capabilities = $model->capabilitiesForRecycler($recyclerId);
+        
         $this->view('admin/recycler-details', [
         'currentPage' => 'recycler-verification',
         'recycler' => $recycler,
+        'license' => $license,
+        'capabilities' => $capabilities,
         ]);
     }
 
