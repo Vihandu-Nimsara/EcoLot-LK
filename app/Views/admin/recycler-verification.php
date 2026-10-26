@@ -79,7 +79,7 @@ $totalCount = count($allRecyclerProfiles);
             </h1>
 
             <p>
-                Review recycler registrations, licences, and verification status.
+                Review recycler registrations, licenses, and verification status.
             </p>
 
         </div>
@@ -127,7 +127,7 @@ $totalCount = count($allRecyclerProfiles);
                         <tr>
                             <th scope="col">Company</th>
                             <th scope="col">Contact</th>
-                            <th scope="col">Licence</th>
+                            <th scope="col">license</th>
                             <th scope="col">District</th>
                             <th scope="col">Submitted</th>
                             <th scope="col">Status</th>
@@ -231,8 +231,8 @@ $totalCount = count($allRecyclerProfiles);
                     ?>
 
 
-                    <?php $licenceFilter = $licenseExpiry < '2026-08-09' ? 'EXPIRED' : ($status === 'PENDING' ? 'PENDING' : 'VALID'); ?>
-                    <tr data-recycler-row data-search="<?= htmlspecialchars($companyName.' '.$contactPerson.' '.$licenseNo) ?>" data-status="<?= htmlspecialchars($status) ?>" data-licence="<?= $licenceFilter ?>">
+                    <?php $licenseFilter = $licenseExpiry < '2026-08-09' ? 'EXPIRED' : ($status === 'PENDING' ? 'PENDING' : 'VALID'); ?>
+                    <tr data-recycler-row data-search="<?= htmlspecialchars($companyName.' '.$contactPerson.' '.$licenseNo) ?>" data-status="<?= htmlspecialchars($status) ?>" data-license="<?= $licenseFilter ?>">
 
                         <td>
                             <strong class="table-primary-text">

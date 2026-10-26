@@ -36,6 +36,7 @@ class AdminController extends Controller
                 'recycler' => null,
                 'license' => null,
                 'capabilities' => [],
+                'activities' => [],
             ]);
             return;
         }
@@ -50,18 +51,22 @@ class AdminController extends Controller
                 'recycler' => null,
                 'license' => null,
                 'capabilities' => [],
+                'activities' => [],
             ]);
             return;
         }
             
         $license =$model->latestLicenseForRecycler($recyclerId);
         $capabilities = $model->capabilitiesForRecycler($recyclerId);
-        
+        $activityModel = new RecyclerAuthorizedActivity();
+        $activities = $activityModel->forRecycler($recyclerId);
+
         $this->view('admin/recycler-details', [
-        'currentPage' => 'recycler-verification',
-        'recycler' => $recycler,
-        'license' => $license,
-        'capabilities' => $capabilities,
+            'currentPage' => 'recycler-verification',
+            'recycler' => $recycler,
+            'license' => $license,
+            'capabilities' => $capabilities,
+            'activities' => $activities,
         ]);
     }
 

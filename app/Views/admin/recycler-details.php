@@ -171,7 +171,7 @@ if ($licenseStatus === 'VALID') {
 
         <div class="details-section-header">
             <span class="section-step">B</span>
-            <h2>CEA Licence Details</h2>
+            <h2>CEA license Details</h2>
         </div>
                 <?php if ($license === null): ?>
                     <p>No license found.</p>
@@ -291,6 +291,83 @@ if ($licenseStatus === 'VALID') {
 
         <?php endif; ?>
 
+    </section>
+
+    <section class="details-card">
+        <div class="details-section-header">
+            <span class="section-step">D</span>
+
+            <div>
+                <h2>Authorized Activities</h2>
+                <p>
+                    Review the Recycler's requested authorized activities.
+                </p>
+            </div>
+        </div>
+
+        <?php if (empty($activities)): ?>
+
+            <p>No activities found.</p>
+
+        <?php else: ?>
+            <div class="data-table-wrapper">
+                <table class="categories-table">
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($activities as $activity): ?>
+                            <?php
+                            $activityStatus = strtoupper(
+                                (string) ($activity['activity_status'] ?? 'PENDING')
+                            );
+
+                            if ($activityStatus === 'APPROVED') {
+                                $activityStatusLabel = 'Approved';
+                                $activityStatusClass = 'status-verified';
+                            } elseif ($activityStatus === 'PENDING') {
+                                $activityStatusLabel = 'Pending';
+                                $activityStatusClass = 'status-pending';
+                            } else {
+                                $activityStatusLabel = ucfirst(
+                                    strtolower($activityStatus)
+                                );
+                                $activityStatusClass = 'status-rejected';
+                            }
+                        ?>
+
+                        <tr>
+                            <td>
+                                <?= htmlspecialchars(
+                                    ucfirst(
+                                        strtolower(
+                                            str_replace('_', ' ', $activity['activity_type'])
+                                        )
+                                    ),
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>
+                            </td>
+                            <td>
+                                <span class="status-badge <?= $activityStatusClass ?>">
+                                    <?= htmlspecialchars(
+                                        $activityStatusLabel,
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>
+                                </span>
+                            </td>
+                        </tr>
+                    
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        
+        <?php endif; ?>
     </section>
 
 

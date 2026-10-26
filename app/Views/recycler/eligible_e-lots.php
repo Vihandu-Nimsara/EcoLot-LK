@@ -3,7 +3,7 @@ $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QU
 $statuses = ['SUBMITTED' => 'Submitted', 'WINNING' => 'Won', 'REJECTED' => 'Lost', 'WITHDRAWN' => 'Withdrawn'];
 ?>
 <section class="eligible-bid-page"><section class="bid-card">
-<div class="bid-header"><div><h1>Eligible Open E-Lots</h1><p>E-Lots currently matching your verified account, licence and approved handling capabilities.</p></div></div>
+<div class="bid-header"><div><h1>Eligible Open E-Lots</h1><p>E-Lots currently matching your verified account, license and approved handling capabilities.</p></div></div>
 <form class="light-filter" data-client-filter data-rows="[data-eligible-row]" data-empty="[data-eligible-filter-empty]" data-result="[data-eligible-result]">
 <div class="quick-filters" role="group" aria-label="Filter by my bid status">
 <?php foreach (['' => 'All', 'NONE' => 'Not Bid Yet', 'SUBMITTED' => 'Bid Submitted'] as $value => $label): ?>
