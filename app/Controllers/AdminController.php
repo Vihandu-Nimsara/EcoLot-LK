@@ -82,7 +82,7 @@ class AdminController extends Controller
             return;
         }
 
-        if (!$this->hasValideCsrfToken()) {
+        if (!$this->hasValidCsrfToken()) {
             http_response_code(403);
             echo '403 Invalid or expired form. Please reload the page and try again.';
             return;
@@ -105,6 +105,31 @@ class AdminController extends Controller
             http_response_code(422);
             return;
         }
+
+        try {
+            $service = new RecyclerApprovalService();
+
+            $service->review(
+                $recyclerId,
+                $decision,
+                $rejectionReason
+            );
+
+            $_SESSION['success'] = $decision === 'APPROVE' 
+                ? 'Recycler verified successfully.'
+                : 'Recycler application rejected.';
+
+        } catch (PDOException $e) {
+            $_SESSION['error'] = 'Recycler review could not be completed.';
+        } catch (InvalidArgumentException | RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+        } catch (Throwable $e) {
+            $_SESSION['error'] = 'Recycler review could not be completed.';
+        }
+
+        header('Location: /admin/recycler-verification/' . $recyclerId, true, 303);
+
+        exit;
     }
 
     public function categoriesAndItems(): void

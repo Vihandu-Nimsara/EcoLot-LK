@@ -433,6 +433,57 @@ if ($licenseStatus === 'VALID') {
             </li>
         </ul>
 
+        <form
+            method="POST"
+            action="/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+            
+            <input 
+                type="hidden" 
+                name="_csrf_token" 
+                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+            
+            <input type="hidden"
+                   name="decision"
+                   value="APPROVE"
+            >
+
+            <button type="submit"
+                    <?= $canVerify ? '' : 'disabled' ?>
+            >
+                Verify Recycler
+            </button>
+        </form>
+
+        <form
+            method="POST"
+            action="/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+            
+            <input 
+                type="hidden" 
+                name="_csrf_token" 
+                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+            
+            <input type="hidden"
+                   name="decision"
+                   value="REJECT"
+            >
+
+            <label for="rejection_reason">
+                Rejection Reason
+            </label>
+            <textarea 
+                name="rejection_reason" 
+                id="rejection_reason"
+                required
+                <?= $isPending ? '' : 'disabled' ?>
+            ></textarea>
+
+            <button type="submit"
+                    <?= $isPending ? '' : 'disabled' ?>
+            >
+                Reject Recycler
+            </button>
+        </form>
     </section>
 
 </section>

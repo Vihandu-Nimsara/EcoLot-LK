@@ -5,9 +5,9 @@ final class RecyclerApprovalService
 {
     private PDO $db;
 
-    public function __construct(PDO $db)
+    public function __construct(?PDO $db = null)
     {
-        $this->db = $db;
+        $this->db = $db ?? Database::connection();
     }
     
     public function review(
