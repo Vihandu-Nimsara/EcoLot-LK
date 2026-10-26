@@ -155,4 +155,15 @@
     .public-summary-grid {
         grid-template-columns: 1fr;
     }
+
+.notification-menu .notification-empty {
+    margin: 0;
+    padding: 14px 16px;
+    color: #66736B;
+    font-size: 0.8125rem;
+}
+
+.noti-badge[hidden] {
+    display: none !important;
+}
 }

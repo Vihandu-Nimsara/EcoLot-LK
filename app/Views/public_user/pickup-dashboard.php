@@ -22,19 +22,37 @@
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                     </svg>
-                    <span class="noti-badge"></span>
-                </button>
+                    <span class="noti-badge" hidden></span>                </button>
 
-                <div class="notification-menu" data-notification-menu hidden>
+                <div class="notification-menu" data-notification-menu
+                     data-notification-user="<?= (int) $notificationUserId ?>"
+                     data-notification-ids="<?= htmlspecialchars((string) json_encode(array_values(array_column($notifications, 'id'))), ENT_QUOTES, 'UTF-8') ?>"
+                     hidden>
                     <h2>Notifications</h2>
-                    <article>
-                        <p>Your request <strong>REQ-2024-00011</strong> has been scheduled.</p>
-                        <time>2 hours ago</time>
-                    </article>
-                    <article>
-                        <p>Pickup verified for <strong>REQ-2024-00010</strong>. Thank you!</p>
-                        <time>Yesterday</time>
-                    </article>
+                    <?php $e = static fn (mixed $value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); ?>
+                    <?php if (empty($notifications)): ?>
+                        <p class="notification-empty">No notifications yet.</p>
+                    <?php endif; ?>
+                    <?php foreach ($notifications as $notification): ?>
+                        <article>
+                            <p>
+                                <?php if ($notification['kind'] === 'FEEDBACK_REPLY'): ?>
+                                    An officer responded to your feedback <strong><?= $e($notification['reference']) ?></strong>.
+                                <?php elseif ($notification['kind'] === 'DAY_CANCELLED'): ?>
+                                    The collection day (<?= $e($notification['collection_date']) ?>) for request
+                                    <strong><?= $e($notification['reference']) ?></strong> was cancelled.
+                                <?php else: ?>
+                                    Your request <strong><?= $e($notification['reference']) ?></strong> was rejected.
+                                    <?php if ($notification['note'] !== ''): ?>
+                                        Reason: <?= $e($notification['note']) ?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </p>
+                            <?php if ($notification['date'] !== ''): ?>
+                                <time><?= $e($notification['date']) ?></time>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

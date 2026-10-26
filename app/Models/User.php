@@ -123,4 +123,55 @@ final class User extends Model
 
         return $statement->rowCount() === 1;
     }
+
+        public function notificationsForPublicUser(int $userId, int $limit = 5): array
+    {
+        $limit = max(1, $limit);
+
+        return $this->query(
+            "SELECT * FROM (
+                SELECT 'REQUEST_REJECTED' AS kind,
+                       CONCAT('REQ-', r.request_id) AS reference,
+                       NULL AS collection_date,
+                       r.review_note AS note,
+                       r.reviewed_at AS happened_at
+                FROM `e_waste_requests` r
+                WHERE r.public_user_id = :rejected_user_id
+                  AND r.request_status = 'REJECTED'
+                  AND r.reviewed_at IS NOT NULL
+
+                UNION ALL
+
+                SELECT 'FEEDBACK_REPLY',
+                       CONCAT('FB-', f.feedback_id),
+                       NULL,
+                       NULL,
+                       f.reviewed_at
+                FROM `complaint_feedback` f
+                WHERE f.public_user_id = :feedback_user_id
+                  AND f.reviewed_at IS NOT NULL
+
+                UNION ALL
+
+                SELECT 'DAY_CANCELLED',
+                       CONCAT('REQ-', r.request_id),
+                       s.collection_date,
+                       NULL,
+                       s.collection_date
+                FROM `e_waste_requests` r
+                JOIN `area_collection_schedules` s ON s.schedule_id = r.schedule_id
+                WHERE r.public_user_id = :cancelled_user_id
+                  AND r.request_status = 'CANCELLED'
+                  AND s.schedule_status = 'CANCELLED'
+             ) AS events
+             ORDER BY happened_at DESC
+             LIMIT {$limit}",
+            [
+                'rejected_user_id' => $userId,
+                'feedback_user_id' => $userId,
+                'cancelled_user_id' => $userId,
+            ]
+        )->fetchAll();
+    }
+    
 }
