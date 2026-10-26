@@ -38,7 +38,34 @@ $licenseStatus = $license !== null
 ? strtoupper((string) $license['license_status']) 
     : null;
 $documentSubmitted = !empty($license['document_path']);
+$isPending = $recordStatus ==='PENDING';
+$isRejected = $recordStatus === 'REJECTED';
 
+$hasLicense = $license !== null;
+
+$licenseIsValid = $hasLicense && $licenseStatus === 'VALID';
+$licenseNotExpired = 
+            $hasLicense &&
+            !empty($license['license_expiry'] &&
+            $license['license_expiry'] >= date('Y-m-d'));
+
+$approvedCapabilityCount = 0;
+
+foreach ($capabilities as $capability) {
+    if (
+        strtoupper(
+            (string) ($capability['capability_status'] ?? '')
+        ) === 'APPROVED'
+    ) {
+        $approvedCapabilityCount++;
+    }
+}
+
+$canVerify = 
+        $isPending &&
+        $licenseIsValid &&
+        $licenseNotExpired &&
+        $approvedCapabilityCount > 0;
 
 if ($recordStatus === 'VERIFIED') {
     $overallStatus = 'Verified';
@@ -371,11 +398,11 @@ if ($licenseStatus === 'VALID') {
     </section>
 
 
-    <!-- D. Final Decision -->
+    <!-- E. Final Decision -->
     <section class="details-card final-decision-card">
 
         <div class="details-section-header">
-            <span class="section-step">D</span>
+            <span class="section-step">E</span>
 
             <div>
                 <h2>Final Recycler Verification</h2>
@@ -385,6 +412,26 @@ if ($licenseStatus === 'VALID') {
                 </p>
             </div>
         </div>
+        <ul class="verification-checklist">
+            <li class="requirement-met">
+                Company information reviewed
+            </li>
+            <li class="<?= $licenseIsValid 
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                CEA license is valid
+            </li>
+            <li class="<?= $licenseNotExpired
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                Licence is not expired
+            </li>
+            <li class="<?= $approvedCapabilityCount > 0
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                At least one capability approved
+            </li>
+        </ul>
 
     </section>
 

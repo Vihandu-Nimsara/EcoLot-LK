@@ -67,7 +67,44 @@ class AdminController extends Controller
             'license' => $license,
             'capabilities' => $capabilities,
             'activities' => $activities,
+            'csrfToken' => Csrf::token(),
         ]);
+    }
+
+    public function reviewRecycler(string $id): void
+    {
+        Auth::requireRole('ADMIN');
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+
+        if ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            return;
+        }
+
+        if (!$this->hasValideCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page and try again.';
+            return;
+        }
+
+        $decision = strtoupper(
+            trim((string) ($_POST['decision'] ?? ''))
+        );
+
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            http_response_code(422);
+            return;
+        }
+
+        $rejectionReason = trim(
+            (string) ($_POST['rejection_reason'] ?? '')
+        );
+
+        if ($decision === 'REJECT' && $rejectionReason === '') {
+            http_response_code(422);
+            return;
+        }
     }
 
     public function categoriesAndItems(): void
