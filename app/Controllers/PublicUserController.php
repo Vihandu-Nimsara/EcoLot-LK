@@ -9,6 +9,9 @@ class PublicUserController extends Controller
 
         $requestModel = new EWasteRequest();
         $publicUserId = (int) Auth::id();
+        $notifications = self::presentNotifications(
+            (new User())->notificationsForPublicUser($publicUserId)
+        );
 
         $this->view('public_user/pickup-dashboard', [
             'currentPage' => 'dashboard',
@@ -17,6 +20,8 @@ class PublicUserController extends Controller
                 [self::class, 'presentRequest'],
                 $requestModel->forPublicUser($publicUserId, 2)
             ),
+            'notifications' => $notifications,
+            'notificationUserId' => $publicUserId,
         ]);
     }
 
@@ -326,6 +331,25 @@ class PublicUserController extends Controller
     public static function presentRequest(array $request): array
     {
         return PickupRequestPresenter::present($request);
+    }
+
+    private static function presentNotifications(array $rows): array
+    {
+        return array_map(static function (array $row): array {
+            $time = strtotime((string) $row['happened_at']) ?: 0;
+            $collectionTime = $row['collection_date'] !== null ? strtotime((string) $row['collection_date']) : false;
+            $kind = (string) $row['kind'];
+
+            return [
+                'id' => $kind . ':' . (string) $row['reference'],
+                'kind' => $kind,
+                'reference' => (string) $row['reference'],
+                'note' => trim((string) ($row['note'] ?? '')),
+                'collection_date' => $collectionTime ? date('M j, Y', $collectionTime) : '',
+                // A cancelled day has no "cancelled at" time, so no time label is shown for it.
+                'date' => $kind === 'DAY_CANCELLED' ? '' : date('M j, Y', $time),
+            ];
+        }, $rows);
     }
 
     private function renderNewRequestForm(): void
