@@ -75,6 +75,13 @@ class AdminController extends Controller
     {
         Auth::requireRole('ADMIN');
 
+        $adminId = Auth::id();
+
+        if ($adminId === null) {
+            http_response_code(403);
+            return;
+        }
+
         $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
 
         if ($recyclerId === false || $recyclerId <= 0) {
@@ -111,6 +118,7 @@ class AdminController extends Controller
 
             $service->review(
                 $recyclerId,
+                $adminId,
                 $decision,
                 $rejectionReason
             );
@@ -127,7 +135,11 @@ class AdminController extends Controller
             $_SESSION['error'] = 'Recycler review could not be completed.';
         }
 
-        header('Location: /admin/recycler-verification/' . $recyclerId, true, 303);
+        $basePath = rtrim(
+            str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/'
+        );
+
+        header('Location: ' . $basePath . '/admin/recycler-verification/' . $recyclerId, true, 303);
 
         exit;
     }

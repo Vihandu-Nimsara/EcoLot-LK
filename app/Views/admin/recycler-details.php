@@ -1,4 +1,11 @@
 <?php
+$successMessage = $_SESSION['success'] ?? null;
+$errorMessage = $_SESSION['error'] ?? null;
+
+unset($_SESSION['success'], $_SESSION['error']);
+?>
+
+<?php
 $recycler = $recycler ?? null;
 $license = $license ?? null;
 
@@ -23,6 +30,7 @@ if ($recycler === null): ?>
     <?php return; ?>
 <?php endif;
 
+
 $companyName = (string) $recycler['company_name'];
 $contactPerson = (string) $recycler['contact_person'];
 $email = $recycler['email'] ?? 'Not provided';
@@ -46,8 +54,8 @@ $hasLicense = $license !== null;
 $licenseIsValid = $hasLicense && $licenseStatus === 'VALID';
 $licenseNotExpired = 
             $hasLicense &&
-            !empty($license['license_expiry'] &&
-            $license['license_expiry'] >= date('Y-m-d'));
+            !empty($license['license_expiry']) &&
+            $license['license_expiry'] >= date('Y-m-d');
 
 $approvedCapabilityCount = 0;
 
@@ -89,6 +97,18 @@ if ($licenseStatus === 'VALID') {
     $licenseStatusClass = 'status-rejected';
 }
 ?>
+
+<?php if ($successMessage !== null): ?>
+    <div class="alert alert-success" role="status">
+        <?= htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') ?>
+    </div>
+<?php endif; ?>
+
+<?php if ($errorMessage !== null): ?>
+    <div class="alert alert-error" role="alert">
+        <?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?>
+    </div>
+<?php endif; ?>
 
 <section class="recycler-details-page">
 
@@ -202,7 +222,7 @@ if ($licenseStatus === 'VALID') {
         </div>
                 <?php if ($license === null): ?>
                     <p>No license found.</p>
-                <?php else: ?>
+                <?phphttps://meet.google.com/rrx-rmjz-gyp else: ?>
                     <div class="details-grid">
                         <div class="details-item">
                             <span class="details-label">License Number</span>
@@ -435,7 +455,7 @@ if ($licenseStatus === 'VALID') {
 
         <form
             method="POST"
-            action="/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
             
             <input 
                 type="hidden" 
@@ -456,7 +476,7 @@ if ($licenseStatus === 'VALID') {
 
         <form
             method="POST"
-            action="/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
             
             <input 
                 type="hidden" 

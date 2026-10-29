@@ -12,6 +12,7 @@ final class RecyclerApprovalService
     
     public function review(
         int $recyclerId,
+        int $adminId,
         string $decision,
         string $rejectionReason = ''
     ): void {
@@ -114,13 +115,20 @@ final class RecyclerApprovalService
 
             $updateStmt = $this->db->prepare(
                 "UPDATE authorized_recyclers
-                SET verification_status = :status
+                SET verification_status = :status,
+                    reviewed_by_admin_user_id = :admin_id,
+                    reviewed_at = CURRENT_TIMESTAMP,
+                    review_note = :review_note
                 WHERE user_id = :recycler_id
                     AND verification_status = 'PENDING'"
             );
 
             $updateStmt->execute([
                 'status' =>$newStatus,
+                'admin_id' => $adminId,
+                'review_note' => $decision === 'REJECT'
+                    ? trim($rejectionReason) 
+                    : null,
                 'recycler_id' => $recyclerId,
             ]);
 

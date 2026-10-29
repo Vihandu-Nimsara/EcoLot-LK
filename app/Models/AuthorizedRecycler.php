@@ -99,7 +99,7 @@ final class AuthorizedRecycler extends Model
     )->fetchAll();
     }
 
-    public function verificationDetails(int $recyclerID): ?array
+    public function verificationDetails(int $recyclerId): ?array
     {
         $result = $this->query(
             "SELECT 
@@ -107,12 +107,12 @@ final class AuthorizedRecycler extends Model
                 r.company_name,
                 r.business_address,
                 r.district,
-                r.verificaion_status,
+                r.verification_status,
                 r.submitted_at,
                 u.full_name AS contact_person,
                 u.email,
-                u.mobile_number AS phone,
-            FROM autherized_recyclers r
+                u.mobile_number AS phone
+            FROM authorized_recyclers r
             JOIN users u ON u.user_id = r.user_id
             WHERE r.user_id = :recycler_id
             LIMIT 1", 
