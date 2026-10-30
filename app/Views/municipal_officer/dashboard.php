@@ -82,7 +82,7 @@
                         <td><?= $escape($schedule['collection_date']) ?></td>
                         <td><?= (int) $schedule['request_count'] ?></td>
                         <td><?= (int) $schedule['request_capacity'] ?></td>
-                        <td><?= $escape($schedule['schedule_status']) ?></td>
+                        <td><span class="table-status" data-status="<?= $escape($schedule['schedule_status']) ?>"><?= $escape(str_replace('_', ' ', $schedule['schedule_status'])) ?></span></td>
                     </tr>
                     <?php endforeach; ?>
                     <?php if (!$schedules): ?><tr><td colspan="8">No upcoming collection schedules.</td></tr><?php endif; ?>
