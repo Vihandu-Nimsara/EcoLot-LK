@@ -33,6 +33,7 @@ foreach ($phpTests as $test) {
 }
 $run(['node', __DIR__ . '/escaping.js']);
 if (in_array('--browser', $argv, true)) {
+    $run(['node', __DIR__ . '/officer-browser.cjs']);
     $run(['node', __DIR__ . '/pickup-browser.cjs']);
     $run(['node', __DIR__ . '/collector-browser.cjs']);
 }

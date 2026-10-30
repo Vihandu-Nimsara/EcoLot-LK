@@ -13,6 +13,13 @@ $db->exec("CREATE DATABASE `$name`");
 try {
     $db->exec("USE `$name`");
     TestDatabase::loadSchema($db);
+    if (($argv[1] ?? '') === 'officer') {
+        $month = TestDatabase::seedScheduleActors($db);
+        $db->exec("UPDATE users SET mobile_number = CONCAT('94', SUBSTRING(mobile_number, 2))");
+        $db->prepare("UPDATE users SET account_status = 'ACTIVE', mobile_verified_at = NOW(), password_hash = ?")->execute([password_hash('BrowserTest123!', PASSWORD_DEFAULT)]);
+        echo json_encode(['database' => $name, 'month' => $month]);
+        exit;
+    }
     $seed = preg_replace('/^--.*$/m', '', str_replace('USE `ecolot_lk`;', '', file_get_contents(APP_ROOT . '/database/seed.sql')));
     foreach (explode(';', $seed) as $sql) if (trim($sql) !== '') $db->exec($sql);
     $db->prepare('UPDATE users SET password_hash = ?, mobile_verified_at = NOW()')->execute([password_hash('BrowserTest123!', PASSWORD_DEFAULT)]);
