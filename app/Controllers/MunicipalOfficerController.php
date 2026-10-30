@@ -213,6 +213,7 @@ class MunicipalOfficerController extends Controller
             'errors' => $errors,
             'old' => $old,
             'csrfToken' => Csrf::token(),
+            'hasStartedWork' => (new AreaCollectionSchedule())->hasStartedWork($number),
         ]);
     }
 
@@ -237,8 +238,8 @@ class MunicipalOfficerController extends Controller
                 if ($schedule === null) {
                     return ['Collection schedule not found.'];
                 }
-                if (in_array($schedule['schedule_status'], ['COMPLETED', 'CANCELLED'], true)) {
-                    return ['Completed and cancelled schedules are read-only.'];
+                if (!in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED'], true) || $model->hasStartedWork($number)) {
+                    return ['Schedules with assigned resources or collection work are read-only here.'];
                 }
                 $errors = [];
                 $count = $model->countActiveRequests($number);
@@ -289,8 +290,12 @@ class MunicipalOfficerController extends Controller
         $model = new AreaCollectionSchedule();
         try {
             $errors = $model->transaction(function () use ($model, $number): array {
-                if ($model->lockSchedule($number) === null) {
+                $schedule = $model->lockSchedule($number);
+                if ($schedule === null) {
                     return ['Collection schedule not found.'];
+                }
+                if (!in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED', 'CANCELLED'], true)) {
+                    return ['Operational and completed schedules cannot be deleted.'];
                 }
                 if ($model->hasRequests($number) || $model->hasAssignments($number) || $model->hasCollectionSubmission($number)) {
                     return ['This schedule cannot be deleted because it already contains requests, assignments, or collection records. Cancel the schedule instead where its status permits.'];

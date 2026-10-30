@@ -31,7 +31,7 @@ $details = [
             <?php foreach ($details as $label => $value): ?><div><dt><?= $escape($label) ?></dt><dd><?= $escape($value) ?></dd></div><?php endforeach; ?>
         </dl>
     </section>
-    <?php if (!in_array($schedule['schedule_status'], ['COMPLETED', 'CANCELLED'], true)): ?>
+    <?php if (in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED'], true) && !$hasStartedWork): ?>
     <section class="scheduled-areas-card schedule-editor">
         <h2>Edit Schedule</h2><p>Only maximum requests and permitted status changes can be saved. Cancelling also cancels pending and approved requests, preserving their history. Active assignments or recorded collection work prevent cancellation.</p>
         <form class="schedule-create-form" method="post" action="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id'] . '/update') ?>">
@@ -58,8 +58,9 @@ $details = [
         </form>
     </section>
     <?php else: ?>
-        <p>This schedule is read-only because it is completed or cancelled.</p>
+        <p>This schedule is read-only here because resources are assigned, collection work exists, or its status no longer permits intake changes.</p>
     <?php endif; ?>
+    <?php if (in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED', 'CANCELLED'], true) && !$hasStartedWork): ?>
     <section class="scheduled-areas-card schedule-editor">
         <h2>Delete Unused Schedule</h2><p>Permanent deletion is allowed only when there have been no requests, assignments, or collection records.</p>
         <form method="post" action="<?= $escape($scheduleUrl . '/' . $schedule['schedule_id'] . '/delete') ?>" data-confirm="Permanently delete this unused collection schedule? This cannot be undone.">
@@ -67,4 +68,5 @@ $details = [
             <button class="secondary-btn" type="submit">Permanently Delete Schedule</button>
         </form>
     </section>
+    <?php endif; ?>
 </section>
