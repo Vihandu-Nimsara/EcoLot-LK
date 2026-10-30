@@ -33,8 +33,6 @@ class MunicipalOfficerController extends Controller
         $errors = [];
         $id = $values['campaign_id'] === '' ? null : $this->positiveInteger($values['campaign_id']);
         if ($values['campaign_id'] !== '' && $id === null) $errors[] = 'Invalid campaign ID.';
-        $length = preg_match_all('/./us', $values['name']);
-        if ($length === false || $length < 3 || $length > 100) $errors[] = 'Name must contain 3–100 characters.';
         if (!preg_match('/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/D', $values['period'])) $errors[] = 'Select a valid month.';
         if (!in_array($values['status'], ['OPEN', 'CLOSED'], true)) $errors[] = 'Select OPEN or CLOSED.';
         if (!$errors) {

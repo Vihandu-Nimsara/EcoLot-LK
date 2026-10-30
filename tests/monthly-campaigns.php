@@ -16,6 +16,8 @@ try {
         catch (DomainException $e) {}
     }
     $model->saveManaged(2, array_replace($data, ['campaign_status' => 'CLOSED']), 1);
+    verify($model->find(2)['campaign_name'] === 'January 2000 E-Waste Campaign', 'Submitted name overrides automatic name');
+    verify(MonthlyCampaign::nameForMonth('2098-12-01') === 'December 2098 E-Waste Campaign', 'December formatting incorrect');
     try { $model->saveManaged(null, array_replace($data, ['campaign_month' => "$month-01"]), 1); throw new RuntimeException('Duplicate accepted'); }
     catch (PDOException $e) { verify((int) $e->errorInfo[1] === 1062, 'Unexpected database error'); }
     $db->exec("UPDATE monthly_campaigns SET campaign_status = 'OPEN' WHERE campaign_id = 2");

@@ -85,18 +85,19 @@
             <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
             <input type="hidden" name="campaign_id" value="<?= $escape($values['campaign_id'] ?? '') ?>">
             <div class="form-group">
-                <label for="campaign-name">Campaign Name</label>
+                <label for="campaign-name">Campaign Name (Automatic)</label>
                 <input
                     id="campaign-name"
                     name="name" value="<?= $escape($values['name'] ?? '') ?>"
                     type="text"
-                    placeholder="e.g. August E-Waste Collection"
+                    placeholder="Generated from the selected month" readonly aria-describedby="campaign-name-help"
                     minlength="3"
                     maxlength="100"
                     required
                 >
             </div>
 
+            <p id="campaign-name-help" class="table-subtext">The campaign name follows the selected month and cannot be edited manually.</p>
             <div class="form-group">
                 <label for="campaign-period">Month / Year</label>
                 <input id="campaign-period" name="period" type="month" value="<?= $escape($values['period'] ?? '') ?>" required>

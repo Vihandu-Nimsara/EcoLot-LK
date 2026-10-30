@@ -6,6 +6,14 @@ final class MonthlyCampaign extends Model
     protected string $table = 'monthly_campaigns';
     protected string $primaryKey = 'campaign_id';
 
+    public static function nameForMonth(string $month): string
+    {
+        if (!preg_match('/^[1-9][0-9]{3}-(0[1-9]|1[0-2])-01$/D', $month)) {
+            throw new DomainException('Select a valid campaign month.');
+        }
+        return (new DateTimeImmutable($month, new DateTimeZone('Asia/Colombo')))->format('F Y') . ' E-Waste Campaign';
+    }
+
     public static function currentMonth(): string
     {
         return (new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo')))->format('Y-m-01');
@@ -24,6 +32,7 @@ final class MonthlyCampaign extends Model
 
     public function saveManaged(?int $id, array $data, int $officer): void
     {
+        $data['campaign_name'] = self::nameForMonth($data['campaign_month']);
         $this->db->beginTransaction();
         try {
             if ($id !== null) {

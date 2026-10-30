@@ -3,7 +3,16 @@
     const form = document.querySelector('[data-campaign-form]');
     if (!dialog || !form) return;
     let trigger;
-    const show = () => { dialog.hidden = false; form.elements.name.focus(); };
+    const updateName = () => {
+        const period = form.elements.period.value;
+        if (!/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/.test(period)) { form.elements.name.value = ''; return; }
+        const [year, month] = period.split('-');
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        form.elements.name.value = `${months[Number(month) - 1]} ${year} E-Waste Campaign`;
+    };
+    form.elements.period.addEventListener('input', updateName);
+    form.elements.period.addEventListener('change', updateName);
+    const show = () => { updateName(); dialog.hidden = false; form.elements.period.focus(); };
     const close = () => { dialog.hidden = true; trigger?.focus(); };
     document.querySelector('[data-open-campaign-dialog]').addEventListener('click', event => {
         trigger = event.currentTarget;
