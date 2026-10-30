@@ -21,7 +21,7 @@ try {
         exit;
     }
     $seed = preg_replace('/^--.*$/m', '', str_replace('USE `ecolot_lk`;', '', file_get_contents(APP_ROOT . '/database/seed.sql')));
-    foreach (explode(';', $seed) as $sql) if (trim($sql) !== '') $db->exec($sql);
+    $db->exec($seed);
     $db->prepare('UPDATE users SET password_hash = ?, mobile_verified_at = NOW()')->execute([password_hash('BrowserTest123!', PASSWORD_DEFAULT)]);
     $month = (new DateTimeImmutable('first day of next month', new DateTimeZone('Asia/Colombo')))->format('Y-m');
     $officer = (int) $db->query('SELECT user_id FROM municipal_officers LIMIT 1')->fetchColumn();

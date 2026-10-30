@@ -1997,6 +1997,7 @@ SELECT
     @bid_off_winning_id, 'COMPLETED', '2026-09-23 11:00:00',
     @officer_id, 'Digital handover completed and acknowledged by the winning recycler.'
 WHERE @bid_off_winning_id IS NOT NULL AND @officer_id IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM `handover_records` WHERE `winning_bid_id` = @bid_off_winning_id)
 ON DUPLICATE KEY UPDATE
     `handover_status` = 'COMPLETED',
     `handover_date` = VALUES(`handover_date`),
