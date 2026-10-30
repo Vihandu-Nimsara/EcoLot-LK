@@ -38,6 +38,7 @@ return static function (Router $router, array $app): void {
         $router->post('/area-schedules/{id}/update', 'MunicipalOfficerController@updateAreaSchedule');
         $router->post('/area-schedules/{id}/delete', 'MunicipalOfficerController@deleteAreaSchedule');
         $router->get('/flagged-requests', 'MunicipalOfficerController@flaggedRequests');
+        $router->post('/flagged-requests/{id}/review', 'MunicipalOfficerController@reviewFlaggedRequest');
         $router->get('/collection-assignments', 'MunicipalOfficerController@collectionAssignments');
         // Backward-compatible alias for older bookmarks during the transition.
         $router->get('/routes', 'MunicipalOfficerController@collectionAssignments');

@@ -333,7 +333,34 @@ class MunicipalOfficerController extends Controller
     public function flaggedRequests(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/flagged-requests', ['currentPage' => 'flagged-requests']);
+        $this->renderFlaggedRequests();
+    }
+
+    private function renderFlaggedRequests(array $errors = []): void
+    {
+        $this->view('municipal_officer/flagged-requests', [
+            'currentPage' => 'flagged-requests', 'requests' => (new FlaggedRequest())->listing(),
+            'csrfToken' => Csrf::token(), 'errors' => $errors,
+            'notice' => Session::pullFlash('review_notice'),
+        ]);
+    }
+
+    public function reviewFlaggedRequest(string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->scheduleCsrf()) return;
+        $number = $this->positiveInteger($id);
+        if ($number === null) { http_response_code(404); echo 'Request not found.'; return; }
+        try {
+            (new FlaggedRequest())->decide($number, $this->postString('decision'), $this->postString('note'), (int) Auth::id());
+        } catch (DomainException $e) {
+            http_response_code(422); $this->renderFlaggedRequests([$e->getMessage()]); return;
+        } catch (PDOException $e) {
+            error_log('Risk review failed: ' . $e->getCode());
+            http_response_code(500); $this->renderFlaggedRequests(['Review could not be saved. Reload and try again.']); return;
+        }
+        Session::flash('review_notice', 'Review saved successfully.');
+        $this->redirect('/officer/flagged-requests');
     }
 
     public function collectionAssignments(): void

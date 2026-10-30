@@ -10,6 +10,7 @@ $phpTests = [
     'area-schedules.php',
     'monthly-campaigns.php',
     'officer-dashboard.php',
+    'flagged-requests.php',
     'collector-crud.php',
     'public-pickup-crud.php',
     'public-pickup-pages.php',
