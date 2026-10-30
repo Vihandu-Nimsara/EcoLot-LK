@@ -6,7 +6,7 @@ class MunicipalOfficerController extends Controller
     public function dashboard(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/dashboard', ['currentPage' => 'dashboard']);
+        $this->view('municipal_officer/dashboard', ['currentPage' => 'dashboard'] + (new OfficerDashboard())->overview());
     }
 
     public function campaigns(): void
