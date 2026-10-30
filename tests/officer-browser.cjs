@@ -44,10 +44,17 @@ const run = args => execFileSync(php, args, {cwd: root, encoding: 'utf8'});
    assert.equal(response.status(), 200, route);
    assert(!/Warning:|Fatal error:/.test(await officer.locator('body').innerText()), route);
    await officer.screenshot({path:`/tmp/ecolot-officer-${route}.png`,fullPage:true});
+   await officer.setViewportSize({width:390,height:844});
+   await officer.screenshot({path:`/tmp/ecolot-officer-${route}-mobile.png`,fullPage:true});
+   assert(await officer.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${route}: page overflows on mobile`);
+   await officer.screenshot({path:`/tmp/ecolot-officer-${route}-mobile.png`,fullPage:true});
+   await officer.setViewportSize({width:1280,height:900});
+
   }
   await officer.goto(`${base}/officer/flagged-requests`);
   assert.match(await officer.locator('tbody').innerText(), /Cracked housing/);
   assert.equal((await officer.request.post(`${base}/officer/flagged-requests/1/review`, {form:{decision:'APPROVED',note:'Forged'}})).status(),403);
+  await officer.getByText('Review request',{exact:true}).click();
   await officer.locator('[name=decision]').selectOption('APPROVED');
   await officer.locator('[name=note]').fill('Handle with protective equipment');
   await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Save Review'}).click()]);
@@ -58,6 +65,7 @@ const run = args => execFileSync(php, args, {cwd: root, encoding: 'utf8'});
   await officer.locator('[name=schedule_status]').selectOption('CLOSED');
   await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Save Changes',exact:true}).click()]);
   await officer.goto(`${base}/officer/collection-assignments`);
+  await officer.getByText('Assign resources',{exact:true}).click();
   await officer.locator('[name=collector]').selectOption('3');
   await officer.locator('[name=vehicle]').selectOption('1');
   await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Assign',exact:true}).click()]);
