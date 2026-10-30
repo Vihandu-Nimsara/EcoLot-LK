@@ -15,15 +15,15 @@
                     <td><?= $escape($schedule['area_name']) ?><br><?= $escape($schedule['collection_date']) ?></td>
                     <td><?= (int) $schedule['ready_requests'] ?> collectable<br><?= (int) $schedule['pending_reviews'] ?> awaiting review</td>
                     <td><?= $escape($schedule['collector_name'] ?? 'Not assigned') ?><br><?= $escape($schedule['vehicle_number'] ?? 'No vehicle') ?><br><?= $escape($schedule['assigned_at']) ?></td>
-                    <td><?= $escape($schedule['schedule_status']) ?></td>
+                    <td><span class="table-status" data-status="<?= $escape($schedule['schedule_status']) ?>"><?= $escape(str_replace('_', ' ', $schedule['schedule_status'])) ?></span></td>
                     <td>
                     <?php if (!$schedule['has_work'] && $schedule['schedule_status'] === 'CLOSED' && !$schedule['assignment_id'] && $schedule['ready_requests'] > 0 && !$schedule['pending_reviews']): ?>
-                        <form method="post" action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>">
+                        <details class="table-action-panel"><summary>Assign resources</summary><form method="post" action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>">
                             <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><input type="hidden" name="action" value="assign">
                             <label>Collector <select name="collector" required><option value="">Select collector</option><?php foreach ($collectors as $collector): ?><option value="<?= (int) $collector['user_id'] ?>"><?= $escape($collector['full_name']) ?></option><?php endforeach; ?></select></label>
                             <label>Vehicle <select name="vehicle" required><option value="">Select vehicle</option><?php foreach ($vehicles as $vehicle): ?><option value="<?= (int) $vehicle['vehicle_id'] ?>"><?= $escape($vehicle['vehicle_number']) ?></option><?php endforeach; ?></select></label>
                             <button type="submit" class="primary-btn">Assign</button>
-                        </form>
+                        </form></details>
                     <?php elseif (!$schedule['has_work'] && $schedule['schedule_status'] === 'ASSIGNED' && $schedule['assignment_id']): ?>
                         <form method="post" action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>" data-confirm="Unassign these resources? The schedule will return to CLOSED.">
                             <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><input type="hidden" name="action" value="unassign"><button type="submit" class="secondary-btn">Unassign</button>
