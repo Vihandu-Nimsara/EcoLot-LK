@@ -12,7 +12,43 @@ class MunicipalOfficerController extends Controller
     public function campaigns(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/campaigns', ['currentPage' => 'campaigns']);
+        $this->renderCampaigns();
+    }
+
+    private function renderCampaigns(array $errors = [], array $values = []): void
+    {
+        $this->view('municipal_officer/campaigns', [
+            'currentPage' => 'campaigns', 'campaigns' => (new MonthlyCampaign())->managementList(),
+            'errors' => $errors, 'values' => $values, 'csrfToken' => Csrf::token(),
+            'notice' => Session::pullFlash('campaign_notice'),
+        ]);
+    }
+
+    public function storeCampaign(): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo 'Session expired. Reload and try again.'; return; }
+        $values = [];
+        foreach (['name', 'period', 'status', 'campaign_id'] as $field) $values[$field] = $this->postString($field);
+        $errors = [];
+        $id = $values['campaign_id'] === '' ? null : $this->positiveInteger($values['campaign_id']);
+        if ($values['campaign_id'] !== '' && $id === null) $errors[] = 'Invalid campaign ID.';
+        $length = preg_match_all('/./us', $values['name']);
+        if ($length === false || $length < 3 || $length > 100) $errors[] = 'Name must contain 3–100 characters.';
+        if (!preg_match('/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/D', $values['period'])) $errors[] = 'Select a valid month.';
+        if (!in_array($values['status'], ['OPEN', 'CLOSED'], true)) $errors[] = 'Select OPEN or CLOSED.';
+        if (!$errors) {
+            try {
+                (new MonthlyCampaign())->saveManaged($id, ['campaign_name' => $values['name'], 'campaign_month' => $values['period'] . '-01', 'campaign_status' => $values['status']], (int) Auth::id());
+            } catch (DomainException $e) { $errors[] = $e->getMessage();
+            } catch (PDOException $e) {
+                $errors[] = (int) ($e->errorInfo[1] ?? 0) === 1062 ? 'A campaign already exists for this month.' : 'Campaign could not be saved. Reload and try again.';
+                error_log('Campaign save failed: ' . $e->getCode());
+            }
+        }
+        if ($errors) { http_response_code(422); $this->renderCampaigns($errors, $values); return; }
+        Session::flash('campaign_notice', 'Campaign saved successfully.');
+        $this->redirect('/officer/campaigns');
     }
 
     public function areaSchedules(): void
@@ -114,7 +150,7 @@ class MunicipalOfficerController extends Controller
                     $campaign = $model->lockCampaign($campaignId);
                     $area = $model->lockArea($areaId);
                     $errors = [];
-                    if ($campaign === null || $campaign['campaign_status'] !== 'OPEN') {
+                    if ($campaign === null || $campaign['campaign_status'] !== 'OPEN' || $campaign['campaign_month'] < MonthlyCampaign::currentMonth()) {
                         $errors[] = 'The selected monthly campaign does not exist or is not open.';
                     }
                     if ($area === null || $area['area_status'] !== 'ACTIVE') {

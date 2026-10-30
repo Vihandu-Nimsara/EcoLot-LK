@@ -8,6 +8,7 @@ $phpTests = [
     'login-rate-limit-storage.php',
     'otp-locking.php',
     'area-schedules.php',
+    'monthly-campaigns.php',
     'collector-crud.php',
     'public-pickup-crud.php',
     'public-pickup-pages.php',

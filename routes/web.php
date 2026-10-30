@@ -31,6 +31,7 @@ return static function (Router $router, array $app): void {
 
     $router->group('/officer', static function (Router $router): void {
         $router->get('/campaigns', 'MunicipalOfficerController@campaigns');
+        $router->post('/campaigns', 'MunicipalOfficerController@storeCampaign');
         $router->get('/area-schedules', 'MunicipalOfficerController@areaSchedules');
         $router->post('/area-schedules', 'MunicipalOfficerController@storeAreaSchedule');
         $router->get('/area-schedules/{id}', 'MunicipalOfficerController@showAreaSchedule');
