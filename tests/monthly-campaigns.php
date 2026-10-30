@@ -27,6 +27,18 @@ try {
     catch (DomainException $e) {}
     $model->saveManaged(1, array_replace($data, ['campaign_month' => "$month-01", 'campaign_status' => 'CLOSED']), 1);
     verify($db->query('SELECT schedule_status FROM area_collection_schedules')->fetchColumn() === 'PLANNED', 'Closing campaign mutated schedule');
+    $db->exec("UPDATE monthly_campaigns SET campaign_status = 'OPEN' WHERE campaign_id = 2");
+    $previousEnv = getenv('DB_DATABASE');
+    putenv('DB_DATABASE=' . $name);
+    try {
+        for ($run = 0; $run < 2; $run++) {
+            exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(APP_ROOT . '/bin/close-expired-campaigns.php'), $output, $status);
+            verify($status === 0, 'Expiry CLI failed');
+        }
+    } finally {
+        putenv($previousEnv === false ? 'DB_DATABASE' : 'DB_DATABASE=' . $previousEnv);
+    }
+    verify($model->find(2)['campaign_status'] === 'CLOSED', 'Expiry CLI did not close past campaign');
     echo "PASS: campaign expiry, duplicate protection, historical edit and linked schedule rules\n";
 } finally {
     $db->exec("USE `$original`");
