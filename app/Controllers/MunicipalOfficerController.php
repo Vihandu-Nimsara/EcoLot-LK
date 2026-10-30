@@ -366,7 +366,35 @@ class MunicipalOfficerController extends Controller
     public function collectionAssignments(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/collection-assignments', ['currentPage' => 'collection-assignments']);
+        $this->renderAssignments();
+    }
+
+    private function renderAssignments(array $errors = []): void
+    {
+        $model = new CollectionAssignment();
+        $this->view('municipal_officer/collection-assignments', [
+            'currentPage' => 'collection-assignments', 'schedules' => $model->listing(),
+            'collectors' => $model->collectors(), 'vehicles' => $model->vehicles(),
+            'errors' => $errors, 'csrfToken' => Csrf::token(), 'notice' => Session::pullFlash('assignment_notice'),
+        ]);
+    }
+
+    public function changeAssignment(string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->scheduleCsrf()) return;
+        $number = $this->positiveInteger($id);
+        if ($number === null) { http_response_code(404); echo 'Schedule not found.'; return; }
+        try {
+            (new CollectionAssignment())->change($number, $this->postString('action'), $this->positiveInteger($this->postString('collector')), $this->positiveInteger($this->postString('vehicle')), (int) Auth::id());
+        } catch (DomainException $e) {
+            http_response_code(422); $this->renderAssignments([$e->getMessage()]); return;
+        } catch (PDOException $e) {
+            error_log('Assignment failed: ' . $e->getCode());
+            http_response_code(422); $this->renderAssignments(['Assignment could not be saved. Resources may have changed; reload and try again.']); return;
+        }
+        Session::flash('assignment_notice', 'Assignment updated successfully.');
+        $this->redirect('/officer/collection-assignments');
     }
 
     public function collectionRecords(): void

@@ -40,6 +40,7 @@ return static function (Router $router, array $app): void {
         $router->get('/flagged-requests', 'MunicipalOfficerController@flaggedRequests');
         $router->post('/flagged-requests/{id}/review', 'MunicipalOfficerController@reviewFlaggedRequest');
         $router->get('/collection-assignments', 'MunicipalOfficerController@collectionAssignments');
+        $router->post('/collection-assignments/{id}', 'MunicipalOfficerController@changeAssignment');
         // Backward-compatible alias for older bookmarks during the transition.
         $router->get('/routes', 'MunicipalOfficerController@collectionAssignments');
         $router->get('/collection-records', 'MunicipalOfficerController@collectionRecords');
