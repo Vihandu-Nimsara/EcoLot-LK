@@ -18,7 +18,9 @@ try {
         (1,1,1,'$month-20','$month-10 23:59:59',5,'CANCELLED')");
     $db->exec("INSERT INTO e_waste_requests (public_user_id,schedule_id,pickup_address,request_status) VALUES (2,1,'Test','SUBMITTED')");
     $db->exec("UPDATE area_collection_schedules SET schedule_status = 'CLOSED' WHERE schedule_id = 1");
+    $db->exec("UPDATE monthly_campaigns SET campaign_status = 'OPEN' WHERE campaign_id = 2");
     $data = $model->overview();
+    verify($db->query('SELECT campaign_status FROM monthly_campaigns WHERE campaign_id = 2')->fetchColumn() === 'CLOSED', 'Dashboard did not catch up expired campaign');
     verify((int) $data['stats']['campaigns'] === 1, 'Open campaign count incorrect');
     verify((int) $data['stats']['assignments'] === 1, 'Ready assignment count incorrect');
     verify(array_column($data['schedules'], 'schedule_id') === [2,1], 'Upcoming ordering/exclusion incorrect');

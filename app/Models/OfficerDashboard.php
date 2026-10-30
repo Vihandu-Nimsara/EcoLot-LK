@@ -5,6 +5,9 @@ final class OfficerDashboard extends Model
 {
     public function overview(): array
     {
+        // Local demos do not require a background scheduler: visiting the workspace
+        // catches up expired campaign scheduling without changing collection work.
+        (new MonthlyCampaign($this->db))->closeExpired();
         $now = new DateTimeImmutable('now', new DateTimeZone('Asia/Colombo'));
         $stats = $this->query("SELECT
             (SELECT COUNT(*) FROM monthly_campaigns WHERE campaign_status = 'OPEN' AND campaign_month >= :month) AS campaigns,
