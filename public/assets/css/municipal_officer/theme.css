@@ -1163,3 +1163,105 @@
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Consistent table rhythm across the officer planning workflow. */
+.officer-app :is(.dashboard-page, .campaigns-page, .area-schedules-page, .flagged-requests-page, .routes-page) table {
+    min-width: 800px;
+    table-layout: auto;
+}
+.officer-app .page-content th {
+    padding: 15px 18px;
+    background: #f4f8f5;
+    color: #63756a;
+    font-size: 0.6875rem;
+    letter-spacing: .06em;
+}
+.officer-app .page-content td {
+    padding: 18px;
+    line-height: 1.65;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+.officer-app .page-content td a:not([class]) {
+    color: #146640;
+    font-weight: 650;
+    text-decoration: none;
+}
+.officer-app .page-content td a:not([class]):hover { text-decoration: underline; }
+.officer-app .page-content td p { margin: 0 0 10px; }
+.officer-app .page-content td p:last-child { margin-bottom: 0; }
+.officer-app .flagged-table { min-width: 1000px; }
+.officer-app .flagged-table td:nth-child(1) { min-width: 160px; max-width: 220px; }
+.officer-app .flagged-table td:nth-child(2) { min-width: 170px; max-width: 230px; }
+.officer-app .flagged-table td:nth-child(3) { min-width: 210px; max-width: 300px; }
+.officer-app .flagged-table td:last-child { min-width: 190px; max-width: 280px; }
+.officer-app .routes-table :is(th,td):last-child { min-width: 180px; width: 220px; text-align: left; }
+.officer-app .table-status {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    padding: 4px 9px;
+    border: 1px solid #e0e7e2;
+    border-radius: 6px;
+    background: #f1f4f2;
+    color: #59675e;
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .025em;
+    white-space: nowrap;
+}
+.officer-app .table-status:is([data-status="OPEN"],[data-status="APPROVED"],[data-status="COMPLETED"]) { background: #eaf7ef; color: #197347; border-color: #d3ebdd; }
+.officer-app .table-status:is([data-status="PENDING"],[data-status="IN_PROGRESS"]) { background: #fff6e7; color: #936419; border-color: #f4e5c5; }
+.officer-app .table-status[data-status="ASSIGNED"] { background: #edf3ff; color: #3f64a5; border-color: #dce6fa; }
+.officer-app .table-status:is([data-status="REJECTED"],[data-status="CANCELLED"]) { background: #fff0ef; color: #ad4945; border-color: #f3dcd9; }
+.officer-app .table-action-panel summary {
+    width: max-content;
+    padding: 8px 12px;
+    border: 1px solid #cde1d4;
+    border-radius: 8px;
+    color: #17663e;
+    background: #fff;
+    cursor: pointer;
+    font-size: .8125rem;
+    font-weight: 650;
+}
+.officer-app .table-action-panel[open] summary { margin-bottom: 14px; }
+.officer-app .table-action-panel form { display: grid; gap: 12px; min-width: 200px; }
+.officer-app .table-action-panel label { display: grid; gap: 5px; font-size: .75rem; color: #52685a; }
+.officer-app .table-action-panel :is(select,textarea) {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid #d9e4dd;
+    border-radius: 7px;
+    background: #fff;
+    color: #263b2e;
+    font: inherit;
+}
+.officer-app .table-action-panel textarea { resize: vertical; min-height: 84px; }
+.officer-app :is([data-review-filter], .routes-list-card > label) { font-size: .8125rem; color: #52685a; }
+.officer-app [data-review-filter] { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.officer-app :is(#review-status,#review-search,#assignment-search) {
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 9px 12px;
+    border: 1px solid #d9e4dd;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+}
+.officer-app #assignment-search { display: block; width: min(100%, 360px); margin: 8px 0 20px; }
+.officer-app .page-content :is(input,select,textarea,summary,a,button):focus-visible { outline: 2px solid #26945a; outline-offset: 3px; }
+.officer-app :is([data-review-empty],[data-assignment-empty]) { padding: 22px 0; color: #738078; text-align: center; }
+@media (max-width: 600px) {
+    .officer-app [data-review-filter] { align-items: stretch; flex-direction: column; }
+    .officer-app .page-content :is(.flagged-list-card,.routes-list-card) { min-width: 0; padding: 16px; }
+}
+@media (max-width: 600px) {
+    .officer-app .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .officer-app .top-header { flex-wrap: wrap; gap: 12px; }
+    .officer-app :is(.header-right,.profile,.profile-info) { min-width: 0; max-width: 100%; }
+    .officer-app .profile-info .name { overflow-wrap: anywhere; white-space: normal; }
+    .officer-app .page-content > section { min-width: 0; max-width: 100%; }
+}
