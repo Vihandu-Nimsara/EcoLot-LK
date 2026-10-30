@@ -41,7 +41,9 @@ const run = args => execFileSync(php, args, {cwd: root, encoding: 'utf8'});
   async function createSchedule(day) {
    await officer.locator('.create-schedule-trigger').click();
    assert(await officer.locator('#create-schedule').evaluate(el=>el.matches(':modal')));
-   await officer.locator('#schedule-campaign').selectOption({label:`Browser Test Campaign — ${fixture.month}`});
+   const label = new Intl.DateTimeFormat('en-GB',{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(`${fixture.month}-01T00:00:00Z`));
+   const option = officer.locator('#schedule-campaign option').filter({hasText:label}).first();
+   await officer.locator('#schedule-campaign').selectOption(await option.getAttribute('value'));
    await officer.locator('#schedule-area').selectOption({label:'Wellawatte — 11100'});
    await officer.locator('#schedule-capacity').fill('2');
    await officer.locator('#schedule-cutoff').fill(`${fixture.month}-08`);
