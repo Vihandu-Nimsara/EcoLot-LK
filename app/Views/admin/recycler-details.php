@@ -220,9 +220,11 @@ if ($licenseStatus === 'VALID') {
             <span class="section-step">B</span>
             <h2>CEA license Details</h2>
         </div>
+        
                 <?php if ($license === null): ?>
                     <p>No license found.</p>
-                <?phphttps://meet.google.com/rrx-rmjz-gyp else: ?>
+                <?php else: ?>
+
                     <div class="details-grid">
                         <div class="details-item">
                             <span class="details-label">License Number</span>
