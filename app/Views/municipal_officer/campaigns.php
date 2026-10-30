@@ -42,7 +42,7 @@
                         <td><?= (int) $campaign['campaign_id'] ?></td>
                         <td><?= $escape($campaign['campaign_name']) ?></td>
                         <td><?= $escape(substr($campaign['campaign_month'], 0, 7)) ?></td>
-                        <td><?= $escape($campaign['campaign_status']) ?></td>
+                        <td><span class="table-status" data-status="<?= $escape($campaign['campaign_status']) ?>"><?= $escape(str_replace('_', ' ', $campaign['campaign_status'])) ?></span></td>
                         <td><?= $escape($campaign['officer_name']) ?></td>
                         <td><?= $escape($campaign['created_at']) ?></td>
                         <td><button type="button" class="edit-btn">Edit</button></td>
