@@ -220,7 +220,7 @@ if ($licenseStatus === 'VALID') {
             <span class="section-step">B</span>
             <h2>CEA license Details</h2>
         </div>
-        
+
                 <?php if ($license === null): ?>
                     <p>No license found.</p>
                 <?php else: ?>
@@ -436,7 +436,7 @@ if ($licenseStatus === 'VALID') {
         </div>
         <ul class="verification-checklist">
             <li class="requirement-met">
-                Company information reviewed
+                Company information submitted
             </li>
             <li class="<?= $licenseIsValid 
                 ? 'requirement-met'
@@ -454,58 +454,63 @@ if ($licenseStatus === 'VALID') {
                 At least one capability approved
             </li>
         </ul>
-
-        <form
-            method="POST"
-            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
-            
-            <input 
-                type="hidden" 
-                name="_csrf_token" 
-                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
-            
-            <input type="hidden"
-                   name="decision"
-                   value="APPROVE"
-            >
-
-            <button type="submit"
-                    <?= $canVerify ? '' : 'disabled' ?>
-            >
-                Verify Recycler
-            </button>
-        </form>
-
-        <form
-            method="POST"
-            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
-            
-            <input 
-                type="hidden" 
-                name="_csrf_token" 
-                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
-            
-            <input type="hidden"
-                   name="decision"
-                   value="REJECT"
-            >
-
-            <label for="rejection_reason">
-                Rejection Reason
-            </label>
-            <textarea 
-                name="rejection_reason" 
-                id="rejection_reason"
-                required
-                <?= $isPending ? '' : 'disabled' ?>
-            ></textarea>
-
-            <button type="submit"
+        <div class="final-review-actions">
+            <form
+                class="verification-approve-form"
+                method="POST"
+                action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+                
+                <input 
+                    type="hidden" 
+                    name="_csrf_token" 
+                    value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                
+                <input type="hidden"
+                       name="decision"
+                       value="APPROVE"
+                >
+    
+                <button type="submit"
+                        class="action-btn approve-btn"
+                        <?= $canVerify ? '' : 'disabled' ?>
+                >
+                    Verify Recycler
+                </button>
+            </form>
+    
+            <form
+                class="verification-reject-form"
+                method="POST"
+                action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
+                
+                <input 
+                    type="hidden" 
+                    name="_csrf_token" 
+                    value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                
+                <input type="hidden"
+                       name="decision"
+                       value="REJECT"
+                >
+    
+                <label for="rejection_reason">
+                    Rejection Reason
+                </label>
+                <textarea 
+                    name="rejection_reason" 
+                    id="rejection_reason"
+                    required
                     <?= $isPending ? '' : 'disabled' ?>
-            >
-                Reject Recycler
-            </button>
-        </form>
+                ></textarea>
+    
+                <button type="submit"
+                        class="action-btn reject-btn"
+                        <?= $isPending ? '' : 'disabled' ?>
+                >
+                    Reject Recycler
+                </button>
+            </form>
+        </div>
     </section>
 
 </section>

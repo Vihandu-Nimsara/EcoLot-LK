@@ -33,6 +33,7 @@ class AdminController extends Controller
             http_response_code(404);
             $this->view('admin/recycler-details', [
                 'currentPage' => 'recycler-verification',
+                'pageStylePage' => 'recycler-details',
                 'recycler' => null,
                 'license' => null,
                 'capabilities' => [],
@@ -48,6 +49,7 @@ class AdminController extends Controller
             http_response_code(404);
             $this->view('admin/recycler-details', [
                 'currentPage' => 'recycler-verification',
+                'pageStylePage' => 'recycler-details',
                 'recycler' => null,
                 'license' => null,
                 'capabilities' => [],
@@ -63,6 +65,7 @@ class AdminController extends Controller
 
         $this->view('admin/recycler-details', [
             'currentPage' => 'recycler-verification',
+            'pageStylePage' => 'recycler-details',
             'recycler' => $recycler,
             'license' => $license,
             'capabilities' => $capabilities,
