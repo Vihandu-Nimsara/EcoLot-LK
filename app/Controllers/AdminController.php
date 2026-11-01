@@ -147,6 +147,106 @@ class AdminController extends Controller
         exit;
     }
 
+    public function viewRecyclerLicense(string $id): void
+    {
+        Auth::requireRole('ADMIN');
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+
+        if ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            return;
+        }
+
+        $license = (new AuthorizedRecycler())->latestLicenseForRecycler($recyclerId);
+        if ($license === null || empty($license['document_path'])) {
+            http_response_code(404);
+            return;
+        }
+
+        $allowedDirectory = realpath(
+            APP_ROOT . '/storage/uploads/recycler-licenses'
+        );
+
+        $filePath = realpath(
+            APP_ROOT . '/storage/' . $license['document_path']
+        );
+
+
+        // Check file location and permissions
+        if (
+            $allowedDirectory === false ||
+            $filePath === false ||
+            !str_starts_with($filePath, $allowedDirectory . DIRECTORY_SEPARATOR) ||
+            dirname($filePath) !== $allowedDirectory ||
+            !is_file($filePath) ||
+            !is_readable($filePath)
+        ) {
+            http_response_code(404);
+            return;
+        }
+
+
+        // Check actual file type 
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->file($filePath);
+
+        if ($mime !== 'application/pdf') {
+            http_response_code(404);
+            return;
+        }
+
+
+        // Check PDF file size
+        $fileSize = filesize($filePath);
+
+        if (
+            $fileSize === false ||
+            $fileSize < 5 ||
+            $fileSize > 5 * 1024 *1024
+        ) {
+            http_response_code(404);
+            return;
+        }
+
+        // Check PDF signature
+        $handle = fopen($filePath, 'rb');
+
+        if ($handle === false) {
+            http_response_code(404);
+            return;
+        }
+
+        $signature = fread($handle, 5);
+
+        $tailLength = min(2048, $fileSize);
+        $ending = false;
+
+        if (fseek($handle, -$tailLength, SEEK_END) === 0) {
+            $ending = fread($handle, $tailLength);
+        }
+
+        fclose($handle);
+
+
+        if (
+            $signature !== '%PDF-' ||
+            !is_string($ending) ||
+            !str_contains($ending, '%%EOF')
+        ) {
+            http_response_code(404);
+            return;
+        }
+
+        header('Content-Type: application/PDF');
+        header('X-Content-Type-Options: nonsniff');
+        header('Cache-Control: private, no-store');
+        header('Content-Disposition: inline; filename="cea-license.pdf"');
+        header('Content-Length: ' . $fileSize);
+
+        readfile($activityModel);
+        exit;
+    }
+
     public function categoriesAndItems(): void
     {
         Auth::requireRole('ADMIN');

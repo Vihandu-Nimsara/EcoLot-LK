@@ -95,5 +95,6 @@ return static function (Router $router, array $app): void {
         $router->get('/categories-items', 'AdminController@categoriesAndItems');
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
+        $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
     });
 };
