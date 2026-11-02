@@ -171,6 +171,21 @@ class AdminController extends Controller
             return;
         }
 
+        $rawLicenseId = $_POST['license_id'] ?? null;
+
+        if (!is_string($rawLicenseId) || preg_match('/^[1-9][0-9]*$/', $rawLicenseId) !== 1)
+        {
+            http_response_code(422);
+            return;
+        }
+
+        $licenseId = filter_var($rawLicenseId, FILTER_VALIDATE_INT);
+
+        if ($licenseId === false || $licenseId <= 0) {
+            http_response_code(422);
+            return;
+        }
+
         $rawDecision = $_POST['decision'] ?? null;
         $rawReviewNote = $_POST['review_note'] ?? '';
 
@@ -198,6 +213,7 @@ class AdminController extends Controller
             $service->review(
                 $recyclerId,
                 $adminId,
+                $licenseId,
                 $decision,
                 $reviewNote
             );
@@ -242,81 +258,29 @@ class AdminController extends Controller
             return;
         }
 
-        $license = (new AuthorizedRecycler())->latestLicenseForRecycler($recyclerId);
-        if ($license === null || empty($license['document_path'])) {
+        $license = (new AuthorizedRecycler())
+            ->latestLicenseForRecycler($recyclerId);
+
+        if ($license === null) {
             http_response_code(404);
             return;
         }
 
-        $allowedDirectory = realpath(
-            APP_ROOT . '/storage/uploads/recycler-licenses'
+        // Reuse the centralized PDF document validator.
+        $validator = new RecyclerLicenseDocumentValidator();
+
+        $filePath = $validator->validatedPath(
+            $license['document_path'] ?? null
         );
 
-        $filePath = realpath(
-            APP_ROOT . '/storage/' . $license['document_path']
-        );
-
-
-        // Check file location and permissions
-        if (
-            $allowedDirectory === false ||
-            $filePath === false ||
-            !str_starts_with($filePath, $allowedDirectory . DIRECTORY_SEPARATOR) ||
-            dirname($filePath) !== $allowedDirectory ||
-            !is_file($filePath) ||
-            !is_readable($filePath)
-        ) {
+        if ($filePath === null) {
             http_response_code(404);
             return;
         }
 
-
-        // Check actual file type 
-        $mime = (new finfo(FILEINFO_MIME_TYPE))->file($filePath);
-
-        if ($mime !== 'application/pdf') {
-            http_response_code(404);
-            return;
-        }
-
-
-        // Check PDF file size
         $fileSize = filesize($filePath);
 
-        if (
-            $fileSize === false ||
-            $fileSize < 5 ||
-            $fileSize > 5 * 1024 *1024
-        ) {
-            http_response_code(404);
-            return;
-        }
-
-        // Check PDF signature
-        $handle = fopen($filePath, 'rb');
-
-        if ($handle === false) {
-            http_response_code(404);
-            return;
-        }
-
-        $signature = fread($handle, 5);
-
-        $tailLength = min(2048, $fileSize);
-        $ending = false;
-
-        if (fseek($handle, -$tailLength, SEEK_END) === 0) {
-            $ending = fread($handle, $tailLength);
-        }
-
-        fclose($handle);
-
-
-        if (
-            $signature !== '%PDF-' ||
-            !is_string($ending) ||
-            !str_contains($ending, '%%EOF')
-        ) {
+        if ($fileSize === false) {
             http_response_code(404);
             return;
         }
@@ -324,7 +288,9 @@ class AdminController extends Controller
         header('Content-Type: application/pdf');
         header('X-Content-Type-Options: nosniff');
         header('Cache-Control: private, no-store');
-        header('Content-Disposition: inline; filename="cea-license.pdf"');
+        header(
+            'Content-Disposition: inline; filename="cea-license.pdf"'
+        );
         header('Content-Length: ' . $fileSize);
 
         readfile($filePath);

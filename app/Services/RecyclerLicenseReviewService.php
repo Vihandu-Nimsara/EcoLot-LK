@@ -13,12 +13,13 @@ final class RecyclerLicenseReviewService
     public function review(
         int $recyclerId,
         int $adminId,
+        int $licenseId,
         string $decision,
         string $reviewNote = ''
     ): void {
-        if ($recyclerId <= 0 || $adminId <= 0) {
+        if ($recyclerId <= 0 || $adminId <= 0 || $licenseId <= 0) {
             throw new InvalidArgumentException(
-                'Invalid recycler or administrator.'
+                'Invalid recycler, administrator, or license.'
             );
         }
 
@@ -36,7 +37,7 @@ final class RecyclerLicenseReviewService
             );
         }
 
-        if (strlen($reviewNote) > 500) {
+        if (mb_strlen($reviewNote, 'UTF-8') > 500) {
             throw new InvalidArgumentException(
                 'Review note is too long.'
             );
@@ -95,6 +96,12 @@ final class RecyclerLicenseReviewService
                 );
             }
 
+            if ((int) $license['license_id'] !== $licenseId) {
+                throw new RuntimeException(
+                    'The license has changed. Please reload the page and review the latest document.'
+                );
+            }
+
             if ($license['license_status'] !== 'PENDING') {
                 throw new RuntimeException(
                     'License has already been reviewed.'
@@ -102,15 +109,24 @@ final class RecyclerLicenseReviewService
             }
 
             if ($decision === 'APPROVE') {
-                if (empty($license['document_path'])) {
-                    throw new RuntimeException(
-                        'License document is missing.'
-                    );
-                }
 
+                // Reject expired licenses.
                 if ((int) $license['is_not_expired'] !== 1) {
                     throw new RuntimeException(
                         'An expired license cannot be approved.'
+                    );
+                }
+
+                // Validate the actual PDF document.
+                $documentValidator = new RecyclerLicenseDocumentValidator();
+
+                $validatedPath = $documentValidator->validatedPath(
+                    $license['document_path'] ?? null
+                );
+
+                if ($validatedPath === null) {
+                    throw new RuntimeException(
+                        'A valid, accessible CEA license PDF is required for approval.'
                     );
                 }
             }

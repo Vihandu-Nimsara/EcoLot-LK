@@ -42,8 +42,8 @@ $recordStatus = strtoupper(
 );
 $licenseNumber = $license['license_no'] ?? 'Not recorded';
 $licenseExpiry = $license['license_expiry'] ?? 'Not recorded';
-$licenseStatus = $license !== null 
-? strtoupper((string) $license['license_status']) 
+$licenseStatus = $license !== null
+? strtoupper((string) $license['license_status'])
     : null;
 $documentSubmitted = !empty($license['document_path']);
 $isPending = $recordStatus ==='PENDING';
@@ -52,7 +52,7 @@ $isRejected = $recordStatus === 'REJECTED';
 $hasLicense = $license !== null;
 
 $licenseIsValid = $hasLicense && $licenseStatus === 'VALID';
-$licenseNotExpired = 
+$licenseNotExpired =
             $hasLicense &&
             !empty($license['license_expiry']) &&
             $license['license_expiry'] >= date('Y-m-d');
@@ -69,7 +69,7 @@ foreach ($capabilities as $capability) {
     }
 }
 
-$canVerify = 
+$canVerify =
         $isPending &&
         $licenseIsValid &&
         $licenseNotExpired &&
@@ -248,7 +248,7 @@ if ($licenseStatus === 'VALID') {
                             <span class="details-label">License Document</span>
 
                             <?php if ($documentSubmitted): ?>
-                                <a 
+                                <a
                                     class="header-action-btn"
                                     href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/license-document"
                                     target="_blank"
@@ -263,10 +263,89 @@ if ($licenseStatus === 'VALID') {
                             <?php endif; ?>
                         </div>
                     </div>
-                <?php endif; ?>
-        </section>
 
-        
+                    <?php if ($isPending && $licenseStatus === 'PENDING'): ?>
+
+                        <div class="final-review-actions">
+
+                            <!-- Approve License -->
+
+                            <form
+                                class="verification-approve-form"
+                                method="POST"
+                                action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/license-review">
+
+                                <input
+                                    type="hidden"
+                                    name="_csrf_token"
+                                    value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
+
+                                <input
+                                    type="hidden"
+                                    name="license_id"
+                                    value="<?= (int) $license['license_id'] ?>"
+                                >
+
+                                <input type="hidden"
+                                       name="decision"
+                                       value="APPROVE"
+                                >
+
+                                <button type="submit"
+                                        class="action-btn approve-btn"
+                                        <?= ($documentSubmitted && $licenseNotExpired) ? '' : 'disabled' ?>
+                                >
+                                    Approve License
+                                </button>
+                            </form>
+
+                            <!-- Reject License -->
+
+                            <form
+                                method="POST"
+                                action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/license-review"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="_csrf_token"
+                                    value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="license_id"
+                                    value="<?= (int) $license['license_id'] ?>"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="decision"
+                                    value="REJECT"
+                                >
+
+                                <label for="license_review_note">
+                                    License Rejection Reason
+                                </label>
+
+                                <textarea
+                                    id="license_review_note"
+                                    name="review_note"
+                                    rows="3"
+                                    maxlength="500"
+                                    required
+                                ></textarea>
+
+                                <button type="submit" class="action-btn reject-btn">
+                                    Reject License
+                                </button>
+                            </form>
+
+                        </div>
+                <?php endif; ?>
+            <?php endif; ?>
+    </section>
+
+
     <!-- C. Capabilities -->
     <section class="details-card">
 
@@ -422,12 +501,12 @@ if ($licenseStatus === 'VALID') {
                                 </span>
                             </td>
                         </tr>
-                    
+
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-        
+
         <?php endif; ?>
     </section>
 
@@ -450,7 +529,7 @@ if ($licenseStatus === 'VALID') {
             <li class="requirement-met">
                 Company information submitted
             </li>
-            <li class="<?= $licenseIsValid 
+            <li class="<?= $licenseIsValid
                 ? 'requirement-met'
                 : 'requirement-unmet' ?>">
                 CEA license is valid
@@ -471,17 +550,17 @@ if ($licenseStatus === 'VALID') {
                 class="verification-approve-form"
                 method="POST"
                 action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
-                
-                <input 
-                    type="hidden" 
-                    name="_csrf_token" 
+
+                <input
+                    type="hidden"
+                    name="_csrf_token"
                     value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
-                
+
                 <input type="hidden"
                        name="decision"
                        value="APPROVE"
                 >
-    
+
                 <button type="submit"
                         class="action-btn approve-btn"
                         <?= $canVerify ? '' : 'disabled' ?>
@@ -489,32 +568,32 @@ if ($licenseStatus === 'VALID') {
                     Verify Recycler
                 </button>
             </form>
-    
+
             <form
                 class="verification-reject-form"
                 method="POST"
                 action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/review">
-                
-                <input 
-                    type="hidden" 
-                    name="_csrf_token" 
+
+                <input
+                    type="hidden"
+                    name="_csrf_token"
                     value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
-                
+
                 <input type="hidden"
                        name="decision"
                        value="REJECT"
                 >
-    
+
                 <label for="rejection_reason">
                     Rejection Reason
                 </label>
-                <textarea 
-                    name="rejection_reason" 
+                <textarea
+                    name="rejection_reason"
                     id="rejection_reason"
                     required
                     <?= $isPending ? '' : 'disabled' ?>
                 ></textarea>
-    
+
                 <button type="submit"
                         class="action-btn reject-btn"
                         <?= $isPending ? '' : 'disabled' ?>
