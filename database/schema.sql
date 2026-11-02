@@ -397,15 +397,29 @@ CREATE TABLE IF NOT EXISTS `recycler_licenses` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `license_number` VARCHAR(100) NOT NULL,
     `expiry_date` DATE NOT NULL,
-    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED') NOT NULL DEFAULT 'PENDING',
+    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED') 
+    NOT NULL DEFAULT 'PENDING',
     `document_path` VARCHAR(500) NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    -- Administrator review metadata
+    `reviewed_by_admin_user_id` BIGINT UNSIGNED NULL,
+    `reviewed_at` DATETIME NULL,
+    `review_note` VARCHAR(500) NULL,
     PRIMARY KEY (`license_id`),
     UNIQUE KEY `uq_recycler_licenses_number` (`license_number`),
     KEY `idx_recycler_licenses_eligibility` (`recycler_user_id`, `license_status`, `expiry_date`),
+    KEY `idx_recycler_licenses_reviewer` (`reviewed_by_admin_user_id`),
     CONSTRAINT `fk_recycler_licenses_recycler`
-        FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        FOREIGN KEY (`recycler_user_id`)
+        REFERENCES `authorized_recyclers` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_recycler_licenses_reviewed_by_admin`
+        FOREIGN KEY (`reviewed_by_admin_user_id`)
+        REFERENCES `administrators` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `recycler_capabilities` (

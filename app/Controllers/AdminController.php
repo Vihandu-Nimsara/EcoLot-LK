@@ -147,6 +147,90 @@ class AdminController extends Controller
         exit;
     }
 
+    public function reviewRecyclerLicense(string $id): void
+    {
+        Auth::requireRole('ADMIN');
+
+        $adminId = Auth::id();
+
+        if ($adminId === null) {
+            http_response_code(403);
+            return;
+        }
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+
+        if ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            return;
+        }
+
+        if (!$this->hasValidateCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page.';
+            return;
+        }
+
+        $rawDecision = $_POST['decision'] ?? null;
+        $rawReviewNote = $_POST['review_note'] ?? '';
+
+        if (!is_string($rawDecision) || !is_string($rawReviewNote)) {
+            http_response_code(422);
+            return;
+        }
+
+        $decision = strtoupper(trim($rawDecision));
+        $reviewNote = trim($rawReviewNote);
+
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            http_response_code(422);
+            return;
+        }
+
+        if ($decision === 'REJECT' && $reviewNote === '') {
+            http_response_code(422);
+            return;
+        }
+
+        try {
+            $service = new RecyclerLicenseReviewService();
+
+            $service->review(
+                $recyclerId,
+                $adminId,
+                $decision,
+                $reviewNote
+            );
+
+            $_SESSION['success'] = $decision === 'APPROVE' 
+                ? 'CEA license approved successfully.'
+                : 'CEA license rejected successfully.';
+        } catch (PDOException $e) {
+            error_log('Recycler license review databse error: ' . $e->getMessage());
+
+            $_SESSION['error'] = 'License review could be completed.';
+        
+        } catch (InvalidArgumentException | RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+        
+        } catch (Throwable $e) {
+            error_log('Recycler license review error: '. $e->getMessage());
+
+            $_SESSION['error'] = 'License review could not be completed.';
+        }
+
+        $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+
+        header(
+            'Location: ' . $basePath . 
+            '/admin/recycler-verification/' . $recyclerId,
+            true,
+            303
+        );
+
+        exit;
+    }
+
     public function viewRecyclerLicense(string $id): void
     {
         Auth::requireRole('ADMIN');
@@ -237,13 +321,13 @@ class AdminController extends Controller
             return;
         }
 
-        header('Content-Type: application/PDF');
-        header('X-Content-Type-Options: nonsniff');
+        header('Content-Type: application/pdf');
+        header('X-Content-Type-Options: nosniff');
         header('Cache-Control: private, no-store');
         header('Content-Disposition: inline; filename="cea-license.pdf"');
         header('Content-Length: ' . $fileSize);
 
-        readfile($activityModel);
+        readfile($filePath);
         exit;
     }
 

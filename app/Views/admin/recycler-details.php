@@ -246,9 +246,21 @@ if ($licenseStatus === 'VALID') {
                         </div>
                         <div class="details-item">
                             <span class="details-label">License Document</span>
-                            <strong class="details-value">
-                                <?= $documentSubmitted ? 'Document submitted' : "Not submitted" ?>
-                            </strong>
+
+                            <?php if ($documentSubmitted): ?>
+                                <a 
+                                    class="header-action-btn"
+                                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/license-document"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    View Document
+                                </a>
+                            <?php else: ?>
+                                <strong class="details-value">
+                                    <?= $documentSubmitted ? 'Document submitted' : "Not submitted" ?>
+                                </strong>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endif; ?>

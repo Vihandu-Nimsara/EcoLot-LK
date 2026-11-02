@@ -321,6 +321,12 @@ final class RecyclerRegistrationService
             throw new RuntimeException('The license storage directory is unavailable.');
         }
 
+        if (!chmod($temporaryPath, 0600)) {
+            @unlink($temporaryPath);
+
+            throw new RuntimeException('The license document could not be secured.');
+        }
+
         $filename = bin2hex(random_bytes(24)) . '.pdf';
         $temporaryPath = $stagingDirectory . '/' . $filename . '.part';
         $absolutePath = $directory . '/' . $filename;
