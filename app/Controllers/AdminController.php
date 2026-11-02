@@ -165,7 +165,7 @@ class AdminController extends Controller
             return;
         }
 
-        if (!$this->hasValidateCsrfToken()) {
+        if (!$this->hasValidCsrfToken()) {
             http_response_code(403);
             echo '403 Invalid or expired form. Please reload the page.';
             return;
@@ -208,7 +208,7 @@ class AdminController extends Controller
         } catch (PDOException $e) {
             error_log('Recycler license review databse error: ' . $e->getMessage());
 
-            $_SESSION['error'] = 'License review could be completed.';
+            $_SESSION['error'] = 'License review could not be completed.';
         
         } catch (InvalidArgumentException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
