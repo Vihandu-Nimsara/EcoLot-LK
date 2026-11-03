@@ -6,7 +6,7 @@ $verification = $compliance['verification_status'] ?? null;
 <section class="workflow-page">
     <div class="workflow-header"><div>
         <h1>My Profile &amp; Compliance</h1>
-        <p>Review your recorded company information, EcoLot verification, CEA licence status, and handling capabilities.</p>
+        <p>Review your recorded company information, EcoLot verification, CEA license status, and handling capabilities.</p>
     </div><div class="workflow-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="contact">Edit Basic Information</button></div></div>
     <p class="page-notice">Some company and compliance changes require Administrator review.</p>
 
@@ -23,15 +23,15 @@ $verification = $compliance['verification_status'] ?? null;
     </section>
 
     <section class="workflow-card">
-        <div class="workflow-section-header"><h2>CEA Licence</h2><p>Licence changes require Administrator verification before replacing the current verified record.</p></div>
+        <div class="workflow-section-header"><h2>CEA license</h2><p>license changes require Administrator verification before replacing the current verified record.</p></div>
         <div class="detail-grid">
-            <div class="detail-item"><span class="detail-label">Licence Type</span><strong class="detail-value">Not available on this page</strong></div>
-            <div class="detail-item"><span class="detail-label">SWML / Licence Number</span><strong class="detail-value">Not available on this page</strong></div>
-            <div class="detail-item"><span class="detail-label">Current Valid Licence Expiry</span><strong class="detail-value"><?= $escape($compliance['valid_license_expiry'] ?? 'No current valid licence') ?></strong></div>
-            <div class="detail-item"><span class="detail-label">Current Licence Status</span><span class="badge <?= !empty($compliance['valid_license_expiry']) ? 'badge-completed' : 'badge-pending' ?>"><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid licence' ?></span></div>
-            <div class="detail-item"><span class="detail-label">Licence Document</span><strong class="detail-value">Document preview and submission are not available on this page.</strong></div>
+            <div class="detail-item"><span class="detail-label">license Type</span><strong class="detail-value">Not available on this page</strong></div>
+            <div class="detail-item"><span class="detail-label">SWML / license Number</span><strong class="detail-value">Not available on this page</strong></div>
+            <div class="detail-item"><span class="detail-label">Current Valid license Expiry</span><strong class="detail-value"><?= $escape($compliance['valid_license_expiry'] ?? 'No current valid license') ?></strong></div>
+            <div class="detail-item"><span class="detail-label">Current license Status</span><span class="badge <?= !empty($compliance['valid_license_expiry']) ? 'badge-completed' : 'badge-pending' ?>"><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid license' ?></span></div>
+            <div class="detail-item"><span class="detail-label">license Document</span><strong class="detail-value">Document preview and submission are not available on this page.</strong></div>
         </div>
-        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="licence">Submit Licence Update</button></div>
+        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="license">Submit license Update</button></div>
     </section>
 
     <section class="workflow-card">
@@ -58,12 +58,12 @@ $verification = $compliance['verification_status'] ?? null;
     <label class="dialog-field"><span><?= $escape($label) ?> — Requires Administrator review</span><input value="<?= $escape($profile[$field] ?? '') ?>" autocomplete="off"></label>
     <?php endforeach; ?>
 </template>
-<template data-profile-template="licence">
-    <p class="dialog-context-note">New licence information requires Administrator verification and does not replace the current verified record until approved. This form is a visual draft only; requests cannot be sent from this page.</p>
-    <label class="dialog-field"><span>Current SWML / Licence Number</span><input readonly value="Not available on this page"></label>
-    <label class="dialog-field"><span>New SWML / Licence Number — Requires Administrator review</span><input autocomplete="off"></label>
+<template data-profile-template="license">
+    <p class="dialog-context-note">New license information requires Administrator verification and does not replace the current verified record until approved. This form is a visual draft only; requests cannot be sent from this page.</p>
+    <label class="dialog-field"><span>Current SWML / license Number</span><input readonly value="Not available on this page"></label>
+    <label class="dialog-field"><span>New SWML / license Number — Requires Administrator review</span><input autocomplete="off"></label>
     <label class="dialog-field"><span>New Expiry Date — Requires Administrator review</span><input type="date"></label>
-    <label class="dialog-field"><span>New Licence PDF — Requires Administrator review</span><input type="file" accept="application/pdf,.pdf" disabled aria-describedby="profile-document-help"><span class="dialog-helper" id="profile-document-help">Document submission is not available in the current implementation.</span></label>
+    <label class="dialog-field"><span>New license PDF — Requires Administrator review</span><input type="file" accept="application/pdf,.pdf" disabled aria-describedby="profile-document-help"><span class="dialog-helper" id="profile-document-help">Document submission is not available in the current implementation.</span></label>
 </template>
 <template data-profile-template="capability">
     <p class="dialog-context-note">Capability changes require Administrator review before affecting eligibility. This form is a visual draft only; requests cannot be sent from this page.</p>

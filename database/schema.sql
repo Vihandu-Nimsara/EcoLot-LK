@@ -397,35 +397,82 @@ CREATE TABLE IF NOT EXISTS `recycler_licenses` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `license_number` VARCHAR(100) NOT NULL,
     `expiry_date` DATE NOT NULL,
-    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED') NOT NULL DEFAULT 'PENDING',
+    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED') 
+    NOT NULL DEFAULT 'PENDING',
     `document_path` VARCHAR(500) NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    -- Administrator review metadata
+    `reviewed_by_admin_user_id` BIGINT UNSIGNED NULL,
+    `reviewed_at` DATETIME NULL,
+    `review_note` VARCHAR(500) NULL,
     PRIMARY KEY (`license_id`),
     UNIQUE KEY `uq_recycler_licenses_number` (`license_number`),
     KEY `idx_recycler_licenses_eligibility` (`recycler_user_id`, `license_status`, `expiry_date`),
+    KEY `idx_recycler_licenses_reviewer` (`reviewed_by_admin_user_id`),
     CONSTRAINT `fk_recycler_licenses_recycler`
-        FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        FOREIGN KEY (`recycler_user_id`)
+        REFERENCES `authorized_recyclers` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT `fk_recycler_licenses_reviewed_by_admin`
+        FOREIGN KEY (`reviewed_by_admin_user_id`)
+        REFERENCES `administrators` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `recycler_capabilities` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `category_id` BIGINT UNSIGNED NOT NULL,
     `can_handle_high_risk` BOOLEAN NOT NULL DEFAULT FALSE,
-    `capability_status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+    `capability_status` ENUM(
+        'PENDING',
+        'APPROVED',
+        'REJECTED',
+        'SUSPENDED'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    -- Administrator review metadata
+    `reviewed_by_admin_user_id` BIGINT UNSIGNED NULL,
+    `reviewed_at` DATETIME NULL,
+    `review_note` VARCHAR(500) NULL,
+
     PRIMARY KEY (`recycler_user_id`, `category_id`),
-    KEY `idx_recycler_capabilities_category` (`category_id`, `capability_status`),
+
+    KEY `idx_recycler_capabilities_category` (
+        `category_id`,
+        `capability_status`
+    ),
+
+    KEY `idx_recycler_capabilities_reviewer` (
+        `reviewed_by_admin_user_id`
+    ),
+
     CONSTRAINT `fk_recycler_capabilities_recycler`
-        FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (`recycler_user_id`)
+        REFERENCES `authorized_recyclers` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
     CONSTRAINT `fk_recycler_capabilities_category`
-        FOREIGN KEY (`category_id`) REFERENCES `waste_categories` (`category_id`)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        FOREIGN KEY (`category_id`)
+        REFERENCES `waste_categories` (`category_id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT `fk_recycler_capabilities_reviewer`
+        FOREIGN KEY (`reviewed_by_admin_user_id`)
+        REFERENCES `administrators` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `recycler_authorized_activities` (
     `activity_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
+
     `activity_type` ENUM(
         'COLLECTION',
         'TRANSPORTATION',
@@ -434,14 +481,48 @@ CREATE TABLE IF NOT EXISTS `recycler_authorized_activities` (
         'RECYCLING',
         'DISPOSAL'
     ) NOT NULL,
-    `activity_status` ENUM('PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED') NOT NULL DEFAULT 'PENDING',
+
+    `activity_status` ENUM(
+        'PENDING',
+        'APPROVED',
+        'REJECTED',
+        'SUSPENDED'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    -- Administrator review metadata
+    `reviewed_by_admin_user_id` BIGINT UNSIGNED NULL,
+    `reviewed_at` DATETIME NULL,
+    `review_note` VARCHAR(500) NULL,
+
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
     PRIMARY KEY (`activity_id`),
-    UNIQUE KEY `uq_recycler_authorized_activity` (`recycler_user_id`, `activity_type`),
-    KEY `idx_recycler_authorized_activities_status` (`activity_status`),
+
+    UNIQUE KEY `uq_recycler_authorized_activity` (
+        `recycler_user_id`,
+        `activity_type`
+    ),
+
+    KEY `idx_recycler_authorized_activities_status` (
+        `activity_status`
+    ),
+
+    KEY `idx_recycler_authorized_activities_reviewer` (
+        `reviewed_by_admin_user_id`
+    ),
+
     CONSTRAINT `fk_recycler_authorized_activities_recycler`
-        FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE CASCADE
+        FOREIGN KEY (`recycler_user_id`)
+        REFERENCES `authorized_recyclers` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT `fk_recycler_authorized_activities_reviewer`
+        FOREIGN KEY (`reviewed_by_admin_user_id`)
+        REFERENCES `administrators` (`user_id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+
 ) ENGINE=InnoDB;
 
 -- =========================================================

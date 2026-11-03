@@ -91,8 +91,13 @@ return static function (Router $router, array $app): void {
         $router->get('/users', 'AdminController@Users');
         $router->get('/recycler-verification', 'AdminController@recyclerVerification');
         $router->get('/recycler-verification/{id}', 'AdminController@recyclerDetails');
+        $router->post('/recycler-verification/{id}/review', 'AdminController@reviewRecycler');
         $router->get('/categories-items', 'AdminController@categoriesAndItems');
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
+        $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
+        $router->post('/recycler-verification/{id}/license-review', 'AdminController@reviewRecyclerLicense');
+        $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
+        $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');
     });
 };

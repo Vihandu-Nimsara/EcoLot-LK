@@ -1,0 +1,217 @@
+<?php
+declare(strict_types=1);
+
+final class RecyclerApprovalService
+{
+    private PDO $db;
+
+    public function __construct(?PDO $db = null)
+    {
+        $this->db = $db ?? Database::connection();
+    }
+    
+    public function review(
+        int $recyclerId,
+        int $adminId,
+        string $decision,
+        string $rejectionReason = ''
+    ): void {
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            throw new InvalidArgumentException('Invalid review decision.');
+        }
+        
+        $this->db->beginTransaction();
+
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT user_id, verification_status
+                FROM authorized_recyclers
+                WHERE user_id = :recycler_id
+                FOR UPDATE"
+            );
+
+            $stmt->execute(['recycler_id' => $recyclerId,]);
+
+            $recycler = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($recycler === false) {
+                throw new RuntimeException('Recycler not found.');
+            }
+
+            if (
+                strtoupper((string) $recycler['verification_status']) !== 'PENDING'
+            ) {
+                throw new RuntimeException(
+                    'Recycler application has already been reviewed.'
+                );
+
+            }
+
+            if ($decision === 'APPROVE') {
+                $licenseStmt = $this->db->prepare(
+                    "SELECT 
+                        license_id,
+                        license_status,
+                        expiry_date
+                    FROM recycler_licenses
+                    WHERE recycler_user_id = :recycler_id
+                    ORDER BY submitted_at DESC, license_id DESC
+                    LIMIT 1
+                    FOR UPDATE"
+                );
+
+                $licenseStmt->execute(['recycler_id' => $recyclerId,]);
+
+                $license = $licenseStmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($license === false) {
+                    throw new RuntimeException(
+                        'Recycler does not have a license record.'
+                    );
+                }
+
+                if (
+                    strtoupper((string) $license['license_status']) !== 'VALID'
+                ) {
+                    throw new RuntimeException(
+                        'Recycler license is not valid.'
+                    );
+                }
+
+                if ((string) $license['expiry_date'] < date('Y-m-d')) {
+                    throw new RuntimeException(
+                        'Recycler license has expired.'
+                    );
+                }
+
+                $capabilityStmt = $this->db->prepare(
+                    "SELECT category_id
+                    FROM recycler_capabilities
+                    WHERE recycler_user_id = :recycler_id
+                        AND capability_status = 'APPROVED'
+                    LIMIT 1
+                    FOR UPDATE"
+                );
+
+                $capabilityStmt->execute(['recycler_id' => $recyclerId,]);
+                $approvedCapability = $capabilityStmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($approvedCapability === false) {
+                    throw new RuntimeException(
+                        'Recycler does not have an approved capability.'
+                    );
+                }
+
+                // All capability reviews must be completed before final approval.
+                $pendingCapabilityStmt = $this->db->prepare(
+                    "SELECT COUNT(*)
+                    FROM recycler_capabilities
+                    WHERE recycler_user_id = :recycler_id
+                    AND capability_status = 'PENDING'"
+                );
+
+                $pendingCapabilityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ((int) $pendingCapabilityStmt->fetchColumn() > 0) {
+                    throw new RuntimeException(
+                        'Recycler has pending capability reviews.'
+                    );
+                }
+
+                // At least one authorized activity must be approved.
+                $approvedActivityStmt = $this->db->prepare(
+                    "SELECT activity_id
+                    FROM recycler_authorized_activities
+                    WHERE recycler_user_id = :recycler_id
+                    AND activity_status = 'APPROVED'
+                    LIMIT 1
+                    FOR UPDATE"
+                );
+
+                $approvedActivityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ($approvedActivityStmt->fetch(PDO::FETCH_ASSOC) === false) {
+                    throw new RuntimeException(
+                        'Recycler does not have an approved authorized activity.'
+                    );
+                }
+
+                // All authorized activity reviews must be completed.
+                $pendingActivityStmt = $this->db->prepare(
+                    "SELECT COUNT(*)
+                    FROM recycler_authorized_activities
+                    WHERE recycler_user_id = :recycler_id
+                    AND activity_status = 'PENDING'"
+                );
+
+                $pendingActivityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ((int) $pendingActivityStmt->fetchColumn() > 0) {
+                    throw new RuntimeException(
+                        'Recycler has pending authorized activity reviews.'
+                    );
+                }
+
+            }
+
+            if ($decision === 'REJECT' && trim($rejectionReason) === '') {
+                throw new InvalidArgumentException(
+                    'Rejection reason is required.'
+                );
+            }
+
+            if (
+                $decision === 'REJECT' &&
+                mb_strlen(trim($rejectionReason), 'UTF-8') > 500
+            ) {
+                throw new InvalidArgumentException(
+                    'Rejection reason must not exceed 500 characters.'
+                );
+            }
+
+            $newStatus = $decision === 'APPROVE'
+                ? 'VERIFIED'
+                : 'REJECTED';
+
+            $updateStmt = $this->db->prepare(
+                "UPDATE authorized_recyclers
+                SET verification_status = :status,
+                    reviewed_by_admin_user_id = :admin_id,
+                    reviewed_at = CURRENT_TIMESTAMP,
+                    review_note = :review_note
+                WHERE user_id = :recycler_id
+                    AND verification_status = 'PENDING'"
+            );
+
+            $updateStmt->execute([
+                'status' =>$newStatus,
+                'admin_id' => $adminId,
+                'review_note' => $decision === 'REJECT'
+                    ? trim($rejectionReason) 
+                    : null,
+                'recycler_id' => $recyclerId,
+            ]);
+
+            if ($updateStmt->rowCount() !== 1) {
+                throw new RuntimeException(
+                    'Recycler verification status could not be updated.'
+                );
+            }
+
+            $this->db->commit();
+        } catch (Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $e;
+
+        }
+    }
+}

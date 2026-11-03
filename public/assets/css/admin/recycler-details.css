@@ -8,10 +8,6 @@
     opacity: .48;
 }
 
-.requirement-unmet {
-    color: #B42318;
-}
-
 .verification-blocked-note {
     margin: 8px 0 0;
     color: #B42318;
@@ -155,9 +151,67 @@
     font-weight: 600;
 }
 
+/* Capability review actions */
+.capability-review-cell {
+    min-width: 260px;
+    vertical-align: middle;
+}
+
+.capability-review-cell form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.capability-review-cell form:last-child {
+    margin-bottom: 0;
+}
+
+.capability-review-cell label {
+    display: block;
+    font-weight: 500;
+}
+
+.capability-review-cell textarea {
+    display: block;
+    width: 100%;
+    min-height: 72px;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.capability-review-cell .action-btn {
+    align-self: flex-start;
+}
+
 .final-decision-card {
     border-color: #b9ddc6;
     background: linear-gradient(135deg, #fff, #f5fbf7);
+}
+
+.final-review-actions {
+    display: grid;
+    gap: 20px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--admin-border-soft);
+}
+
+.final-review-actions form {
+    margin: 0;
+}
+
+.verification-reject-form {
+    display: grid;
+    gap: 12px;
+    max-width: 560px;
+}
+
+.final-review-actions .action-btn {
+    width: fit-content;
 }
 
 .verification-checklist {
@@ -186,6 +240,18 @@
     font-weight: 800;
 }
 
+.verification-checklist li.requirement-met {
+    color: var(--admin-green-800);
+    background: #f0faf3;
+    border-color: #b9ddc6;
+}
+
+.verification-checklist li.requirement-unmet {
+    color: #B42318;
+    background: #fff7f6;
+    border-color: #f3c6c2;
+}
+
 .final-decision-note {
     margin-top: 14px;
     color: var(--admin-muted);
@@ -212,6 +278,12 @@
     min-width: 760px;
 }
 
+.activities-table th:first-child,
+.activities-table td:first-child {
+    min-width: 130px;
+    white-space: nowrap;
+}
+
 @media (max-width: 900px) {
     .details-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -235,6 +307,10 @@
 
     .details-grid {
         grid-template-columns: 1fr;
+    }
+
+    .final-review-actions .action-btn {
+        width: 100%;
     }
 
     .details-item-wide {

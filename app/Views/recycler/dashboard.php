@@ -18,7 +18,7 @@
     </div>
     <section class="compliance-summary" aria-label="Compliance summary">
         <div><span>Verification</span><strong><?= $escape(ucfirst(strtolower($compliance['verification_status'] ?? 'Not recorded'))) ?></strong></div>
-        <div><span>CEA Licence Status</span><strong><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid licence' ?></strong></div>
+        <div><span>CEA license Status</span><strong><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid license' ?></strong></div>
         <div><span>Approved Capabilities</span><strong><?= count(array_filter($capabilities, static fn (array $row): bool => $row['capability_status'] === 'APPROVED')) ?></strong></div>
         <a href="<?= $escape($basePath) ?>/recycler/profile">View My Profile</a>
     </section>
