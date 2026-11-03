@@ -247,6 +247,245 @@ class AdminController extends Controller
         exit;
     }
 
+    public function reviewRecyclerCapability(string $id): void
+    {
+        Auth::requireRole('ADMIN');
+
+        $adminId = Auth::id();
+
+        if ($adminId === null) {
+            http_response_code(403);
+            return;
+        }
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+
+        if ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            return;
+        }
+
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page.';
+            return;
+        }
+
+        // Validate the selected waste category.
+        $rawCategoryId = $_POST['category_id'] ?? null;
+
+        if (
+            !is_string($rawCategoryId) ||
+            preg_match('/^[1-9][0-9]*$/', $rawCategoryId) !== 1
+        ) {
+            http_response_code(422);
+            return;
+        }
+
+        $categoryId = filter_var(
+            $rawCategoryId,
+            FILTER_VALIDATE_INT
+        );
+
+        if ($categoryId === false || $categoryId <= 0) {
+            http_response_code(422);
+            return;
+        }
+
+        $rawDecision = $_POST['decision'] ?? null;
+        $rawReviewNote = $_POST['review_note'] ?? '';
+
+        if (
+            !is_string($rawDecision) ||
+            !is_string($rawReviewNote)
+        ) {
+            http_response_code(422);
+            return;
+        }
+
+        $decision = strtoupper(trim($rawDecision));
+        $reviewNote = trim($rawReviewNote);
+
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            http_response_code(422);
+            return;
+        }
+
+        if ($decision === 'REJECT' && $reviewNote === '') {
+            http_response_code(422);
+            return;
+        }
+
+        try {
+            $service = new RecyclerCapabilityReviewService();
+
+            $service->review(
+                $recyclerId,
+                $categoryId,
+                $adminId,
+                $decision,
+                $reviewNote
+            );
+
+            $_SESSION['success'] = $decision === 'APPROVE'
+                ? 'Recycler capability approved successfully.'
+                : 'Recycler capability rejected successfully.';
+
+        } catch (PDOException $e) {
+            error_log(
+                'Capability review database error: ' . $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Capability review could not be completed.';
+
+        } catch (InvalidArgumentException | RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+
+        } catch (Throwable $e) {
+            error_log(
+                'Capability review error: ' . $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Capability review could not be completed.';
+        }
+
+        $basePath = rtrim(
+            str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])),
+            '/'
+        );
+
+        header(
+            'Location: ' . $basePath .
+            '/admin/recycler-verification/' . $recyclerId,
+            true,
+            303
+        );
+
+        exit;
+    }
+
+    public function reviewRecyclerAuthorizedActivity(string $id): void
+    {
+        Auth::requireRole('ADMIN');
+
+        $adminId = Auth::id();
+
+        if ($adminId === null) {
+            http_response_code(403);
+            return;
+        }
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+
+        if ($recyclerId === false || $recyclerId <= 0) {
+            http_response_code(404);
+            return;
+        }
+
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page.';
+            return;
+        }
+
+        // Validate the selected authorized activity.
+        $rawActivityId = $_POST['activity_id'] ?? null;
+
+        if (
+            !is_string($rawActivityId) ||
+            preg_match('/^[1-9][0-9]*$/', $rawActivityId) !== 1
+        ) {
+            http_response_code(422);
+            return;
+        }
+
+        $activityId = filter_var(
+            $rawActivityId,
+            FILTER_VALIDATE_INT
+        );
+
+        if ($activityId === false || $activityId <= 0) {
+            http_response_code(422);
+            return;
+        }
+
+        $rawDecision = $_POST['decision'] ?? null;
+        $rawReviewNote = $_POST['review_note'] ?? '';
+
+        if (
+            !is_string($rawDecision) ||
+            !is_string($rawReviewNote)
+        ) {
+            http_response_code(422);
+            return;
+        }
+
+        $decision = strtoupper(trim($rawDecision));
+        $reviewNote = trim($rawReviewNote);
+
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            http_response_code(422);
+            return;
+        }
+
+        if ($decision === 'REJECT' && $reviewNote === '') {
+            http_response_code(422);
+            return;
+        }
+
+        try {
+            $service = new RecyclerAuthorizedActivityReviewService();
+
+            $service->review(
+                $recyclerId,
+                $activityId,
+                $adminId,
+                $decision,
+                $reviewNote
+            );
+
+            $_SESSION['success'] = $decision === 'APPROVE'
+                ? 'Recycler authorized activity approved successfully.'
+                : 'Recycler authorized activity rejected successfully.';
+
+        } catch (PDOException $e) {
+            error_log(
+                'Authorized activity review database error: '
+                . $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Authorized activity review could not be completed.';
+
+        } catch (InvalidArgumentException | RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+
+        } catch (Throwable $e) {
+            error_log(
+                'Authorized activity review error: ' . $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Authorized activity review could not be completed.';
+        }
+
+        $basePath = rtrim(
+            str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])),
+            '/'
+        );
+
+        header(
+            'Location: ' . $basePath .
+            '/admin/recycler-verification/' . $recyclerId,
+            true,
+            303
+        );
+
+        exit;
+    }
+
     public function viewRecyclerLicense(string $id): void
     {
         Auth::requireRole('ADMIN');

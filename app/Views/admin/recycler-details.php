@@ -58,22 +58,44 @@ $licenseNotExpired =
             $license['license_expiry'] >= date('Y-m-d');
 
 $approvedCapabilityCount = 0;
+$pendingCapabilityCount = 0;
 
 foreach ($capabilities as $capability) {
-    if (
-        strtoupper(
-            (string) ($capability['capability_status'] ?? '')
-        ) === 'APPROVED'
-    ) {
+    $capabilityStatus = strtoupper(
+        (string) ($capability['capability_status'] ?? '')
+    );
+
+    if ($capabilityStatus === 'APPROVED') {
         $approvedCapabilityCount++;
+    } elseif ($capabilityStatus === 'PENDING') {
+        $pendingCapabilityCount++;
+    }
+}
+
+$approvedActivityCount = 0;
+$pendingActivityCount = 0;
+
+foreach ($activities as $activity) {
+    $activityStatus = strtoupper(
+        (string) ($activity['activity_status'] ?? '')
+    );
+
+    if ($activityStatus === 'APPROVED') {
+        $approvedActivityCount++;
+    } elseif ($activityStatus === 'PENDING') {
+        $pendingActivityCount++;
     }
 }
 
 $canVerify =
-        $isPending &&
-        $licenseIsValid &&
-        $licenseNotExpired &&
-        $approvedCapabilityCount > 0;
+    $isPending &&
+    $licenseIsValid &&
+    $licenseNotExpired &&
+    $approvedCapabilityCount > 0 &&
+    $pendingCapabilityCount === 0 &&
+    $approvedActivityCount > 0 &&
+    $pendingActivityCount === 0;
+
 
 if ($recordStatus === 'VERIFIED') {
     $overallStatus = 'Verified';
@@ -373,6 +395,7 @@ if ($licenseStatus === 'VALID') {
                             <th>Waste Category</th>
                             <th>High-Risk Handling</th>
                             <th>Status</th>
+                            <th>Admin Review</th>
                         </tr>
                     </thead>
 
@@ -380,16 +403,23 @@ if ($licenseStatus === 'VALID') {
                         <?php foreach ($capabilities as $capability): ?>
 
                             <?php
+                            $categoryId = (int) $capability['category_id'];
+
                             $capabilityStatus = strtoupper(
                                 (string) ($capability['capability_status'] ?? 'PENDING')
                             );
 
+                            $canReviewCapability = $isPending
+                                && $capabilityStatus === 'PENDING';
+
                             if ($capabilityStatus === 'APPROVED') {
                                 $capabilityStatusLabel = 'Approved';
                                 $capabilityStatusClass = 'status-verified';
+
                             } elseif ($capabilityStatus === 'PENDING') {
                                 $capabilityStatusLabel = 'Pending';
                                 $capabilityStatusClass = 'status-pending';
+
                             } else {
                                 $capabilityStatusLabel = ucfirst(
                                     strtolower($capabilityStatus)
@@ -422,6 +452,73 @@ if ($licenseStatus === 'VALID') {
                                         ) ?>
                                     </span>
                                 </td>
+                                <td class="capability-review-cell">
+                                    <?php if ($canReviewCapability): ?>
+
+                                        <!-- Approve Capability -->
+                                        <form
+                                            method="POST"
+                                            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/capability-review"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_csrf_token"
+                                                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="category_id"
+                                                value="<?= $categoryId ?>"
+                                            >
+
+                                            <input type="hidden" name="decision" value="APPROVE">
+
+                                            <button type="submit" class="action-btn approve-btn">
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        <!-- Reject Capability -->
+                                        <form
+                                            method="POST"
+                                            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/capability-review"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_csrf_token"
+                                                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="category_id"
+                                                value="<?= $categoryId ?>"
+                                            >
+
+                                            <input type="hidden" name="decision" value="REJECT">
+
+                                            <label for="capability_note_<?= $categoryId ?>">
+                                                Rejection Reason
+                                            </label>
+
+                                            <textarea
+                                                id="capability_note_<?= $categoryId ?>"
+                                                name="review_note"
+                                                rows="2"
+                                                maxlength="500"
+                                                required
+                                            ></textarea>
+
+                                            <button type="submit" class="action-btn reject-btn">
+                                                Reject
+                                            </button>
+                                        </form>
+
+                                    <?php else: ?>
+                                        <span>Review unavailable</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
 
                         <?php endforeach; ?>
@@ -432,7 +529,8 @@ if ($licenseStatus === 'VALID') {
         <?php endif; ?>
 
     </section>
-
+    
+    <!-- D. Authorized Activities -->
     <section class="details-card">
         <div class="details-section-header">
             <span class="section-step">D</span>
@@ -451,56 +549,157 @@ if ($licenseStatus === 'VALID') {
 
         <?php else: ?>
             <div class="data-table-wrapper">
-                <table class="categories-table">
+                <table class="categories-table activities-table">
                     <thead>
                         <tr>
                             <th>Activity</th>
                             <th>Status</th>
+                            <th>Admin Review</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <?php foreach ($activities as $activity): ?>
                             <?php
-                            $activityStatus = strtoupper(
-                                (string) ($activity['activity_status'] ?? 'PENDING')
+                            $activityId = (int) (
+                                $activity['activity_id'] ?? 0
                             );
+
+                            $activityStatus = strtoupper(
+                                (string) ($activity['activity_status'] ?? '')
+                            );
+
+                            $canReviewActivity =
+                                $isPending &&
+                                $activityId > 0 &&
+                                $activityStatus === 'PENDING';
 
                             if ($activityStatus === 'APPROVED') {
                                 $activityStatusLabel = 'Approved';
                                 $activityStatusClass = 'status-verified';
+
                             } elseif ($activityStatus === 'PENDING') {
                                 $activityStatusLabel = 'Pending';
                                 $activityStatusClass = 'status-pending';
+
                             } else {
-                                $activityStatusLabel = ucfirst(
-                                    strtolower($activityStatus)
-                                );
+                                $activityStatusLabel = $activityStatus !== ''
+                                    ? ucfirst(strtolower($activityStatus))
+                                    : 'Unknown';
+
                                 $activityStatusClass = 'status-rejected';
                             }
-                        ?>
+                            ?>
 
-                        <tr>
-                            <td>
-                                <?= htmlspecialchars(
-                                    ucfirst(
-                                        strtolower(
-                                            str_replace('_', ' ', $activity['activity_type'])
-                                        )
-                                    ),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
-                            </td>
-                            <td>
-                                <span class="status-badge <?= $activityStatusClass ?>">
+                            <tr>
+                                <td>
                                     <?= htmlspecialchars(
-                                        $activityStatusLabel,
+                                        ucfirst(
+                                            strtolower(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    (string) $activity['activity_type']
+                                                )
+                                            )
+                                        ),
                                         ENT_QUOTES,
                                         'UTF-8'
                                     ) ?>
-                                </span>
-                            </td>
-                        </tr>
+                                </td>
+
+                                <td>
+                                    <span class="status-badge <?= $activityStatusClass ?>">
+                                        <?= htmlspecialchars(
+                                            $activityStatusLabel,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </span>
+                                </td>
+
+                                <td class="capability-review-cell">
+                                    <?php if ($canReviewActivity): ?>
+
+                                        <!-- Approve Activity -->
+                                        <form
+                                            method="POST"
+                                            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/activity-review"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_csrf_token"
+                                                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="activity_id"
+                                                value="<?= $activityId ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="decision"
+                                                value="APPROVE"
+                                            >
+
+                                            <button
+                                                type="submit"
+                                                class="action-btn approve-btn"
+                                            >
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        <!-- Reject Activity -->
+                                        <form
+                                            method="POST"
+                                            action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/activity-review"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="_csrf_token"
+                                                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="activity_id"
+                                                value="<?= $activityId ?>"
+                                            >
+
+                                            <input
+                                                type="hidden"
+                                                name="decision"
+                                                value="REJECT"
+                                            >
+
+                                            <label for="activity_note_<?= $activityId ?>">
+                                                Rejection Reason
+                                            </label>
+
+                                            <textarea
+                                                id="activity_note_<?= $activityId ?>"
+                                                name="review_note"
+                                                rows="2"
+                                                maxlength="500"
+                                                required
+                                            ></textarea>
+
+                                            <button
+                                                type="submit"
+                                                class="action-btn reject-btn"
+                                            >
+                                                Reject
+                                            </button>
+                                        </form>
+
+                                    <?php else: ?>
+                                        <span>Review unavailable</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
 
                         <?php endforeach; ?>
                     </tbody>
@@ -509,6 +708,7 @@ if ($licenseStatus === 'VALID') {
 
         <?php endif; ?>
     </section>
+
 
 
     <!-- E. Final Decision -->
@@ -544,6 +744,24 @@ if ($licenseStatus === 'VALID') {
                 : 'requirement-unmet' ?>">
                 At least one capability approved
             </li>
+            <li class="<?= $pendingCapabilityCount === 0
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                All capability reviews completed
+            </li>
+
+            <li class="<?= $approvedActivityCount > 0
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                At least one authorized activity approved
+            </li>
+
+            <li class="<?= $pendingActivityCount === 0
+                ? 'requirement-met'
+                : 'requirement-unmet' ?>">
+                All authorized activity reviews completed
+            </li>
+
         </ul>
         <div class="final-review-actions">
             <form
@@ -590,10 +808,10 @@ if ($licenseStatus === 'VALID') {
                 <textarea
                     name="rejection_reason"
                     id="rejection_reason"
+                    maxlength="500"
                     required
                     <?= $isPending ? '' : 'disabled' ?>
                 ></textarea>
-
                 <button type="submit"
                         class="action-btn reject-btn"
                         <?= $isPending ? '' : 'disabled' ?>

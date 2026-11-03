@@ -101,11 +101,77 @@ final class RecyclerApprovalService
                         'Recycler does not have an approved capability.'
                     );
                 }
+
+                // All capability reviews must be completed before final approval.
+                $pendingCapabilityStmt = $this->db->prepare(
+                    "SELECT COUNT(*)
+                    FROM recycler_capabilities
+                    WHERE recycler_user_id = :recycler_id
+                    AND capability_status = 'PENDING'"
+                );
+
+                $pendingCapabilityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ((int) $pendingCapabilityStmt->fetchColumn() > 0) {
+                    throw new RuntimeException(
+                        'Recycler has pending capability reviews.'
+                    );
+                }
+
+                // At least one authorized activity must be approved.
+                $approvedActivityStmt = $this->db->prepare(
+                    "SELECT activity_id
+                    FROM recycler_authorized_activities
+                    WHERE recycler_user_id = :recycler_id
+                    AND activity_status = 'APPROVED'
+                    LIMIT 1
+                    FOR UPDATE"
+                );
+
+                $approvedActivityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ($approvedActivityStmt->fetch(PDO::FETCH_ASSOC) === false) {
+                    throw new RuntimeException(
+                        'Recycler does not have an approved authorized activity.'
+                    );
+                }
+
+                // All authorized activity reviews must be completed.
+                $pendingActivityStmt = $this->db->prepare(
+                    "SELECT COUNT(*)
+                    FROM recycler_authorized_activities
+                    WHERE recycler_user_id = :recycler_id
+                    AND activity_status = 'PENDING'"
+                );
+
+                $pendingActivityStmt->execute([
+                    'recycler_id' => $recyclerId
+                ]);
+
+                if ((int) $pendingActivityStmt->fetchColumn() > 0) {
+                    throw new RuntimeException(
+                        'Recycler has pending authorized activity reviews.'
+                    );
+                }
+
             }
 
             if ($decision === 'REJECT' && trim($rejectionReason) === '') {
                 throw new InvalidArgumentException(
                     'Rejection reason is required.'
+                );
+            }
+
+            if (
+                $decision === 'REJECT' &&
+                mb_strlen(trim($rejectionReason), 'UTF-8') > 500
+            ) {
+                throw new InvalidArgumentException(
+                    'Rejection reason must not exceed 500 characters.'
                 );
             }
 

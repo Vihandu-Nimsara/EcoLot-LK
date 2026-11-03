@@ -97,5 +97,7 @@ return static function (Router $router, array $app): void {
         $router->get('/reports', 'AdminController@reports');
         $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
         $router->post('/recycler-verification/{id}/license-review', 'AdminController@reviewRecyclerLicense');
+        $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
+        $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');
     });
 };

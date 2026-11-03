@@ -151,6 +151,42 @@
     font-weight: 600;
 }
 
+/* Capability review actions */
+.capability-review-cell {
+    min-width: 260px;
+    vertical-align: middle;
+}
+
+.capability-review-cell form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.capability-review-cell form:last-child {
+    margin-bottom: 0;
+}
+
+.capability-review-cell label {
+    display: block;
+    font-weight: 500;
+}
+
+.capability-review-cell textarea {
+    display: block;
+    width: 100%;
+    min-height: 72px;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.capability-review-cell .action-btn {
+    align-self: flex-start;
+}
+
 .final-decision-card {
     border-color: #b9ddc6;
     background: linear-gradient(135deg, #fff, #f5fbf7);
@@ -240,6 +276,12 @@
 
 .capabilities-table {
     min-width: 760px;
+}
+
+.activities-table th:first-child,
+.activities-table td:first-child {
+    min-width: 130px;
+    white-space: nowrap;
 }
 
 @media (max-width: 900px) {
