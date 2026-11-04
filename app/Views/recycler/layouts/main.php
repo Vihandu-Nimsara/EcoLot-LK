@@ -13,6 +13,10 @@ $secondaryPageStyle = in_array($currentPage ?? '', $workflowPages, true)
     ? 'recycler/workflow.css'
     : null;
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
+$dashboardPage = ($currentPage ?? '') === 'dashboard';
+// Reuse controller-loaded profiles; resolve the same authenticated company on other pages.
+$workspaceProfile = $dashboardProfile ?? $profile
+    ?? (new AuthorizedRecycler())->profileForRecycler((int) Auth::id());
 $themeVersion = Asset::version('css/recycler/theme.css');
 ?>
 <!DOCTYPE html>
@@ -26,10 +30,10 @@ $themeVersion = Asset::version('css/recycler/theme.css');
 
     <?php require dirname(__DIR__, 2) . '/components/workspace-head.php'; ?>
 
-    <?php if ($pageStyle !== null): ?>
+    <?php if ($pageStyle !== null && !$dashboardPage): ?>
         <link
             rel="stylesheet"
-            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>?v=<?= Asset::version('css/' . $pageStyle) ?>"
         >
     <?php endif; ?>
 
@@ -39,6 +43,13 @@ $themeVersion = Asset::version('css/recycler/theme.css');
 
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
     <link rel="stylesheet" href="<?= $assetBase ?>/css/recycler/theme.css?v=<?= $themeVersion ?>">
+    <?php if ($pageStyle !== null && $dashboardPage): ?>
+        <link
+            rel="stylesheet"
+            href="<?= $assetBase ?>/css/<?= htmlspecialchars($pageStyle, ENT_QUOTES, 'UTF-8') ?>?v=<?= Asset::version('css/' . $pageStyle) ?>"
+        >
+    <?php endif; ?>
+
 </head>
 
 <body class="recycler-app">
