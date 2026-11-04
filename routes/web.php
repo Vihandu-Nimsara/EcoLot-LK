@@ -31,13 +31,16 @@ return static function (Router $router, array $app): void {
 
     $router->group('/officer', static function (Router $router): void {
         $router->get('/campaigns', 'MunicipalOfficerController@campaigns');
+        $router->post('/campaigns', 'MunicipalOfficerController@storeCampaign');
         $router->get('/area-schedules', 'MunicipalOfficerController@areaSchedules');
         $router->post('/area-schedules', 'MunicipalOfficerController@storeAreaSchedule');
         $router->get('/area-schedules/{id}', 'MunicipalOfficerController@showAreaSchedule');
         $router->post('/area-schedules/{id}/update', 'MunicipalOfficerController@updateAreaSchedule');
         $router->post('/area-schedules/{id}/delete', 'MunicipalOfficerController@deleteAreaSchedule');
         $router->get('/flagged-requests', 'MunicipalOfficerController@flaggedRequests');
+        $router->post('/flagged-requests/{id}/review', 'MunicipalOfficerController@reviewFlaggedRequest');
         $router->get('/collection-assignments', 'MunicipalOfficerController@collectionAssignments');
+        $router->post('/collection-assignments/{id}', 'MunicipalOfficerController@changeAssignment');
         // Backward-compatible alias for older bookmarks during the transition.
         $router->get('/routes', 'MunicipalOfficerController@collectionAssignments');
         $router->get('/collection-records', 'MunicipalOfficerController@collectionRecords');

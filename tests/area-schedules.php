@@ -110,6 +110,7 @@ try {
     $db->exec("INSERT INTO schedule_assignments (schedule_id, collector_user_id, assigned_by_officer_user_id) VALUES ($unusedId, 3, 1)");
     verify(!$invoke('deleteAreaSchedule', [], $unusedId), 'Assigned schedule deleted');
     verify(!$invoke('updateAreaSchedule', ['request_capacity' => '5', 'schedule_status' => 'CANCELLED'], $unusedId), 'Assigned work cancelled');
+    verify(!$invoke('updateAreaSchedule', ['request_capacity' => '99', 'schedule_status' => 'PLANNED'], $unusedId), 'Assigned resources permit capacity edit');
     verify($model->find($unusedId)['schedule_status'] === 'PLANNED', 'Failed cancellation changed status');
     $db->exec("INSERT INTO schedule_collections (schedule_id, submitted_by_collector_user_id) VALUES ($unusedId, 3)");
     verify($model->hasCollectionSubmission($unusedId), 'Collection check missing');
@@ -129,6 +130,14 @@ try {
     verify(!$invoke('updateAreaSchedule', ['request_capacity' => '6', 'schedule_status' => 'COMPLETED'], $unusedId), 'Completed capacity edited');
     foreach (['ASSIGNED', 'IN_PROGRESS', 'COLLECTION_SUBMITTED', 'COMPLETED', 'CANCELLED'] as $state) {
         verify(AreaCollectionSchedule::manualStatuses(['schedule_status' => $state] + $sample) === [$state], 'Workflow state editable');
+    }
+    $orphanId = $model->create(['campaign_id' => 1, 'postal_area_id' => 2, 'created_by_officer_user_id' => 1, 'collection_date' => "$month-25", 'request_cutoff_at' => "$month-24 23:59:59", 'request_capacity' => 5, 'schedule_status' => 'PLANNED']);
+    foreach (['ASSIGNED', 'IN_PROGRESS', 'COLLECTION_SUBMITTED', 'COMPLETED'] as $state) {
+        $model->update($orphanId, ['schedule_status' => $state]);
+        verify(!$invoke('deleteAreaSchedule', [], $orphanId), 'Operational schedule without links deleted');
+        $model->update($unusedId, ['schedule_status' => $state]);
+        verify(!$invoke('updateAreaSchedule', ['request_capacity' => '99', 'schedule_status' => $state], $unusedId), 'Operational capacity edited');
+        verify(!$invoke('deleteAreaSchedule', [], $unusedId), 'Operational schedule deleted');
     }
     foreach (['areaSchedules', 'storeAreaSchedule', 'showAreaSchedule', 'updateAreaSchedule', 'deleteAreaSchedule'] as $method) {
         foreach (['guest', 'public'] as $role) {

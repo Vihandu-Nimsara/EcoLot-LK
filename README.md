@@ -111,3 +111,22 @@ whole project world-writable. Other server environments should provision this
 file for their actual PHP worker user. A `Permission denied` warning for this
 file in XAMPP's `logs/php_error_log` causes all login submissions to fail before
 password verification.
+
+### Campaign expiry maintenance
+
+Run `php bin/close-expired-campaigns.php` from the deployment checkout to close
+OPEN campaigns whose month is before the current month in `Asia/Colombo`.
+The command is safe to repeat, does not cancel schedules or requests, and exits
+nonzero on failure. It uses the application's `DB_*` environment configuration.
+
+Configure the deployment scheduler to run it every minute, so month-end closure
+occurs within a minute even when no officer visits the site. For this XAMPP checkout:
+
+```cron
+* * * * * /Applications/XAMPP/xamppfiles/bin/php /Applications/XAMPP/xamppfiles/htdocs/EcoLot-LK/bin/close-expired-campaigns.php
+```
+
+The scheduler entry must be installed on the host serving the application;
+committing this command does not install a host scheduler. Send scheduler failures
+to the deployment's normal job logs/monitoring. Page reads also close expired
+campaigns, and schedule creation independently rejects expired campaigns.

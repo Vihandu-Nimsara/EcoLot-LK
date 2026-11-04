@@ -3,7 +3,7 @@ $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QU
 $scheduleUrl = $basePath . '/officer/area-schedules';
 $filterCampaigns = [];
 foreach ($schedules as $schedule) {
-    $filterCampaigns[$schedule['campaign_id']] = $schedule['campaign_name'] . ' — ' . substr($schedule['campaign_month'], 0, 7);
+    $filterCampaigns[$schedule['campaign_id']] = date('M Y', strtotime($schedule['campaign_month'])) . ' · Campaign #' . $schedule['campaign_id'];
 }
 ?>
 <section class="area-schedules-page">
@@ -27,11 +27,11 @@ foreach ($schedules as $schedule) {
         </div>
         <div class="schedule-table-wrapper">
             <table class="schedule-table">
-                <thead><tr><th>Campaign</th><th>Postal Code Area</th><th>Collection Date</th><th>Request Cut-off</th><th>Requests / Maximum</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Campaign</th><th>Postal Code Area</th><th>Collection Date</th><th>Request Cut-off</th><th>Requests / Limit</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
                     <?php foreach ($schedules as $schedule): ?>
                         <tr data-campaign-id="<?= $escape($schedule['campaign_id']) ?>">
-                            <td><?= $escape($schedule['campaign_name']) ?><br><?= $escape(substr($schedule['campaign_month'], 0, 7)) ?></td>
+                            <td class="schedule-campaign-cell" title="<?= $escape($schedule['campaign_name']) ?>"><strong><?= $escape(date('M Y', strtotime($schedule['campaign_month']))) ?></strong><span class="table-subtext">Campaign #<?= (int) $schedule['campaign_id'] ?></span></td>
                             <td><?= $escape($schedule['area_name']) ?><br><?= $escape($schedule['postal_code']) ?></td>
                             <td><?= $escape($schedule['collection_date']) ?></td>
                             <td><?= $escape($schedule['request_cutoff_at']) ?></td>
@@ -61,7 +61,7 @@ foreach ($schedules as $schedule) {
                 <select id="schedule-campaign" name="campaign_id" required>
                     <option value="">Select an open campaign</option>
                     <?php foreach ($campaigns as $campaign): ?>
-                        <option value="<?= $escape($campaign['campaign_id']) ?>" <?= (string) ($old['campaign_id'] ?? '') === (string) $campaign['campaign_id'] ? 'selected' : '' ?>><?= $escape($campaign['campaign_name'] . ' — ' . substr($campaign['campaign_month'], 0, 7)) ?></option>
+                        <option value="<?= $escape($campaign['campaign_id']) ?>" <?= (string) ($old['campaign_id'] ?? '') === (string) $campaign['campaign_id'] ? 'selected' : '' ?>><?= $escape(date('M Y', strtotime($campaign['campaign_month'])) . ' · Campaign #' . $campaign['campaign_id']) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?php if ($campaigns === []): ?><small>No open campaigns are available.</small><?php endif; ?>

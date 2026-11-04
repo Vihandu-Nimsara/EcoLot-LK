@@ -1,346 +1,46 @@
+<?php $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
 <section class="flagged-requests-page">
-
-    <div class="page-toolbar">
-
-        <div>
-            <h1>Hazardous Request Review</h1>
-
-            <p>
-                Review e-waste pickup requests flagged as potentially hazardous before collection.
-            </p>
-        </div>
-
-    </div>
-
+    <div class="page-toolbar"><div><h1>Hazardous Request Review</h1><p>Review item risks before resource assignment. Decisions are final here; all times use Sri Lanka time.</p></div></div>
+    <?php if ($notice): ?><p role="status"><?= $escape($notice) ?></p><?php endif; ?>
+    <?php foreach ($errors as $error): ?><p role="alert"><?= $escape($error) ?></p><?php endforeach; ?>
     <section class="filter-card compact-filter-card">
-
-        <form class="filter-form" data-flagged-filter-form>
-
-            <div class="filter-grid">
-
-                <div class="form-group">
-
-                    <label for="campaign">
-                        Campaign
-                    </label>
-
-                    <select id="campaign" name="campaign">
-
-                        <option value="">
-                            All Campaigns
-                        </option>
-
-                        <option value="campaign-1">
-                            Colombo Municipal E-Waste Campaign — 8/2026
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="schedule">
-                        Collection Schedule
-                    </label>
-
-                    <select id="schedule" name="schedule">
-
-                        <option value="">
-                            All Schedules
-                        </option>
-
-                        <option value="SCH-0010">
-                            SCH-0010 — Wellawatte — 30 Aug 2026
-                        </option>
-
-                        <option value="SCH-0009">
-                            SCH-0009 — Rajagiriya — 23 Aug 2026
-                        </option>
-
-                        <option value="SCH-0008">
-                            SCH-0008 — Narahenpita — 19 Aug 2026
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="review-status">
-                        Review Status
-                    </label>
-
-                    <select id="review-status" name="review_status">
-
-                        <option value="">
-                            All Review Statuses
-                        </option>
-
-                        <option value="PENDING_REVIEW">
-                            Pending Review
-                        </option>
-
-                        <option value="APPROVED">
-                            Approved
-                        </option>
-
-                        <option value="REJECTED">
-                            Rejected
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <div class="filter-actions">
-
-                <button
-                    type="reset"
-                    class="secondary-btn">
-                    Clear
-                </button>
-
-                <button
-                    type="submit"
-                    class="primary-btn">
-                    Apply Filters
-                </button>
-
-            </div>
-
+        <form data-review-filter>
+            <label for="review-status">Review status</label>
+            <select id="review-status"><option value="">All</option><option>PENDING</option><option>APPROVED</option><option>REJECTED</option></select>
+            <label for="review-search">Campaign, schedule or user</label>
+            <input id="review-search" type="search">
+            <button type="reset" class="secondary-btn">Clear</button>
         </form>
-
     </section>
-
     <section class="flagged-list-card">
-
-        <div class="list-heading">
-
-            <div>
-
-                <h2>
-                    Flagged Requests
-                </h2>
-
-                <p>
-                    Requests requiring officer review before they can proceed to collection.
-                </p>
-
-                <span class="filter-result-count officer-result-count" data-filter-result-count role="status" aria-live="polite">2 requests shown</span>
-
-            </div>
-
-        </div>
-
-        <div class="flagged-table-wrapper">
-
-            <table class="flagged-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Request ID</th>
-
-                        <th>User</th>
-
-                        <th>Collection Schedule</th>
-
-                        <th>Item Category</th>
-
-                        <th>Hazard Reason</th>
-
-                        <th>Submitted Date</th>
-
-                        <th>Status</th>
-
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody data-flagged-table-body>
-
-                    <tr
-                        data-request-id="REQ-1045"
-                        data-campaign="campaign-1"
-                        data-schedule="SCH-0010"
-                        data-review-status="PENDING_REVIEW"
-                    >
-
-                        <td>
-                            REQ-1045
-                        </td>
-
-                        <td>
-                            Kasun Perera
-                        </td>
-
-                        <td>
-                            <strong>SCH-0010</strong>
-                            <span class="table-subtext">Wellawatte · 30 Aug 2026</span>
-                        </td>
-
-                        <td>
-                            Refrigerator
-                        </td>
-
-                        <td>
-                            Possible refrigerant or hazardous coolant.
-                        </td>
-
-                        <td>
-                            12 Aug 2026
-                        </td>
-
-                        <td>
-
-                            <span class="review-status pending">
-                                PENDING REVIEW
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="review-btn">
-                                Review
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr
-                        data-request-id="REQ-1048"
-                        data-campaign="campaign-1"
-                        data-schedule="SCH-0009"
-                        data-review-status="PENDING_REVIEW"
-                    >
-
-                        <td>
-                            REQ-1048
-                        </td>
-
-                        <td>
-                            Dilini Silva
-                        </td>
-
-                        <td>
-                            <strong>SCH-0009</strong>
-                            <span class="table-subtext">Rajagiriya · 23 Aug 2026</span>
-                        </td>
-
-                        <td>
-                            CRT Monitor
-                        </td>
-
-                        <td>
-                            May contain leaded glass and hazardous components.
-                        </td>
-
-                        <td>
-                            14 Aug 2026
-                        </td>
-
-                        <td>
-
-                            <span class="review-status pending">
-                                PENDING REVIEW
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button type="button" class="review-btn">
-                                Review
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <div class="flagged-empty-state officer-empty-state" data-flagged-empty-state hidden>
-            No flagged requests match the selected filters.
-        </div>
-
+        <p>Pending reviews on cancelled requests remain in history but cannot be actioned.</p>
+        <div class="flagged-table-wrapper"><table class="flagged-table">
+            <thead><tr><th>Request / User</th><th>Campaign / Schedule</th><th>Items and risk</th><th>Review / Request status</th><th>Decision</th></tr></thead>
+            <tbody>
+            <?php foreach ($requests as $request): ?>
+                <tr data-risk-status="<?= $escape($request['risk_review_status']) ?>">
+                    <td>REQ-<?= (int) $request['request_id'] ?><br><?= $escape($request['full_name']) ?><br><?= $escape($request['submitted_at']) ?><br><?= $escape($request['pickup_address']) ?></td>
+                    <td><?= $escape($request['campaign_name']) ?><br><a href="<?= $escape($basePath) ?>/officer/area-schedules/<?= (int) $request['schedule_id'] ?>">SCH-<?= (int) $request['schedule_id'] ?></a><br><?= $escape($request['area_name']) ?><br><?= $escape($request['collection_date']) ?></td>
+                    <td><?php foreach ($request['items'] as $item): ?>
+                        <p class="table-item"><strong><?= $escape($item['item_name']) ?></strong> × <?= (int) $item['quantity'] ?><br>Risk: <?= $escape($item['applied_risk_level']) ?>; condition: <?= $escape($item['item_condition']) ?><br><?= $escape($item['condition_note']) ?></p>
+                    <?php endforeach; ?><?php if (!$request['items']): ?>No item details recorded.<?php endif; ?></td>
+                    <td><span class="table-status" data-status="<?= $escape($request['risk_review_status']) ?>"><?= $escape($request['risk_review_status']) ?></span><span class="table-subtext"><?= $escape(str_replace('_', ' ', $request['request_status'])) ?></span></td>
+                    <td>
+                    <?php if ($request['request_status'] === 'PENDING_REVIEW' && $request['risk_review_status'] === 'PENDING' && in_array($request['schedule_status'], ['PLANNED','OPEN','CLOSED'], true)): ?>
+                        <details class="table-action-panel"><summary>Review request</summary><form method="post" action="<?= $escape($basePath) ?>/officer/flagged-requests/<?= (int) $request['request_id'] ?>/review">
+                            <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
+                            <label>Decision <select name="decision" required><option value="">Select decision</option><option value="APPROVED">Approve for collection</option><option value="REJECTED">Reject</option></select></label>
+                            <label>Officer note <textarea name="note" maxlength="500" rows="3" placeholder="Handling instructions; reason required for rejection"></textarea></label>
+                            <button class="primary-btn" type="submit">Save Review</button>
+                        </form></details>
+                    <?php else: ?>
+                        <?= $escape($request['reviewer_name'] ?? 'No decision recorded') ?><br><?= $escape($request['reviewed_at']) ?><br><?= $escape($request['review_note']) ?>
+                    <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table></div>
+        <p data-review-empty <?= $requests ? 'hidden' : '' ?>>No flagged requests match.</p>
     </section>
-
 </section>
-
-<div class="review-dialog officer-dialog" data-review-dialog hidden>
-    <section
-        class="review-dialog-card officer-dialog-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="review-dialog-title"
-    >
-        <div class="review-dialog-header officer-dialog-header">
-            <div>
-                <span class="dialog-eyebrow" data-review-request-id>Flagged request</span>
-                <h2 id="review-dialog-title">Review Hazardous Request</h2>
-                <p>Confirm whether this request can proceed to the assigned collection schedule.</p>
-            </div>
-
-            <button
-                type="button"
-                class="review-dialog-close officer-dialog-close"
-                aria-label="Close request review"
-                data-close-review-dialog
-            >×</button>
-        </div>
-
-        <div class="review-request-summary">
-            <div><span>User</span><strong data-review-user></strong></div>
-            <div><span>Schedule</span><strong data-review-schedule></strong></div>
-            <div><span>Item Category</span><strong data-review-category></strong></div>
-            <div class="review-summary-wide"><span>Hazard Reason</span><strong data-review-reason></strong></div>
-        </div>
-
-        <form class="review-form" data-review-form>
-            <div class="form-group">
-                <label for="review-decision">Review Decision</label>
-                <select id="review-decision" name="decision" required>
-                    <option value="PENDING_REVIEW">Pending Review</option>
-                    <option value="APPROVED">Approve for Collection</option>
-                    <option value="REJECTED">Reject Request</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="review-note">Officer Note</label>
-                <textarea
-                    id="review-note"
-                    name="note"
-                    rows="4"
-                    maxlength="500"
-                    placeholder="Add handling instructions or a reason for the decision"
-                ></textarea>
-                <small>A note is required when rejecting a request.</small>
-            </div>
-
-            <p class="review-form-error officer-form-error" role="alert" data-review-form-error hidden></p>
-
-            <div class="review-dialog-actions officer-dialog-actions">
-                <button type="button" class="secondary-btn" data-close-review-dialog>Cancel</button>
-                <button type="submit" class="primary-btn">Save Review</button>
-            </div>
-        </form>
-    </section>
-</div>
-
-<div class="review-toast officer-toast" role="status" aria-live="polite" data-review-toast hidden>
-    Review decision saved in this browser.
-</div>

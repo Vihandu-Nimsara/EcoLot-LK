@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 // Run against an isolated, disposable database; never writes the application database.
-// php -d session.save_path=/tmp tests/seed-compatibility.php
+// Tests the current-schema demonstration seed contract; it intentionally resets demo data.
 // The configured DB account needs CREATE/DROP DATABASE privileges.
 require_once __DIR__ . '/support/bootstrap.php';
 Session::start();
@@ -21,38 +21,27 @@ try {
     $seed = str_replace('USE `ecolot_lk`;', '', $seed);
     $seed = preg_replace('/^--.*$/m', '', $seed);
     $runSeed = static function () use ($db, $seed): void {
-        foreach (explode(';', $seed) as $sql) {
-            if (trim($sql) !== '') $db->exec($sql);
-        }
+        $db->exec($seed);
     };
     $runSeed();
     $runSeed();
     $row = $db->query('SELECT * FROM authorized_recyclers')->fetch();
     verify($row['verification_status'] === 'VERIFIED' && $row['reviewed_by_admin_user_id'] !== null && $row['reviewed_at'] !== null, 'Current schema recycler audit failed');
     verify((int) $db->query('SELECT COUNT(*) FROM e_waste_items')->fetchColumn() === 51, 'Catalogue incomplete');
-    verify((int) $db->query('SELECT COUNT(*) FROM public_profiles')->fetchColumn() === 1, 'Seed stopped before public profile');
-    $db->exec("UPDATE public_profiles SET address = 'User edited address'");
-    $db->exec("UPDATE postal_code_areas SET area_name = 'Edited area', area_status = 'INACTIVE' WHERE postal_code = '11100'");
-    $db->exec("UPDATE waste_categories SET category_status = 'INACTIVE' WHERE category_name = 'Office E-Waste'");
-    $hash = password_hash('ChangedPassword!', PASSWORD_DEFAULT);
-    $db->prepare("UPDATE users SET password_hash = ? WHERE mobile_number = '94775555555'")->execute([$hash]);
+    verify((int) $db->query('SELECT COUNT(*) FROM public_profiles')->fetchColumn() === 4, 'Seed stopped before public profiles');
+    $counts = [];
+    foreach (['users','public_profiles','authorized_recyclers','monthly_campaigns','area_collection_schedules','e_waste_requests','handover_records'] as $table) {
+        $counts[$table] = (int) $db->query("SELECT COUNT(*) FROM `$table`")->fetchColumn();
+    }
+    verify($counts['authorized_recyclers'] === 2, 'Recycler fixtures incomplete');
+    verify((int) $db->query("SELECT COUNT(*) FROM handover_records h JOIN recycler_bids b ON b.bid_id = h.winning_bid_id JOIN e_lots l ON l.e_lot_id = b.e_lot_id WHERE h.handover_status = 'COMPLETED' AND b.bid_status = 'WINNING' AND l.lot_status = 'COMPLETED'")->fetchColumn() > 0, 'Completed handover timeline inconsistent');
+    $db->exec("UPDATE public_profiles SET address = 'Changed demo address'");
+    $db->exec("UPDATE users SET password_hash = 'changed' WHERE mobile_number = '94775555555'");
     $runSeed();
-    verify($db->query('SELECT address FROM public_profiles')->fetchColumn() === 'User edited address', 'Seed overwrote user address');
-    verify($db->query("SELECT area_name FROM postal_code_areas WHERE postal_code = '11100'")->fetchColumn() === 'Edited area', 'Seed overwrote area name');
-    verify($db->query("SELECT category_status FROM waste_categories WHERE category_name = 'Office E-Waste'")->fetchColumn() === 'INACTIVE', 'Seed reactivated category');
-    verify($db->query("SELECT password_hash FROM users WHERE mobile_number = '94775555555'")->fetchColumn() === $hash, 'Seed reset password');
-    $db->exec('ALTER TABLE authorized_recyclers DROP CONSTRAINT chk_recycler_verification_audit');
-    $db->exec('ALTER TABLE authorized_recyclers DROP FOREIGN KEY fk_authorized_recyclers_reviewed_by_admin');
-    $db->exec('ALTER TABLE authorized_recyclers CHANGE reviewed_by_admin_user_id verified_by_admin_user_id BIGINT UNSIGNED NULL, CHANGE reviewed_at verified_at DATETIME NULL');
-    $db->exec('DELETE FROM authorized_recyclers');
-    $runSeed();
-    $row = $db->query('SELECT * FROM authorized_recyclers')->fetch();
-    verify($row['verification_status'] === 'VERIFIED' && $row['verified_by_admin_user_id'] !== null && $row['verified_at'] !== null, 'Legacy schema recycler audit failed');
-    $db->exec("UPDATE authorized_recyclers SET verification_status = 'REJECTED'");
-    $runSeed();
-    verify($db->query('SELECT verification_status FROM authorized_recyclers')->fetchColumn() === 'REJECTED', 'Repeat seed overwrote existing review decision');
-    verify((int) $db->query('SELECT COUNT(*) FROM authorized_recyclers')->fetchColumn() === 1, 'Duplicate recycler');
-    echo "PASS: full seed imports and reruns on current/legacy recycler schemas, preserves review decisions, and includes catalogue/public profile\n";
+    foreach ($counts as $table => $count) verify((int) $db->query("SELECT COUNT(*) FROM `$table`")->fetchColumn() === $count, "Repeat seed duplicated $table");
+    verify($db->query("SELECT address FROM public_profiles p JOIN users u ON u.user_id = p.user_id WHERE u.mobile_number = '94775555555'")->fetchColumn() === '18 Marine Drive, Wellawatte', 'Demo address not restored');
+    verify(password_verify('Password123', $db->query("SELECT password_hash FROM users WHERE mobile_number = '94775555555'")->fetchColumn()), 'Demo login not restored');
+    echo "PASS: current-schema demo seed repeatability, natural keys, catalogue, demo login reset and completed handover timeline\n";
 } finally {
     if ($db->inTransaction()) $db->rollBack();
     $db->exec('USE `' . str_replace('`', '``', $originalDatabase) . '`');

@@ -6,13 +6,47 @@ class MunicipalOfficerController extends Controller
     public function dashboard(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/dashboard', ['currentPage' => 'dashboard']);
+        $this->view('municipal_officer/dashboard', ['currentPage' => 'dashboard'] + (new OfficerDashboard())->overview());
     }
 
     public function campaigns(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/campaigns', ['currentPage' => 'campaigns']);
+        $this->renderCampaigns();
+    }
+
+    private function renderCampaigns(array $errors = [], array $values = []): void
+    {
+        $this->view('municipal_officer/campaigns', [
+            'currentPage' => 'campaigns', 'campaigns' => (new MonthlyCampaign())->managementList(),
+            'errors' => $errors, 'values' => $values, 'csrfToken' => Csrf::token(),
+            'notice' => Session::pullFlash('campaign_notice'),
+        ]);
+    }
+
+    public function storeCampaign(): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo 'Session expired. Reload and try again.'; return; }
+        $values = [];
+        foreach (['name', 'period', 'status', 'campaign_id'] as $field) $values[$field] = $this->postString($field);
+        $errors = [];
+        $id = $values['campaign_id'] === '' ? null : $this->positiveInteger($values['campaign_id']);
+        if ($values['campaign_id'] !== '' && $id === null) $errors[] = 'Invalid campaign ID.';
+        if (!preg_match('/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/D', $values['period'])) $errors[] = 'Select a valid month.';
+        if (!in_array($values['status'], ['OPEN', 'CLOSED'], true)) $errors[] = 'Select OPEN or CLOSED.';
+        if (!$errors) {
+            try {
+                (new MonthlyCampaign())->saveManaged($id, ['campaign_name' => $values['name'], 'campaign_month' => $values['period'] . '-01', 'campaign_status' => $values['status']], (int) Auth::id());
+            } catch (DomainException $e) { $errors[] = $e->getMessage();
+            } catch (PDOException $e) {
+                $errors[] = (int) ($e->errorInfo[1] ?? 0) === 1062 ? 'A campaign already exists for this month.' : 'Campaign could not be saved. Reload and try again.';
+                error_log('Campaign save failed: ' . $e->getCode());
+            }
+        }
+        if ($errors) { http_response_code(422); $this->renderCampaigns($errors, $values); return; }
+        Session::flash('campaign_notice', 'Campaign saved successfully.');
+        $this->redirect('/officer/campaigns');
     }
 
     public function areaSchedules(): void
@@ -114,7 +148,7 @@ class MunicipalOfficerController extends Controller
                     $campaign = $model->lockCampaign($campaignId);
                     $area = $model->lockArea($areaId);
                     $errors = [];
-                    if ($campaign === null || $campaign['campaign_status'] !== 'OPEN') {
+                    if ($campaign === null || $campaign['campaign_status'] !== 'OPEN' || $campaign['campaign_month'] < MonthlyCampaign::currentMonth()) {
                         $errors[] = 'The selected monthly campaign does not exist or is not open.';
                     }
                     if ($area === null || $area['area_status'] !== 'ACTIVE') {
@@ -177,6 +211,7 @@ class MunicipalOfficerController extends Controller
             'errors' => $errors,
             'old' => $old,
             'csrfToken' => Csrf::token(),
+            'hasStartedWork' => (new AreaCollectionSchedule())->hasStartedWork($number),
         ]);
     }
 
@@ -201,8 +236,8 @@ class MunicipalOfficerController extends Controller
                 if ($schedule === null) {
                     return ['Collection schedule not found.'];
                 }
-                if (in_array($schedule['schedule_status'], ['COMPLETED', 'CANCELLED'], true)) {
-                    return ['Completed and cancelled schedules are read-only.'];
+                if (!in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED'], true) || $model->hasStartedWork($number)) {
+                    return ['Schedules with assigned resources or collection work are read-only here.'];
                 }
                 $errors = [];
                 $count = $model->countActiveRequests($number);
@@ -253,8 +288,12 @@ class MunicipalOfficerController extends Controller
         $model = new AreaCollectionSchedule();
         try {
             $errors = $model->transaction(function () use ($model, $number): array {
-                if ($model->lockSchedule($number) === null) {
+                $schedule = $model->lockSchedule($number);
+                if ($schedule === null) {
                     return ['Collection schedule not found.'];
+                }
+                if (!in_array($schedule['schedule_status'], ['PLANNED', 'OPEN', 'CLOSED', 'CANCELLED'], true)) {
+                    return ['Operational and completed schedules cannot be deleted.'];
                 }
                 if ($model->hasRequests($number) || $model->hasAssignments($number) || $model->hasCollectionSubmission($number)) {
                     return ['This schedule cannot be deleted because it already contains requests, assignments, or collection records. Cancel the schedule instead where its status permits.'];
@@ -292,13 +331,68 @@ class MunicipalOfficerController extends Controller
     public function flaggedRequests(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/flagged-requests', ['currentPage' => 'flagged-requests']);
+        $this->renderFlaggedRequests();
+    }
+
+    private function renderFlaggedRequests(array $errors = []): void
+    {
+        $this->view('municipal_officer/flagged-requests', [
+            'currentPage' => 'flagged-requests', 'requests' => (new FlaggedRequest())->listing(),
+            'csrfToken' => Csrf::token(), 'errors' => $errors,
+            'notice' => Session::pullFlash('review_notice'),
+        ]);
+    }
+
+    public function reviewFlaggedRequest(string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->scheduleCsrf()) return;
+        $number = $this->positiveInteger($id);
+        if ($number === null) { http_response_code(404); echo 'Request not found.'; return; }
+        try {
+            (new FlaggedRequest())->decide($number, $this->postString('decision'), $this->postString('note'), (int) Auth::id());
+        } catch (DomainException $e) {
+            http_response_code(422); $this->renderFlaggedRequests([$e->getMessage()]); return;
+        } catch (PDOException $e) {
+            error_log('Risk review failed: ' . $e->getCode());
+            http_response_code(500); $this->renderFlaggedRequests(['Review could not be saved. Reload and try again.']); return;
+        }
+        Session::flash('review_notice', 'Review saved successfully.');
+        $this->redirect('/officer/flagged-requests');
     }
 
     public function collectionAssignments(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/collection-assignments', ['currentPage' => 'collection-assignments']);
+        $this->renderAssignments();
+    }
+
+    private function renderAssignments(array $errors = []): void
+    {
+        $model = new CollectionAssignment();
+        $this->view('municipal_officer/collection-assignments', [
+            'currentPage' => 'collection-assignments', 'schedules' => $model->listing(),
+            'collectors' => $model->collectors(), 'vehicles' => $model->vehicles(),
+            'errors' => $errors, 'csrfToken' => Csrf::token(), 'notice' => Session::pullFlash('assignment_notice'),
+        ]);
+    }
+
+    public function changeAssignment(string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->scheduleCsrf()) return;
+        $number = $this->positiveInteger($id);
+        if ($number === null) { http_response_code(404); echo 'Schedule not found.'; return; }
+        try {
+            (new CollectionAssignment())->change($number, $this->postString('action'), $this->positiveInteger($this->postString('collector')), $this->positiveInteger($this->postString('vehicle')), (int) Auth::id());
+        } catch (DomainException $e) {
+            http_response_code(422); $this->renderAssignments([$e->getMessage()]); return;
+        } catch (PDOException $e) {
+            error_log('Assignment failed: ' . $e->getCode());
+            http_response_code(422); $this->renderAssignments(['Assignment could not be saved. Resources may have changed; reload and try again.']); return;
+        }
+        Session::flash('assignment_notice', 'Assignment updated successfully.');
+        $this->redirect('/officer/collection-assignments');
     }
 
     public function collectionRecords(): void

@@ -8,6 +8,10 @@ $phpTests = [
     'login-rate-limit-storage.php',
     'otp-locking.php',
     'area-schedules.php',
+    'monthly-campaigns.php',
+    'officer-dashboard.php',
+    'flagged-requests.php',
+    'collection-assignments.php',
     'collector-crud.php',
     'public-pickup-crud.php',
     'public-pickup-pages.php',
@@ -29,6 +33,7 @@ foreach ($phpTests as $test) {
 }
 $run(['node', __DIR__ . '/escaping.js']);
 if (in_array('--browser', $argv, true)) {
+    $run(['node', __DIR__ . '/officer-browser.cjs']);
     $run(['node', __DIR__ . '/pickup-browser.cjs']);
     $run(['node', __DIR__ . '/collector-browser.cjs']);
 }
