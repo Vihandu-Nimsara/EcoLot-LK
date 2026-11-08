@@ -163,6 +163,9 @@ class RecyclerController extends Controller
             $recycler = new AuthorizedRecycler();
             $this->view('recycler/profile', [
                 'currentPage' => 'profile',
+                'csrfToken' => Csrf::token(),
+                'profileSuccess' => Session::pullFlash('profile_success'),
+                'profileError' => Session::pullFlash('profile_error'),
                 'profile' => $recycler->profileForRecycler($userId),
                 'compliance' => $recycler->dashboardCompliance($userId),
                 'capabilities' => $recycler->capabilitiesForRecycler($userId),
@@ -170,6 +173,54 @@ class RecyclerController extends Controller
                     ->forRecycler($userId),
             ]);
         });
+    }
+
+    public function updateProfileContact(): void
+    {
+        Auth::requireRole('RECYCLER');
+
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form.';
+            return;
+        }
+
+        $fullName = $this->postString('full_name');
+
+        if (
+            preg_match(
+                '/\A(?=.{2,120}\z)[^\x00-\x1F\x7F]+\z/u',
+                $fullName
+            ) !== 1
+        ) {
+            Session::flash(
+                'profile_error',
+                'Contact person name must contain 2 to 120 valid characters.'
+            );
+
+            $this->redirect('/recycler/profile');
+        }
+
+        try {
+            (new AuthorizedRecycler())->updateContactPerson(
+                (int) Auth::id(),
+                $fullName
+            );
+
+            Session::flash(
+                'profile_success',
+                'Contact person updated successfully.'
+            );
+        } catch (Throwable $error) {
+            error_log('Recycler contact update failed: ' . $error);
+
+            Session::flash(
+                'profile_error',
+                'Unable to update contact person. Please try again.'
+            );
+        }
+
+        $this->redirect('/recycler/profile');
     }
 
     public function reports(): void

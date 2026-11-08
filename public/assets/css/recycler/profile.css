@@ -6,3 +6,91 @@
 .recycler-app .recycler-profile-dialog .dialog-field input:disabled {
     background: #F3F6F4;
 }
+
+
+
+/* Inline contact person editing */
+
+.profile-contact-editor {
+    width: 100%;
+    min-width: 0;
+}
+
+.profile-contact-editor summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.profile-contact-editor summary::-webkit-details-marker {
+    display: none;
+}
+
+.profile-contact-editor summary:focus-visible {
+    outline: 2px solid #168a50;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.profile-contact-editor .detail-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.profile-edit-closed,
+.profile-edit-open {
+    flex-shrink: 0;
+    padding: 6px 13px;
+    border: 1px solid #168a50;
+    border-radius: 8px;
+    color: #087640;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.profile-edit-open {
+    display: none;
+}
+
+.profile-contact-editor[open] .profile-edit-closed {
+    display: none;
+}
+
+.profile-contact-editor[open] .profile-edit-open {
+    display: inline-block;
+}
+
+.profile-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.profile-contact-form label {
+    font-weight: 600;
+}
+
+.profile-contact-form input {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 13px;
+    border: 1px solid #cbd5d1;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.profile-contact-form input:focus {
+    outline: 2px solid #168a50;
+    outline-offset: 2px;
+}
+
+.profile-contact-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}

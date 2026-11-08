@@ -41,6 +41,22 @@ final class AuthorizedRecycler extends Model
             ['owner' => $userId])->fetch() ?: null;
     }
 
+    public function updateContactPerson(int $userId, string $fullName): void
+    {
+        $this->query(
+            "UPDATE users u
+            INNER JOIN authorized_recyclers r
+                ON r.user_id = u.user_id
+            SET u.full_name = :full_name
+            WHERE u.user_id = :owner
+            AND u.role = 'RECYCLER'",
+            [
+                'full_name' => $fullName,
+                'owner' => $userId,
+            ]
+        );
+    }
+
     /** Read-only compliance data for the authenticated Recycler dashboard. */
     public function dashboardCompliance(int $userId): ?array
     {

@@ -4,20 +4,94 @@ $verification = $compliance['verification_status'] ?? null;
 ?>
 <link rel="stylesheet" href="<?= $escape($basePath) ?>/assets/css/recycler/profile.css?v=<?= Asset::version('css/recycler/profile.css') ?>">
 <section class="workflow-page">
-    <div class="workflow-header"><div>
-        <h1>My Profile &amp; Compliance</h1>
-        <p>Review your recorded company information, EcoLot verification, CEA license status, and handling capabilities.</p>
-    </div><div class="workflow-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="contact">Edit Basic Information</button></div></div>
+    <div class="workflow-header">
+        <div>
+            <h1>My Profile &amp; Compliance</h1>
+            <p>Review your recorded company information, EcoLot verification, CEA license status, and handling capabilities.</p>
+        </div>
+    </div>
     <p class="page-notice">Some company and compliance changes require Administrator review.</p>
 
     <section class="workflow-card">
         <div class="workflow-section-header"><h2>Company Information</h2></div>
-        <div class="detail-grid">
-            <?php foreach (['Company Name' => 'company_name', 'Contact Person' => 'full_name',
-                'Business Email' => 'email', 'Phone' => 'mobile_number', 'Business Address' => 'business_address',
-                'District' => 'district'] as $label => $field): ?>
-            <div class="detail-item"><span class="detail-label"><?= $escape($label) ?></span><strong class="detail-value"><?= $escape(($profile[$field] ?? '') !== '' ? $profile[$field] : 'Not recorded') ?></strong></div>
-            <?php endforeach; ?>
+        <div class="detail-grid"> 
+        <?php
+        $companyFields = [
+            'Company Name' => 'company_name',
+            'Contact Person' => 'full_name',
+            'Business Email' => 'email',
+            'Phone' => 'mobile_number',
+            'Business Address' => 'business_address',
+            'District' => 'district',
+        ];
+        ?>
+
+        <?php foreach ($companyFields as $label => $field): ?>
+            <div class="detail-item">
+                <span class="detail-label">
+                    <?= $escape($label) ?>
+                </span>
+
+                <?php if ($field === 'full_name'): ?>
+                    <details class="profile-contact-editor">
+                        <summary>
+                            <strong class="detail-value">
+                                <?= $escape($profile['full_name'] ?? 'Not recorded') ?>
+                            </strong>
+
+                            <span class="profile-edit-closed">Edit</span>
+                            <span class="profile-edit-open">Close</span>
+                        </summary>
+
+                        <form
+                            class="profile-contact-form"
+                            method="post"
+                            action="<?= $escape($basePath) ?>/recycler/profile/contact"
+                        >
+                            <input
+                                type="hidden"
+                                name="_csrf_token"
+                                value="<?= $escape($csrfToken ?? '') ?>"
+                            >
+
+                            <label for="recycler-contact-name">
+                                Contact Person
+                            </label>
+
+                            <input
+                                id="recycler-contact-name"
+                                type="text"
+                                name="full_name"
+                                value="<?= $escape($profile['full_name'] ?? '') ?>"
+                                minlength="2"
+                                maxlength="120"
+                                autocomplete="name"
+                                required
+                            >
+
+                            <div class="form-actions">
+                                <button type="reset" class="secondary-workflow-btn">
+                                    Reset
+                                </button>
+
+                                <button type="submit" class="dialog-primary-btn">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </details>
+                <?php else: ?>
+                    <strong class="detail-value">
+                        <?= $escape(
+                            ($profile[$field] ?? '') !== ''
+                                ? $profile[$field]
+                                : 'Not recorded'
+                        ) ?>
+                    </strong>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+
             <div class="detail-item"><span class="detail-label">Verification</span><span class="badge <?= $verification === 'VERIFIED' ? 'badge-completed' : ($verification === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($verification ?? 'Not recorded'))) ?></span></div>
         </div>
     </section>
@@ -47,96 +121,8 @@ $verification = $compliance['verification_status'] ?? null;
         </table></div><?php endif; ?>
         <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability">Request Capability Change</button></div>
     </section>
-
-    <!-- Authorized Activities -->
-    <section class="workflow-card">
-
-        <div class="workflow-section-header">
-            <h2>Authorized Activities</h2>
-            <p>
-                Activities requested by your organization
-                and their Administrator approval statuses.
-            </p>
-        </div>
-
-        <?php if (empty($activities)): ?>
-
-            <div class="empty-state">
-                No authorized activities are recorded.
-            </div>
-
-        <?php else: ?>
-
-            <div class="workflow-table-wrapper">
-                <table class="workflow-table">
-
-                    <thead>
-                        <tr>
-                            <th scope="col">Activity</th>
-                            <th scope="col">Approval Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <?php foreach ($activities as $activity): ?>
-                            <?php
-                            $activityStatus = strtoupper(
-                                (string) ($activity['activity_status'] ?? '')
-                            );
-
-                            $activityName = ucfirst(
-                                strtolower(
-                                    str_replace(
-                                        '_',
-                                        ' ',
-                                        (string) ($activity['activity_type'] ?? '')
-                                    )
-                                )
-                            );
-
-                            $statusLabel = $activityStatus !== ''
-                                ? ucfirst(strtolower($activityStatus))
-                                : 'Unknown';
-
-                            $statusClass = match ($activityStatus) {
-                                'APPROVED' => 'badge-completed',
-                                'REJECTED', 'SUSPENDED' => 'badge-rejected',
-                                default => 'badge-pending',
-                            };
-                            ?>
-
-                            <tr>
-                                <td data-label="Activity">
-                                    <?= $escape($activityName) ?>
-                                </td>
-
-                                <td data-label="Approval Status">
-                                    <span class="badge <?= $statusClass ?>">
-                                        <?= $escape($statusLabel) ?>
-                                    </span>
-                                </td>
-                            </tr>
-
-                        <?php endforeach; ?>
-                    </tbody>
-
-                </table>
-            </div>
-
-        <?php endif; ?>
-
-    </section>
 </section>
 
-<template data-profile-template="contact">
-    <p class="dialog-context-note">Try changes as a visual draft. Saving contact details and sending company change requests are not available here. Closing this form discards your draft.</p>
-    <label class="dialog-field"><span>Contact Person</span><input data-contact-name value="<?= $escape($profile['full_name'] ?? '') ?>" autocomplete="off"></label>
-    <label class="dialog-field"><span>Business Email</span><input type="email" data-contact-email value="<?= $escape($profile['email'] ?? '') ?>" autocomplete="off"></label>
-    <label class="dialog-field"><span>Phone</span><input readonly value="<?= $escape($profile['mobile_number'] ?? '') ?>" aria-describedby="profile-phone-help"><span class="dialog-helper" id="profile-phone-help">Mobile number changes require verification.</span></label>
-    <?php foreach (['Company Name' => 'company_name', 'Business Address' => 'business_address', 'District' => 'district'] as $label => $field): ?>
-    <label class="dialog-field"><span><?= $escape($label) ?> — Requires Administrator review</span><input value="<?= $escape($profile[$field] ?? '') ?>" autocomplete="off"></label>
-    <?php endforeach; ?>
-</template>
 <template data-profile-template="license">
     <p class="dialog-context-note">New license information requires Administrator verification and does not replace the current verified record until approved. This form is a visual draft only; requests cannot be sent from this page.</p>
     <label class="dialog-field"><span>Current SWML / license Number</span><input readonly value="Not available on this page"></label>
