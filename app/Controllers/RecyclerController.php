@@ -154,7 +154,7 @@ class RecyclerController extends Controller
                 'handover' => (new RecyclerBid())->handoverForOwnedWinningBid((int) $lot['bid_id'], $userId)]);
         });
     }
-        
+
     public function profile(): void
     {
         Auth::requireRole('RECYCLER');

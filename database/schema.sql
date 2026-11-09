@@ -397,7 +397,7 @@ CREATE TABLE IF NOT EXISTS `recycler_licenses` (
     `recycler_user_id` BIGINT UNSIGNED NOT NULL,
     `license_number` VARCHAR(100) NOT NULL,
     `expiry_date` DATE NOT NULL,
-    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED', 'SUPERSEDED') 
+    `license_status` ENUM('PENDING', 'VALID', 'REJECTED', 'EXPIRED', 'REVOKED', 'SUPERSEDED')
     NOT NULL DEFAULT 'PENDING',
     `document_path` VARCHAR(500) NULL,
     `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
