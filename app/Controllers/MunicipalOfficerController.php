@@ -457,13 +457,75 @@ class MunicipalOfficerController extends Controller
     public function eLots(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/elots', ['currentPage' => 'e-lots']);
+        $this->renderOfficerModule('elots');
     }
 
     public function feedback(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/feedback', ['currentPage' => 'feedback']);
+        $this->renderOfficerModule('feedback');
+    }
+
+    private function moduleFilters(string $module): array
+    {
+        $filters=['status'=>'','type'=>'','category'=>'','q'=>'','sort'=>'newest','page'=>1];
+        foreach ($filters as $key=>$default) {
+            if (!isset($_GET[$key])) continue;
+            if (!is_string($_GET[$key])) throw new InvalidArgumentException('Invalid filters.');
+            $filters[$key]=trim($_GET[$key]);
+        }
+        $filters['page']=$this->positiveInteger((string)$filters['page'],1000000);
+        $statuses=$module==='elots'?OfficerELot::STATUSES:OfficerFeedback::STATUSES;
+        if ($filters['page']===null || !in_array($filters['sort'],['newest','oldest'],true)
+            || ($filters['status']!=='' && !in_array($filters['status'],$statuses,true))
+            || ($filters['type']!=='' && !in_array($filters['type'],OfficerFeedback::TYPES,true))
+            || ($filters['category']!=='' && $this->positiveInteger($filters['category'])===null)
+            || mb_strlen($filters['q'])>100) throw new InvalidArgumentException('Invalid filters.');
+        return $filters;
+    }
+
+    private function renderOfficerModule(string $module, array $errors=[], ?int $selectedId=null): void
+    {
+        try {
+            $filters=$this->moduleFilters($module);
+            if ($selectedId===null && isset($_GET['id'])) {
+                $selectedId=is_string($_GET['id'])?$this->positiveInteger($_GET['id']):null;
+                if ($selectedId===null) throw new InvalidArgumentException('Invalid record ID.');
+            }
+            $model=$module==='elots'?new OfficerELot():new OfficerFeedback();
+            $selected=$selectedId===null?null:$model->details($selectedId,(int)Auth::id());
+            if ($selectedId!==null && $selected===null) { http_response_code(404); echo 'Record not found.'; return; }
+            $this->view('municipal_officer/'.$module, [
+                'currentPage'=>$module==='elots'?'e-lots':'feedback', 'listing'=>$model->listing((int)Auth::id(),$filters),
+                'filters'=>$filters, 'selected'=>$selected, 'categories'=>$module==='elots'?$model->categories():[],
+                'errors'=>$errors, 'notice'=>Session::pullFlash('officer_module_notice'), 'csrfToken'=>Csrf::token(),
+            ]);
+        } catch (InvalidArgumentException $e) { http_response_code(400); echo $e->getMessage();
+        } catch (PDOException $e) { error_log('Officer module read failed: '.$e->getCode()); http_response_code(500); echo 'Records could not be loaded. Please try again.'; }
+    }
+
+    public function manageELot(string $id): void { $this->mutateOfficerModule('elots',$id); }
+    public function reviewFeedback(string $id): void { $this->mutateOfficerModule('feedback',$id); }
+
+    private function mutateOfficerModule(string $module, string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo 'Session expired. Reload and try again.'; return; }
+        $number=$this->positiveInteger($id);
+        if ($number===null) { http_response_code(400); echo 'Invalid record ID.'; return; }
+        $input=[];
+        foreach (['action','note','open','close','bid_id','handover_status','date','expected','status','response'] as $key) {
+            if (!is_string($_POST[$key]??'')) { http_response_code(422); echo 'Form values must be text.'; return; }
+            $input[$key]=$this->postString($key);
+        }
+        try {
+            if ($module==='elots') (new OfficerELot())->act($number,(int)Auth::id(),$input);
+            else (new OfficerFeedback())->review($number,(int)Auth::id(),$input['expected'],$input['status'],$input['response']);
+        } catch (OutOfBoundsException $e) { http_response_code(404); echo 'Record not found.'; return;
+        } catch (DomainException $e) { http_response_code(422); $this->renderOfficerModule($module,[$e->getMessage()],$number); return;
+        } catch (PDOException $e) { error_log('Officer module write failed: '.$e->getCode()); http_response_code(500); echo 'Update could not be saved. Reload and try again.'; return; }
+        Session::flash('officer_module_notice','Update saved successfully.');
+        $this->redirect('/officer/'.($module==='elots'?'e-lots':'feedback').'?id='.$number);
     }
 
     public function reports(): void

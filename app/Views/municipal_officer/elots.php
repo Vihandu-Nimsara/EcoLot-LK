@@ -1,122 +1,37 @@
+<?php $module='elots'; ?>
 <section class="elots-page">
-    <div class="page-toolbar">
-        <div>
-            <h1>E-Lot Verification & Bids</h1>
-            <p>Verify collector-created E-Lots, open approved lots for bidding, and manage recycler awards.</p>
-        </div>
-        <div class="pending-summary"><strong data-pending-count>0</strong><span>Pending verification</span></div>
-    </div>
-
-    <section class="elot-filter-card compact-filter-card">
-        <form class="elot-filter-form" data-elot-filter-form>
-            <div class="elot-filter-grid">
-                <div class="form-group">
-                    <label for="elot-status">E-Lot Status</label>
-                    <select id="elot-status" name="elot_status">
-                        <option value="">All Statuses</option>
-                        <option value="PENDING_VERIFICATION">Pending Verification</option>
-                        <option value="REJECTED">Rejected</option>
-                        <option value="OPEN_FOR_BIDDING">Open for Bidding</option>
-                        <option value="AWARDED">Awarded</option>
-                        <option value="COMPLETED">Completed</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <select id="category" name="category">
-                        <option value="">All Categories</option>
-                        <option value="DOMESTIC">Domestic E-Waste</option>
-                        <option value="OFFICE">Office E-Waste</option>
-                        <option value="INDUSTRIAL">Industrial E-Waste</option>
-                    </select>
-                </div>
-            </div>
-            <div class="filter-actions">
-                <button type="reset" class="secondary-btn">Clear</button>
-                <button type="submit" class="primary-btn">Apply Filters</button>
-            </div>
-        </form>
-    </section>
-
-    <section class="elots-list-card">
-        <div class="elots-list-heading">
-            <div>
-                <h2>Collector E-Lots</h2>
-                <p>Only verified E-Lots become visible to eligible recyclers.</p>
-                <span class="elot-result-count officer-result-count" data-elot-result-count role="status" aria-live="polite"></span>
-            </div>
-        </div>
-        <div class="elots-table-wrapper">
-            <table class="elots-table">
-                <thead><tr><th>E-Lot</th><th>Collector</th><th>Category</th><th>Items</th><th>Weight</th><th>Created</th><th>Bidding Period</th><th>Bids</th><th>Status</th><th>Winner</th><th>Action</th></tr></thead>
-                <tbody data-elots-table-body></tbody>
-            </table>
-        </div>
-        <div class="elots-empty-state officer-empty-state" data-elots-empty-state hidden>No E-Lots match the selected filters.</div>
-    </section>
+<div class="page-toolbar"><div><h1>E-Lot Verification & Bids</h1><p>Review verified source inventory, open bidding, select an eligible Recycler and record handover.</p></div></div>
+<?php require __DIR__.'/module-filters.php'; ?>
+<section class="elots-list-card"><h2>Collector E-Lots</h2>
+<?php if (!$listing['rows']): ?><p class="officer-empty-state">No accessible E-Lots match these filters.</p><?php else: ?>
+<div class="elots-table-wrapper"><table class="elots-table"><thead><tr><th>E-Lot</th><th>Collector / Category</th><th>Inventory</th><th>Created</th><th>Bidding window</th><th>Submitted bids</th><th>Status</th><th>Action</th></tr></thead><tbody>
+<?php foreach ($listing['rows'] as $lot): ?><tr><td><?= $escape($lot['lot_code']) ?><br><?= $escape($lot['title']) ?></td><td><?= $escape($lot['collector_name']) ?><br><?= $escape($lot['category_name']) ?></td><td><?= $escape($lot['item_count']) ?> source items<br><?= $escape($lot['total_quantity']) ?> units<br><?= $escape($lot['total_weight']) ?> kg</td><td><?= $escape($lot['created_at']) ?></td><td><?= $escape($lot['bidding_open_at']) ?><br><?= $escape($lot['bidding_close_at']) ?></td><td><?= (int)$lot['bid_count'] ?></td><td><span class="elot-status <?= $escape(strtolower(str_replace('_','-',$lot['lot_status']))) ?>"><?= $escape($lot['lot_status']) ?></span></td><td><a class="secondary-btn" href="<?= $escape($link(['id'=>$lot['e_lot_id']])) ?>#module-details">View Details</a></td></tr><?php endforeach; ?>
+</tbody></table></div><?php endif; ?></section>
+<?php if ($selected): $lot=$selected; ?>
+<section class="elots-list-card officer-module-details" id="module-details"><h2><?= $escape($lot['lot_code']) ?> · <?= $escape($lot['title']) ?></h2>
+<div class="elot-summary-grid"><?php foreach (['lot_status'=>'Status','category_name'=>'Category','collector_name'=>'Collector','created_at'=>'Created','total_quantity'=>'Actual units','total_weight'=>'Actual weight (kg)','reviewer_name'=>'Reviewing Officer','verified_at'=>'Reviewed at'] as $field=>$label): ?><div><span><?= $escape($label) ?></span><strong><?= $escape($lot[$field]) ?></strong></div><?php endforeach; ?></div>
+<p class="module-message">Officer note: <?= $escape($lot['verification_note']) ?></p>
+<h3>Source collection traceability</h3><div class="elots-table-wrapper"><table class="elots-table"><thead><tr><th>Item</th><th>Source IDs</th><th>Area / Schedule</th><th>Actual Qty / Weight</th><th>Condition / Risk</th><th>Item / Pickup result</th><th>Source verification</th></tr></thead><tbody>
+<?php foreach ($lot['items'] as $item): ?><tr><td><?= $escape($item['item_name']) ?><br>Request item #<?= (int)$item['request_item_id'] ?></td><td>Submission #<?= (int)$item['schedule_collection_id'] ?><br>Record #<?= (int)$item['collection_record_id'] ?><br>Request #<?= (int)$item['request_id'] ?></td><td><?= $escape($item['area_name']) ?><br>Schedule #<?= (int)$item['schedule_id'] ?><br><?= $escape($item['collection_date']) ?></td><td><?= $escape($item['actual_quantity']) ?> units<br><?= $escape($item['actual_weight_kg']) ?> kg</td><td><?= $escape($item['actual_condition']) ?><br><?= $escape($item['actual_risk_level']) ?></td><td><?= $escape($item['item_result']) ?><br><?= $escape($item['pickup_result']) ?></td><td><?= $escape($item['verification_status']) ?></td></tr><?php endforeach; ?></tbody></table></div>
+<?php $actionUrl=$basePath.'/officer/e-lots/'.$lot['e_lot_id'].'/manage'; ?>
+<?php if ($lot['lot_status']==='PENDING_VERIFICATION'): ?>
+<form method="post" action="<?= $escape($actionUrl) ?>" class="elot-review-form" data-officer-confirm="Save this E-Lot review decision?">
+<input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
+<div class="form-group"><label for="lot-note">Verification note / mandatory rejection reason</label><textarea id="lot-note" name="note" maxlength="500" rows="3"></textarea></div>
+<div class="elot-form-grid"><div class="form-group"><label for="lot-open">Bidding opens (Sri Lanka time)</label><input type="datetime-local" id="lot-open" name="open"></div><div class="form-group"><label for="lot-close">Bidding closes (Sri Lanka time)</label><input type="datetime-local" id="lot-close" name="close"></div></div>
+<div class="filter-actions"><button class="primary-btn" name="action" value="approve">Approve and Open Bidding</button><button class="secondary-btn" name="action" value="reject">Reject E-Lot</button></div></form>
+<?php endif; ?>
+<h3>Recycler bids</h3><p>Selection is an Officer decision among eligible submitted bids after the deadline. Amounts are shown as submitted; no automatic ranking is applied.</p>
+<?php if (!$lot['bids']): ?><p>No bids received. An award cannot be made without an eligible submitted bid.</p><?php else: ?>
+<div class="elots-table-wrapper"><table class="elots-table"><thead><tr><th>Bid / Recycler</th><th>Amount (LKR)</th><th>Submitted / Reviewed</th><th>Status</th><th>Current eligibility</th><th>Action</th></tr></thead><tbody>
+<?php foreach ($lot['bids'] as $bid): ?><tr><td>#<?= (int)$bid['bid_id'] ?> · <?= $escape($bid['company_name']) ?></td><td><?= $escape($bid['bid_amount']) ?></td><td><?= $escape($bid['submitted_at']) ?><br><?= $escape($bid['reviewed_at']) ?></td><td><?= $escape($bid['bid_status']) ?></td><td><?= $bid['eligible']?'Eligible':'Not currently eligible' ?></td><td>
+<?php if ($lot['lot_status']==='OPEN_FOR_BIDDING' && $lot['bidding_close_at']!==null && $lot['now']>=$lot['bidding_close_at'] && $bid['bid_status']==='SUBMITTED' && $bid['eligible']): ?><form method="post" action="<?= $escape($actionUrl) ?>" data-officer-confirm="Award this E-Lot to the selected Recycler? This decision is final."><input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><input type="hidden" name="bid_id" value="<?= (int)$bid['bid_id'] ?>"><button class="primary-btn" name="action" value="award">Select Winner</button></form><?php endif; ?></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?>
+<?php if ($lot['lot_status']==='OPEN_FOR_BIDDING'): ?><p>Bidding <?= $lot['bidding_close_at']!==null && $lot['now']>=$lot['bidding_close_at']?'has closed.':'closes at '.$escape($lot['bidding_close_at']).'.' ?> Winner selection is available only after closing.</p><?php endif; ?>
+<?php if ($lot['handover']): $handover=$lot['handover']; ?><h3>Digital handover</h3><p>Winning Recycler: <?= $escape($handover['company_name']) ?> · Bid #<?= (int)$handover['winning_bid_id'] ?></p><p><?= $escape($handover['handover_status']) ?> · <?= $escape($handover['handover_date']) ?> · Officer: <?= $escape($handover['officer_name']) ?></p><p class="module-message"><?= $escape($handover['remarks']) ?></p>
+<?php if ($lot['lot_status']==='AWARDED' && in_array($handover['handover_status'],['PENDING','SCHEDULED'],true)): ?><form method="post" action="<?= $escape($actionUrl) ?>" class="elot-manage-form" data-officer-confirm="Save this digital handover record?">
+<input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><input type="hidden" name="action" value="handover">
+<div class="form-group"><label for="handover-status">Handover status</label><select id="handover-status" name="handover_status"><option>SCHEDULED</option><option>COMPLETED</option></select></div>
+<div class="form-group"><label for="handover-date">Handover date/time (Sri Lanka time)</label><input id="handover-date" type="datetime-local" step="1" name="date" required></div>
+<div class="form-group"><label for="handover-note">Remarks</label><textarea id="handover-note" name="note" maxlength="500"></textarea></div><button class="primary-btn">Save Handover</button></form><?php endif; endif; ?>
+</section><?php endif; ?>
 </section>
-
-<div class="elot-dialog officer-dialog" data-elot-dialog hidden>
-    <section class="elot-dialog-card officer-dialog-card" role="dialog" aria-modal="true" aria-labelledby="elot-dialog-title">
-        <div class="elot-dialog-header officer-dialog-header">
-            <div>
-                <span class="dialog-eyebrow" data-dialog-eyebrow>E-Lot review</span>
-                <h2 id="elot-dialog-title" data-dialog-title>Verify E-Lot</h2>
-                <p data-dialog-description>Review the collector's E-Lot before opening recycler bidding.</p>
-            </div>
-            <button type="button" class="elot-dialog-close officer-dialog-close" aria-label="Close E-Lot dialog" data-close-dialog>×</button>
-        </div>
-
-        <div class="elot-summary-grid">
-            <div><span>Collector</span><strong data-summary-collector></strong></div>
-            <div><span>Category</span><strong data-summary-category></strong></div>
-            <div><span>Items</span><strong data-summary-items></strong></div>
-            <div><span>Total Weight</span><strong data-summary-weight></strong></div>
-        </div>
-
-        <form class="elot-review-form" data-review-form hidden>
-            <div class="elot-form-grid">
-                <div class="form-group">
-                    <label for="review-decision">Decision</label>
-                    <select id="review-decision" name="decision">
-                        <option value="APPROVE">Approve and Open Bidding</option>
-                        <option value="REJECT">Reject E-Lot</option>
-                    </select>
-                </div>
-                <div class="form-group bidding-field">
-                    <label for="bidding-start">Bidding Opens</label>
-                    <input id="bidding-start" name="start" type="date">
-                </div>
-                <div class="form-group bidding-field">
-                    <label for="bidding-end">Bidding Closes</label>
-                    <input id="bidding-end" name="end" type="date">
-                </div>
-                <div class="form-group elot-title-field">
-                    <label for="verification-note">Verification Note</label>
-                    <textarea id="verification-note" name="note" rows="3" maxlength="500" placeholder="Reason, conditions, or verification details"></textarea>
-                </div>
-            </div>
-            <p class="elot-form-error officer-form-error" role="alert" data-review-error hidden></p>
-            <div class="elot-dialog-actions officer-dialog-actions">
-                <button type="button" class="secondary-btn" data-close-dialog>Cancel</button>
-                <button type="submit" class="primary-btn" data-review-submit>Approve E-Lot</button>
-            </div>
-        </form>
-
-        <form class="elot-manage-form" data-manage-form hidden>
-            <div class="verification-note-card" data-note-card hidden><span>Officer Note</span><strong data-note-output></strong></div>
-            <fieldset class="bid-selector" data-bid-selector hidden>
-                <legend>Recycler Bids</legend>
-                <div data-bid-options></div>
-            </fieldset>
-            <div class="elot-winner-summary" data-winner-summary hidden><span>Selected Recycler</span><strong data-winner-output></strong></div>
-            <p class="elot-form-error officer-form-error" role="alert" data-manage-error hidden></p>
-            <div class="elot-dialog-actions officer-dialog-actions">
-                <button type="button" class="secondary-btn" data-close-dialog>Close</button>
-                <button type="submit" class="primary-btn" data-manage-submit hidden>Save Changes</button>
-            </div>
-        </form>
-    </section>
-</div>
-
-<div class="elot-toast officer-toast" role="status" aria-live="polite" data-elot-toast hidden>E-Lot updated.</div>

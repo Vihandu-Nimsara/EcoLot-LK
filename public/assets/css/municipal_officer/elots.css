@@ -219,3 +219,16 @@
         grid-column: auto;
     }
 }
+
+.officer-module-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 16px; }
+.officer-module-filters .form-group { flex: 1 1 180px; }
+.officer-module-details { margin-top: 24px; }
+.officer-module-details h3 { margin-top: 24px; margin-bottom: 10px; }
+.officer-module-details textarea { width: 100%; box-sizing: border-box; }
+.officer-module-details :is(td, strong) { overflow-wrap: anywhere; }
+.module-message { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0; }
+.module-notice { padding: 16px; background: #d0fae4; border-radius: 10px; }
+.module-pagination { display: flex; gap: 12px; margin: 12px 0; }
+.officer-app .elots-table { min-width: 1050px; }
+.officer-app .elots-table :is(th, td):first-child { min-width: 150px; }
+.officer-app .elots-table td { vertical-align: top; }
