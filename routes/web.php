@@ -44,6 +44,7 @@ return static function (Router $router, array $app): void {
         // Backward-compatible alias for older bookmarks during the transition.
         $router->get('/routes', 'MunicipalOfficerController@collectionAssignments');
         $router->get('/collection-records', 'MunicipalOfficerController@collectionRecords');
+        $router->post('/collection-records/{id}/review', 'MunicipalOfficerController@reviewCollection');
         $router->get('/e-lots', 'MunicipalOfficerController@eLots');
         $router->get('/feedback', 'MunicipalOfficerController@feedback');
         $router->get('/reports', 'MunicipalOfficerController@reports');

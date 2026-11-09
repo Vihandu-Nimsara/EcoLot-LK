@@ -125,3 +125,13 @@
         grid-template-columns: 1fr;
     }
 }
+
+.verification-status.rejected { color: #991b1b; background: #fee2e2; }
+.collection-review-details { margin-top: 24px; }
+.collection-review-details .record-summary-grid strong,
+.collection-review-details td { overflow-wrap: anywhere; }
+.collection-note { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: 12px; }
+.collection-review-notice { padding: 16px; background: #d0fae4; color: #065f46; border-radius: 10px; }
+.collection-review-details .record-review-form { margin-top: 24px; }
+.collection-review-details textarea { width: 100%; box-sizing: border-box; }
+@media (max-width: 700px) { .collection-review-details .record-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

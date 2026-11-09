@@ -398,7 +398,60 @@ class MunicipalOfficerController extends Controller
     public function collectionRecords(): void
     {
         Auth::requireRole('MUNICIPAL_OFFICER');
-        $this->view('municipal_officer/collection-records', ['currentPage' => 'collection-records']);
+        $this->renderCollectionRecords();
+    }
+
+    private function renderCollectionRecords(array $errors = []): void
+    {
+        $rawId = $_GET['submission_id'] ?? null;
+        $id = is_string($rawId) ? $this->positiveInteger($rawId) : null;
+        $status = $_GET['verification_status'] ?? 'PENDING';
+        if (($rawId !== null && $id === null) || !is_string($status)
+            || !in_array($status, ['', 'PENDING','VERIFIED','REJECTED'], true)) {
+            http_response_code(400); echo 'Invalid submission ID or status.'; return;
+        }
+        try {
+            $model = new ScheduleCollection();
+            $selected = $id === null ? null : $model->findForOfficer($id, (int) Auth::id());
+            if ($id !== null && $selected === null) {
+                http_response_code(404); echo 'Collection submission not found.'; return;
+            }
+            $collections = $model->forOfficer((int) Auth::id(), $status);
+            $this->view('municipal_officer/collection-records', [
+                'currentPage' => 'collection-records', 'collections' => $collections,
+                'selectedCollection' => $selected, 'statusFilter' => $status,
+                'errors' => $errors, 'csrfToken' => Csrf::token(),
+                'notice' => Session::pullFlash('collection_review_notice'),
+            ]);
+        } catch (PDOException $e) {
+            error_log('Collection list failed: ' . $e->getCode());
+            http_response_code(500); echo 'Collections could not be loaded. Please try again later.';
+        }
+    }
+
+    public function reviewCollection(string $id): void
+    {
+        Auth::requireRole('MUNICIPAL_OFFICER');
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo 'Session expired. Reload and try again.'; return; }
+        $number = $this->positiveInteger($id);
+        if ($number === null) { http_response_code(400); echo 'Invalid submission ID.'; return; }
+        if (!is_string($_POST['note'] ?? '') || !is_string($_POST['decision'] ?? '')) {
+            http_response_code(422); echo 'Decision and note must be text.'; return;
+        }
+        try {
+            (new ScheduleCollection())->decide($number, (int) Auth::id(), $this->postString('decision'), $this->postString('note'));
+        } catch (OutOfBoundsException $e) {
+            http_response_code(404); echo 'Collection submission not found.'; return;
+        } catch (DomainException $e) {
+            http_response_code(422);
+            $_GET['submission_id'] = (string) $number;
+            $this->renderCollectionRecords([$e->getMessage()]); return;
+        } catch (PDOException $e) {
+            error_log('Collection review failed: ' . $e->getCode());
+            http_response_code(500); echo 'Review could not be saved. Reload and try again.'; return;
+        }
+        Session::flash('collection_review_notice', 'Collection review saved successfully.');
+        $this->redirect('/officer/collection-records?submission_id=' . $number);
     }
 
     public function eLots(): void
