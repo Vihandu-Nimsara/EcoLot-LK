@@ -154,23 +154,75 @@ class RecyclerController extends Controller
                 'handover' => (new RecyclerBid())->handoverForOwnedWinningBid((int) $lot['bid_id'], $userId)]);
         });
     }
-
+        
     public function profile(): void
     {
         Auth::requireRole('RECYCLER');
+
         $this->readPage(function (): void {
             $userId = (int) Auth::id();
+            $db = Database::connection();
+
             $recycler = new AuthorizedRecycler();
+
+            // Read the recycler's latest approved licence.
+            // An expired approved licence is still shown
+            // so its renewal details remain visible.
+            $statement = $db->prepare(
+                "SELECT
+                    license_id,
+                    license_number,
+                    expiry_date,
+                    license_status
+                FROM recycler_licenses
+                WHERE recycler_user_id = :recycler_user_id
+                AND license_status = 'VALID'
+                ORDER BY expiry_date DESC, license_id DESC
+                LIMIT 1"
+            );
+
+            $statement->execute([
+                'recycler_user_id' => $userId,
+            ]);
+
+            $license = $statement->fetch(PDO::FETCH_ASSOC);
+
+            $currentLicense = $license === false
+                ? null
+                : $license;
+
+            // Read only this recycler's pending request.
+            $licenseRequestModel =
+                new RecyclerLicenseUpdateRequest($db);
+
+            $pendingLicenseUpdate =
+                $licenseRequestModel->pendingForRecycler($userId);
+
             $this->view('recycler/profile', [
                 'currentPage' => 'profile',
                 'csrfToken' => Csrf::token(),
-                'profileSuccess' => Session::pullFlash('profile_success'),
-                'profileError' => Session::pullFlash('profile_error'),
-                'profile' => $recycler->profileForRecycler($userId),
-                'compliance' => $recycler->dashboardCompliance($userId),
-                'capabilities' => $recycler->capabilitiesForRecycler($userId),
-                'activities' => (new RecyclerAuthorizedActivity())
-                    ->forRecycler($userId),
+
+                'profileSuccess' =>
+                    Session::pullFlash('profile_success'),
+
+                'profileError' =>
+                    Session::pullFlash('profile_error'),
+
+                'profile' =>
+                    $recycler->profileForRecycler($userId),
+
+                'compliance' =>
+                    $recycler->dashboardCompliance($userId),
+
+                'capabilities' =>
+                    $recycler->capabilitiesForRecycler($userId),
+
+                'activities' =>
+                    (new RecyclerAuthorizedActivity())
+                        ->forRecycler($userId),
+
+                'currentLicense' => $currentLicense,
+                'pendingLicenseUpdate' => $pendingLicenseUpdate,
             ]);
         });
     }
@@ -217,6 +269,79 @@ class RecyclerController extends Controller
             Session::flash(
                 'profile_error',
                 'Unable to update contact person. Please try again.'
+            );
+        }
+
+        $this->redirect('/recycler/profile');
+    }
+
+    public function submitLicenseUpdate(): void
+    {
+        Auth::requireRole('RECYCLER');
+
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form.';
+            return;
+        }
+
+        $input = [
+            'requested_license_number' =>
+                $_POST['requested_license_number'] ?? null,
+            'requested_expiry_date' =>
+                $_POST['requested_expiry_date'] ?? null,
+        ];
+
+        $file = $_FILES['license_document']
+            ?? ['error' => UPLOAD_ERR_NO_FILE];
+
+        try {
+            if (!is_array($file)) {
+                throw new InvalidArgumentException(
+                    'A valid CEA licence PDF is required.'
+                );
+            }
+
+            $service = new RecyclerLicenseUpdateService();
+
+            $service->submit(
+                (int) Auth::id(),
+                $input,
+                $file
+            );
+
+            Session::flash(
+                'profile_success',
+                'CEA licence update submitted for Admin review. '
+                . 'Your current approved licence remains unchanged.'
+            );
+
+        } catch (PDOException $error) {
+            error_log(
+                'Recycler licence update database failure: '
+                . $error::class
+            );
+
+            Session::flash(
+                'profile_error',
+                'Unable to submit the licence update. Please try again.'
+            );
+
+        } catch (InvalidArgumentException | RuntimeException $error) {
+            Session::flash(
+                'profile_error',
+                $error->getMessage()
+            );
+
+        } catch (Throwable $error) {
+            error_log(
+                'Recycler licence update failure: '
+                . $error::class
+            );
+
+            Session::flash(
+                'profile_error',
+                'Unable to submit the licence update. Please try again.'
             );
         }
 

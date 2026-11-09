@@ -59,6 +59,8 @@ class AdminController extends Controller
         }
             
         $license =$model->latestLicenseForRecycler($recyclerId);
+        $licenseUpdateModel = new RecyclerLicenseUpdateRequest();
+        $pendingLicenseUpdate = $licenseUpdateModel->pendingForRecycler($recyclerId);
         $capabilities = $model->capabilitiesForRecycler($recyclerId);
         $activityModel = new RecyclerAuthorizedActivity();
         $activities = $activityModel->forRecycler($recyclerId);
@@ -68,6 +70,7 @@ class AdminController extends Controller
             'pageStylePage' => 'recycler-details',
             'recycler' => $recycler,
             'license' => $license,
+            'pendingLicenseUpdate' => $pendingLicenseUpdate,
             'capabilities' => $capabilities,
             'activities' => $activities,
             'csrfToken' => Csrf::token(),
@@ -239,6 +242,119 @@ class AdminController extends Controller
 
         header(
             'Location: ' . $basePath . 
+            '/admin/recycler-verification/' . $recyclerId,
+            true,
+            303
+        );
+
+        exit;
+    }
+
+    public function reviewRecyclerLicenseUpdate(
+        string $id,
+        string $requestId
+    ): void {
+        Auth::requireRole('ADMIN');
+
+        $adminId = Auth::id();
+
+        if ($adminId === null) {
+            http_response_code(403);
+            return;
+        }
+
+        // Validate both URL parameters.
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+        $updateRequestId = filter_var(
+            $requestId,
+            FILTER_VALIDATE_INT
+        );
+
+        if (
+            $recyclerId === false ||
+            $recyclerId <= 0 ||
+            $updateRequestId === false ||
+            $updateRequestId <= 0
+        ) {
+            http_response_code(404);
+            return;
+        }
+
+        // CSRF protection.
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page.';
+            return;
+        }
+
+        $rawDecision = $_POST['decision'] ?? null;
+        $rawReviewNote = $_POST['review_note'] ?? '';
+
+        if (
+            !is_string($rawDecision) ||
+            !is_string($rawReviewNote)
+        ) {
+            http_response_code(422);
+            return;
+        }
+
+        $decision = strtoupper(trim($rawDecision));
+        $reviewNote = trim($rawReviewNote);
+
+        if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
+            http_response_code(422);
+            return;
+        }
+
+        if ($decision === 'REJECT' && $reviewNote === '') {
+            http_response_code(422);
+            return;
+        }
+
+        try {
+            $service = new RecyclerLicenseUpdateReviewService();
+
+            $service->review(
+                $recyclerId,
+                $updateRequestId,
+                (int) $adminId,
+                $decision,
+                $reviewNote
+            );
+
+            $_SESSION['success'] = $decision === 'APPROVE'
+                ? 'CEA licence update approved successfully.'
+                : 'CEA licence update rejected successfully.';
+
+        } catch (PDOException $e) {
+            error_log(
+                'Recycler licence update database error: ' .
+                $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Licence update review could not be completed.';
+
+        } catch (InvalidArgumentException | RuntimeException $e) {
+            $_SESSION['error'] = $e->getMessage();
+
+        } catch (Throwable $e) {
+            error_log(
+                'Recycler licence update review error: ' .
+                $e->getMessage()
+            );
+
+            $_SESSION['error'] =
+                'Licence update review could not be completed.';
+        }
+
+        $basePath = rtrim(
+            str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])),
+            '/'
+        );
+
+        header(
+            'Location: ' . $basePath .
             '/admin/recycler-verification/' . $recyclerId,
             true,
             303
@@ -529,6 +645,77 @@ class AdminController extends Controller
         header('Cache-Control: private, no-store');
         header(
             'Content-Disposition: inline; filename="cea-license.pdf"'
+        );
+        header('Content-Length: ' . $fileSize);
+
+        readfile($filePath);
+        exit;
+    }
+
+    public function viewRecyclerLicenseUpdateDocument(
+        string $id,
+        string $requestId
+    ): void {
+        Auth::requireRole('ADMIN');
+
+        $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
+        $updateRequestId = filter_var($requestId, FILTER_VALIDATE_INT);
+
+        if (
+            $recyclerId === false ||
+            $recyclerId <= 0 ||
+            $updateRequestId === false ||
+            $updateRequestId <= 0
+        ) {
+            http_response_code(404);
+            return;
+        }
+
+        // Retrieve only a request belonging to this recycler.
+        $stmt = Database::connection()->prepare(
+            "SELECT document_path
+            FROM recycler_license_update_requests
+            WHERE request_id = :request_id
+            AND recycler_user_id = :recycler_id
+            LIMIT 1"
+        );
+
+        $stmt->execute([
+            'request_id' => $updateRequestId,
+            'recycler_id' => $recyclerId
+        ]);
+
+        $request = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($request === false) {
+            http_response_code(404);
+            return;
+        }
+
+        // Reuse the existing secure PDF validator.
+        $validator = new RecyclerLicenseDocumentValidator();
+
+        $filePath = $validator->validatedPath(
+            $request['document_path'] ?? null
+        );
+
+        if ($filePath === null) {
+            http_response_code(404);
+            return;
+        }
+
+        $fileSize = filesize($filePath);
+
+        if ($fileSize === false) {
+            http_response_code(404);
+            return;
+        }
+
+        header('Content-Type: application/pdf');
+        header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: private, no-store');
+        header(
+            'Content-Disposition: inline; filename="cea-license-update.pdf"'
         );
         header('Content-Length: ' . $fileSize);
 

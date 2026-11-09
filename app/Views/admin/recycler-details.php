@@ -368,6 +368,246 @@ if ($licenseStatus === 'VALID') {
     </section>
 
 
+    <?php if (!empty($pendingLicenseUpdate)): ?>
+
+        <section class="details-card license-update-review-card">
+
+            <div class="details-section-header">
+                <div>
+                    <h2>Pending CEA Licence Update</h2>
+                    <p>
+                        The recycler has submitted updated
+                        licence information for Administrator review.
+                    </p>
+                </div>
+            </div>
+
+            <div class="details-grid">
+
+                <div class="details-item">
+                    <span class="details-label">
+                        Requested Licence Number
+                    </span>
+
+                    <strong class="details-value">
+                        <?= htmlspecialchars(
+                            (string) $pendingLicenseUpdate[
+                                'requested_license_number'
+                            ],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </strong>
+                </div>
+
+                <div class="details-item">
+                    <span class="details-label">
+                        Requested Expiry Date
+                    </span>
+
+                    <strong class="details-value">
+                        <?= htmlspecialchars(
+                            (string) $pendingLicenseUpdate[
+                                'requested_expiry_date'
+                            ],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </strong>
+                </div>
+
+                <div class="details-item">
+                    <span class="details-label">
+                        Submitted At
+                    </span>
+
+                    <strong class="details-value">
+                        <?= htmlspecialchars(
+                            (string) $pendingLicenseUpdate[
+                                'submitted_at'
+                            ],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </strong>
+                </div>
+
+                <div class="details-item">
+                    <span class="details-label">
+                        Review Status
+                    </span>
+
+                    <span class="status-badge status-pending">
+                        Pending Review
+                    </span>
+                </div>
+
+            </div>
+
+
+            <?php
+            $compareCurrentNumber = (string) ($license['license_no'] ?? '');
+            $compareCurrentExpiry = (string) ($license['license_expiry'] ?? '');
+            $compareRequestedNumber = (string) $pendingLicenseUpdate['requested_license_number'];
+            $compareRequestedExpiry = (string) $pendingLicenseUpdate['requested_expiry_date'];
+
+            if ($compareCurrentNumber === '') {
+                $updateType = 'New Licence';
+                $updateImpact = 'If approved, a new VALID licence will be created.';
+            } elseif ($compareCurrentNumber === $compareRequestedNumber) {
+                $updateType = 'Licence Renewal';
+                $updateImpact = 'If approved, the existing licence will be renewed and its previous details preserved in revision history.';
+            } else {
+                $updateType = 'Licence Replacement';
+                $updateImpact = 'If approved, the existing licence will become SUPERSEDED and a new VALID licence will be created.';
+            }
+            ?>
+
+            <div class="license-update-impact" role="note">
+                <strong><?= htmlspecialchars($updateType, ENT_QUOTES, 'UTF-8') ?></strong>
+                <p><?= htmlspecialchars($updateImpact, ENT_QUOTES, 'UTF-8') ?></p>
+            </div>
+
+            <div class="license-update-comparison" aria-label="Licence details comparison">
+                <div class="license-update-compare-panel">
+                    <h3>Current Licence</h3>
+                    <span class="details-label">Licence Number</span>
+                    <strong>
+                        <?= htmlspecialchars($compareCurrentNumber !== '' ? $compareCurrentNumber : 'Not recorded', ENT_QUOTES, 'UTF-8') ?>
+                    </strong>
+                    <span class="details-label">Expiry Date</span>
+                    <strong>
+                        <?= htmlspecialchars($compareCurrentExpiry !== '' ? $compareCurrentExpiry : 'Not recorded', ENT_QUOTES, 'UTF-8') ?>
+                    </strong>
+                </div>
+
+                <div class="license-update-compare-panel license-update-compare-new">
+                    <h3>Requested Licence</h3>
+                    <span class="details-label">Licence Number</span>
+                    <strong>
+                        <?= htmlspecialchars($compareRequestedNumber, ENT_QUOTES, 'UTF-8') ?>
+                    </strong>
+                    <span class="details-label">Expiry Date</span>
+                    <strong>
+                        <?= htmlspecialchars($compareRequestedExpiry, ENT_QUOTES, 'UTF-8') ?>
+                    </strong>
+                </div>
+            </div>
+
+            <div class="license-update-document-action">
+                <a
+                    href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/license-update/<?= (int) $pendingLicenseUpdate['request_id'] ?>/document"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View Submitted CEA Licence PDF
+                </a>
+            </div>
+
+            <p class="page-notice">
+                The currently approved licence remains
+                unchanged until this request is approved.
+            </p>
+
+            <?php
+            $licenseUpdateReviewUrl =
+                $basePath .
+                '/admin/recycler-verification/' .
+                (int) $recycler['recycler_id'] .
+                '/license-update/' .
+                (int) $pendingLicenseUpdate['request_id'] .
+                '/review';
+            ?>
+
+            <div class="final-review-actions">
+
+                <!-- Approve Licence Update -->
+                <form
+                    method="POST"
+                    action="<?= htmlspecialchars(
+                        $licenseUpdateReviewUrl,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                    onsubmit="return confirm('Approve this CEA licence update? The approved licence details will change.');"
+                >
+                    <input
+                        type="hidden"
+                        name="_csrf_token"
+                        value="<?= htmlspecialchars(
+                            $csrfToken,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="decision"
+                        value="APPROVE"
+                    >
+
+                    <button
+                        type="submit"
+                        class="action-btn approve-btn"
+                    >
+                        Approve Licence Update
+                    </button>
+                </form>
+
+                <!-- Reject Licence Update -->
+                <form
+                    method="POST"
+                    action="<?= htmlspecialchars(
+                        $licenseUpdateReviewUrl,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                >
+                    <input
+                        type="hidden"
+                        name="_csrf_token"
+                        value="<?= htmlspecialchars(
+                            $csrfToken,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="decision"
+                        value="REJECT"
+                    >
+
+                    <label for="license_update_rejection_note">
+                        Licence Update Rejection Reason
+                    </label>
+
+                    <textarea
+                        id="license_update_rejection_note"
+                        name="review_note"
+                        rows="3"
+                        maxlength="500"
+                        placeholder="Explain why this licence update is rejected..."
+                        required
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        class="action-btn reject-btn"
+                    >
+                        Reject Licence Update
+                    </button>
+                </form>
+
+            </div>
+
+        </section>
+
+    <?php endif; ?>
+
+
     <!-- C. Capabilities -->
     <section class="details-card">
 

@@ -57,6 +57,7 @@ return static function (Router $router, array $app): void {
         $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
         $router->get('/profile', 'RecyclerController@profile');
         $router->post('/profile/contact', 'RecyclerController@updateProfileContact');
+        $router->post('/profile/license-update', 'RecyclerController@submitLicenseUpdate');
         $router->get('/reports', 'RecyclerController@reports');
     });
 
@@ -97,6 +98,8 @@ return static function (Router $router, array $app): void {
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
         $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
+        $router->get('/recycler-verification/{id}/license-update/{requestId}/document', 'AdminController@viewRecyclerLicenseUpdateDocument');
+        $router->post('/recycler-verification/{id}/license-update/{requestId}/review', 'AdminController@reviewRecyclerLicenseUpdate');
         $router->post('/recycler-verification/{id}/license-review', 'AdminController@reviewRecyclerLicense');
         $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
         $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');

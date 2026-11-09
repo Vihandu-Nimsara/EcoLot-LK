@@ -326,3 +326,99 @@
         flex: 1 1 100%;
     }
 }
+
+
+/* EcoLot CEA licence update UI polish */
+
+.license-update-review-card .license-update-impact {
+    padding: 15px 18px;
+    margin: 20px 0;
+    background: #edf7f2;
+    border: 1px solid #c7e5d5;
+    border-left: 4px solid #277753;
+    border-radius: 10px;
+}
+
+.license-update-review-card .license-update-impact strong {
+    display: block;
+    color: #205e42;
+    margin-bottom: 6px;
+}
+
+.license-update-review-card .license-update-impact p {
+    margin: 0;
+    line-height: 1.6;
+    color: #315647;
+}
+
+.license-update-review-card .license-update-comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 18px 0 24px;
+}
+
+.license-update-review-card .license-update-compare-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid #dbe5e0;
+    border-radius: 12px;
+    background: #f8faf9;
+}
+
+.license-update-review-card .license-update-compare-new {
+    background: #f0f8f4;
+    border-color: #badccc;
+}
+
+.license-update-review-card .license-update-compare-panel h3 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+}
+
+.license-update-review-card .license-update-compare-panel strong {
+    overflow-wrap: anywhere;
+    margin-bottom: 10px;
+}
+
+.license-update-review-card .final-review-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.license-update-review-card .final-review-actions > form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid #dbe5e0;
+    border-radius: 12px;
+}
+
+.license-update-review-card .final-review-actions textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 95px;
+    padding: 10px 12px;
+    font: inherit;
+    border: 1px solid #cbd5d1;
+    border-radius: 8px;
+}
+
+.license-update-review-card .final-review-actions .action-btn {
+    max-width: 100%;
+    white-space: normal;
+}
+
+@media (max-width: 760px) {
+    .license-update-review-card .license-update-comparison,
+    .license-update-review-card .final-review-actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

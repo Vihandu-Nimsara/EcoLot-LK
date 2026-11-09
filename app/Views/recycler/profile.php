@@ -12,6 +12,18 @@ $verification = $compliance['verification_status'] ?? null;
     </div>
     <p class="page-notice">Some company and compliance changes require Administrator review.</p>
 
+    <?php if (!empty($profileSuccess)): ?>
+        <p class="page-notice" role="status">
+            <?= $escape($profileSuccess) ?>
+        </p>
+    <?php endif; ?>
+
+    <?php if (!empty($profileError)): ?>
+        <p class="page-notice" role="alert">
+            <?= $escape($profileError) ?>
+        </p>
+    <?php endif; ?>
+
     <section class="workflow-card">
         <div class="workflow-section-header"><h2>Company Information</h2></div>
         <div class="detail-grid"> 
@@ -96,16 +108,248 @@ $verification = $compliance['verification_status'] ?? null;
         </div>
     </section>
 
+    <?php
+    $today = (new DateTimeImmutable(
+        'today',
+        new DateTimeZone('Asia/Colombo')
+    ))->format('Y-m-d');
+
+    $tomorrow = (new DateTimeImmutable(
+        'tomorrow',
+        new DateTimeZone('Asia/Colombo')
+    ))->format('Y-m-d');
+
+    $isVerified = $verification === 'VERIFIED';
+    $hasPendingLicenseUpdate = !empty($pendingLicenseUpdate);
+
+    $licenseExpiry = $currentLicense['expiry_date'] ?? null;
+
+    $licenseIsExpired = $licenseExpiry !== null
+        && $licenseExpiry < $today;
+    ?>
+
     <section class="workflow-card">
-        <div class="workflow-section-header"><h2>CEA license</h2><p>license changes require Administrator verification before replacing the current verified record.</p></div>
-        <div class="detail-grid">
-            <div class="detail-item"><span class="detail-label">license Type</span><strong class="detail-value">Not available on this page</strong></div>
-            <div class="detail-item"><span class="detail-label">SWML / license Number</span><strong class="detail-value">Not available on this page</strong></div>
-            <div class="detail-item"><span class="detail-label">Current Valid license Expiry</span><strong class="detail-value"><?= $escape($compliance['valid_license_expiry'] ?? 'No current valid license') ?></strong></div>
-            <div class="detail-item"><span class="detail-label">Current license Status</span><span class="badge <?= !empty($compliance['valid_license_expiry']) ? 'badge-completed' : 'badge-pending' ?>"><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid license' ?></span></div>
-            <div class="detail-item"><span class="detail-label">license Document</span><strong class="detail-value">Document preview and submission are not available on this page.</strong></div>
+
+        <div class="workflow-section-header">
+            <h2>CEA Licence</h2>
+            <p>
+                Licence updates require Administrator approval.
+                Your existing approved record remains unchanged
+                while a request is under review.
+            </p>
         </div>
-        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="license">Submit license Update</button></div>
+
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Current Licence Number
+                </span>
+
+                <strong class="detail-value">
+                    <?= $escape(
+                        $currentLicense['license_number']
+                        ?? 'No approved licence recorded'
+                    ) ?>
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Current Licence Expiry
+                </span>
+
+                <strong class="detail-value">
+                    <?= $escape(
+                        $licenseExpiry ?? 'Not recorded'
+                    ) ?>
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Current Licence Status
+                </span>
+
+                <?php if ($currentLicense === null): ?>
+
+                    <span class="badge badge-pending">
+                        Not recorded
+                    </span>
+
+                <?php elseif ($licenseIsExpired): ?>
+
+                    <span class="badge badge-rejected">
+                        Expired
+                    </span>
+
+                <?php else: ?>
+
+                    <span class="badge badge-completed">
+                        Valid
+                    </span>
+
+                <?php endif; ?>
+            </div>
+
+        </div>
+
+        <?php if ($hasPendingLicenseUpdate): ?>
+
+            <div class="profile-license-request-status">
+
+                <h3>Licence Update Awaiting Review</h3>
+
+                <p>
+                    Your latest licence update request has been
+                    submitted and is awaiting Administrator review.
+                </p>
+
+                <div class="detail-grid">
+
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            Requested Licence Number
+                        </span>
+
+                        <strong class="detail-value">
+                            <?= $escape(
+                                $pendingLicenseUpdate['requested_license_number']
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            Requested Expiry Date
+                        </span>
+
+                        <strong class="detail-value">
+                            <?= $escape(
+                                $pendingLicenseUpdate['requested_expiry_date']
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            Request Status
+                        </span>
+
+                        <span class="badge badge-pending">
+                            Pending Review
+                        </span>
+                    </div>
+
+                </div>
+
+                <p class="page-notice">
+                    Another licence update cannot be submitted
+                    until this request has been reviewed.
+                </p>
+
+            </div>
+
+        <?php elseif ($isVerified): ?>
+
+            <details class="profile-license-update">
+
+                <summary class="secondary-workflow-btn profile-license-toggle">
+                    Update CEA Licence
+                </summary>
+
+                <p>
+                    Renew an existing CEA licence or submit a new
+                    licence number. Upload the updated licence PDF
+                    for Administrator review.
+                </p>
+
+                <form
+                    class="profile-license-form"
+                    method="post"
+                    action="<?= $escape($basePath) ?>/recycler/profile/license-update"
+                    enctype="multipart/form-data"
+                >
+
+                    <input
+                        type="hidden"
+                        name="_csrf_token"
+                        value="<?= $escape($csrfToken ?? '') ?>"
+                    >
+
+                    <label class="dialog-field">
+                        <span>Updated Licence Number</span>
+
+                        <input
+                            type="text"
+                            name="requested_license_number"
+                            value="<?= $escape(
+                                $currentLicense['license_number'] ?? ''
+                            ) ?>"
+                            maxlength="100"
+                            required
+                            autocomplete="off"
+                        >
+
+                        <span class="dialog-helper">
+                            You may keep your existing licence number
+                            if the licence has been renewed.
+                        </span>
+                    </label>
+
+                    <label class="dialog-field">
+                        <span>New Expiry Date</span>
+
+                        <input
+                            type="date"
+                            name="requested_expiry_date"
+                            min="<?= $escape($tomorrow) ?>"
+                            required
+                        >
+                    </label>
+
+                    <label class="dialog-field">
+                        <span>Updated CEA Licence PDF</span>
+
+                        <input
+                            type="file"
+                            name="license_document"
+                            accept=".pdf,application/pdf"
+                            required
+                        >
+
+                        <span class="dialog-helper">
+                            PDF only. Maximum file size: 5 MB.
+                        </span>
+                    </label>
+
+                    <p class="page-notice">
+                        Submission does not immediately replace
+                        your current approved licence.
+                        Administrator approval is required.
+                    </p>
+
+                    <div class="form-actions">
+                        <button
+                            class="secondary-workflow-btn"
+                            type="submit"
+                        >
+                            Submit for Admin Review
+                        </button>
+                    </div>
+
+                </form>
+
+            </details>
+
+        <?php else: ?>
+
+            <p class="page-notice">
+                Licence updates are available to verified recyclers.
+            </p>
+
+        <?php endif; ?>
+
     </section>
 
     <section class="workflow-card">
@@ -123,13 +367,6 @@ $verification = $compliance['verification_status'] ?? null;
     </section>
 </section>
 
-<template data-profile-template="license">
-    <p class="dialog-context-note">New license information requires Administrator verification and does not replace the current verified record until approved. This form is a visual draft only; requests cannot be sent from this page.</p>
-    <label class="dialog-field"><span>Current SWML / license Number</span><input readonly value="Not available on this page"></label>
-    <label class="dialog-field"><span>New SWML / license Number — Requires Administrator review</span><input autocomplete="off"></label>
-    <label class="dialog-field"><span>New Expiry Date — Requires Administrator review</span><input type="date"></label>
-    <label class="dialog-field"><span>New license PDF — Requires Administrator review</span><input type="file" accept="application/pdf,.pdf" disabled aria-describedby="profile-document-help"><span class="dialog-helper" id="profile-document-help">Document submission is not available in the current implementation.</span></label>
-</template>
 <template data-profile-template="capability">
     <p class="dialog-context-note">Capability changes require Administrator review before affecting eligibility. This form is a visual draft only; requests cannot be sent from this page.</p>
     <label class="dialog-field"><span>Waste Category</span><input data-profile-category autocomplete="off" placeholder="Enter the requested waste category"></label>
