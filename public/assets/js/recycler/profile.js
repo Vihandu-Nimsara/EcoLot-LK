@@ -1,5 +1,19 @@
 (() => {
     'use strict';
+    const resend = document.querySelector('.recycler-profile-page [data-phone-resend]');
+    const cooldown = document.querySelector('.recycler-profile-page [data-phone-cooldown]');
+    if (resend && cooldown) {
+        const readyAt = Date.now() + Number(resend.dataset.cooldown || 0) * 1000;
+        const updateCooldown = () => {
+            const remaining = Math.max(0, Math.ceil((readyAt - Date.now()) / 1000));
+            resend.disabled = remaining > 0;
+            cooldown.textContent = remaining > 0 ? `Resend available in ${remaining} seconds.` : 'You can request a new code.';
+            return remaining;
+        };
+        if (updateCooldown() > 0) {
+            const timer = setInterval(() => { if (updateCooldown() === 0) clearInterval(timer); }, 1000);
+        }
+    }
     const modal = document.querySelector('[data-profile-modal]');
     if (!modal) return;
     // Use the existing dialog styling outside the inert workspace.

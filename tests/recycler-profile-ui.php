@@ -7,30 +7,53 @@ $assert = static function (bool $ok, string $message) use (&$checks): void {
     if (!$ok) throw new RuntimeException($message);
     ++$checks;
 };
-$render = static function (?array $profile, ?array $compliance, array $capabilities): string {
+$render = static function (?array $profile, ?array $compliance, array $capabilities, array $activities = [], ?array $currentLicense = null, ?array $pendingLicenseUpdate = null, ?array $phoneChange = null, bool $phoneEditorOpen = false): string {
     $basePath = '/EcoLot-LK';
+    $csrfToken = 'profile-test-token';
     ob_start();
     require APP_ROOT . '/app/Views/recycler/profile.php';
     return ob_get_clean();
 };
 $html = $render(['company_name' => 'Owner <Recovery>', 'full_name' => 'Owner "Contact"', 'email' => 'owner@example.org', 'mobile_number' => '94770000000', 'business_address' => 'Recorded & private', 'district' => 'Colombo'], ['verification_status' => 'VERIFIED', 'valid_license_expiry' => '2028-02-01'], [['category_name' => 'Owner <Category>', 'capability_status' => 'APPROVED'], ['category_name' => 'Pending category', 'capability_status' => 'PENDING']]);
 foreach (['Owner &lt;Recovery&gt;', 'Owner &quot;Contact&quot;', 'Recorded &amp; private', 'Owner &lt;Category&gt;', '2028-02-01', 'Awaiting review', 'Approved', 'Pending'] as $value) $assert(str_contains($html, $value), 'Real escaped values/status: ' . $value);
-foreach (['Edit Basic Information', 'Submit license Update', 'Request Change', 'Request Capability Change'] as $label) $assert(str_contains($html, $label), 'Restored action ' . $label);
+foreach (['Company Information', 'CEA Licence', 'Compliance Overview', 'Recycling Capabilities', 'Authorized Activities', 'Save Changes', 'Submit for Admin Review', 'Request Change', 'Request Capability Change'] as $label) $assert(str_contains($html, $label), 'Existing action or card: ' . $label);
 foreach (['GreenCycle', 'Anjana', 'SWML/2026/001', 'Demo Consumer', 'data-recycler-dialog='] as $fake) $assert(!str_contains($html, $fake), 'Old demo path absent: ' . $fake);
 $dom = new DOMDocument();
 @$dom->loadHTML($html);
 $x = new DOMXPath($dom);
-$assert($x->query('//input[@data-contact-name and not(@readonly)]')->length === 1, 'Contact draft editable');
-$assert($x->query('//input[@data-contact-email and @type="email" and not(@readonly)]')->length === 1, 'Email draft editable');
-$assert($x->query('//input[@value="94770000000" and @readonly]')->length === 1, 'Phone read-only');
-$assert(str_contains($html, 'Mobile number changes require verification.'), 'Phone verification note');
-foreach (['Company Name', 'Business Address', 'District', 'New SWML / license Number', 'New Expiry Date'] as $field) $assert(str_contains($html, $field . ' — Requires Administrator review'), 'Review label: ' . $field);
-$assert($x->query('//input[@type="file" and @disabled]')->length === 1, 'Upload unavailable');
-$assert($x->query('//button[@data-profile-unavailable and @disabled and @type="button"]')->length === 1, 'No submit action');
-$assert($x->query('//form[@action or @method]')->length === 0, 'No mutation endpoint');
-$assert($x->query('//input[@name] | //select[@name] | //textarea[@name]')->length === 0, 'Draft values not form payloads');
-$assert(str_contains($html, 'visual draft only') && str_contains($html, 'Closing this form discards your draft.'), 'Honest draft limitation');
+$assert($x->query('//form[@method="post" and @action="/EcoLot-LK/recycler/profile/contact"]//input[@name="full_name" and @required and @minlength="2" and @maxlength="120"]')->length === 1, 'Working contact form preserved');
+$assert($x->query('//input[@name="email" or @name="mobile_number" or @name="company_name" or @name="business_address" or @name="district"]')->length === 0, 'Other company fields remain read-only');
+$assert($x->query('//form[@method="post"]//input[@name="_csrf_token" and @value="profile-test-token"]')->length === 3, 'Contact, phone and licence forms retain CSRF');
+$assert($x->query('//input[@name="current_password" and @type="password" and not(@value)]')->length === 1, 'Password is never repopulated');
+$assert($x->query('//input[@name="proposed_mobile_number" and @type="tel"]')->length === 1, 'Separate phone request editor');
+$assert($x->query('//details[contains(@class,"profile-license-update")]//form[@method="post" and @enctype="multipart/form-data" and @action="/EcoLot-LK/recycler/profile/license-update"]//input[@type="file" and @name="license_document" and @accept=".pdf,application/pdf" and @required and not(@disabled)]')->length === 1, 'Collapsible PDF upload preserved');
+$assert($x->query('//input[@name="requested_expiry_date" and @required and @min]')->length === 1, 'Expiry validation preserved');
+$assert($x->query('//button[@data-profile-unavailable and @disabled and @type="button"]')->length === 1, 'Capability submission remains unavailable');
+$assert(str_contains($html, 'visual drafts only') && str_contains($html, 'requests cannot be sent from this page'), 'Honest draft limitation');
+$assert(!str_contains($html, '100%'), 'No invented compliance percentage');
+$assert(str_contains($html, '1 Approved') && str_contains($html, '0 Approved'), 'Only recorded approvals counted');
+$activityHtml = $render(null, ['verification_status' => 'REJECTED'], [], [
+    ['activity_type' => 'COLLECTION', 'activity_status' => 'APPROVED'],
+    ['activity_type' => 'Sorting <private>', 'activity_status' => 'SUSPENDED'],
+]);
+$assert(str_contains($activityHtml, 'Collection') && str_contains($activityHtml, 'Sorting &lt;private&gt;'), 'Recorded activity names escaped');
+$assert(str_contains($activityHtml, 'Suspended') && str_contains($activityHtml, 'Rejected') && str_contains($activityHtml, '1 Approved'), 'Actual activity and verification statuses');
+$pending = $render(null, ['verification_status' => 'VERIFIED'], [], [], ['license_number' => 'Approved <record>', 'expiry_date' => '2000-01-01'], ['requested_license_number' => 'Renewal <record>', 'requested_expiry_date' => '2099-01-01']);
+foreach (['Approved &lt;record&gt;', 'Renewal &lt;record&gt;', 'Expired', 'Pending Review', 'Another licence update cannot be submitted'] as $value) $assert(str_contains($pending, $value), 'Pending/expired licence presentation: ' . $value);
+$assert(!str_contains($pending, 'name="license_document"'), 'Pending request prevents another submission');
+$valid = $render(null, ['verification_status' => 'VERIFIED'], [], [], ['license_number' => 'Approved record', 'expiry_date' => '2099-01-01']);
+$assert(str_contains($valid, 'Valid') && str_contains($valid, 'Approved record'), 'Approved current licence retained');
 $empty = $render(null, null, []);
-foreach (['Not recorded', 'No current valid license', 'No handling capabilities are recorded.', 'Request Capability Change'] as $text) $assert(str_contains($empty, $text), 'Empty state: ' . $text);
+foreach (['Not recorded', 'No current valid licence', 'No handling capabilities are recorded.', 'No authorized activities are recorded.', 'Request Capability Change', 'Licence updates are available to verified recyclers.'] as $text) $assert(str_contains($empty, $text), 'Empty state: ' . $text);
 $assert(!str_contains($empty, 'Awaiting review'), 'No invented pending state');
+$phone = $render(null, null, [], [], null, null, ['masked_mobile' => '9477****001', 'expires_at' => '2030-01-01 06:00:00', 'retry_after' => 60, 'can_verify' => true]);
+$phoneDom = new DOMDocument();
+@$phoneDom->loadHTML($phone);
+$phoneXpath = new DOMXPath($phoneDom);
+$assert($phoneXpath->query('//details[contains(@class,"profile-phone-editor") and @open]')->length === 1, 'Pending editor stays open');
+$assert($phoneXpath->query('//input[@name="otp" and @inputmode="numeric" and @pattern="[0-9]{6}" and not(@value)]')->length === 1, 'OTP accessible and never repopulated');
+foreach (['verify', 'resend', 'cancel'] as $action) $assert($phoneXpath->query('//form[@method="post" and @action="/EcoLot-LK/recycler/profile/phone/' . $action . '"]//input[@name="_csrf_token"]')->length === 1, 'Phone CSRF: ' . $action);
+$assert(!str_contains($phone, 'name="current_password"') && str_contains($phone, '9477****001'), 'Only masked destination in verification state');
+$error = $render(null, null, [], [], null, null, null, true);
+$assert(str_contains($error, 'class="profile-contact-editor profile-phone-editor" open'), 'Request errors keep editor open');
 echo "PASS: $checks Profile view/permissions/escaping assertions (no database access)\n";

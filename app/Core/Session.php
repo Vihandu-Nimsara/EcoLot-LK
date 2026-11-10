@@ -69,10 +69,12 @@ final class Session
         return $value;
     }
 
-    public static function regenerate(): void
+    public static function regenerate(): bool
     {
         self::start();
-        session_regenerate_id(true);
+        // Callers needing confirmed rotation can inspect the result. Do not emit
+        // a native warning that could prevent a secure logout/redirect on failure.
+        return @session_regenerate_id(true);
     }
 
     public static function destroy(): void

@@ -57,6 +57,10 @@ return static function (Router $router, array $app): void {
         $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
         $router->get('/profile', 'RecyclerController@profile');
         $router->post('/profile/contact', 'RecyclerController@updateProfileContact');
+        $router->post('/profile/phone/request', 'RecyclerController@requestPhoneChange');
+        $router->post('/profile/phone/verify', 'RecyclerController@verifyPhoneChange');
+        $router->post('/profile/phone/resend', 'RecyclerController@resendPhoneChange');
+        $router->post('/profile/phone/cancel', 'RecyclerController@cancelPhoneChange');
         $router->post('/profile/license-update', 'RecyclerController@submitLicenseUpdate');
         $router->get('/reports', 'RecyclerController@reports');
     });

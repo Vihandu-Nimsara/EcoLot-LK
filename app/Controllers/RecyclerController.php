@@ -202,6 +202,9 @@ class RecyclerController extends Controller
                 'currentPage' => 'profile',
                 'csrfToken' => Csrf::token(),
 
+                'phoneChange' => $this->phoneChangeService()->pendingChange($userId),
+                'phoneEditorOpen' => (bool) Session::pullFlash('phone_editor_open', false),
+
                 'profileSuccess' =>
                     Session::pullFlash('profile_success'),
 
@@ -225,6 +228,95 @@ class RecyclerController extends Controller
                 'pendingLicenseUpdate' => $pendingLicenseUpdate,
             ]);
         });
+    }
+
+    protected function phoneChangeService(): RecyclerPhoneChangeService
+    {
+        return new RecyclerPhoneChangeService();
+    }
+
+    public function requestPhoneChange(): void
+    {
+        $this->handlePhoneChange('request');
+    }
+
+    public function verifyPhoneChange(): void
+    {
+        $this->handlePhoneChange('verify');
+    }
+
+    public function resendPhoneChange(): void
+    {
+        $this->handlePhoneChange('resend');
+    }
+
+    public function cancelPhoneChange(): void
+    {
+        $this->handlePhoneChange('cancel');
+    }
+
+    protected function rotatePhoneChangeSession(): bool
+    {
+        return Session::regenerate();
+    }
+
+    private function handlePhoneChange(string $action): void
+    {
+        Auth::requireRole('RECYCLER');
+        Session::flash('phone_editor_open', true);
+        if (!$this->hasValidCsrfToken()) {
+            Session::flash('profile_error', 'Your session expired. Please try again.');
+            $this->redirect('/recycler/profile');
+        }
+        $reloginNotice = null;
+        try {
+            $service = $this->phoneChangeService();
+            $userId = (int) Auth::id();
+            switch ($action) {
+                case 'request':
+                    $service->startChange($userId, $this->postString('current_password', false), $this->postString('proposed_mobile_number'));
+                    $message = 'A verification code was sent to your proposed mobile number.';
+                    break;
+                case 'verify':
+                    $service->verifyChange($userId, $this->postString('otp'));
+                    try {
+                        if (!$this->rotatePhoneChangeSession()) throw new RuntimeException('Session rotation failed.');
+                        Csrf::regenerate();
+                    } catch (Throwable) {
+                        $reloginNotice = 'Your phone number was updated. Your session could not be renewed. Sign in again using your updated mobile number.';
+                        break;
+                    }
+                    Session::flash('phone_editor_open', false);
+                    $message = 'Phone number updated successfully. Use your new number for future logins.';
+                    break;
+                case 'resend':
+                    $service->resend($userId);
+                    $message = 'A new verification code was sent. The previous code is no longer valid.';
+                    break;
+                case 'cancel':
+                    $service->cancel($userId);
+                    Session::flash('phone_editor_open', false);
+                    $message = 'Phone number change cancelled. Your current number is unchanged.';
+                    break;
+            }
+            if ($reloginNotice === null) Session::flash('profile_success', $message);
+        } catch (PhoneChangeOutcomeUnknownException) {
+            $reloginNotice = 'We could not confirm the phone change outcome. Sign in again and check your profile. Your new number may already be active; if it is not, use your previous number.';
+        } catch (OtpRateLimitException $error) {
+            Session::flash('profile_error', $error->getMessage() . ' Retry in ' . $error->retryAfterSeconds() . ' seconds.');
+        } catch (DomainException $error) {
+            Session::flash('profile_error', $error->getMessage());
+        } catch (Throwable $error) {
+            // Exception category only: never log arguments, SQL, OTPs or credentials.
+            error_log('Recycler phone change failure category=' . $error::class);
+            Session::flash('profile_error', 'Unable to complete the phone change right now. Please try again later.');
+        }
+        if ($reloginNotice !== null) {
+            Auth::logout();
+            Session::flash('auth_success', $reloginNotice);
+            $this->redirect('/login');
+        }
+        $this->redirect('/recycler/profile');
     }
 
     public function updateProfileContact(): void

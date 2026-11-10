@@ -38,6 +38,23 @@ final class User extends Model
         return $result === false ? null : $result;
     }
 
+    /** Consume a verified phone challenge in the same caller-owned transaction. */
+    public function replaceRecyclerMobile(int $userId, string $expectedMobile, string $proposedMobile): bool
+    {
+        if (!$this->db->inTransaction() || Auth::role() !== 'RECYCLER' || (int) Auth::id() !== $userId) {
+            throw new LogicException('An owned Recycler transaction is required.');
+        }
+        if (MobileNumber::normalize($proposedMobile) !== $proposedMobile) {
+            throw new InvalidArgumentException('A normalized mobile number is required.');
+        }
+        return $this->query(
+            "UPDATE users SET mobile_number = :mobile, mobile_verified_at = CURRENT_TIMESTAMP
+             WHERE user_id = :owner AND role = 'RECYCLER' AND account_status = 'ACTIVE'
+               AND mobile_number = :expected",
+            ['mobile' => $proposedMobile, 'owner' => $userId, 'expected' => $expectedMobile]
+        )->rowCount() === 1;
+    }
+
     public function findByEmail(string $email): ?array
     {
         $result = $this->query(

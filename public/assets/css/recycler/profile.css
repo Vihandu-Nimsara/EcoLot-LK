@@ -1,4 +1,118 @@
+/* Keep the shared workflow design; only arrange profile content here. */
+.recycler-profile-page .profile-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.recycler-profile-page .profile-layout .workflow-card {
+    margin-top: 0;
+}
+
+.recycler-profile-page .profile-column {
+    display: grid;
+    min-width: 0;
+    gap: 20px;
+}
+
+.recycler-profile-page .detail-grid {
+    grid-template-columns: 1fr;
+}
+
+.recycler-profile-page .detail-item {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: start;
+    gap: 12px;
+    padding: 15px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--recycler-border);
+    border-radius: 0;
+}
+
+.recycler-profile-page .detail-item:last-child {
+    border-bottom: 0;
+}
+
+.recycler-profile-page .detail-label {
+    margin-bottom: 0;
+}
+
+.recycler-profile-page .badge {
+    justify-self: start;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.recycler-profile-page .profile-contact-form input,
+.recycler-profile-page .profile-license-form input {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.recycler-profile-page .workflow-table {
+    min-width: 0;
+    table-layout: fixed;
+}
+
+.recycler-profile-page .workflow-table :is(th, td) {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+    .recycler-profile-page .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .recycler-profile-page .profile-column {
+        display: contents;
+    }
+
+    .recycler-profile-page .profile-company { order: 1; }
+    .recycler-profile-page .profile-licence { order: 2; }
+    .recycler-profile-page .profile-compliance { order: 3; }
+    .recycler-profile-page .profile-capabilities { order: 4; }
+    .recycler-profile-page .profile-activities { order: 5; }
+}
+
+@media (max-width: 600px) {
+    .recycler-profile-page .detail-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .recycler-profile-page .workflow-table :is(th, td) {
+        padding: 8px;
+    }
+}
+
 /* Profile-only additions to the existing Recycler dialog design. */
+.recycler-profile-page .profile-phone-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.recycler-profile-page .profile-phone-actions form {
+    min-width: 0;
+}
+
+.recycler-profile-page .profile-phone-editor :disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.recycler-profile-page .profile-phone-editor .dialog-helper {
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
 .recycler-app .recycler-profile-dialog :disabled {
     opacity: .65;
     cursor: not-allowed;

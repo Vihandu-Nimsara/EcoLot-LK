@@ -3,7 +3,7 @@ $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QU
 $verification = $compliance['verification_status'] ?? null;
 ?>
 <link rel="stylesheet" href="<?= $escape($basePath) ?>/assets/css/recycler/profile.css?v=<?= Asset::version('css/recycler/profile.css') ?>">
-<section class="workflow-page">
+<section class="workflow-page recycler-profile-page">
     <div class="workflow-header">
         <div>
             <h1>My Profile &amp; Compliance</h1>
@@ -24,7 +24,9 @@ $verification = $compliance['verification_status'] ?? null;
         </p>
     <?php endif; ?>
 
-    <section class="workflow-card">
+    <div class="profile-layout">
+    <div class="profile-column profile-company-column">
+    <section class="workflow-card profile-company">
         <div class="workflow-section-header"><h2>Company Information</h2></div>
         <div class="detail-grid"> 
         <?php
@@ -92,6 +94,48 @@ $verification = $compliance['verification_status'] ?? null;
                             </div>
                         </form>
                     </details>
+                <?php elseif ($field === 'mobile_number'): ?>
+                    <details class="profile-contact-editor profile-phone-editor" <?= !empty($phoneChange) || !empty($phoneEditorOpen) ? 'open' : '' ?>>
+                        <summary>
+                            <strong class="detail-value"><?= $escape($profile['mobile_number'] ?? 'Not recorded') ?></strong>
+                            <span class="profile-edit-closed">Edit</span>
+                            <span class="profile-edit-open">Close</span>
+                        </summary>
+                        <?php if (!empty($phoneChange)): ?>
+                            <p class="dialog-helper">Verification code sent to <?= $escape($phoneChange['masked_mobile']) ?>. Your current number remains active until verification succeeds.</p>
+                            <p class="dialog-helper">Code expires: <?= $escape($phoneChange['expires_at']) ?> (Asia/Colombo).</p>
+                            <?php if (!$phoneChange['can_verify']): ?>
+                                <p class="page-notice">This code cannot currently be used. Resend a code or cancel and start again.</p>
+                            <?php endif; ?>
+                            <form class="profile-contact-form" method="post" action="<?= $escape($basePath) ?>/recycler/profile/phone/verify">
+                                <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
+                                <label for="recycler-phone-otp">Six-digit verification code</label>
+                                <input id="recycler-phone-otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required>
+                                <div class="form-actions"><button class="dialog-primary-btn" type="submit" <?= !$phoneChange['can_verify'] ? 'disabled' : '' ?>>Verify &amp; Save</button></div>
+                            </form>
+                            <div class="profile-phone-actions">
+                                <form method="post" action="<?= $escape($basePath) ?>/recycler/profile/phone/resend">
+                                    <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
+                                    <button class="secondary-workflow-btn" type="submit" data-phone-resend data-cooldown="<?= (int) $phoneChange['retry_after'] ?>">Resend Code</button>
+                                </form>
+                                <form method="post" action="<?= $escape($basePath) ?>/recycler/profile/phone/cancel">
+                                    <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
+                                    <button class="secondary-workflow-btn" type="submit">Cancel Change</button>
+                                </form>
+                            </div>
+                            <p class="dialog-helper" data-phone-cooldown aria-live="polite"><?= $phoneChange['retry_after'] > 0 ? 'Resend available in ' . (int) $phoneChange['retry_after'] . ' seconds.' : 'You can request a new code.' ?></p>
+                        <?php else: ?>
+                            <form class="profile-contact-form" method="post" action="<?= $escape($basePath) ?>/recycler/profile/phone/request">
+                                <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
+                                <p class="dialog-helper">Confirm your password and verify the new number before changing your login number.</p>
+                                <label for="recycler-new-mobile">New Mobile Number</label>
+                                <input id="recycler-new-mobile" name="proposed_mobile_number" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" required>
+                                <label for="recycler-phone-password">Current Password</label>
+                                <input id="recycler-phone-password" name="current_password" type="password" autocomplete="current-password" required>
+                                <div class="form-actions"><button class="dialog-primary-btn" type="submit">Send Verification Code</button></div>
+                            </form>
+                        <?php endif; ?>
+                    </details>
                 <?php else: ?>
                     <strong class="detail-value">
                         <?= $escape(
@@ -104,9 +148,25 @@ $verification = $compliance['verification_status'] ?? null;
             </div>
         <?php endforeach; ?>
 
-            <div class="detail-item"><span class="detail-label">Verification</span><span class="badge <?= $verification === 'VERIFIED' ? 'badge-completed' : ($verification === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($verification ?? 'Not recorded'))) ?></span></div>
+            <div class="detail-item"><span class="detail-label">Verification Status</span><span class="badge <?= $verification === 'VERIFIED' ? 'badge-completed' : ($verification === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($verification ?? 'Not recorded'))) ?></span></div>
         </div>
     </section>
+
+    <section class="workflow-card profile-capabilities">
+        <div class="workflow-section-header"><h2>Recycling Capabilities</h2><p>Approved categories affect eligibility; all capability changes require Administrator review.</p></div>
+        <?php if (!$capabilities): ?><div class="empty-state">No handling capabilities are recorded.</div><?php else: ?>
+        <div class="workflow-table-wrapper"><table class="workflow-table">
+            <thead><tr><th scope="col">Waste Category</th><th scope="col">Capability Status</th><th scope="col">Action</th></tr></thead>
+            <tbody><?php foreach ($capabilities as $capability): ?><tr>
+                <td data-label="Waste Category"><?= $escape($capability['category_name']) ?></td>
+                <td data-label="Capability Status"><span class="badge <?= $capability['capability_status'] === 'APPROVED' ? 'badge-completed' : ($capability['capability_status'] === 'SUSPENDED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($capability['capability_status']))) ?></span></td>
+                <td data-label="Action"><?php if ($capability['capability_status'] === 'PENDING'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-profile-open="capability" data-category="<?= $escape($capability['category_name']) ?>">Request Change</button><?php endif; ?></td>
+            </tr><?php endforeach; ?></tbody>
+        </table></div><?php endif; ?>
+        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability">Request Capability Change</button></div>
+        <p class="page-notice">Capability change dialogs are visual drafts only; requests cannot be sent from this page.</p>
+    </section>
+    </div>
 
     <?php
     $today = (new DateTimeImmutable(
@@ -128,7 +188,8 @@ $verification = $compliance['verification_status'] ?? null;
         && $licenseExpiry < $today;
     ?>
 
-    <section class="workflow-card">
+    <div class="profile-column profile-compliance-column">
+    <section class="workflow-card profile-licence">
 
         <div class="workflow-section-header">
             <h2>CEA Licence</h2>
@@ -352,19 +413,45 @@ $verification = $compliance['verification_status'] ?? null;
 
     </section>
 
-    <section class="workflow-card">
-        <div class="workflow-section-header"><h2>Waste-Handling Capabilities</h2><p>Approved categories affect eligibility; all capability changes require Administrator review.</p></div>
-        <?php if (!$capabilities): ?><div class="empty-state">No handling capabilities are recorded.</div><?php else: ?>
-        <div class="workflow-table-wrapper"><table class="workflow-table">
-            <thead><tr><th scope="col">Waste Category</th><th scope="col">Capability Status</th><th scope="col">Action</th></tr></thead>
-            <tbody><?php foreach ($capabilities as $capability): ?><tr>
-                <td data-label="Waste Category"><?= $escape($capability['category_name']) ?></td>
-                <td data-label="Capability Status"><span class="badge <?= $capability['capability_status'] === 'APPROVED' ? 'badge-completed' : ($capability['capability_status'] === 'SUSPENDED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($capability['capability_status']))) ?></span></td>
-                <td data-label="Action"><?php if ($capability['capability_status'] === 'PENDING'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-profile-open="capability" data-category="<?= $escape($capability['category_name']) ?>">Request Change</button><?php endif; ?></td>
-            </tr><?php endforeach; ?></tbody>
-        </table></div><?php endif; ?>
-        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability">Request Capability Change</button></div>
+    <section class="workflow-card profile-compliance">
+        <div class="workflow-section-header"><h2>Compliance Overview</h2><p>Recorded verification and approvals.</p></div>
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span class="detail-label">Recycler Verification</span>
+                <span class="badge <?= $verification === 'VERIFIED' ? 'badge-completed' : ($verification === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($verification ?? 'Not recorded'))) ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">CEA Licence</span>
+                <span class="badge <?= !empty($compliance['valid_license_expiry']) ? 'badge-completed' : 'badge-pending' ?>"><?= !empty($compliance['valid_license_expiry']) ? 'Valid until ' . $escape($compliance['valid_license_expiry']) : 'No current valid licence' ?></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Handling Capabilities</span>
+                <strong class="detail-value"><?= count(array_filter($capabilities, static fn (array $row): bool => $row['capability_status'] === 'APPROVED')) ?> Approved</strong>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Authorized Activities</span>
+                <strong class="detail-value"><?= count(array_filter($activities, static fn (array $row): bool => $row['activity_status'] === 'APPROVED')) ?> Approved</strong>
+            </div>
+        </div>
     </section>
+
+    <section class="workflow-card profile-activities">
+        <div class="workflow-section-header"><h2>Authorized Activities</h2><p>Recorded activities and their approval statuses.</p></div>
+        <?php if (!$activities): ?>
+            <div class="empty-state">No authorized activities are recorded.</div>
+        <?php else: ?>
+            <div class="detail-grid">
+                <?php foreach ($activities as $activity): ?>
+                    <div class="detail-item">
+                        <span class="detail-label"><?= $escape(ucwords(strtolower(str_replace('_', ' ', $activity['activity_type'])))) ?></span>
+                        <span class="badge <?= $activity['activity_status'] === 'APPROVED' ? 'badge-completed' : (in_array($activity['activity_status'], ['REJECTED', 'SUSPENDED', 'REVOKED'], true) ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($activity['activity_status']))) ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </section>
+    </div>
+    </div>
 </section>
 
 <template data-profile-template="capability">
