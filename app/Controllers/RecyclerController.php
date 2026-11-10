@@ -6,31 +6,15 @@ class RecyclerController extends Controller
     public function dashboard(): void
     {
         Auth::requireRole('RECYCLER');
-
         $this->readPage(function (): void {
             $userId = (int) Auth::id();
-
             $data = $this->reportingData($userId);
-
             $recycler = new AuthorizedRecycler();
-
-            $activities = (new RecyclerAuthorizedActivity())
-                ->forRecycler($userId);
-
             $this->view('recycler/dashboard', $data + [
                 'currentPage' => 'dashboard',
-
-                'eligibleCount' => count(
-                    (new ELot())->eligibleForRecycler($userId)
-                ),
-
-                'dashboardProfile' => $recycler->profileForRecycler($userId),
-
+                'eligibleCount' => count((new ELot())->eligibleForRecycler($userId)),
                 'compliance' => $recycler->dashboardCompliance($userId),
-
                 'capabilities' => $recycler->capabilitiesForRecycler($userId),
-
-                'activities' => $activities,
             ]);
         });
     }
@@ -166,8 +150,6 @@ class RecyclerController extends Controller
                 'profile' => $recycler->profileForRecycler($userId),
                 'compliance' => $recycler->dashboardCompliance($userId),
                 'capabilities' => $recycler->capabilitiesForRecycler($userId),
-                'activities' => (new RecyclerAuthorizedActivity())
-                    ->forRecycler($userId),
             ]);
         });
     }

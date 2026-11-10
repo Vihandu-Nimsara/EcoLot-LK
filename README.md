@@ -130,3 +130,24 @@ The scheduler entry must be installed on the host serving the application;
 committing this command does not install a host scheduler. Send scheduler failures
 to the deployment's normal job logs/monitoring. Page reads also close expired
 campaigns, and schedule creation independently rejects expired campaigns.
+
+## Docker on macOS (Desktop checkout)
+
+Keep the project at `/Users/nimsara/Desktop/project/EcoLot-LK`.
+Double-click `Start EcoLot.command` to open Docker Desktop, build and start
+PHP/Apache, MySQL and phpMyAdmin, and open http://localhost:8080.
+Double-click `Stop EcoLot.command` to stop services without deleting data.
+The shortcuts also work if the whole project folder is moved later.
+
+Apache serves `public/`; edit project files in this folder as usual.
+phpMyAdmin: http://localhost:8081; login: `app_user` / `user_pass`.
+Database: `ecolot_lk`. Host SQL clients use `127.0.0.1:3307`.
+A fresh Docker database volume imports `database/schema.sql` and
+`database/seed.sql` once, including demo accounts documented in seed.sql.
+Existing XAMPP data is not copied. Docker data persists in named volumes;
+`docker compose down -v` deletes those volumes, so do not use it to stop the app.
+Runtime storage uses a separate Docker volume. XAMPP is not needed.
+Notify.lk SMS requires the environment variables documented above, supplied
+through the shell or a local `.env` file (forwarded by Compose).
+
+Terminal equivalent: `docker compose up --build -d --wait --wait-timeout 300`.

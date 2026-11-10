@@ -87,7 +87,13 @@ return static function (Router $router, array $app): void {
         $router->post('/collection-records/{id}/delete', 'CollectorController@deleteRecord');
         $router->post('/schedules/{id}/submit', 'CollectorController@submitSchedule');
         $router->get('/initial-request', 'CollectorController@initialRequest');
-        $router->get('/e-lots', 'CollectorController@eLots');
+                $router->get('/e-lots', 'CollectorController@eLots');
+        $router->get('/e-lots/available-items', 'CollectorController@availableELotItems');
+        $router->get('/e-lots/{id}', 'CollectorController@showELot');
+        $router->post('/e-lots', 'CollectorController@storeELot');
+        $router->post('/e-lots/{id}/update', 'CollectorController@updateELot');
+        $router->post('/e-lots/{id}/delete', 'CollectorController@deleteELot');
+        $router->post('/e-lots/{id}/submit', 'CollectorController@submitELot');
     });
 
     $router->group('/admin', static function (Router $router): void {

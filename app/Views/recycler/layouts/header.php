@@ -1,11 +1,7 @@
-<?php
-$identityName = (string) ($workspaceProfile['company_name'] ?? Auth::user()['name'] ?? 'Recycler');
-$identityInitial = function_exists('mb_substr') ? mb_substr($identityName, 0, 1) : substr($identityName, 0, 1);
-?>
 <header class="top-header">
 
     <button class="mobile-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="recycler-sidebar" data-nav-toggle>
-        <span aria-hidden="true"><?= $recyclerIcon('menu') ?></span>
+        <span aria-hidden="true">☰</span>
     </button>
 
     <div class="header-left">
@@ -15,9 +11,9 @@ $identityInitial = function_exists('mb_substr') ? mb_substr($identityName, 0, 1)
 
     <div class="header-right">
         <div class="profile">
-            <div class="avatar" aria-hidden="true"><?= htmlspecialchars(strtoupper($identityInitial), ENT_QUOTES, 'UTF-8') ?></div>
+            <div class="avatar" aria-hidden="true">R</div>
             <div class="profile-info">
-                <span class="name"><?= htmlspecialchars($identityName, ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="name"><?= htmlspecialchars((string) (Auth::user()['name'] ?? 'Recycler'), ENT_QUOTES, 'UTF-8') ?></span>
                 <span class="role">Recycler</span>
             </div>
         </div>

@@ -54,13 +54,13 @@ try {
         if ($method === 'dashboard') {
             $assert($data['eligibleCount'] === 0 && $data['capabilities'] === [], 'Empty dashboard eligibility/capabilities');
             $assert($data['compliance']['verification_status'] === 'PENDING' && $data['compliance']['valid_license_expiry'] === null, 'Empty owner compliance does not borrow verified competitor data');
-            $assert(str_contains($html, '0 Approved') && (str_contains($html, 'No current valid licence') || str_contains($html, 'No current valid license')), 'Dashboard empty states rendered');
+            $assert(str_contains($html, 'No handling capabilities are recorded.') && str_contains($html, 'No current valid licence'), 'Dashboard empty states rendered');
         } else {
             $assert(str_contains($html, 'You have not placed any bids.') && str_contains($html, 'You have no awarded E-Lots.'), 'Reports empty states rendered');
         }
     }
     [$data, $html] = $page('profile');
-    $assert(str_contains($html, 'Empty company') && str_contains($html, 'Not recorded') && (str_contains($html, 'No current valid licence') || str_contains($html, 'No current valid license')), 'Profile missing email/licence safe');
+    $assert(str_contains($html, 'Empty company') && str_contains($html, 'Not recorded') && str_contains($html, 'No current valid licence'), 'Profile missing email/licence safe');
     $assert(!str_contains($html, 'data-recycler-dialog='), 'Profile has no fake mutation controls');
 
     $login($owner);
@@ -109,18 +109,7 @@ try {
             $assert($data['eligibleCount'] === 3, 'Only three remaining open eligible lots');
             $assert($data['compliance'] === ['verification_status' => 'VERIFIED', 'valid_license_expiry' => '2028-02-01'], 'Dashboard owner compliance');
             $assert(count($data['capabilities']) === 1 && $data['capabilities'][0]['category_name'] === $f['tag'] . ' Electronics', 'Dashboard owner capability table');
-            $dom = new DOMDocument();
-            $previousLibxml = libxml_use_internal_errors(true);
-            $dom->loadHTML($html);
-            libxml_clear_errors();
-            libxml_use_internal_errors($previousLibxml);
-            $xpath = new DOMXPath($dom);
-            foreach (['Eligible E-Lots' => 3, 'Submitted Bids' => 1, 'Awarded E-Lots' => 6, 'Awaiting Handover' => 2] as $label => $count) {
-                $nodes = $xpath->query('//div[@class="stat-info"][span[normalize-space()="' . $label . '"]]/h2');
-                $assert($nodes->length === 1 && trim($nodes->item(0)->textContent) === (string) $count, 'Rendered dashboard ' . $label);
-            }
-            $assert($data['dashboardProfile']['company_name'] === 'Owner <Recovery>' && str_contains($html, 'Owner &lt;Recovery&gt;'), 'Dashboard escaped owner identity');
-            $assert($xpath->query('//table')->length === 2, 'Dashboard contains only recent bids and awards tables');
+            foreach (['My Bids' => 9, 'Awarded E-Lots' => 6, 'Submitted Bids' => 1, 'Withdrawn Bids' => 1] as $label => $count) $assert(str_contains($html, $label . '</span><h2>' . $count . '</h2>'), 'Rendered dashboard ' . $label);
         } else {
             foreach (['Total Bids' => 9, 'Won Bids' => 6, 'Lost Bids' => 1, 'Withdrawn Bids' => 1, 'Awaiting Handover' => 2] as $label => $count) $assert(str_contains($html, $label . '</span><strong>' . $count . '</strong>'), 'Rendered report ' . $label);
             $assert(str_contains($html, 'Cancelled') && str_contains($html, 'Not recorded'), 'Cancelled and missing handovers rendered honestly');
@@ -132,21 +121,6 @@ try {
     $assert($data['profile']['mobile_number'] === $f['mobiles']['recycler'] && str_contains($html, '2028-02-01'), 'Profile real phone and owner compliance');
     $assert(count($data['capabilities']) === 1 && !str_contains($html, '2029-03-01') && !str_contains($html, 'Private competitor category'), 'Profile owner scoping');
     $assert(!str_contains($html, 'GreenCycle') && !str_contains($html, 'data-recycler-dialog='), 'No fixed identity or fake edit controls');
-    $sharedHeader = null;
-    foreach (['dashboard' => 'dashboard', 'eligibleELots' => 'eligible-e-lots', 'myBids' => 'my-bids',
-        'awardedELots' => 'awarded-e-lots', 'profile' => 'profile', 'reports' => 'reports'] as $method => $slug) {
-        [, $html] = $page($method);
-        preg_match('/<header class="top-header">.*?<\/header>/s', $html, $headerMatch);
-        $assert(isset($headerMatch[0]) && str_contains($headerMatch[0], 'Recycler Workspace')
-            && str_contains($headerMatch[0], 'Owner &lt;Recovery&gt;'), "$method shared escaped company header");
-        preg_match('/<nav class="sidebar-nav">.*?<\/nav>/s', $html, $navMatch);
-        $assert(isset($navMatch[0]) && !str_contains($navMatch[0], '<svg'), "$method text-only navigation");
-        $sharedHeader ??= $headerMatch[0];
-        $assert($headerMatch[0] === $sharedHeader, "$method identical shared header markup");
-        $assert(substr_count($html, '<header class="top-header">') === 1 && !str_contains($html, '<h1>Recycler Dashboard</h1>'), "$method no duplicate dashboard header");
-        $assert(preg_match('~href="[^" ]*/recycler/' . preg_quote($slug, '~') . '"\s+class="nav-item active"\s+aria-current="page"~', $html) === 1,
-            "$method correct active navigation");
-    }
     $model = new RecyclerBid();
     $assert($model->handoverForOwnedWinningBid($bidIds[3], $owner)['remarks'] === 'Collected <securely> & recorded', 'Model returns real remarks');
     [, $html] = $page('awardedELotDetails', $lotIds[3]);

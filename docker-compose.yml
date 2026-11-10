@@ -1,0 +1,58 @@
+name: ecolot-lk
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - .:/var/www/html:ro
+      - app_storage:/var/www/html/storage
+    environment:
+      APP_ENV: local
+      APP_BASE_PATH: ""
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: ecolot_lk
+      DB_USERNAME: app_user
+      DB_PASSWORD: user_pass
+      NOTIFY_LK_USER_ID: ${NOTIFY_LK_USER_ID:-}
+      NOTIFY_LK_API_KEY: ${NOTIFY_LK_API_KEY:-}
+      NOTIFY_LK_SENDER_ID: ${NOTIFY_LK_SENDER_ID:-}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: ecolot_lk
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: user_pass
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", 'MYSQL_PWD="$$MYSQL_PASSWORD" mysql --host=127.0.0.1 --user="$$MYSQL_USER" --database="$$MYSQL_DATABASE" --execute="SELECT 1" > /dev/null 2>&1']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    ports:
+      - "127.0.0.1:8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  app_storage:

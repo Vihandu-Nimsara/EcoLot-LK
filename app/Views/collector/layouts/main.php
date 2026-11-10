@@ -44,7 +44,7 @@ $pageStyleVersion = $pageStyle !== null
 
     <script src="<?= $assetBase ?>/js/collector/collector-workspace.js?v=<?= $workspaceScriptVersion ?>"></script>
     <?php if ($pageScript !== null): ?>
-        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>"></script>
+        <script src="<?= $assetBase ?>/js/<?= htmlspecialchars($pageScript, ENT_QUOTES, 'UTF-8') ?>?v=<?= time() ?>"></script>
     <?php endif; ?>
 </body>
 </html>
