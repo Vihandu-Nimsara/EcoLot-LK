@@ -1,6 +1,19 @@
 <?php
 $escape = static fn ($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 $verification = $compliance['verification_status'] ?? null;
+$capabilityOptions = $capabilityOptions ?? [];
+$capabilityRequests = $capabilityRequests ?? [];
+$capabilityFormInput = $capabilityFormInput ?? [];
+$capabilityOptionsById = array_column($capabilityOptions, null, 'category_id');
+$licenceCoverage = $licenceCoverage ?? [];
+$licenceConflicts = $licenceConflicts ?? [];
+$hasCurrentCoverage = false;
+foreach ($licenceCoverage as $recordedScope) {
+    if ($recordedScope['verification_status'] === 'VERIFIED' && (int) $recordedScope['current_document'] === 1 && $recordedScope['superseded_at'] === null) {
+        $hasCurrentCoverage = true;
+        break;
+    }
+}
 ?>
 <link rel="stylesheet" href="<?= $escape($basePath) ?>/assets/css/recycler/profile.css?v=<?= Asset::version('css/recycler/profile.css') ?>">
 <section class="workflow-page recycler-profile-page">
@@ -159,12 +172,28 @@ $verification = $compliance['verification_status'] ?? null;
             <thead><tr><th scope="col">Waste Category</th><th scope="col">Capability Status</th><th scope="col">Action</th></tr></thead>
             <tbody><?php foreach ($capabilities as $capability): ?><tr>
                 <td data-label="Waste Category"><?= $escape($capability['category_name']) ?></td>
-                <td data-label="Capability Status"><span class="badge <?= $capability['capability_status'] === 'APPROVED' ? 'badge-completed' : ($capability['capability_status'] === 'SUSPENDED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($capability['capability_status']))) ?></span></td>
-                <td data-label="Action"><?php if ($capability['capability_status'] === 'PENDING'): ?><span class="muted-action">Awaiting review</span><?php else: ?><button class="btn-action" type="button" data-profile-open="capability" data-category="<?= $escape($capability['category_name']) ?>">Request Change</button><?php endif; ?></td>
+                <td data-label="Capability Status"><span class="badge <?= $capability['capability_status'] === 'APPROVED' ? 'badge-completed' : (in_array($capability['capability_status'], ['SUSPENDED', 'REJECTED'], true) ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($capability['capability_status']))) ?></span><span class="dialog-helper">High-risk: <?= !empty($capability['can_handle_high_risk']) ? 'Yes' : 'No' ?></span></td>
+                <td data-label="Action"><?php if ($capability['capability_status'] === 'PENDING'): ?><span class="muted-action">Awaiting review</span><?php elseif (isset($capabilityOptionsById[$capability['category_id'] ?? 0])): ?><button class="btn-action" type="button" data-profile-open="capability" data-category-id="<?= (int) $capability['category_id'] ?>">Request Change</button><?php else: ?><span class="muted-action">No change available</span><?php endif; ?></td>
             </tr><?php endforeach; ?></tbody>
         </table></div><?php endif; ?>
-        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability">Request Capability Change</button></div>
-        <p class="page-notice">Capability change dialogs are visual drafts only; requests cannot be sent from this page.</p>
+        <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability" <?= !$capabilityOptions ? 'disabled' : '' ?> <?= $capabilityFormInput ? 'data-profile-auto-open' : '' ?>>Request Capability Change</button></div>
+        <p class="page-notice">Requests require Administrator approval. Existing permissions remain unchanged until approval. Permission reductions cannot be approved while this category has unresolved bids or unfinished winning handovers.</p>
+        <?php if ($capabilityRequests): ?>
+            <details class="profile-capability-history" <?= in_array('PENDING', array_column($capabilityRequests, 'request_status'), true) ? 'open' : '' ?>>
+                <summary>Recent Capability Requests</summary>
+                <?php foreach ($capabilityRequests as $request): ?>
+                    <article class="profile-capability-request">
+                        <h3><?= $escape($request['category_name']) ?> — <?= $escape(ucfirst(strtolower($request['request_type']))) ?></h3>
+                        <span class="badge <?= $request['request_status'] === 'APPROVED' ? 'badge-completed' : ($request['request_status'] === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($request['request_status']))) ?></span>
+                        <p>Previous: <?= $escape($request['previous_capability_status'] ?? 'No capability') ?>; high-risk <?= $request['previous_can_handle_high_risk'] === null ? 'Not applicable' : ((int) $request['previous_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?>.</p>
+                        <p>Requested: <?= $request['request_type'] === 'DEACTIVATE' ? 'Inactive' : 'Approved' ?>; high-risk <?= $request['requested_can_handle_high_risk'] === null ? 'Unchanged' : ((int) $request['requested_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?>.</p>
+                        <p>Reason: <?= $escape($request['request_reason']) ?></p>
+                        <p>Submitted: <?= $escape($request['submitted_at']) ?></p>
+                        <?php if ($request['reviewed_at'] !== null): ?><p>Reviewed: <?= $escape($request['reviewed_at']) ?>. <?= $escape($request['review_note'] ?? 'Approved without additional comments.') ?></p><?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
+            </details>
+        <?php endif; ?>
     </section>
     </div>
 
@@ -414,7 +443,16 @@ $verification = $compliance['verification_status'] ?? null;
     </section>
 
     <section class="workflow-card profile-compliance">
-        <div class="workflow-section-header"><h2>Compliance Overview</h2><p>Recorded verification and approvals.</p></div>
+        <div class="workflow-section-header"><h2>Compliance Overview</h2><p>Recorded verification and approvals. Licence validity does not establish category or activity coverage.</p></div>
+        <?php if (!$hasCurrentCoverage): ?><p class="page-notice">Licence scope verification required. Existing records are preserved, but new bids and expanded authorizations require Administrator verification of current category, activity and high-risk evidence. You do not need to register again.</p><?php endif; ?>
+        <?php if ($licenceConflicts): ?><p class="page-notice">Some existing bids or awards need authorization review. They have not been cancelled or rewritten. Contact the Administrator or Municipal Officer.</p><?php endif; ?>
+        <details class="profile-capability-history"><summary>Licence-linked scope and feedback</summary>
+            <?php foreach ($licenceCoverage as $scope): ?><article class="profile-capability-request">
+                <h3><?= $escape($scope['category_name']) ?> — <?= $escape(ucfirst(strtolower($scope['activity_type']))) ?></h3>
+                <p><?= $escape($scope['verification_status']) ?><?= (int)$scope['current_document']!==1 || $scope['superseded_at']!==null ? ' — Historical; re-verification required' : '' ?>; high-risk <?= (int)$scope['covers_high_risk']===1 && $scope['verification_status']==='VERIFIED' && (int)$scope['current_document']===1 && $scope['superseded_at']===null ? 'Explicitly covered' : 'Not currently established' ?>.</p>
+                <p>Licence <?= $escape($scope['license_number']) ?>, document version <?= (int)$scope['document_version'] ?>. <?= $escape($scope['review_note']??'Awaiting evidence review') ?></p>
+            </article><?php endforeach; ?>
+        </details>
         <div class="detail-grid">
             <div class="detail-item">
                 <span class="detail-label">Recycler Verification</span>
@@ -455,10 +493,16 @@ $verification = $compliance['verification_status'] ?? null;
 </section>
 
 <template data-profile-template="capability">
-    <p class="dialog-context-note">Capability changes require Administrator review before affecting eligibility. This form is a visual draft only; requests cannot be sent from this page.</p>
-    <label class="dialog-field"><span>Waste Category</span><input data-profile-category autocomplete="off" placeholder="Enter the requested waste category"></label>
-    <label class="dialog-field"><span>Request — Requires Administrator review</span><select><option value="">Select request</option><option>Add capability</option><option>Update capability</option><option>Deactivate capability</option></select></label>
-    <label class="dialog-field"><span>Reason</span><textarea rows="3" placeholder="Explain the requested change"></textarea></label>
+    <p class="dialog-context-note">Capability changes require Administrator approval and current licence scope verification before affecting eligibility. ADD, UPDATE and reactivation may require supporting licence evidence, not necessarily a new licence. Suspended or rejected capabilities cannot be reactivated here.</p>
+    <label class="dialog-field"><span>Waste Category</span><select name="category_id" data-profile-category data-selected="<?= (int) ($capabilityFormInput['category_id'] ?? 0) ?>" required>
+        <option value="">Select category</option>
+        <?php foreach ($capabilityOptions as $option): ?>
+            <option value="<?= (int) $option['category_id'] ?>" data-actions="<?= $escape(implode(',', $option['actions'])) ?>" data-status="<?= $escape($option['current_status']) ?>" data-risk="<?= $escape($option['current_risk'] ?? '') ?>"><?= $escape($option['category_name']) ?></option>
+        <?php endforeach; ?>
+    </select></label>
+    <label class="dialog-field"><span>Request</span><select name="request_type" data-profile-request data-selected="<?= $escape($capabilityFormInput['request_type'] ?? '') ?>" required><option value="">Select request</option></select></label>
+    <label class="dialog-field" data-profile-risk-field><span>Requested High-Risk Permission</span><select name="requested_can_handle_high_risk" data-profile-risk data-selected="<?= $escape($capabilityFormInput['risk'] ?? '') ?>" required><option value="">Select permission</option></select></label>
+    <label class="dialog-field"><span>Request Reason</span><textarea name="request_reason" rows="3" maxlength="500" required placeholder="Explain the requested change"><?= $escape($capabilityFormInput['reason'] ?? '') ?></textarea></label>
 </template>
 <div class="workspace-dialog recycler-profile-dialog" data-profile-modal hidden>
     <section class="workspace-dialog-card" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" aria-describedby="profile-dialog-description">
@@ -467,11 +511,12 @@ $verification = $compliance['verification_status'] ?? null;
             <h2 id="profile-dialog-title"></h2>
             <p id="profile-dialog-description"></p>
         </div><button class="workspace-dialog-close" type="button" aria-label="Close profile dialog" data-profile-close>×</button></div>
-        <form class="workspace-dialog-form" data-profile-form>
+        <form class="workspace-dialog-form" data-profile-form method="post" action="<?= $escape($basePath) ?>/recycler/profile/capabilities/request">
+            <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
             <div class="workspace-dialog-fields" data-profile-fields></div>
             <div class="workspace-dialog-actions">
                 <button class="dialog-secondary-btn" type="button" data-profile-close>Cancel</button>
-                <button class="dialog-primary-btn" type="button" disabled data-profile-unavailable>Saving unavailable</button>
+                <button class="dialog-primary-btn" type="submit" <?= !$capabilityOptions ? 'disabled' : '' ?> data-profile-submit>Submit Request</button>
             </div>
         </form>
     </section>

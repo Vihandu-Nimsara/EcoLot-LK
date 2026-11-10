@@ -50,6 +50,9 @@ final class RecyclerAuthorizedActivityReviewService
         $this->db->beginTransaction();
 
         try {
+            $authorization = new RecyclerLicenceAuthorization($this->db);
+            $authorization->requireAdmin($adminId);
+            $authorization->lockOwner($recyclerId);
             // Lock the recycler first to maintain lock ordering.
             $recyclerStmt = $this->db->prepare(
                 "SELECT user_id, verification_status
@@ -107,6 +110,8 @@ final class RecyclerAuthorizedActivityReviewService
                     'Activity has already been reviewed.'
                 );
             }
+
+            if ($decision === 'APPROVE') $authorization->requireActivity($recyclerId, $activity['activity_type'], true);
 
             $newStatus = $decision === 'APPROVE'
                 ? 'APPROVED'

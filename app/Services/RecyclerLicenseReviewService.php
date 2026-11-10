@@ -46,6 +46,9 @@ final class RecyclerLicenseReviewService
         $this->db->beginTransaction();
 
         try {
+            $authorization = new RecyclerLicenceAuthorization($this->db);
+            $authorization->requireAdmin($adminId);
+            $authorization->lockOwner($recyclerId);
             // Lock the parent recycler record first.
             $recyclerStmt = $this->db->prepare(
                 "SELECT user_id, verification_status
@@ -162,6 +165,10 @@ final class RecyclerLicenseReviewService
                 );
             }
 
+            if ($decision === 'APPROVE') {
+                $current = $authorization->currentLicense($recyclerId, true);
+                (new RecyclerLicenceCoverageService($this->db))->capture($recyclerId, (int) $current['license_id'], (int) $current['document_version'], $adminId);
+            }
             $this->db->commit();
 
         } catch (Throwable $e) {

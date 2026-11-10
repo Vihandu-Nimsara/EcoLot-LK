@@ -10,11 +10,13 @@ $assert = static function (bool $ok, string $message) use (&$checks): void {
 $render = static function (?array $profile, ?array $compliance, array $capabilities, array $activities = [], ?array $currentLicense = null, ?array $pendingLicenseUpdate = null, ?array $phoneChange = null, bool $phoneEditorOpen = false): string {
     $basePath = '/EcoLot-LK';
     $csrfToken = 'profile-test-token';
+    $capabilityOptions = ($compliance['verification_status'] ?? '') === 'VERIFIED'
+        ? [['category_id' => 1, 'category_name' => 'Owner <Category>', 'actions' => ['UPDATE', 'DEACTIVATE'], 'current_status' => 'APPROVED', 'current_risk' => 0]] : [];
     ob_start();
     require APP_ROOT . '/app/Views/recycler/profile.php';
     return ob_get_clean();
 };
-$html = $render(['company_name' => 'Owner <Recovery>', 'full_name' => 'Owner "Contact"', 'email' => 'owner@example.org', 'mobile_number' => '94770000000', 'business_address' => 'Recorded & private', 'district' => 'Colombo'], ['verification_status' => 'VERIFIED', 'valid_license_expiry' => '2028-02-01'], [['category_name' => 'Owner <Category>', 'capability_status' => 'APPROVED'], ['category_name' => 'Pending category', 'capability_status' => 'PENDING']]);
+$html = $render(['company_name' => 'Owner <Recovery>', 'full_name' => 'Owner "Contact"', 'email' => 'owner@example.org', 'mobile_number' => '94770000000', 'business_address' => 'Recorded & private', 'district' => 'Colombo'], ['verification_status' => 'VERIFIED', 'valid_license_expiry' => '2028-02-01'], [['category_id' => 1, 'category_name' => 'Owner <Category>', 'capability_status' => 'APPROVED'], ['category_id' => 2, 'category_name' => 'Pending category', 'capability_status' => 'PENDING']]);
 foreach (['Owner &lt;Recovery&gt;', 'Owner &quot;Contact&quot;', 'Recorded &amp; private', 'Owner &lt;Category&gt;', '2028-02-01', 'Awaiting review', 'Approved', 'Pending'] as $value) $assert(str_contains($html, $value), 'Real escaped values/status: ' . $value);
 foreach (['Company Information', 'CEA Licence', 'Compliance Overview', 'Recycling Capabilities', 'Authorized Activities', 'Save Changes', 'Submit for Admin Review', 'Request Change', 'Request Capability Change'] as $label) $assert(str_contains($html, $label), 'Existing action or card: ' . $label);
 foreach (['GreenCycle', 'Anjana', 'SWML/2026/001', 'Demo Consumer', 'data-recycler-dialog='] as $fake) $assert(!str_contains($html, $fake), 'Old demo path absent: ' . $fake);
@@ -23,13 +25,14 @@ $dom = new DOMDocument();
 $x = new DOMXPath($dom);
 $assert($x->query('//form[@method="post" and @action="/EcoLot-LK/recycler/profile/contact"]//input[@name="full_name" and @required and @minlength="2" and @maxlength="120"]')->length === 1, 'Working contact form preserved');
 $assert($x->query('//input[@name="email" or @name="mobile_number" or @name="company_name" or @name="business_address" or @name="district"]')->length === 0, 'Other company fields remain read-only');
-$assert($x->query('//form[@method="post"]//input[@name="_csrf_token" and @value="profile-test-token"]')->length === 3, 'Contact, phone and licence forms retain CSRF');
+$assert($x->query('//form[@method="post"]//input[@name="_csrf_token" and @value="profile-test-token"]')->length === 4, 'Contact, phone, capability and licence forms retain CSRF');
 $assert($x->query('//input[@name="current_password" and @type="password" and not(@value)]')->length === 1, 'Password is never repopulated');
 $assert($x->query('//input[@name="proposed_mobile_number" and @type="tel"]')->length === 1, 'Separate phone request editor');
 $assert($x->query('//details[contains(@class,"profile-license-update")]//form[@method="post" and @enctype="multipart/form-data" and @action="/EcoLot-LK/recycler/profile/license-update"]//input[@type="file" and @name="license_document" and @accept=".pdf,application/pdf" and @required and not(@disabled)]')->length === 1, 'Collapsible PDF upload preserved');
 $assert($x->query('//input[@name="requested_expiry_date" and @required and @min]')->length === 1, 'Expiry validation preserved');
-$assert($x->query('//button[@data-profile-unavailable and @disabled and @type="button"]')->length === 1, 'Capability submission remains unavailable');
-$assert(str_contains($html, 'visual drafts only') && str_contains($html, 'requests cannot be sent from this page'), 'Honest draft limitation');
+$assert($x->query('//form[@data-profile-form and @method="post"]')->length === 1, 'Capability modal has POST backend');
+$assert($x->query('//button[@data-profile-submit and @type="submit" and not(@disabled)]')->length === 1, 'Capability submission is available');
+$assert(str_contains($html, 'name="category_id"') && str_contains($html, 'data-category-id="1"'), 'Capability selected by ID');
 $assert(!str_contains($html, '100%'), 'No invented compliance percentage');
 $assert(str_contains($html, '1 Approved') && str_contains($html, '0 Approved'), 'Only recorded approvals counted');
 $activityHtml = $render(null, ['verification_status' => 'REJECTED'], [], [

@@ -608,6 +608,54 @@ if ($licenseStatus === 'VALID') {
     <?php endif; ?>
 
 
+    <?php require __DIR__ . '/recycler-licence-coverage.php'; ?>
+
+    <section class="details-card capability-change-requests">
+        <div class="details-section-header"><div>
+            <h2>Capability Change Requests</h2>
+            <p>Post-registration changes for <?= htmlspecialchars($companyName, ENT_QUOTES, 'UTF-8') ?>. Approval applies the recorded proposal only when current capability data still matches its snapshot.</p>
+        </div></div>
+        <?php if (empty($capabilityRequests)): ?>
+            <p>No capability change requests are recorded.</p>
+        <?php else: ?>
+            <?php foreach ($capabilityRequests as $change): ?>
+                <details class="capability-change-request" <?= $change['request_status'] === 'PENDING' ? 'open' : '' ?>>
+                    <summary><?= htmlspecialchars($change['category_name'] . ' — ' . $change['request_type'] . ' — ' . $change['request_status'], ENT_QUOTES, 'UTF-8') ?></summary>
+                    <dl class="details-grid">
+                        <div><dt>Previous capability status</dt><dd><?= htmlspecialchars($change['previous_capability_status'] ?? 'No capability', ENT_QUOTES, 'UTF-8') ?></dd></div>
+                        <div><dt>Previous high-risk permission</dt><dd><?= $change['previous_can_handle_high_risk'] === null ? 'Not applicable' : ((int) $change['previous_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?></dd></div>
+                        <div><dt>Proposed status</dt><dd><?= $change['request_type'] === 'DEACTIVATE' ? 'INACTIVE' : 'APPROVED' ?></dd></div>
+                        <div><dt>Requested high-risk permission</dt><dd><?= $change['requested_can_handle_high_risk'] === null ? 'Unchanged' : ((int) $change['requested_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?></dd></div>
+                        <div><dt>Request reason</dt><dd><?= htmlspecialchars($change['request_reason'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+                        <div><dt>Submitted</dt><dd><?= htmlspecialchars($change['submitted_at'], ENT_QUOTES, 'UTF-8') ?></dd></div>
+                        <?php if ($change['reviewed_at'] !== null): ?>
+                            <div><dt>Reviewed</dt><dd><?= htmlspecialchars($change['reviewed_at'], ENT_QUOTES, 'UTF-8') ?> by Administrator #<?= (int) $change['reviewed_by_admin_user_id'] ?></dd></div>
+                            <div><dt>Review note</dt><dd><?= htmlspecialchars($change['review_note'] ?? 'No additional comments.', ENT_QUOTES, 'UTF-8') ?></dd></div>
+                        <?php endif; ?>
+                    </dl>
+                    <?php if ($change['request_status'] === 'PENDING'): ?>
+                        <p>Permission reductions are blocked while this category has unresolved bids or unfinished winning handovers. No existing bid or handover will be rewritten.</p>
+                        <div class="final-review-actions">
+                            <form method="post" action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/capability-change/<?= (int) $change['request_id'] ?>/review" class="verification-reject-form">
+                                <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="hidden" name="decision" value="APPROVE">
+                                <label class="form-group">Approval note (optional)<textarea name="review_note" rows="2" maxlength="500"></textarea></label>
+                                <label><input type="checkbox" required> I have reviewed the previous and proposed permissions and confirm this change.</label>
+                                <button type="submit" class="action-btn approve-btn">Approve Capability Change</button>
+                            </form>
+                            <form method="post" action="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification/<?= (int) $recycler['recycler_id'] ?>/capability-change/<?= (int) $change['request_id'] ?>/review" class="verification-reject-form">
+                                <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="hidden" name="decision" value="REJECT">
+                                <label class="form-group">Rejection reason<textarea name="review_note" rows="2" minlength="3" maxlength="500" required></textarea></label>
+                                <button type="submit" class="action-btn reject-btn">Reject Capability Change</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </details>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </section>
+
     <!-- C. Capabilities -->
     <section class="details-card">
 

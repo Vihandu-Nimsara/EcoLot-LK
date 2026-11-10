@@ -57,6 +57,7 @@ return static function (Router $router, array $app): void {
         $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
         $router->get('/profile', 'RecyclerController@profile');
         $router->post('/profile/contact', 'RecyclerController@updateProfileContact');
+        $router->post('/profile/capabilities/request', 'RecyclerController@requestCapabilityChange');
         $router->post('/profile/phone/request', 'RecyclerController@requestPhoneChange');
         $router->post('/profile/phone/verify', 'RecyclerController@verifyPhoneChange');
         $router->post('/profile/phone/resend', 'RecyclerController@resendPhoneChange');
@@ -106,6 +107,12 @@ return static function (Router $router, array $app): void {
         $router->post('/recycler-verification/{id}/license-update/{requestId}/review', 'AdminController@reviewRecyclerLicenseUpdate');
         $router->post('/recycler-verification/{id}/license-review', 'AdminController@reviewRecyclerLicense');
         $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
+        $router->post('/recycler-verification/{id}/capability-change/{requestId}/review', 'AdminController@reviewCapabilityChange');
+        $router->post('/recycler-verification/{id}/licence-coverage', 'AdminController@proposeLicenceCoverage');
+        $router->post('/recycler-verification/{id}/licence-coverage/{coverageId}/review', 'AdminController@reviewLicenceCoverage');
+        $router->post('/recycler-verification/{id}/lot-activities', 'AdminController@setLicenceLotActivities');
+        $router->get('/recycler-verification/{id}/licence-source/{licenseId}/{version}/document', 'AdminController@viewLicenceSource');
+        $router->get('/recycler-verification/{id}/licence-evidence/{evidenceId}/document', 'AdminController@viewLicenceEvidence');
         $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');
     });
 };

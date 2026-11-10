@@ -47,6 +47,9 @@ final class RecyclerLicenseUpdateReviewService
         $this->db->beginTransaction();
 
         try {
+            $authorization = new RecyclerLicenceAuthorization($this->db);
+            $authorization->requireAdmin($adminId);
+            $authorization->lockOwner($recyclerId);
             // Use the same parent-first locking strategy
             // as the recycler's submission workflow.
             $recyclerStmt = $this->db->prepare(
@@ -324,6 +327,11 @@ final class RecyclerLicenseUpdateReviewService
                             : null
                     ]);
                 }
+            }
+
+            if ($decision === 'APPROVE') {
+                $current = $authorization->currentLicense($recyclerId, true);
+                (new RecyclerLicenceCoverageService($this->db))->capture($recyclerId, (int) $current['license_id'], (int) $current['document_version'], $adminId);
             }
 
             // Finalize the review for either decision.

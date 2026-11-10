@@ -8,6 +8,7 @@ final class ELot extends Model
 
     public static function eligibilitySql(): string
     {
+        $coverage=RecyclerLicenceAuthorization::lotSql('cap.recycler_user_id');
         return "l.lot_status = 'OPEN_FOR_BIDDING'
             AND l.bidding_open_at IS NOT NULL AND l.bidding_close_at IS NOT NULL
             AND CURRENT_TIMESTAMP >= l.bidding_open_at AND CURRENT_TIMESTAMP < l.bidding_close_at
@@ -22,7 +23,8 @@ final class ELot extends Model
                     SELECT 1 FROM e_lot_items eli
                     JOIN collection_record_items cri ON cri.record_item_id = eli.record_item_id
                     JOIN request_items ri ON ri.request_item_id = cri.request_item_id
-                    WHERE eli.e_lot_id = l.e_lot_id AND ri.applied_risk_level = 'HIGH')))";
+                    WHERE eli.e_lot_id = l.e_lot_id AND (ri.applied_risk_level = 'HIGH' OR cri.actual_risk_level = 'HIGH')))
+                AND ($coverage))";
     }
 
     public static function eligibilityParameters(int $userId): array
@@ -45,6 +47,7 @@ final class ELot extends Model
 
     public function eligibleForRecycler(int $userId): array
     {
+        if (!$this->hasIntactEvidence($userId)) return [];
         return $this->query($this->recyclerSelect() . ' HAVING can_bid = 1 ORDER BY l.bidding_close_at, l.e_lot_id',
             self::eligibilityParameters($userId) + ['own_user' => $userId])->fetchAll();
     }
@@ -53,6 +56,7 @@ final class ELot extends Model
     {
         $row = $this->query($this->recyclerSelect() . ' WHERE l.e_lot_id = :lot HAVING can_bid = 1 OR bid_id IS NOT NULL',
             self::eligibilityParameters($userId) + ['own_user' => $userId, 'lot' => $lotId])->fetch();
+        if ($row && !$this->hasIntactEvidence($userId)) $row['can_bid']=0;
         return $row ?: null;
     }
 
@@ -74,7 +78,14 @@ final class ELot extends Model
 
     public function isEligible(int $lotId, int $userId): bool
     {
+        if (!$this->hasIntactEvidence($userId)) return false;
         return (bool) $this->query('SELECT 1 FROM e_lots l WHERE l.e_lot_id = :lot AND ' . self::eligibilitySql(),
             self::eligibilityParameters($userId) + ['lot' => $lotId])->fetchColumn();
+    }
+
+    private function hasIntactEvidence(int $userId): bool
+    {
+        try { (new RecyclerLicenceAuthorization($this->db))->requireCurrentEvidence($userId); return true; }
+        catch (DomainException) { return false; }
     }
 }

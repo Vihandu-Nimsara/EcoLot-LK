@@ -66,6 +66,7 @@ final class RecyclerBidService
             if (!$lot) throw new DomainException('E-Lot not found.', 404);
             $this->requireOpenWindow($lot);
             $this->lockEligibility($userId, $lot);
+            (new RecyclerLicenceAuthorization($this->db))->requireBid($userId, $lotId);
             if (!$this->lots->isEligible($lotId, $userId)) throw new DomainException('You are not currently eligible to bid on this E-Lot, or its bidding window is closed.');
             if ($this->bids->findForRecyclerAndLot($userId, $lotId)) throw new DomainException('You already have a bid for this E-Lot. Withdrawn bids cannot be replaced.');
             return $this->bids->createSubmittedBid($lotId, $userId, $amount);
@@ -101,6 +102,7 @@ final class RecyclerBidService
                 $this->bids->withdrawOwnedSubmittedBid($bidId, $userId);
             } else {
                 $this->lockEligibility($userId, $lot);
+                (new RecyclerLicenceAuthorization($this->db))->requireBid($userId, $lotId);
                 if (!$this->lots->isEligible($lotId, $userId)) throw new DomainException('You are not currently eligible to revise this bid, or its bidding window is closed.');
                 if ($amount === (string) $bid['bid_amount']) throw new DomainException('Enter a different amount to revise your bid.');
                 $this->bids->reviseOwnedSubmittedBid($bidId, $userId, $amount);

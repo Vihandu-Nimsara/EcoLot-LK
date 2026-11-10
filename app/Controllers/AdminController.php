@@ -72,6 +72,13 @@ class AdminController extends Controller
             'license' => $license,
             'pendingLicenseUpdate' => $pendingLicenseUpdate,
             'capabilities' => $capabilities,
+            'capabilityRequests' => (new RecyclerCapabilityChangeRequest())->historyForRecycler($recyclerId),
+            'licenceCoverage' => (new RecyclerLicenceCoverage())->history($recyclerId),
+            'coverageAudit' => (new RecyclerLicenceCoverage())->reviewHistory($recyclerId),
+            'coverageSource' => (new RecyclerLicenceAuthorization(Database::connection()))->currentLicense($recyclerId),
+            'coverageCategories' => (new WasteCategory())->all(),
+            'licenceConflicts' => (new RecyclerLicenceCoverage())->conflicts($recyclerId),
+            'coverageLots' => (new RecyclerLicenceCoverage())->lotChoices(),
             'activities' => $activities,
             'csrfToken' => Csrf::token(),
         ]);
@@ -135,7 +142,7 @@ class AdminController extends Controller
 
         } catch (PDOException $e) {
             $_SESSION['error'] = 'Recycler review could not be completed.';
-        } catch (InvalidArgumentException | RuntimeException $e) {
+        } catch (InvalidArgumentException | DomainException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
         } catch (Throwable $e) {
             $_SESSION['error'] = 'Recycler review could not be completed.';
@@ -229,7 +236,7 @@ class AdminController extends Controller
 
             $_SESSION['error'] = 'License review could not be completed.';
         
-        } catch (InvalidArgumentException | RuntimeException $e) {
+        } catch (InvalidArgumentException | DomainException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
         
         } catch (Throwable $e) {
@@ -335,7 +342,7 @@ class AdminController extends Controller
             $_SESSION['error'] =
                 'Licence update review could not be completed.';
 
-        } catch (InvalidArgumentException | RuntimeException $e) {
+        } catch (InvalidArgumentException | DomainException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
 
         } catch (Throwable $e) {
@@ -361,6 +368,99 @@ class AdminController extends Controller
         );
 
         exit;
+    }
+
+    public function proposeLicenceCoverage(string $id): void { $this->handleLicenceCoverage($id,'propose'); }
+    public function reviewLicenceCoverage(string $id,string $coverageId): void { $this->handleLicenceCoverage($id,'review',$coverageId); }
+    public function setLicenceLotActivities(string $id): void { $this->handleLicenceCoverage($id,'lot'); }
+
+    private function handleLicenceCoverage(string $id,string $action,string $coverageId='0'): void
+    {
+        Auth::requireRole('ADMIN');
+        $owner=filter_var($id,FILTER_VALIDATE_INT);
+        if ($owner===false || $owner<=0) { http_response_code(404); return; }
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo '403 Invalid or expired form.'; return; }
+        try {
+            $service=new RecyclerLicenceCoverageService(); $admin=(int)Auth::id();
+            if ($action==='propose') {
+                $input=[];
+                foreach (['license_id','document_version','category_id','activity_type','covers_high_risk','authorization_basis','waste_description','document_waste_code','evidence_reference','licence_conditions'] as $key) $input[$key]=$this->postString($key);
+                $service->propose($owner,$admin,$input);
+                Session::put('success','Coverage proposal recorded. Explicit verification is still required.');
+            } elseif ($action==='review') {
+                $coverage=filter_var($coverageId,FILTER_VALIDATE_INT);
+                if ($coverage===false || $coverage<=0) throw new DomainException('Invalid coverage record.');
+                if ($this->postString('decision')==='VERIFIED' && $this->postString('evidence_confirmed')!=='1') throw new DomainException('Confirm that you inspected the specific document and supporting authorization.');
+                $service->review($owner,$coverage,$admin,$this->postString('decision'),$this->postString('review_note'));
+                Session::put('success','Licence coverage decision recorded. Existing bids and handovers were preserved.');
+            } else {
+                $lot=filter_var($this->postString('e_lot_id'),FILTER_VALIDATE_INT);
+                $version=filter_var($this->postString('requirement_version'),FILTER_VALIDATE_INT);
+                $activities=$_POST['required_activities']??null;
+                if ($lot===false || $version===false || !is_array($activities)) throw new DomainException('Select a valid E-Lot and its required activities.');
+                $service->setLotActivities($lot,$admin,$version,$activities,$this->postString('review_note'));
+                Session::put('success','E-Lot activity requirements recorded. Existing bids were not changed.');
+            }
+        } catch (DomainException $error) { Session::put('error',$error->getMessage()); }
+        catch (Throwable $error) {
+            error_log('Licence coverage action failed category=' . $error::class);
+            Session::put('error','Unable to record this authorization decision. Refresh and try again.');
+        }
+        $this->redirect('/admin/recycler-verification/' . $owner);
+    }
+
+    public function viewLicenceSource(string $id,string $licenseId,string $version): void
+    {
+        $this->serveCoveragePdf($id,$licenseId,$version,false);
+    }
+
+    public function viewLicenceEvidence(string $id,string $evidenceId): void
+    {
+        $this->serveCoveragePdf($id,$evidenceId,'0',true);
+    }
+
+    private function serveCoveragePdf(string $id,string $sourceId,string $version,bool $historical): void
+    {
+        Auth::requireRole('ADMIN');
+        $owner=filter_var($id,FILTER_VALIDATE_INT); $source=filter_var($sourceId,FILTER_VALIDATE_INT);
+        if ($owner===false || $owner<=0 || $source===false || $source<=0) { http_response_code(404); return; }
+        $db=Database::connection();
+        try { (new RecyclerLicenceAuthorization($db))->requireAdmin((int)Auth::id()); }
+        catch (DomainException) { http_response_code(403); return; }
+        $sql=$historical ? 'SELECT document_path,document_sha256 FROM recycler_license_evidence WHERE recycler_user_id=? AND evidence_id=?'
+            : 'SELECT document_path FROM recycler_licenses WHERE recycler_user_id=? AND license_id=? AND document_version=?';
+        $s=$db->prepare($sql); $s->execute($historical ? [$owner,$source] : [$owner,$source,(int)$version]); $row=$s->fetch();
+        $path=$row ? (new RecyclerLicenseDocumentValidator())->validatedPath($row['document_path']) : null;
+        if ($path===null || ($historical && !hash_equals($row['document_sha256'],(string)hash_file('sha256',$path)))) { http_response_code(404); return; }
+        header('Content-Type: application/pdf'); header('X-Content-Type-Options: nosniff'); header('Cache-Control: private, no-store');
+        header('Content-Disposition: inline; filename="cea-evidence.pdf"'); header('Content-Length: ' . filesize($path));
+        readfile($path);
+    }
+
+    public function reviewCapabilityChange(string $id, string $requestId): void
+    {
+        Auth::requireRole('ADMIN');
+        $owner = filter_var($id, FILTER_VALIDATE_INT);
+        $request = filter_var($requestId, FILTER_VALIDATE_INT);
+        if ($owner === false || $owner <= 0 || $request === false || $request <= 0) {
+            http_response_code(404);
+            return;
+        }
+        if (!$this->hasValidCsrfToken()) {
+            http_response_code(403);
+            echo '403 Invalid or expired form. Please reload the page.';
+            return;
+        }
+        try {
+            (new RecyclerCapabilityChangeReviewService())->review($owner, $request, (int) Auth::id(), $this->postString('decision'), $this->postString('review_note'));
+            Session::put('success', 'Capability change request reviewed successfully.');
+        } catch (DomainException $error) {
+            Session::put('error', $error->getMessage());
+        } catch (Throwable $error) {
+            error_log('Capability change review failed category=' . $error::class);
+            Session::put('error', 'Unable to review this request. Please refresh and try again.');
+        }
+        $this->redirect('/admin/recycler-verification/' . $owner);
     }
 
     public function reviewRecyclerCapability(string $id): void
@@ -455,7 +555,7 @@ class AdminController extends Controller
             $_SESSION['error'] =
                 'Capability review could not be completed.';
 
-        } catch (InvalidArgumentException | RuntimeException $e) {
+        } catch (InvalidArgumentException | DomainException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
 
         } catch (Throwable $e) {
@@ -575,7 +675,7 @@ class AdminController extends Controller
             $_SESSION['error'] =
                 'Authorized activity review could not be completed.';
 
-        } catch (InvalidArgumentException | RuntimeException $e) {
+        } catch (InvalidArgumentException | DomainException | RuntimeException $e) {
             $_SESSION['error'] = $e->getMessage();
 
         } catch (Throwable $e) {

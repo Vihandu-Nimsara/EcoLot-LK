@@ -23,6 +23,9 @@ final class RecyclerApprovalService
         $this->db->beginTransaction();
 
         try {
+            $authorization = new RecyclerLicenceAuthorization($this->db);
+            $authorization->requireAdmin($adminId);
+            $authorization->lockOwner($recyclerId);
             $stmt = $this->db->prepare(
                 "SELECT user_id, verification_status
                 FROM authorized_recyclers
@@ -48,6 +51,7 @@ final class RecyclerApprovalService
             }
 
             if ($decision === 'APPROVE') {
+                $authorization->requireFinalApproval($recyclerId);
                 $licenseStmt = $this->db->prepare(
                     "SELECT 
                         license_id,

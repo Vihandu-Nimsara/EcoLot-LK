@@ -177,7 +177,7 @@ class RecyclerController extends Controller
                 FROM recycler_licenses
                 WHERE recycler_user_id = :recycler_user_id
                 AND license_status = 'VALID'
-                ORDER BY expiry_date DESC, license_id DESC
+                ORDER BY submitted_at DESC, license_id DESC
                 LIMIT 1"
             );
 
@@ -220,6 +220,12 @@ class RecyclerController extends Controller
                 'capabilities' =>
                     $recycler->capabilitiesForRecycler($userId),
 
+                'capabilityOptions' => (new RecyclerCapabilityChangeService($db))->options($userId),
+                'capabilityRequests' => (new RecyclerCapabilityChangeRequest($db))->historyForRecycler($userId),
+                'capabilityFormInput' => Session::pullFlash('capability_form_input', []),
+                'licenceCoverage' => (new RecyclerLicenceCoverage($db))->history($userId),
+                'licenceConflicts' => (new RecyclerLicenceCoverage($db))->conflicts($userId),
+
                 'activities' =>
                     (new RecyclerAuthorizedActivity())
                         ->forRecycler($userId),
@@ -228,6 +234,31 @@ class RecyclerController extends Controller
                 'pendingLicenseUpdate' => $pendingLicenseUpdate,
             ]);
         });
+    }
+
+    public function requestCapabilityChange(): void
+    {
+        Auth::requireRole('RECYCLER');
+        if (!$this->hasValidCsrfToken()) {
+            Session::flash('profile_error', 'Your session expired. Please reload the page and try again.');
+            $this->redirect('/recycler/profile');
+        }
+        $category = filter_var($this->postString('category_id'), FILTER_VALIDATE_INT);
+        $type = $this->postString('request_type');
+        $risk = $this->postString('requested_can_handle_high_risk');
+        $reason = $this->postString('request_reason');
+        try {
+            if ($category === false || $category <= 0 || !in_array($risk, ['', '0', '1'], true)) throw new DomainException('Select a valid category and high-risk permission.');
+            (new RecyclerCapabilityChangeService())->submit((int) Auth::id(), $category, $type, $risk === '' ? null : (int) $risk, $reason);
+            Session::flash('profile_success', 'Capability change submitted for Administrator review. Your current capabilities are unchanged.');
+        } catch (DomainException $error) {
+            Session::flash('profile_error', $error->getMessage());
+            Session::flash('capability_form_input', ['category_id' => (int) $category, 'request_type' => $type, 'risk' => $risk, 'reason' => mb_substr($reason, 0, 500, 'UTF-8')]);
+        } catch (Throwable $error) {
+            error_log('Capability request failed category=' . $error::class);
+            Session::flash('profile_error', 'Unable to submit the capability request. Please try again later.');
+        }
+        $this->redirect('/recycler/profile');
     }
 
     protected function phoneChangeService(): RecyclerPhoneChangeService

@@ -92,6 +92,29 @@
 }
 
 /* Profile-only additions to the existing Recycler dialog design. */
+.recycler-profile-page .profile-capability-history {
+    margin-top: 20px;
+}
+.recycler-profile-page .profile-capabilities td > .dialog-helper {
+    display: block;
+    margin-top: 6px;
+}
+.recycler-profile-page .profile-capability-history summary {
+    cursor: pointer;
+    color: var(--recycler-green-800);
+    font-weight: 600;
+}
+.recycler-profile-page .profile-capability-request {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--recycler-border);
+    overflow-wrap: anywhere;
+}
+.recycler-profile-page .profile-capability-request h3 {
+    font-size: .9375rem;
+}
+.recycler-profile-dialog [data-profile-risk-field][hidden] { display: none; }
+.recycler-profile-dialog .dialog-field select { min-width: 0; max-width: 100%; }
+
 .recycler-profile-page .profile-phone-actions {
     display: flex;
     flex-wrap: wrap;

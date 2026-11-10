@@ -2,6 +2,33 @@
     width: 100%;
     min-width: 0;
 }
+.recycler-details-page .licence-coverage-section { overflow-wrap: anywhere; }
+.recycler-details-page .licence-coverage-section .details-grid > div { min-width: 0; }
+.recycler-details-page .licence-coverage-section dd { margin-left: 0; }
+.recycler-details-page .licence-coverage-section fieldset label { display: block; margin: 8px 0; }
+.recycler-details-page .licence-coverage-section .action-btn { max-width: 100%; white-space: normal; }
+
+/* Post-registration capability requests stay inside this details page. */
+.recycler-details-page .capability-change-request {
+    padding: 18px 0;
+    border-top: 1px solid var(--admin-border-soft);
+    overflow-wrap: anywhere;
+}
+.recycler-details-page .capability-change-request summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+.recycler-details-page .capability-change-request .details-grid > div {
+    min-width: 0;
+}
+.recycler-details-page .capability-change-request dd {
+    margin: 6px 0 0;
+}
+.recycler-details-page .capability-change-request textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
 .recycler-details-page button:disabled {
     cursor: not-allowed;

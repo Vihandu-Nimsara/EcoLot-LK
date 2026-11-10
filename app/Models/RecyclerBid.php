@@ -20,7 +20,7 @@ final class RecyclerBid extends Model
 
     public function listForRecycler(int $recyclerUserId): array
     {
-        return $this->query("SELECT b.bid_id, b.bid_amount, b.bid_status, b.submitted_at,
+        $rows = $this->query("SELECT b.bid_id, b.bid_amount, b.bid_status, b.submitted_at,
             l.e_lot_id, l.lot_code, l.title, l.bidding_close_at, c.category_name,
             (b.bid_status = 'SUBMITTED' AND (" . ELot::eligibilitySql() . ")) AS can_revise,
             (b.bid_status = 'SUBMITTED' AND l.lot_status = 'OPEN_FOR_BIDDING'
@@ -29,6 +29,9 @@ final class RecyclerBid extends Model
             FROM recycler_bids b JOIN e_lots l ON l.e_lot_id = b.e_lot_id
             JOIN waste_categories c ON c.category_id = l.category_id
             WHERE b.recycler_user_id = :owner ORDER BY b.submitted_at DESC, b.bid_id DESC", ELot::eligibilityParameters($recyclerUserId) + ['owner' => $recyclerUserId])->fetchAll();
+        try { (new RecyclerLicenceAuthorization($this->db))->requireCurrentEvidence($recyclerUserId); }
+        catch (DomainException) { foreach ($rows as &$row) $row['can_revise'] = 0; unset($row); }
+        return $rows;
     }
 
     public function listWinningForRecycler(int $recyclerUserId): array

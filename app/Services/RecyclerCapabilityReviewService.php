@@ -50,6 +50,9 @@ final class RecyclerCapabilityReviewService
         $this->db->beginTransaction();
 
         try {
+            $authorization = new RecyclerLicenceAuthorization($this->db);
+            $authorization->requireAdmin($adminId);
+            $authorization->lockOwner($recyclerId);
             // Lock the Recycler record first.
             $recyclerStmt = $this->db->prepare(
                 "SELECT user_id, verification_status
@@ -106,6 +109,10 @@ final class RecyclerCapabilityReviewService
                 throw new RuntimeException(
                     'Capability has already been reviewed.'
                 );
+            }
+
+            if ($decision === 'APPROVE') {
+                $authorization->requireCapability($recyclerId, $categoryId, (int) $capability['can_handle_high_risk'], true);
             }
 
             $newStatus = $decision === 'APPROVE'
