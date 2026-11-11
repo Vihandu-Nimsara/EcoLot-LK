@@ -1,347 +1,67 @@
+<?php
+$escape = static fn ($value): string => htmlspecialchars($value === null ? 'Not recorded' : (string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+?>
 <section class="collection-records-page">
-
-    <div class="page-toolbar">
-
-        <div>
-            <h1>Collection Records</h1>
-
-            <p>
-                Review collector submissions grouped by collection schedule and verify completed collections.
-            </p>
-        </div>
-
-    </div>
-
+    <div class="page-toolbar"><div><h1>Collection Records</h1><p>Review submissions for schedules you created. Collection decisions are saved to the database.</p></div></div>
+    <?php foreach ($errors as $error): ?><p class="officer-form-error" role="alert"><?= $escape($error) ?></p><?php endforeach; ?>
+    <?php if ($notice): ?><p role="status" class="collection-review-notice"><?= $escape($notice) ?></p><?php endif; ?>
     <section class="records-filter-card compact-filter-card">
-
-        <form class="records-filter-form" data-records-filter-form>
-
-            <div class="records-filter-grid">
-
-                <div class="form-group">
-
-                    <label for="campaign">
-                        Campaign
-                    </label>
-
-                    <select id="campaign" name="campaign">
-
-                        <option value="">
-                            All Campaigns
-                        </option>
-
-                        <option value="campaign-2">
-                            July E-Waste Collection Campaign — 7/2026
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="schedule">
-                        Collection Schedule
-                    </label>
-
-                    <select id="schedule" name="schedule">
-
-                        <option value="">
-                            All Schedules
-                        </option>
-
-                        <option value="SCH-0004">
-                            SCH-0004 — Rajagiriya — 23 Jul 2026
-                        </option>
-
-                        <option value="SCH-0003">
-                            SCH-0003 — Kollupitiya — 16 Jul 2026
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="verification-status">
-                        Verification Status
-                    </label>
-
-                    <select id="verification-status" name="verification_status">
-
-                        <option value="">
-                            All Statuses
-                        </option>
-
-                        <option value="PENDING">
-                            Pending Verification
-                        </option>
-
-                        <option value="VERIFIED">
-                            Verified
-                        </option>
-
-                    </select>
-
-                </div>
-
+        <form class="records-filter-form" method="get" action="<?= $escape($basePath . '/officer/collection-records') ?>">
+            <div class="form-group"><label for="verification-status">Verification Status</label>
+                <select id="verification-status" name="verification_status">
+                    <?php foreach (['' => 'All submitted collections', 'PENDING' => 'Pending verification', 'VERIFIED' => 'Verified', 'REJECTED' => 'Rejected'] as $value => $label): ?>
+                        <option value="<?= $escape($value) ?>" <?= $statusFilter === $value ? 'selected' : '' ?>><?= $escape($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-
-            <div class="filter-actions">
-
-                <button
-                    type="reset"
-                    class="secondary-btn">
-                    Clear
-                </button>
-
-                <button
-                    type="submit"
-                    class="primary-btn">
-                    Apply Filters
-                </button>
-
-            </div>
-
+            <div class="filter-actions"><button type="submit" class="primary-btn">Apply Filters</button><a class="secondary-btn" href="<?= $escape($basePath . '/officer/collection-records') ?>">Clear</a></div>
         </form>
-
     </section>
-
     <section class="records-list-card">
-
-        <div class="records-list-heading">
-
-            <div>
-
-                <h2>Schedule Collection Summary</h2>
-
-                <p>
-                    Each row summarizes collection records submitted for one area collection schedule.
-                </p>
-
-                <span class="record-result-count officer-result-count" data-record-result-count role="status" aria-live="polite">2 records shown</span>
-
-            </div>
-
-        </div>
-
-        <div class="records-table-wrapper">
-
-            <table class="records-table">
-
-                <thead>
-
-                    <tr>
-                        <th>Schedule &amp; Area</th>
-                        <th>Collection Date</th>
-                        <th>Progress</th>
-                        <th>Outstanding</th>
-                        <th>Total Weight</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-
-                </thead>
-
-                <tbody data-records-table-body>
-
-                    <tr
-                        data-record-id="CR-0009"
-                        data-campaign="campaign-2"
-                        data-schedule="SCH-0004"
-                        data-verification-status="PENDING"
-                    >
-
-                        <td>
-                            <strong>SCH-0004</strong>
-                            <span class="table-subtext">Rajagiriya</span>
-                        </td>
-
-                        <td>
-                            23 Jul 2026
-                        </td>
-
-                        <td>
-                            <strong>3 collected</strong>
-                            <span class="table-subtext">4 assigned · 1 partial</span>
-                        </td>
-
-                        <td>
-                            <strong>0 pending</strong>
-                            <span class="table-subtext">0 failed</span>
-                        </td>
-
-                        <td>
-                            31.50 kg
-                        </td>
-
-                        <td>
-
-                            <span class="verification-status pending">
-                                PENDING
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="record-action-btn primary-action">
-                                Review
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    <tr
-                        data-record-id="CR-0007"
-                        data-campaign="campaign-2"
-                        data-schedule="SCH-0003"
-                        data-verification-status="VERIFIED"
-                    >
-
-                        <td>
-                            <strong>SCH-0003</strong>
-                            <span class="table-subtext">Kollupitiya</span>
-                        </td>
-
-                        <td>
-                            16 Jul 2026
-                        </td>
-
-                        <td>
-                            <strong>2 collected</strong>
-                            <span class="table-subtext">2 assigned · 0 partial</span>
-                        </td>
-
-                        <td>
-                            <strong>0 pending</strong>
-                            <span class="table-subtext">0 failed</span>
-                        </td>
-
-                        <td>
-                            18.00 kg
-                        </td>
-
-                        <td>
-
-                            <span class="verification-status verified">
-                                VERIFIED
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="record-action-btn secondary-action">
-                                View
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <div class="records-empty-state officer-empty-state" data-records-empty-state hidden>
-            No collection records match the selected filters.
-        </div>
-
+        <div class="records-list-heading"><div><h2>Schedule Collection Summary</h2><span class="record-result-count officer-result-count"><?= count($collections) ?> records shown</span></div></div>
+        <?php if (!$collections): ?><p class="officer-empty-state">No submitted collections match this status.</p><?php else: ?>
+        <div class="records-table-wrapper"><table class="records-table"><thead><tr><th>Submission / Schedule</th><th>Area / Collection Date</th><th>Collector</th><th>Submitted</th><th>Requests</th><th>Status</th><th>Action</th></tr></thead><tbody>
+        <?php foreach ($collections as $collection): ?>
+            <tr><td>#<?= (int) $collection['schedule_collection_id'] ?><br>Schedule #<?= (int) $collection['schedule_id'] ?></td>
+                <td><?= $escape($collection['area_name']) ?><br><?= $escape($collection['collection_date']) ?></td>
+                <td><?= $escape($collection['collector_name']) ?></td><td><?= $escape($collection['submitted_at']) ?></td><td><?= (int) $collection['record_count'] ?></td>
+                <td><span class="verification-status <?= $escape(strtolower($collection['verification_status'])) ?>"><?= $escape($collection['verification_status']) ?></span></td>
+                <td><a class="record-action-btn secondary-btn" href="<?= $escape($basePath . '/officer/collection-records?' . http_build_query(['submission_id' => $collection['schedule_collection_id'], 'verification_status' => $statusFilter])) ?>">View Details</a></td></tr>
+        <?php endforeach; ?>
+        </tbody></table></div><?php endif; ?>
     </section>
-
-</section>
-
-<div class="record-dialog officer-dialog" data-record-dialog hidden>
-    <section
-        class="record-dialog-card officer-dialog-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="record-dialog-title"
-    >
-        <div class="record-dialog-header officer-dialog-header">
-            <div>
-                <span class="dialog-eyebrow" data-record-dialog-eyebrow>Collection record</span>
-                <h2 id="record-dialog-title" data-record-dialog-title>Review Collection Records</h2>
-                <p data-record-dialog-description>Check the submitted collection details before verification.</p>
-            </div>
-
-            <button
-                type="button"
-                class="record-dialog-close officer-dialog-close"
-                aria-label="Close collection record details"
-                data-close-record-dialog
-            >×</button>
-        </div>
-
+    <?php if ($selectedCollection !== null): $selected = $selectedCollection; ?>
+    <section class="records-list-card collection-review-details" id="collection-details">
+        <h2>Collection Details · Submission #<?= (int) $selected['schedule_collection_id'] ?></h2>
         <div class="record-summary-grid">
-            <div><span>Schedule</span><strong data-record-schedule></strong></div>
-            <div><span>Area</span><strong data-record-area></strong></div>
-            <div><span>Collection Date</span><strong data-record-date></strong></div>
-            <div><span>Total Weight</span><strong data-record-weight></strong></div>
+            <?php foreach (['schedule_id' => 'Schedule', 'area_name' => 'Area', 'collection_date' => 'Collection Date', 'collector_name' => 'Collector', 'verification_status' => 'Status', 'submitted_at' => 'Submitted', 'reviewer_name' => 'Reviewing Officer', 'verified_at' => 'Reviewed at'] as $key => $label): ?>
+                <div><span><?= $escape($label) ?></span><strong><?= $escape($selected[$key]) ?></strong></div>
+            <?php endforeach; ?>
         </div>
-
-        <div class="record-submissions-section">
-            <div class="record-submissions-heading">
-                <h3>Collector Submissions</h3>
-                <span data-submission-count></span>
-            </div>
-
-            <div class="record-submissions-table-wrapper">
-                <table class="record-submissions-table">
-                    <thead>
-                        <tr>
-                            <th>Request</th>
-                            <th>Resident</th>
-                            <th>Weight</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
-                    <tbody data-record-submissions></tbody>
-                </table>
-            </div>
-        </div>
-
-        <form class="record-review-form" data-record-review-form>
-            <div class="record-review-grid">
-                <div class="form-group">
-                    <label for="record-verification-status">Verification Status</label>
-                    <select id="record-verification-status" name="status" required>
-                        <option value="PENDING">PENDING VERIFICATION</option>
-                        <option value="VERIFIED">VERIFIED</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="record-verification-note">Verification Note</label>
-                    <textarea
-                        id="record-verification-note"
-                        name="note"
-                        rows="3"
-                        maxlength="240"
-                        placeholder="Add a short verification note"
-                    ></textarea>
-                </div>
-            </div>
-
-            <p class="record-form-error officer-form-error" role="alert" data-record-form-error hidden></p>
-
-            <div class="record-dialog-actions officer-dialog-actions">
-                <button type="button" class="secondary-btn" data-close-record-dialog>Cancel</button>
-                <button type="submit" class="primary-btn" data-record-submit>Save Verification</button>
-            </div>
+        <p class="collection-note"><strong>Officer note:</strong> <?= $escape($selected['verification_note']) ?></p>
+        <?php if (!$selected['records']): ?><p>No collection records were saved for this submission.</p><?php endif; ?>
+        <?php foreach ($selected['records'] as $record): ?>
+            <section class="record-submissions-section">
+                <h3>Request #<?= (int) $record['request_id'] ?> · <?= $escape($record['resident_name']) ?></h3>
+                <p><?= $escape($record['pickup_address']) ?></p>
+                <p>Pickup: <strong><?= $escape($record['pickup_result']) ?></strong> · Attempted: <?= $escape($record['pickup_attempted_at']) ?></p>
+                <p class="collection-note">Collector note: <?= $escape($record['collector_note']) ?></p>
+                <?php if (!$record['items']): ?><p>No request items are available. This submission cannot be verified.</p><?php else: ?>
+                <div class="record-submissions-table-wrapper"><table class="record-submissions-table"><thead><tr><th>Item / Category</th><th>Requested Qty</th><th>Actual Qty</th><th>Weight (kg)</th><th>Condition</th><th>Result</th><th>Risk</th><th>Notes</th></tr></thead><tbody>
+                <?php foreach ($record['items'] as $item): ?>
+                    <tr><td><?= $escape($item['item_name']) ?><br><?= $escape($item['category_name']) ?></td>
+                    <?php foreach (['requested_quantity', 'actual_quantity', 'actual_weight_kg', 'actual_condition', 'item_result', 'actual_risk_level', 'notes'] as $field): ?><td><?= $escape($item[$field]) ?></td><?php endforeach; ?></tr>
+                <?php endforeach; ?></tbody></table></div><?php endif; ?>
+            </section>
+        <?php endforeach; ?>
+        <?php if ($selected['verification_status'] === 'PENDING'): ?>
+        <form class="record-review-form" method="post" action="<?= $escape($basePath . '/officer/collection-records/' . $selected['schedule_collection_id'] . '/review') ?>" data-collection-review>
+            <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>">
+            <div class="form-group"><label for="verification-note">Officer note (required to reject; maximum 500 characters)</label>
+                <textarea id="verification-note" name="note" maxlength="500" rows="3"></textarea></div>
+            <div class="record-dialog-actions"><button class="primary-btn" type="submit" name="decision" value="VERIFIED">Verify</button><button class="secondary-btn" type="submit" name="decision" value="REJECTED">Reject</button></div>
         </form>
+        <?php else: ?><p>This decision is final. Submitted collection records are read-only.</p><?php endif; ?>
     </section>
-</div>
-
-<div class="record-toast officer-toast" role="status" aria-live="polite" data-record-toast hidden>
-    Collection record verification saved in this browser.
-</div>
+    <?php endif; ?>
+</section>
