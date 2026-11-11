@@ -1,497 +1,1778 @@
 (() => {
     'use strict';
 
-    const ELOTS_KEY = 'ecolot_elots_v2';
-    const VERIFIED_ITEMS_KEY = 'ecolot_verified_collection_items_v1';
+    // ============================================================
+    // CONFIGURATION
+    // ============================================================
 
-    const seedVerifiedItems = [
-        { id: 'VCI-001', recordItemId: 'CRI-201', requestId: 'REQ-00992', name: 'Laptop Computer', categoryId: 1, categoryName: 'Computers & IT Equipment', quantity: 3, actualWeightKg: 7.8, verifiedOn: '2026-08-14' },
-        { id: 'VCI-002', recordItemId: 'CRI-202', requestId: 'REQ-00994', name: 'Desktop Monitor', categoryId: 2, categoryName: 'Displays & Monitors', quantity: 2, actualWeightKg: 9.4, verifiedOn: '2026-08-14' },
-        { id: 'VCI-003', recordItemId: 'CRI-203', requestId: 'REQ-00995', name: 'Wi-Fi Router', categoryId: 3, categoryName: 'Networking Equipment', quantity: 7, actualWeightKg: 4.9, verifiedOn: '2026-08-15' },
-        { id: 'VCI-004', recordItemId: 'CRI-204', requestId: 'REQ-00997', name: 'Network Switch', categoryId: 3, categoryName: 'Networking Equipment', quantity: 3, actualWeightKg: 5.7, verifiedOn: '2026-08-15' },
-        { id: 'VCI-005', recordItemId: 'CRI-205', requestId: 'REQ-00999', name: 'Mobile Phone', categoryId: 4, categoryName: 'Mobile & Communication Devices', quantity: 12, actualWeightKg: 2.6, verifiedOn: '2026-08-16' },
-        { id: 'VCI-006', recordItemId: 'CRI-206', requestId: 'REQ-01001', name: 'Lithium-ion Battery Pack', categoryId: 5, categoryName: 'Batteries', quantity: 6, actualWeightKg: 8.3, verifiedOn: '2026-08-16' }
-    ];
+    const BASE = '/EcoLot-LK/public';
+
+    const API = `${BASE}/collector/e-lots`;
+
+    const SELECTORS = {
+        page: '[data-collector-page="elots"]',
+        modal: '#collector-elot-modal',
+        modalBody: '#collector-elot-modal-body',
+        modalTitle: '#collector-elot-modal-title',
+        modalDescription: '#collector-elot-modal-description',
+        verifiedRows: '#collector-verified-item-rows',
+        lotRows: '#collector-elot-rows',
+        lotEmpty: '#collector-elot-empty',
+        statusFilter: '#collector-elot-status-filter',
+        createButton: '#collector-create-elot'
+    };
+
+    // ============================================================
+    // APPLICATION STATE
+    // ============================================================
 
     let activeLotId = null;
+
+    let activeLot = null;
+
+    let selectedItems = new Set();
+
+    let currentFormItems = [];
+
+    let requestSequence = 0;
+
     let modalReturnFocus = null;
 
-    const escapeHtml = (value) => String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    let busy = false;
 
-    const getJson = (key, fallback) => {
-        try {
-            const parsed = JSON.parse(localStorage.getItem(key));
-            return parsed ?? fallback;
-        } catch (error) {
-            return fallback;
-        }
+    // ============================================================
+    // DATA FROM PHP
+    // ============================================================
+
+    const poolData = Array.isArray(window.COLLECTOR_POOL)
+        ? window.COLLECTOR_POOL
+        : [];
+
+    const lotData = Array.isArray(window.COLLECTOR_LOTS)
+        ? window.COLLECTOR_LOTS
+        : [];
+
+    const categoryData = Array.isArray(
+        window.COLLECTOR_CATEGORIES
+    )
+        ? window.COLLECTOR_CATEGORIES
+        : [];
+
+    // ============================================================
+    // GENERAL HELPERS
+    // ============================================================
+
+    const $ = selector => document.querySelector(selector);
+
+    const escapeHtml = value => {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
     };
 
-    const setJson = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+    const number = value => {
+        const result = Number(value);
 
-    const ensureVerifiedItems = () => {
-        const existing = getJson(VERIFIED_ITEMS_KEY, null);
-        if (!Array.isArray(existing) || !existing.length) {
-            setJson(VERIFIED_ITEMS_KEY, seedVerifiedItems);
-            return [...seedVerifiedItems];
-        }
-        return existing;
+        return Number.isFinite(result)
+            ? result
+            : 0;
     };
 
-    const normalizeLot = (raw, index) => {
-        const id = raw.id || raw.eLotId || raw.elot_id || raw.elotCode || `EL-C-${String(index + 1).padStart(3, '0')}`;
-        const status = raw.status || raw.lotStatus || raw.lot_status || 'DRAFT';
-        const itemIds = Array.isArray(raw.itemIds)
-            ? raw.itemIds
-            : Array.isArray(raw.items)
-                ? raw.items.map((item) => typeof item === 'string' ? item : (item.id || item.itemId || item.verifiedItemId)).filter(Boolean)
-                : [];
+    const formatWeight = value => {
+        return `${number(value).toFixed(2)} kg`;
+    };
+
+    const formatDate = value => {
+        if (!value) {
+            return '—';
+        }
+
+        const date = new Date(
+            String(value).replace(' ', 'T')
+        );
+
+        if (Number.isNaN(date.getTime())) {
+            return '—';
+        }
+
+        return new Intl.DateTimeFormat('en-LK', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }).format(date);
+    };
+
+    const csrfToken = () => {
+        return (
+            $('[data-elot-csrf]')?.dataset.elotCsrf ||
+            $('meta[name="csrf-token"]')
+                ?.getAttribute('content') ||
+            ''
+        );
+    };
+
+    const statusLabel = status => {
+        const labels = {
+            DRAFT: 'Draft',
+            PENDING_VERIFICATION: 'Pending Verification',
+            REJECTED: 'Rejected',
+            OPEN_FOR_BIDDING: 'Open for Bidding',
+            AWARDED: 'Awarded',
+            PROCESSING: 'Processing',
+            COMPLETED: 'Completed',
+            CANCELLED: 'Cancelled'
+        };
+
+        return labels[status] ||
+            String(status || '').replaceAll('_', ' ');
+    };
+
+    const statusClass = status => {
+        const classes = {
+            DRAFT: 'draft',
+            PENDING_VERIFICATION: 'pending',
+            REJECTED: 'rejected',
+            OPEN_FOR_BIDDING: 'approved',
+            AWARDED: 'approved',
+            PROCESSING: 'pending',
+            COMPLETED: 'approved',
+            CANCELLED: 'rejected'
+        };
+
+        return classes[status] || 'pending';
+    };
+
+    // ============================================================
+    // NORMALIZE VERIFIED ITEMS
+    // ============================================================
+
+    const getVerifiedItems = () => {
+        return poolData.map(item => {
+            const allocatedLotId =
+                item.allocated_lot_id ?? null;
+
+            const allocated =
+                number(item.is_allocated) === 1 ||
+                (
+                    allocatedLotId !== null &&
+                    allocatedLotId !== ''
+                );
+
+            return {
+                id: String(item.record_item_id),
+                name: String(item.item_name || ''),
+                categoryId: number(item.category_id),
+                categoryName: String(
+                    item.category_name || ''
+                ),
+                quantity: number(item.actual_quantity),
+                weight: number(item.actual_weight_kg),
+                verifiedAt: item.verified_at || '',
+                allocated,
+                allocatedLotId:
+                    allocatedLotId === null
+                        ? null
+                        : String(allocatedLotId)
+            };
+        });
+    };
+
+    // ============================================================
+    // NORMALIZE E-LOTS
+    // ============================================================
+
+    const getLots = () => {
+        return lotData.map(lot => ({
+            id: String(lot.e_lot_id),
+            code: String(lot.lot_code || ''),
+            title: String(lot.title || ''),
+            categoryId: number(lot.category_id),
+            categoryName: String(
+                lot.category_name || ''
+            ),
+            status: String(lot.lot_status || 'DRAFT'),
+            itemCount: number(lot.item_count),
+            weight: number(lot.total_weight_kg),
+            createdAt: lot.created_at || ''
+        }));
+    };
+
+    // ============================================================
+    // NORMALIZE CATEGORIES
+    // ============================================================
+
+    const getCategories = () => {
+        return categoryData.map(category => ({
+            id: number(category.category_id),
+            name: String(category.category_name || '')
+        }));
+    };
+
+    // ============================================================
+    // VERIFIED ITEM AVAILABILITY
+    // ============================================================
+
+    const itemAvailability = item => {
+        if (item.allocated) {
+            return {
+                label: 'Allocated',
+                className: 'allocated'
+            };
+        }
+
+        const modal = $(SELECTORS.modal);
+
+        if (
+            modal &&
+            !modal.hidden &&
+            selectedItems.has(item.id)
+        ) {
+            return {
+                label: 'Selected',
+                className: 'selected'
+            };
+        }
+
         return {
-            ...raw,
-            id,
-            name: raw.name || raw.title || raw.elotName || id,
-            description: raw.description || '',
-            categoryId: Number(raw.categoryId || raw.category_id || 0) || null,
-            categoryName: raw.categoryName || raw.category || 'Unspecified',
-            itemIds,
-            status,
-            createdAt: raw.createdAt || raw.created_at || new Date().toISOString(),
-            submittedAt: raw.submittedAt || raw.submitted_at || null
+            label: 'Available',
+            className: 'available'
         };
     };
 
-    const getLots = () => {
-        const raw = getJson(ELOTS_KEY, []);
-        if (!Array.isArray(raw)) return [];
-        return raw.map(normalizeLot);
-    };
-
-    const saveLots = (lots) => setJson(ELOTS_KEY, lots);
-    const getVerifiedItems = () => ensureVerifiedItems();
-
-    const formatDate = (value) => {
-        if (!value) return '—';
-        const date = new Date(value.includes('T') ? value : `${value}T00:00:00`);
-        return new Intl.DateTimeFormat('en-LK', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
-    };
-
-    const statusLabel = (status) => ({
-        DRAFT: 'Draft',
-        PENDING_VERIFICATION: 'Pending Verification',
-        REJECTED: 'Rejected',
-        OPEN_FOR_BIDDING: 'Open for Bidding',
-        AWARDED: 'Awarded',
-        PROCESSING: 'Processing',
-        COMPLETED: 'Completed',
-        CANCELLED: 'Cancelled'
-    }[status] || String(status).replaceAll('_', ' '));
-
-    const statusClass = (status) => ({
-        DRAFT: 'draft',
-        PENDING_VERIFICATION: 'pending-verification',
-        REJECTED: 'rejected',
-        OPEN_FOR_BIDDING: 'open-for-bidding',
-        AWARDED: 'awarded',
-        PROCESSING: 'processing',
-        COMPLETED: 'completed',
-        CANCELLED: 'cancelled'
-    }[status] || 'pending');
-
-    const lotItems = (lot) => {
-        const byId = new Map(getVerifiedItems().map((item) => [item.id, item]));
-        return (lot.itemIds || []).map((id) => byId.get(id)).filter(Boolean);
-    };
-
-    const lotWeight = (lot) => lotItems(lot).reduce((sum, item) => sum + (Number(item.actualWeightKg) || 0), 0);
-
-    const usedItemIds = (excludeLotId = null) => {
-        const used = new Set();
-        getLots().forEach((lot) => {
-            if (lot.id === excludeLotId || lot.status === 'CANCELLED') return;
-            (lot.itemIds || []).forEach((id) => used.add(id));
-        });
-        return used;
-    };
-
-    const showFeedback = (message) => {
-        const box = document.getElementById('elot-feedback');
-        if (!box) return;
-        box.textContent = message;
-        box.hidden = false;
-        window.clearTimeout(box._hideTimer);
-        box._hideTimer = window.setTimeout(() => { box.hidden = true; }, 3600);
-    };
+    // ============================================================
+    // RENDER VERIFIED ITEMS POOL
+    // ============================================================
 
     const renderVerifiedItems = () => {
-        const body = document.getElementById('collector-verified-item-rows');
-        if (!body) return;
+        const tbody = $(SELECTORS.verifiedRows);
+
+        if (!tbody) {
+            return;
+        }
+
         const items = getVerifiedItems();
-        const used = usedItemIds();
-        const available = items.filter((item) => !used.has(item.id));
 
-        body.innerHTML = items.map((item) => `
-            <tr>
-                <td><span class="collector-request-id">${escapeHtml(item.id)}</span><br><small>${escapeHtml(item.name)}</small></td>
-                <td>${escapeHtml(item.categoryName)}</td>
-                <td>${Number(item.quantity) || 0}</td>
-                <td>${Number(item.actualWeightKg).toFixed(2)} kg</td>
-                <td>${escapeHtml(formatDate(item.verifiedOn))}</td>
-                <td>${used.has(item.id)
-                    ? '<span class="collector-status collector-status--submitted">Allocated</span>'
-                    : '<span class="collector-status collector-status--verified">Available</span>'}</td>
-            </tr>
-        `).join('');
+        if (items.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        <div class="collector-empty-state">
+                            <strong>
+                                No verified collection items
+                            </strong>
+                            <span>
+                                Items will appear after Municipal
+                                Officer verification.
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            `;
 
-        document.getElementById('elot-verified-item-count').textContent = String(available.length);
-        document.getElementById('elot-available-weight').textContent = `${available.reduce((sum, item) => sum + Number(item.actualWeightKg || 0), 0).toFixed(2)} kg available`;
+            return;
+        }
+
+        tbody.innerHTML = items.map(item => {
+            const availability = itemAvailability(item);
+
+            return `
+                <tr>
+                    <td>
+                        <span class="collector-request-id">
+                            ${escapeHtml(item.name)}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(item.categoryName)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(item.quantity)}
+                    </td>
+
+                    <td>
+                        ${formatWeight(item.weight)}
+                    </td>
+
+                    <td>
+                        ${formatDate(item.verifiedAt)}
+                    </td>
+
+                    <td>
+                        <span
+                            class="collector-status
+                            collector-status--${availability.className}">
+                            ${availability.label}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     };
+
+    // ============================================================
+    // RENDER SUMMARY
+    // ============================================================
 
     const renderSummary = () => {
+        const items = getVerifiedItems();
+
         const lots = getLots();
-        document.getElementById('elot-draft-count').textContent = String(lots.filter((lot) => lot.status === 'DRAFT').length);
-        document.getElementById('elot-pending-count').textContent = String(lots.filter((lot) => lot.status === 'PENDING_VERIFICATION').length);
-        document.getElementById('elot-active-count').textContent = String(lots.filter((lot) => ['OPEN_FOR_BIDDING', 'AWARDED', 'PROCESSING'].includes(lot.status)).length);
+
+        const available = items.filter(
+            item => !item.allocated
+        );
+
+        const availableWeight = available.reduce(
+            (total, item) => total + item.weight,
+            0
+        );
+
+        const draftCount = lots.filter(
+            lot => lot.status === 'DRAFT'
+        ).length;
+
+        const pendingCount = lots.filter(
+            lot => lot.status === 'PENDING_VERIFICATION'
+        ).length;
+
+        const activeCount = lots.filter(
+            lot => [
+                'OPEN_FOR_BIDDING',
+                'AWARDED',
+                'PROCESSING'
+            ].includes(lot.status)
+        ).length;
+
+        const availableCountElement = $(
+            '#elot-verified-item-count'
+        );
+
+        const draftCountElement = $(
+            '#elot-draft-count'
+        );
+
+        const pendingCountElement = $(
+            '#elot-pending-count'
+        );
+
+        const activeCountElement = $(
+            '#elot-active-count'
+        );
+
+        const weightElement = $(
+            '#elot-available-weight'
+        );
+
+        if (availableCountElement) {
+            availableCountElement.textContent =
+                String(available.length);
+        }
+
+        if (draftCountElement) {
+            draftCountElement.textContent =
+                String(draftCount);
+        }
+
+        if (pendingCountElement) {
+            pendingCountElement.textContent =
+                String(pendingCount);
+        }
+
+        if (activeCountElement) {
+            activeCountElement.textContent =
+                String(activeCount);
+        }
+
+        if (weightElement) {
+            weightElement.textContent =
+                `${formatWeight(availableWeight)} available`;
+        }
     };
 
-    const lotActions = (lot) => {
-        if (['DRAFT', 'REJECTED'].includes(lot.status)) {
+    // ============================================================
+    // E-LOT ACTION BUTTONS
+    // ============================================================
+
+    const renderLotActions = lot => {
+        const editable = [
+            'DRAFT',
+            'REJECTED'
+        ].includes(lot.status);
+
+        if (!editable) {
             return `
                 <div class="collector-row-actions">
-                    <button type="button" class="collector-table-action" data-elot-view="${escapeHtml(lot.id)}">View</button>
-                    <button type="button" class="collector-table-action" data-elot-edit="${escapeHtml(lot.id)}">Edit</button>
-                    <button type="button" class="collector-table-action" data-elot-submit="${escapeHtml(lot.id)}">Submit</button>
-                    <button type="button" class="collector-danger-button" data-elot-delete="${escapeHtml(lot.id)}">Delete</button>
+                    <button
+                        type="button"
+                        class="collector-table-action"
+                        data-elot-view="${escapeHtml(lot.id)}">
+                        View
+                    </button>
                 </div>
             `;
         }
-        return `<button type="button" class="collector-table-action" data-elot-view="${escapeHtml(lot.id)}">View Details</button>`;
+
+        return `
+            <div class="collector-row-actions">
+
+                <button
+                    type="button"
+                    class="collector-table-action"
+                    data-elot-view="${escapeHtml(lot.id)}">
+                    View
+                </button>
+
+                <button
+                    type="button"
+                    class="collector-table-action"
+                    data-elot-edit="${escapeHtml(lot.id)}">
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    class="collector-table-action"
+                    data-elot-submit="${escapeHtml(lot.id)}">
+                    Submit
+                </button>
+
+                <button
+                    type="button"
+                    class="collector-danger-button"
+                    data-elot-delete="${escapeHtml(lot.id)}">
+                    Delete
+                </button>
+
+            </div>
+        `;
     };
+
+    // ============================================================
+    // RENDER MY E-LOTS
+    // ============================================================
 
     const renderLots = () => {
-        const body = document.getElementById('collector-elot-rows');
-        if (!body) return;
-        const filter = document.getElementById('collector-elot-status-filter')?.value || 'ALL';
-        const lots = getLots().filter((lot) => filter === 'ALL' || lot.status === filter);
-        body.innerHTML = lots.map((lot) => `
+        const tbody = $(SELECTORS.lotRows);
+
+        const empty = $(SELECTORS.lotEmpty);
+
+        if (!tbody) {
+            return;
+        }
+
+        const filter = $(SELECTORS.statusFilter)
+            ?.value || 'ALL';
+
+        const lots = getLots().filter(lot => {
+            return filter === 'ALL' ||
+                lot.status === filter;
+        });
+
+        tbody.innerHTML = lots.map(lot => `
             <tr>
-                <td><span class="collector-request-id">${escapeHtml(lot.id)}</span></td>
-                <td>${escapeHtml(lot.name)}</td>
-                <td>${escapeHtml(lot.categoryName)}</td>
-                <td>${(lot.itemIds || []).length}</td>
-                <td>${lotWeight(lot).toFixed(2)} kg</td>
-                <td><span class="collector-status collector-status--${statusClass(lot.status)}">${escapeHtml(statusLabel(lot.status))}</span></td>
-                <td>${lotActions(lot)}</td>
+
+                <td class="collector-elot-id-cell">
+                    <span class="collector-request-id">
+                        ${escapeHtml(lot.code || lot.id)}
+                    </span>
+                </td>
+
+                <td>
+                    ${escapeHtml(lot.title)}
+                </td>
+
+                <td>
+                    ${escapeHtml(lot.categoryName)}
+                </td>
+
+                <td>
+                    ${lot.itemCount}
+                </td>
+
+                <td>
+                    ${formatWeight(lot.weight)}
+                </td>
+
+                <td>
+                    <span
+                        class="collector-status
+                        collector-status--${statusClass(lot.status)}">
+                        ${escapeHtml(statusLabel(lot.status))}
+                    </span>
+                </td>
+
+                <td class="collector-action-column">
+                    ${renderLotActions(lot)}
+                </td>
+
             </tr>
         `).join('');
-        const empty = document.getElementById('collector-elot-empty');
-        if (empty) empty.hidden = lots.length !== 0;
+
+        if (empty) {
+            empty.hidden = lots.length !== 0;
+        }
     };
 
+    // ============================================================
+    // RENDER COMPLETE PAGE
+    // ============================================================
+
     const renderAll = () => {
-        if (!document.querySelector('[data-collector-page="elots"]')) return;
+        if (!$(SELECTORS.page)) {
+            return;
+        }
+
         renderVerifiedItems();
+
         renderSummary();
+
         renderLots();
     };
 
-    const categories = () => {
-        const map = new Map();
-        getVerifiedItems().forEach((item) => map.set(String(item.categoryId), { id: item.categoryId, name: item.categoryName }));
-        return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
-    };
+    // ============================================================
+    // MODAL HELPERS
+    // ============================================================
 
-    const nextLotId = () => {
-        const numbers = getLots().map((lot) => {
-            const match = lot.id.match(/(\d+)$/);
-            return match ? Number(match[1]) : 0;
-        });
-        return `EL-C-${String(Math.max(0, ...numbers) + 1).padStart(3, '0')}`;
-    };
+    const getModal = () => $(SELECTORS.modal);
 
-    const openFormModal = (mode = 'create', lotId = null, trigger = null) => {
-        const modal = document.getElementById('collector-elot-modal');
-        const body = document.getElementById('collector-elot-modal-body');
-        const title = document.getElementById('collector-elot-modal-title');
-        const description = document.getElementById('collector-elot-modal-description');
-        if (!modal || !body) return;
+    const showModal = () => {
+        const modal = getModal();
 
-        const existing = lotId ? getLots().find((lot) => lot.id === lotId) : null;
-        const readOnly = mode === 'view';
-        activeLotId = existing?.id || null;
-        modalReturnFocus = trigger || document.activeElement;
-
-        if (title) title.textContent = readOnly ? `E-Lot Details — ${existing?.id || ''}` : existing ? `Edit E-Lot — ${existing.id}` : 'Create E-Lot';
-        if (description) description.textContent = readOnly
-            ? 'Review the E-Lot composition and its browser-local status.'
-            : 'Choose one category and combine verified items into an E-Lot draft.';
-
-        if (readOnly && existing) {
-            const items = lotItems(existing);
-            body.innerHTML = `
-                <section class="collector-elot-details-panel">
-                    <div class="collector-elot-detail-grid">
-                        <div><span>E-Lot ID</span><strong>${escapeHtml(existing.id)}</strong></div>
-                        <div><span>Status</span><strong>${escapeHtml(statusLabel(existing.status))}</strong></div>
-                        <div><span>Category</span><strong>${escapeHtml(existing.categoryName)}</strong></div>
-                        <div><span>Items</span><strong>${items.length}</strong></div>
-                        <div><span>Total Weight</span><strong>${lotWeight(existing).toFixed(2)} kg</strong></div>
-                        <div><span>Submitted</span><strong>${escapeHtml(existing.submittedAt ? formatDate(existing.submittedAt) : 'Not submitted')}</strong></div>
-                    </div>
-                    <div class="collector-elot-detail-list">
-                        <span>Included Verified Items</span>
-                        <ul>${items.map((item) => `<li>${escapeHtml(item.name)} — ${item.quantity} unit(s), ${Number(item.actualWeightKg).toFixed(2)} kg</li>`).join('') || '<li>No matching verified item data is available.</li>'}</ul>
-                    </div>
-                    ${existing.description ? `<div class="collector-elot-detail-list"><span>Description</span><p>${escapeHtml(existing.description)}</p></div>` : ''}
-                    <div class="collector-modal-actions"><button type="button" class="collector-modal-button collector-modal-button--secondary" data-elot-modal-close>Close</button></div>
-                </section>
-            `;
-        } else {
-            const lot = existing || {
-                id: nextLotId(),
-                name: '',
-                description: '',
-                categoryId: categories()[0]?.id || null,
-                categoryName: categories()[0]?.name || '',
-                itemIds: [],
-                status: 'DRAFT'
-            };
-            body.innerHTML = formHtml(lot);
-            refreshFormItems();
+        if (!modal) {
+            return;
         }
+
+        modalReturnFocus = document.activeElement;
 
         modal.hidden = false;
+
         document.body.style.overflow = 'hidden';
-        window.setTimeout(() => modal.querySelector('.collector-modal__close')?.focus(), 0);
-    };
 
-    const formHtml = (lot) => `
-        <div class="collector-elot-form-layout" data-elot-form data-elot-id="${escapeHtml(lot.id)}">
-            <section class="collector-elot-form-panel">
-                <label class="collector-elot-field">
-                    <span>E-Lot ID</span>
-                    <input type="text" value="${escapeHtml(lot.id)}" readonly>
-                </label>
-                <label class="collector-elot-field">
-                    <span>Category *</span>
-                    <select data-elot-category>
-                        ${categories().map((category) => `<option value="${category.id}" ${Number(lot.categoryId) === Number(category.id) ? 'selected' : ''}>${escapeHtml(category.name)}</option>`).join('')}
-                    </select>
-                </label>
-                <label class="collector-elot-field">
-                    <span>E-Lot Name *</span>
-                    <input type="text" maxlength="100" data-elot-name value="${escapeHtml(lot.name)}" placeholder="e.g. Verified Routers — August Batch">
-                </label>
-                <label class="collector-elot-field">
-                    <span>Description</span>
-                    <textarea maxlength="260" data-elot-description placeholder="Optional description">${escapeHtml(lot.description || '')}</textarea>
-                </label>
-            </section>
-
-            <section class="collector-elot-items-panel">
-                <div class="collector-record-block-heading">
-                    <h3>Select Verified Items</h3>
-                    <span class="collector-count-pill" data-elot-selection-count>0 selected</span>
-                </div>
-                <div class="collector-elot-item-list" data-elot-item-list></div>
-                <div class="collector-elot-total">
-                    <span>Total Selected Weight</span>
-                    <strong data-elot-total>0.00 kg</strong>
-                </div>
-            </section>
-        </div>
-        <div class="collector-modal-actions">
-            <button type="button" class="collector-modal-button collector-modal-button--secondary" data-elot-modal-close>Cancel</button>
-            <button type="button" class="collector-modal-button collector-modal-button--primary" data-elot-save-draft>Save Draft</button>
-        </div>
-    `;
-
-    const refreshFormItems = () => {
-        const form = document.querySelector('[data-elot-form]');
-        const list = form?.querySelector('[data-elot-item-list]');
-        if (!form || !list) return;
-        const lotId = form.dataset.elotId;
-        const current = getLots().find((lot) => lot.id === lotId);
-        const selected = new Set(current?.itemIds || []);
-        list.querySelectorAll('[data-elot-item-check]:checked').forEach((checkbox) => selected.add(checkbox.value));
-
-        const categoryId = Number(form.querySelector('[data-elot-category]')?.value || 0);
-        const used = usedItemIds(lotId);
-        const eligible = getVerifiedItems().filter((item) => Number(item.categoryId) === categoryId && !used.has(item.id));
-
-        list.innerHTML = eligible.map((item) => `
-            <label class="collector-elot-item-option">
-                <input type="checkbox" value="${escapeHtml(item.id)}" data-elot-item-check ${selected.has(item.id) ? 'checked' : ''}>
-                <span><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.id)} · ${item.quantity} unit(s) · ${escapeHtml(item.requestId)}</span></span>
-                <b>${Number(item.actualWeightKg).toFixed(2)} kg</b>
-            </label>
-        `).join('') || '<div class="collector-empty-state"><strong>No available verified items</strong><span>Choose another category or free items from another draft.</span></div>';
-        refreshFormTotals();
-    };
-
-    const refreshFormTotals = () => {
-        const form = document.querySelector('[data-elot-form]');
-        if (!form) return;
-        const ids = [...form.querySelectorAll('[data-elot-item-check]:checked')].map((checkbox) => checkbox.value);
-        const byId = new Map(getVerifiedItems().map((item) => [item.id, item]));
-        const weight = ids.reduce((sum, id) => sum + Number(byId.get(id)?.actualWeightKg || 0), 0);
-        const count = form.querySelector('[data-elot-selection-count]');
-        const total = form.querySelector('[data-elot-total]');
-        if (count) count.textContent = `${ids.length} selected`;
-        if (total) total.textContent = `${weight.toFixed(2)} kg`;
-    };
-
-    const collectForm = () => {
-        const form = document.querySelector('[data-elot-form]');
-        if (!form) return { ok: false, error: 'E-Lot form is unavailable.' };
-        const categoryId = Number(form.querySelector('[data-elot-category]')?.value || 0);
-        const category = categories().find((entry) => Number(entry.id) === categoryId);
-        const name = form.querySelector('[data-elot-name]')?.value?.trim() || '';
-        const description = form.querySelector('[data-elot-description]')?.value?.trim() || '';
-        const itemIds = [...form.querySelectorAll('[data-elot-item-check]:checked')].map((checkbox) => checkbox.value);
-        if (!category) return { ok: false, error: 'Choose an E-Lot category.' };
-        if (!name) return { ok: false, error: 'Enter an E-Lot name.' };
-        if (!itemIds.length) return { ok: false, error: 'Select at least one verified item.' };
-        return {
-            ok: true,
-            lot: {
-                id: form.dataset.elotId,
-                name,
-                description,
-                categoryId: category.id,
-                categoryName: category.name,
-                itemIds
-            }
-        };
-    };
-
-    const saveDraft = () => {
-        const result = collectForm();
-        if (!result.ok) {
-            window.alert(result.error);
-            return;
-        }
-        const lots = getLots();
-        const index = lots.findIndex((lot) => lot.id === result.lot.id);
-        const previous = index >= 0 ? lots[index] : {};
-        const next = {
-            ...previous,
-            ...result.lot,
-            status: previous.status === 'REJECTED' ? 'DRAFT' : (previous.status || 'DRAFT'),
-            createdAt: previous.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            submittedAt: null
-        };
-        if (index >= 0) lots[index] = next;
-        else lots.push(next);
-        saveLots(lots);
-        showFeedback(`${next.id} draft saved in this browser.`);
-        closeModal();
-        renderAll();
-    };
-
-    const submitLot = (lotId) => {
-        const lots = getLots();
-        const index = lots.findIndex((lot) => lot.id === lotId);
-        if (index < 0) return;
-        if (!['DRAFT', 'REJECTED'].includes(lots[index].status)) return;
-        if (!(lots[index].itemIds || []).length) {
-            window.alert('This E-Lot has no verified items.');
-            return;
-        }
-        if (!window.confirm(`Mark ${lotId} as submitted in this browser? It becomes read-only here; nothing is sent to a Municipal Officer.`)) return;
-        lots[index] = { ...lots[index], status: 'PENDING_VERIFICATION', submittedAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-        saveLots(lots);
-        showFeedback(`${lotId} marked as submitted in this browser only.`);
-        renderAll();
-    };
-
-    const deleteLot = (lotId) => {
-        const lots = getLots();
-        const lot = lots.find((entry) => entry.id === lotId);
-        if (!lot || !['DRAFT', 'REJECTED'].includes(lot.status)) return;
-        if (!window.confirm(`Delete local draft ${lotId} from this browser? Its verified items will return to the available pool.`)) return;
-        saveLots(lots.filter((entry) => entry.id !== lotId));
-        showFeedback(`${lotId} local draft deleted from this browser.`);
-        renderAll();
+        modal.querySelector(
+            '.collector-modal__close'
+        )?.focus();
     };
 
     const closeModal = () => {
-        const modal = document.getElementById('collector-elot-modal');
-        if (!modal || modal.hidden) return;
+        const modal = getModal();
+
+        if (!modal || modal.hidden || busy) {
+            return;
+        }
+
+        requestSequence++;
+
         modal.hidden = true;
+
         activeLotId = null;
+
+        activeLot = null;
+
+        selectedItems.clear();
+
+        currentFormItems = [];
+
+        const body = $(SELECTORS.modalBody);
+
+        if (body) {
+            body.innerHTML = '';
+        }
+
         document.body.style.overflow = '';
-        if (modalReturnFocus instanceof HTMLElement) modalReturnFocus.focus();
+
+        renderVerifiedItems();
+
+        if (
+            modalReturnFocus &&
+            typeof modalReturnFocus.focus === 'function'
+        ) {
+            modalReturnFocus.focus();
+        }
+
         modalReturnFocus = null;
     };
 
-    document.addEventListener('click', (event) => {
-        if (event.target.closest('#collector-create-elot')) {
-            openFormModal('create', null, event.target.closest('#collector-create-elot'));
+    // ============================================================
+    // FORM HTML
+    // ============================================================
+
+    const buildForm = (lot = null) => {
+        const isEdit = Boolean(lot);
+
+        const selectedCategory = isEdit
+            ? number(lot.category_id)
+            : 0;
+
+        const categoryOptions = getCategories()
+            .map(category => {
+                const selected =
+                    category.id === selectedCategory
+                        ? 'selected'
+                        : '';
+
+                return `
+                    <option
+                        value="${category.id}"
+                        ${selected}>
+                        ${escapeHtml(category.name)}
+                    </option>
+                `;
+            }).join('');
+
+        return `
+            <form
+                class="collector-elot-form-layout"
+                data-elot-form
+                data-elot-id="${isEdit
+                ? escapeHtml(lot.e_lot_id)
+                : 'new'}">
+
+                <section class="collector-elot-form-panel">
+
+                    <label class="collector-elot-field">
+
+                        <span>E-Lot ID</span>
+
+                        <input
+                            type="text"
+                            readonly
+                            value="${escapeHtml(
+                    isEdit
+                        ? lot.lot_code
+                        : (window.COLLECTOR_NEXT_LOT_CODE || '')
+                )}">
+
+                    </label>
+
+                    <label class="collector-elot-field">
+
+                        <span>E-Lot Category</span>
+
+                        <select
+                            data-elot-category
+                            ${isEdit ? 'disabled' : ''}
+                            required>
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            ${categoryOptions}
+
+                        </select>
+
+                    </label>
+
+                    <label class="collector-elot-field">
+
+                        <span>E-Lot Name</span>
+
+                        <input
+                            type="text"
+                            data-elot-name
+                            maxlength="100"
+                            required
+                            placeholder="Enter E-Lot name"
+                            value="${escapeHtml(
+                    lot?.title || ''
+                )}">
+
+                    </label>
+
+                </section>
+
+                <section class="collector-elot-items-panel">
+
+                    <div class="collector-record-block-heading">
+
+                        <h3>Verified Items</h3>
+
+                        <span
+                            class="collector-count-pill"
+                            data-elot-selection-count>
+                            0 selected
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="collector-elot-item-list"
+                        data-elot-item-list>
+
+                        <div class="collector-empty-state">
+                            Choose a category to load
+                            verified items.
+                        </div>
+
+                    </div>
+
+                    <div class="collector-elot-total">
+
+                        <span>Total Weight</span>
+
+                        <strong data-elot-total>
+                            0.00 kg
+                        </strong>
+
+                    </div>
+
+                </section>
+
+                <div class="collector-modal-actions">
+
+                    <button
+                        type="button"
+                        class="collector-modal-button
+                        collector-modal-button--secondary"
+                        data-elot-modal-close>
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="collector-modal-button
+                        collector-modal-button--primary"
+                        data-elot-save-draft>
+                        Save Draft
+                    </button>
+
+                </div>
+
+            </form>
+        `;
+    };
+
+    // ============================================================
+    // UPDATE FORM TOTALS
+    // ============================================================
+
+    const refreshFormTotals = () => {
+        const countElement = $(
+            '[data-elot-selection-count]'
+        );
+
+        const totalElement = $(
+            '[data-elot-total]'
+        );
+
+        const selected = currentFormItems.filter(
+            item => selectedItems.has(
+                String(item.record_item_id)
+            )
+        );
+
+        const totalWeight = selected.reduce(
+            (total, item) => {
+                return total +
+                    number(item.actual_weight_kg);
+            },
+            0
+        );
+
+        if (countElement) {
+            countElement.textContent =
+                `${selected.length} selected`;
+        }
+
+        if (totalElement) {
+            totalElement.textContent =
+                formatWeight(totalWeight);
+        }
+    };
+
+    // ============================================================
+    // RENDER VERIFIED ITEM CHECKBOXES
+    // ============================================================
+
+    const renderFormItems = items => {
+        const container = $(
+            '[data-elot-item-list]'
+        );
+
+        if (!container) {
             return;
         }
-        if (event.target.closest('[data-elot-modal-close]')) {
+
+        if (!items.length) {
+            container.innerHTML = `
+                <div class="collector-empty-state">
+                    <strong>
+                        No available verified items
+                    </strong>
+                    <span>
+                        This category currently has no
+                        available verified collection items.
+                    </span>
+                </div>
+            `;
+
+            refreshFormTotals();
+
+            return;
+        }
+
+        container.innerHTML = items.map(item => {
+            const id = String(item.record_item_id);
+
+            const checked = selectedItems.has(id)
+                ? 'checked'
+                : '';
+
+            return `
+                <label class="collector-elot-item-option">
+
+                    <input
+                        type="checkbox"
+                        data-elot-item-check
+                        value="${escapeHtml(id)}"
+                        ${checked}>
+
+                    <span>
+
+                        <strong>
+                            ${escapeHtml(item.item_name)}
+                        </strong>
+
+                        <small>
+                            Quantity:
+                            ${number(item.actual_quantity)}
+                            |
+                            Weight:
+                            ${formatWeight(
+                item.actual_weight_kg
+            )}
+                        </small>
+
+                    </span>
+
+                </label>
+            `;
+        }).join('');
+
+        refreshFormTotals();
+    };
+
+    // ============================================================
+    // FETCH JSON
+    // ============================================================
+
+    const getJson = async url => {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        const contentType =
+            response.headers.get('content-type') || '';
+
+        if (!contentType.includes('application/json')) {
+            throw new Error(
+                'The server returned an unexpected response.'
+            );
+        }
+
+        const result = await response.json();
+
+        if (!response.ok || result.success !== true) {
+            throw new Error(
+                result.message ||
+                result.error ||
+                'Unable to load data.'
+            );
+        }
+
+        return result;
+    };
+
+    // ============================================================
+    // LOAD AVAILABLE ITEMS FOR CATEGORY
+    // ============================================================
+
+    const refreshFormItems = async () => {
+        const form = $('[data-elot-form]');
+
+        if (!form) {
+            return;
+        }
+
+        const categoryId = number(
+            form.querySelector(
+                '[data-elot-category]'
+            )?.value
+        );
+
+        const container = $(
+            '[data-elot-item-list]'
+        );
+
+        const sequence = ++requestSequence;
+
+        currentFormItems = [];
+
+        if (!categoryId) {
+            selectedItems.clear();
+
+            if (container) {
+                container.innerHTML = `
+                    <div class="collector-empty-state">
+                        Choose a category first.
+                    </div>
+                `;
+            }
+
+            refreshFormTotals();
+
+            renderVerifiedItems();
+
+            return;
+        }
+
+        if (container) {
+            container.innerHTML = `
+                <div class="collector-empty-state">
+                    Loading verified items...
+                </div>
+            `;
+        }
+
+        const params = new URLSearchParams();
+
+        params.set(
+            'category_id',
+            String(categoryId)
+        );
+
+        if (activeLotId !== null) {
+            params.set(
+                'exclude_lot_id',
+                String(activeLotId)
+            );
+        }
+
+        try {
+            const result = await getJson(
+                `${API}/available-items?${params.toString()}`
+            );
+
+            if (sequence !== requestSequence) {
+                return;
+            }
+
+            currentFormItems = Array.isArray(result.items)
+                ? result.items
+                : [];
+
+            const allowedIds = new Set(
+                currentFormItems.map(
+                    item => String(item.record_item_id)
+                )
+            );
+
+            selectedItems = new Set(
+                [...selectedItems].filter(
+                    id => allowedIds.has(id)
+                )
+            );
+
+            renderFormItems(currentFormItems);
+
+            renderVerifiedItems();
+
+        } catch (error) {
+            if (sequence !== requestSequence) {
+                return;
+            }
+
+            currentFormItems = [];
+
+            selectedItems.clear();
+
+            if (container) {
+                container.innerHTML = `
+                    <div class="collector-empty-state">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+            }
+
+            refreshFormTotals();
+
+            renderVerifiedItems();
+        }
+    };
+
+    // ============================================================
+    // OPEN CREATE E-LOT MODAL
+    // ============================================================
+
+    const openCreateModal = () => {
+        if (busy) {
+            return;
+        }
+
+        activeLotId = null;
+
+        activeLot = null;
+
+        selectedItems.clear();
+
+        currentFormItems = [];
+
+        const title = $(SELECTORS.modalTitle);
+
+        const description = $(
+            SELECTORS.modalDescription
+        );
+
+        const body = $(SELECTORS.modalBody);
+
+        if (title) {
+            title.textContent = 'Create E-Lot';
+        }
+
+        if (description) {
+            description.textContent =
+                'Choose a category and select verified items to create an E-Lot draft.';
+        }
+
+        if (body) {
+            body.innerHTML = buildForm();
+        }
+
+        showModal();
+
+        renderVerifiedItems();
+    };
+
+    // ============================================================
+    // OPEN EDIT E-LOT MODAL
+    // ============================================================
+
+    const openEditModal = async lotId => {
+        if (busy) {
+            return;
+        }
+
+        try {
+            const result = await getJson(
+                `${API}/${encodeURIComponent(lotId)}`
+            );
+
+            const lot = result.lot;
+
+            if (!lot) {
+                throw new Error(
+                    'E-Lot details were not returned.'
+                );
+            }
+
+            if (![
+                'DRAFT',
+                'REJECTED'
+            ].includes(lot.lot_status)) {
+                throw new Error(
+                    'Only Draft or Rejected E-Lots can be edited.'
+                );
+            }
+
+            activeLotId = String(lot.e_lot_id);
+
+            activeLot = lot;
+
+            selectedItems = new Set(
+                (lot.item_ids || []).map(String)
+            );
+
+            currentFormItems = [];
+
+            const title = $(SELECTORS.modalTitle);
+
+            const description = $(
+                SELECTORS.modalDescription
+            );
+
+            const body = $(SELECTORS.modalBody);
+
+            if (title) {
+                title.textContent = 'Edit E-Lot';
+            }
+
+            if (description) {
+                description.textContent =
+                    'Update the E-Lot name and verified items.';
+            }
+
+            if (body) {
+                body.innerHTML = buildForm(lot);
+            }
+
+            showModal();
+
+            await refreshFormItems();
+
+        } catch (error) {
+            console.error(error);
+
+            alert(error.message);
+        }
+    };
+
+    // ============================================================
+    // VIEW E-LOT DETAILS
+    // ============================================================
+
+    const openViewModal = async lotId => {
+        if (busy) {
+            return;
+        }
+
+        try {
+            const result = await getJson(
+                `${API}/${encodeURIComponent(lotId)}`
+            );
+
+            const lot = result.lot;
+
+            if (!lot) {
+                throw new Error(
+                    'E-Lot not found.'
+                );
+            }
+
+            activeLotId = null;
+
+            activeLot = null;
+
+            selectedItems.clear();
+
+            currentFormItems = [];
+
+            const title = $(SELECTORS.modalTitle);
+
+            const description = $(
+                SELECTORS.modalDescription
+            );
+
+            const body = $(SELECTORS.modalBody);
+
+            if (title) {
+                title.textContent = 'E-Lot Details';
+            }
+
+            if (description) {
+                description.textContent =
+                    'View the saved E-Lot and its verified collection items.';
+            }
+
+            const items = Array.isArray(lot.items)
+                ? lot.items
+                : [];
+
+            const itemRows = items.map(item => `
+                <tr>
+                    <td>
+                        ${escapeHtml(item.item_name)}
+                    </td>
+
+                    <td>
+                        ${number(item.actual_quantity)}
+                    </td>
+
+                    <td>
+                        ${formatWeight(
+                item.actual_weight_kg
+            )}
+                    </td>
+                </tr>
+            `).join('');
+
+            if (body) {
+                body.innerHTML = `
+                    <section class="collector-elot-details-panel">
+
+                        <div class="collector-elot-detail-grid">
+
+                            <p>
+                                <strong>E-Lot ID:</strong>
+                                ${escapeHtml(lot.lot_code)}
+                            </p>
+
+                            <p>
+                                <strong>Name:</strong>
+                                ${escapeHtml(lot.title)}
+                            </p>
+
+                            <p>
+                                <strong>Category:</strong>
+                                ${escapeHtml(lot.category_name)}
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                ${escapeHtml(
+                    statusLabel(lot.lot_status)
+                )}
+                            </p>
+
+                            <p>
+                                <strong>Total Weight:</strong>
+                                ${formatWeight(
+                    lot.total_weight_kg
+                )}
+                            </p>
+
+                        </div>
+
+                        <div class="collector-table-wrap">
+
+                            <table class="collector-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Weight</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    ${itemRows || `
+                                        <tr>
+                                            <td colspan="3">
+                                                No items found.
+                                            </td>
+                                        </tr>
+                                    `}
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div class="collector-modal-actions">
+
+                            <button
+                                type="button"
+                                class="collector-modal-button
+                                collector-modal-button--secondary"
+                                data-elot-modal-close>
+                                Close
+                            </button>
+
+                        </div>
+
+                    </section>
+                `;
+            }
+
+            showModal();
+
+        } catch (error) {
+            console.error(error);
+
+            alert(error.message);
+        }
+    };
+
+    // ============================================================
+    // POST ACTION
+    // ============================================================
+
+    const postAction = async (url, formData) => {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type':
+                    'application/x-www-form-urlencoded;charset=UTF-8',
+                'Accept': 'application/json'
+            },
+            body: formData.toString()
+        });
+
+        const contentType =
+            response.headers.get('content-type') || '';
+
+        if (!contentType.includes('application/json')) {
+            throw new Error(
+                'Unexpected server response. The operation was not confirmed.'
+            );
+        }
+
+        let result;
+
+        try {
+            result = await response.json();
+        } catch (error) {
+            throw new Error(
+                'Unable to read the server response.'
+            );
+        }
+
+        if (!response.ok || result.success !== true) {
+            throw new Error(
+                result.message ||
+                result.error ||
+                'E-Lot operation failed.'
+            );
+        }
+
+        return result;
+    };
+
+    // ============================================================
+    // FORM VALIDATION
+    // ============================================================
+
+    const collectForm = () => {
+        const form = $('[data-elot-form]');
+
+        if (!form) {
+            throw new Error(
+                'E-Lot form is unavailable.'
+            );
+        }
+
+        const title = form.querySelector(
+            '[data-elot-name]'
+        )?.value.trim() || '';
+
+        const categoryId = number(
+            form.querySelector(
+                '[data-elot-category]'
+            )?.value
+        );
+
+        const itemIds = [
+            ...selectedItems
+        ];
+
+        if (!categoryId) {
+            throw new Error(
+                'Please select an E-Waste category.'
+            );
+        }
+
+        if (!title) {
+            throw new Error(
+                'Please enter an E-Lot name.'
+            );
+        }
+
+        if (title.length > 100) {
+            throw new Error(
+                'E-Lot name cannot exceed 100 characters.'
+            );
+        }
+
+        if (itemIds.length === 0) {
+            throw new Error(
+                'Please select at least one verified item.'
+            );
+        }
+
+        return {
+            title,
+            categoryId,
+            itemIds
+        };
+    };
+
+    // ============================================================
+    // SAVE DRAFT
+    // ============================================================
+
+    const saveDraft = async () => {
+        if (busy) {
+            return;
+        }
+
+        let formValues;
+
+        try {
+            formValues = collectForm();
+        } catch (error) {
+            alert(error.message);
+
+            return;
+        }
+
+        const button = $(
+            '[data-elot-save-draft]'
+        );
+
+        const isEdit = activeLotId !== null;
+
+        const url = isEdit
+            ? `${API}/${encodeURIComponent(activeLotId)}/update`
+            : API;
+
+        const formData = new URLSearchParams();
+
+        formData.append(
+            'title',
+            formValues.title
+        );
+
+        formData.append(
+            'category_id',
+            String(formValues.categoryId)
+        );
+
+        formValues.itemIds.forEach(id => {
+            formData.append(
+                'item_ids[]',
+                String(id)
+            );
+        });
+
+        formData.append(
+            '_csrf_token',
+            csrfToken()
+        );
+
+        busy = true;
+
+        if (button) {
+            button.disabled = true;
+
+            button.textContent = 'Saving...';
+        }
+
+        try {
+            const result = await postAction(
+                url,
+                formData
+            );
+
+            console.log(
+                'E-Lot saved:',
+                result.message
+            );
+
+            window.location.assign(API);
+
+        } catch (error) {
+            console.error(
+                'Save Draft failed:',
+                error
+            );
+
+            alert(error.message);
+
+        } finally {
+            busy = false;
+
+            if (button) {
+                button.disabled = false;
+
+                button.textContent = 'Save Draft';
+            }
+        }
+    };
+
+    // ============================================================
+    // SUBMIT E-LOT
+    // ============================================================
+
+    const submitLot = async lotId => {
+        if (busy) {
+            return;
+        }
+
+        const confirmed = window.confirm(
+            'Submit this E-Lot for Municipal Officer verification?'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const formData = new URLSearchParams();
+
+        formData.append(
+            '_csrf_token',
+            csrfToken()
+        );
+
+        busy = true;
+
+        try {
+            await postAction(
+                `${API}/${encodeURIComponent(lotId)}/submit`,
+                formData
+            );
+
+            window.location.assign(API);
+
+        } catch (error) {
+            console.error(
+                'Submit E-Lot failed:',
+                error
+            );
+
+            alert(error.message);
+
+        } finally {
+            busy = false;
+        }
+    };
+
+    // ============================================================
+    // DELETE E-LOT
+    // ============================================================
+
+    const deleteLot = async lotId => {
+        if (busy) {
+            return;
+        }
+
+        const confirmed = window.confirm(
+            'Delete this E-Lot draft? Its allocated items will become available again.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const formData = new URLSearchParams();
+
+        formData.append(
+            '_csrf_token',
+            csrfToken()
+        );
+
+        busy = true;
+
+        try {
+            await postAction(
+                `${API}/${encodeURIComponent(lotId)}/delete`,
+                formData
+            );
+
+            window.location.assign(API);
+
+        } catch (error) {
+            console.error(
+                'Delete E-Lot failed:',
+                error
+            );
+
+            alert(error.message);
+
+        } finally {
+            busy = false;
+        }
+    };
+
+    // ============================================================
+    // CLICK EVENTS
+    // ============================================================
+
+    document.addEventListener('click', event => {
+        const target = event.target;
+
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        const createButton = target.closest(
+            SELECTORS.createButton
+        );
+
+        if (createButton) {
+            event.preventDefault();
+
+            openCreateModal();
+
+            return;
+        }
+
+        const closeButton = target.closest(
+            '[data-elot-modal-close]'
+        );
+
+        if (closeButton) {
+            event.preventDefault();
+
             closeModal();
-            return;
-        }
-        const view = event.target.closest('[data-elot-view]');
-        if (view) {
-            openFormModal('view', view.dataset.elotView, view);
-            return;
-        }
-        const edit = event.target.closest('[data-elot-edit]');
-        if (edit) {
-            openFormModal('edit', edit.dataset.elotEdit, edit);
-            return;
-        }
-        const submit = event.target.closest('[data-elot-submit]');
-        if (submit) {
-            submitLot(submit.dataset.elotSubmit);
-            return;
-        }
-        const remove = event.target.closest('[data-elot-delete]');
-        if (remove) {
-            deleteLot(remove.dataset.ellotDelete || remove.dataset.elotDelete);
-            return;
-        }
-        if (event.target.closest('[data-elot-save-draft]')) {
-            saveDraft();
-        }
-    });
 
-    document.addEventListener('change', (event) => {
-        if (event.target.matches('#collector-elot-status-filter')) renderLots();
-        if (event.target.matches('[data-elot-category]')) refreshFormItems();
-        if (event.target.matches('[data-elot-item-check]')) refreshFormTotals();
-    });
+            return;
+        }
 
-    document.addEventListener('keydown', (event) => {
-        const modal = document.getElementById('collector-elot-modal');
-        if (!modal || modal.hidden) return;
-        if (event.key === 'Escape') {
+        const viewButton = target.closest(
+            '[data-elot-view]'
+        );
+
+        if (viewButton) {
             event.preventDefault();
+
+            openViewModal(
+                viewButton.dataset.elotView
+            );
+
+            return;
+        }
+
+        const editButton = target.closest(
+            '[data-elot-edit]'
+        );
+
+        if (editButton) {
+            event.preventDefault();
+
+            openEditModal(
+                editButton.dataset.elotEdit
+            );
+
+            return;
+        }
+
+        const submitButton = target.closest(
+            '[data-elot-submit]'
+        );
+
+        if (submitButton) {
+            event.preventDefault();
+
+            submitLot(
+                submitButton.dataset.elotSubmit
+            );
+
+            return;
+        }
+
+        const deleteButton = target.closest(
+            '[data-elot-delete]'
+        );
+
+        if (deleteButton) {
+            event.preventDefault();
+
+            deleteLot(
+                deleteButton.dataset.elotDelete
+            );
+
+            return;
+        }
+    });
+
+    // ============================================================
+    // FORM SUBMIT EVENT
+    // ============================================================
+
+    document.addEventListener('submit', event => {
+        const form = event.target;
+
+        if (!(form instanceof Element)) {
+            return;
+        }
+
+        if (!form.matches('[data-elot-form]')) {
+            return;
+        }
+
+        event.preventDefault();
+
+        saveDraft();
+    });
+
+    // ============================================================
+    // CHANGE EVENTS
+    // ============================================================
+
+    document.addEventListener('change', event => {
+        const target = event.target;
+
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        if (target.matches(SELECTORS.statusFilter)) {
+            renderLots();
+
+            return;
+        }
+
+        if (target.matches('[data-elot-category]')) {
+            selectedItems.clear();
+
+            currentFormItems = [];
+
+            refreshFormItems();
+
+            renderVerifiedItems();
+
+            return;
+        }
+
+        if (target.matches('[data-elot-item-check]')) {
+            const itemId = String(target.value);
+
+            if (target.checked) {
+                selectedItems.add(itemId);
+            } else {
+                selectedItems.delete(itemId);
+            }
+
+            refreshFormTotals();
+
+            renderVerifiedItems();
+
+            return;
+        }
+    });
+
+    // ============================================================
+    // ESCAPE KEY
+    // ============================================================
+
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        const modal = getModal();
+
+        if (modal && !modal.hidden) {
+            event.preventDefault();
+
             closeModal();
-            return;
-        }
-        if (event.key !== 'Tab') return;
-        const focusable = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]')];
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
         }
     });
 
-    ensureVerifiedItems();
-    renderAll();
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+
+    const initialize = () => {
+        if (!$(SELECTORS.page)) {
+            return;
+        }
+
+        renderAll();
+
+        console.log(
+            'EcoLot-LK Collector E-Lot module initialized.'
+        );
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener(
+            'DOMContentLoaded',
+            initialize,
+            { once: true }
+        );
+    } else {
+        initialize();
+    }
+
 })();
