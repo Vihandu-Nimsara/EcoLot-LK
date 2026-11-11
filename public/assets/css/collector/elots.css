@@ -194,3 +194,14 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* E-Lot ID column stays on one line in My E-Lots */
+.collector-elot-id-cell {
+    white-space: nowrap;
+}
+
+/* Create E-Lot button stays on one line */
+#collector-create-elot {
+    white-space: nowrap;
+    flex-shrink: 0;
+}

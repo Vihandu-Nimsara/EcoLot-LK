@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `authorized_recyclers` (
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `fk_authorized_recyclers_reviewed_by_admin`
         FOREIGN KEY (`reviewed_by_admin_user_id`) REFERENCES `administrators` (`user_id`)
-        ON UPDATE CASCADE ON DELETE RESTRICT,
+        ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT `chk_recycler_verification_audit`
         CHECK (
             (`verification_status` = 'PENDING'
@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS `e_waste_requests` (
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT `fk_requests_reviewed_by_officer`
         FOREIGN KEY (`reviewed_by_officer_user_id`) REFERENCES `municipal_officers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE RESTRICT,
+        ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT `chk_requests_review_audit`
         CHECK (
             (`risk_review_status` IN ('NOT_REQUIRED', 'PENDING') AND `reviewed_by_officer_user_id` IS NULL AND `reviewed_at` IS NULL)
@@ -549,7 +549,7 @@ CREATE TABLE IF NOT EXISTS `schedule_collections` (
         ON UPDATE CASCADE ON DELETE RESTRICT,
     CONSTRAINT `fk_schedule_collections_officer`
         FOREIGN KEY (`verified_by_officer_user_id`) REFERENCES `municipal_officers` (`user_id`)
-        ON UPDATE CASCADE ON DELETE RESTRICT,
+        ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT `chk_schedule_collections_verification_audit`
         CHECK (
             (`verification_status` = 'DRAFT' AND `submitted_at` IS NULL AND `verified_by_officer_user_id` IS NULL AND `verified_at` IS NULL)
