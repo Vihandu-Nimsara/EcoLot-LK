@@ -17,7 +17,10 @@ check(RecyclerBidService::suggestedAmount('999999999899.99') === '999999999999.9
 check(RecyclerBidService::suggestedAmount('999999999900.00') === null, 'Suggestion overflow safe');
 check(RecyclerBidService::suggestedAmount('1250.75') === '1350.75', 'Exact decimal suggestion');
 check(RecyclerBidService::amount('999999999999.99') === '999999999999.99', 'Maximum decimal');
-Session::put('auth_user', ['id' => 27, 'role' => 'RECYCLER', 'name' => '<Recycler>']);
+$actorId = (int) Database::connection()->query("SELECT u.user_id FROM users u JOIN authorized_recyclers r ON r.user_id=u.user_id
+    WHERE u.role='RECYCLER' AND u.account_status='ACTIVE' AND r.verification_status='VERIFIED' LIMIT 1")->fetchColumn();
+check($actorId > 0, 'Bidding controller checks require an authorized fixture');
+Session::put('auth_user', ['id' => $actorId, 'role' => 'RECYCLER', 'name' => '<Recycler>']);
 foreach (['placeBid', 'updateBid', 'withdrawBid'] as $method) {
     foreach (['0', '-1', 'abc', '1e2', '9999999999999999999999999'] as $id) {
         ob_start(); (new RecyclerController())->$method($id); ob_end_clean();

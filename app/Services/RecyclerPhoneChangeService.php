@@ -412,6 +412,12 @@ final class RecyclerPhoneChangeService
         if ($user === null || $user['role'] !== 'RECYCLER' || $user['account_status'] !== 'ACTIVE') {
             throw new DomainException('This Recycler account is not active.');
         }
+        $statement = $this->connection->prepare('SELECT verification_status FROM authorized_recyclers WHERE user_id = ?'
+            . ($this->connection->inTransaction() ? ' FOR UPDATE' : ''));
+        $statement->execute([$user['user_id']]);
+        if ($statement->fetchColumn() !== 'VERIFIED') {
+            throw new DomainException('Phone changes require a verified Recycler account.');
+        }
     }
 
     /** Named lock covers quota reads + reservation across accounts for one destination. */

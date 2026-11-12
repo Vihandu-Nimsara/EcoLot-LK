@@ -71,6 +71,18 @@ class AuthController extends Controller
             return;
         }
 
+        // Denied Recycler states must not enter the registration OTP flow.
+        $recycler = $user['role'] === 'RECYCLER'
+            ? (new AuthorizedRecycler())->findByUserId((int) $user['user_id'])
+            : null;
+        if ($user['role'] === 'RECYCLER' && ($recycler === null
+            || in_array($recycler['verification_status'], ['REJECTED', 'SUSPENDED'], true)
+            || in_array($user['account_status'], ['SUSPENDED', 'DISABLED'], true))) {
+            http_response_code(403);
+            $this->renderLogin('Your Recycler account is not currently authorized. Contact an Administrator.', $rawMobile);
+            return;
+        }
+
         if ($this->requiresMobileVerification($user)) {
             MobileVerificationSession::start((int) $user['user_id']);
             Csrf::regenerate();
@@ -84,7 +96,6 @@ class AuthController extends Controller
         $role = (string) $user['role'];
 
         if ($role === 'RECYCLER') {
-            $recycler = (new AuthorizedRecycler())->findByUserId((int) $user['user_id']);
             $verificationStatus = $recycler['verification_status'] ?? 'PENDING';
 
             if ($verificationStatus === 'PENDING') {
@@ -96,7 +107,7 @@ class AuthController extends Controller
                 return;
             }
 
-            if ($verificationStatus === 'REJECTED') {
+            if ($verificationStatus !== 'VERIFIED') {
                 http_response_code(403);
                 $this->renderLogin(
                     'Your Recycler application was rejected by an Administrator.',

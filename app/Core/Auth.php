@@ -57,6 +57,20 @@ final class Auth
         return is_string($prefix) ? rtrim($prefix, '/') . '/dashboard' : null;
     }
 
+    /** One current-state read per protected Admin/Recycler entry; never session-cached. */
+    public static function currentAccountAllows(string $role, ?PDO $db = null): bool
+    {
+        if (!in_array($role, ['ADMIN', 'RECYCLER'], true)) return true;
+        $db ??= Database::connection();
+        $membership = $role === 'ADMIN'
+            ? 'JOIN administrators membership ON membership.user_id = u.user_id'
+            : "JOIN authorized_recyclers membership ON membership.user_id = u.user_id AND membership.verification_status = 'VERIFIED'";
+        $statement = $db->prepare("SELECT u.user_id FROM users u $membership
+            WHERE u.user_id = ? AND u.role = ? AND u.account_status = 'ACTIVE'");
+        $statement->execute([(int) self::id(), $role]);
+        return $statement->fetchColumn() !== false;
+    }
+
     public static function requireRole(string $role): void
     {
         if (!self::check()) {
@@ -69,6 +83,24 @@ final class Auth
             http_response_code(403);
             echo '403 Forbidden';
             exit;
+        }
+
+        if (in_array($role, ['ADMIN', 'RECYCLER'], true)) {
+            try {
+                $allowed = self::currentAccountAllows($role);
+            } catch (Throwable $error) {
+                // Fail closed without exposing credentials, SQL or document paths.
+                error_log('Privileged account check failed category=' . $error::class);
+                http_response_code(503);
+                echo 'Account access could not be verified. Please try again later.';
+                exit;
+            }
+            if (!$allowed) {
+                self::logout();
+                http_response_code(403);
+                echo '403 This account is no longer authorized. Please sign in again.';
+                exit;
+            }
         }
     }
 }

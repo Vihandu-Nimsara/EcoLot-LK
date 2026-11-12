@@ -14,6 +14,7 @@
             const timer = setInterval(() => { if (updateCooldown() === 0) clearInterval(timer); }, 1000);
         }
     }
+    document.querySelector('[data-profile-feedback]')?.focus();
     const modal = document.querySelector('[data-profile-modal]');
     if (!modal) return;
     // Use the existing dialog styling outside the inert workspace.
@@ -105,7 +106,7 @@
         if (modal.hidden) return;
         if (event.key === 'Escape') { event.preventDefault(); close(); return; }
         if (event.key !== 'Tab') return;
-        const controls = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])')];
+        const controls = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])')].filter(control => control.getClientRects().length > 0);
         const first = controls[0], last = controls[controls.length - 1];
         if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }

@@ -122,7 +122,7 @@ class RecyclerController extends Controller
     {
         try { $render(); }
         catch (Throwable $error) {
-            error_log('Recycler bid read failed: ' . $error);
+            error_log('Recycler read failed category=' . $error::class);
             http_response_code(500);
             echo 'We could not load your bidding information. Please try again later.';
         }
@@ -240,8 +240,9 @@ class RecyclerController extends Controller
     {
         Auth::requireRole('RECYCLER');
         if (!$this->hasValidCsrfToken()) {
-            Session::flash('profile_error', 'Your session expired. Please reload the page and try again.');
-            $this->redirect('/recycler/profile');
+            http_response_code(403);
+            echo '403 Invalid or expired form.';
+            return;
         }
         $category = filter_var($this->postString('category_id'), FILTER_VALIDATE_INT);
         $type = $this->postString('request_type');
@@ -296,8 +297,9 @@ class RecyclerController extends Controller
         Auth::requireRole('RECYCLER');
         Session::flash('phone_editor_open', true);
         if (!$this->hasValidCsrfToken()) {
-            Session::flash('profile_error', 'Your session expired. Please try again.');
-            $this->redirect('/recycler/profile');
+            http_response_code(403);
+            echo '403 Invalid or expired form.';
+            return;
         }
         $reloginNotice = null;
         try {
@@ -387,7 +389,7 @@ class RecyclerController extends Controller
                 'Contact person updated successfully.'
             );
         } catch (Throwable $error) {
-            error_log('Recycler contact update failed: ' . $error);
+            error_log('Recycler contact update failed category=' . $error::class);
 
             Session::flash(
                 'profile_error',

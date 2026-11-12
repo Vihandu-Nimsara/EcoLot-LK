@@ -260,7 +260,8 @@ try {
         $process=proc_open([PHP_BINARY,'-d','session.save_path=/tmp',APP_ROOT.'/tests/'.$test],[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']],$streams);
         if (!is_resource($process)) throw new RuntimeException('Could not start regression');
         fclose($streams[0]); $output=stream_get_contents($streams[1]); $errors=stream_get_contents($streams[2]); fclose($streams[1]); fclose($streams[2]);
-        $check(proc_close($process)===0,'Regression '.$test.': '.$output.$errors); echo $output;
+        $expected = $test === 'recycler-bids.php' ? 'PASS: recycler amount, ID and mutation CSRF checks' : 'dashboard presentation/status/escaping assertions';
+        $check(proc_close($process)===0 && str_contains($output,$expected),'Regression '.$test.': '.$output.$errors); echo $output;
     }
     echo "PASS: $checks licence coverage/migration/approval/eligibility/security/concurrency assertions\n";
 } finally {

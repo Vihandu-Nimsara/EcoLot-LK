@@ -237,8 +237,9 @@ try {
     $recycler();
     $controller=new CapabilityRecyclerController();
     $_POST=['_csrf_token'=>'invalid','category_id'=>'3','request_type'=>'ADD','requested_can_handle_high_risk'=>'0','request_reason'=>'New category'];
-    try { $controller->requestCapabilityChange(); } catch (CapabilityRedirect $redirect) { $check($redirect->getMessage()==='/recycler/profile','Invalid CSRF uses profile redirect'); }
-    $check(Session::pullFlash('profile_error')==='Your session expired. Please reload the page and try again.','Submission CSRF enforced');
+    ob_start(); $controller->requestCapabilityChange(); $csrfHtml = ob_get_clean();
+    $check(http_response_code()===403 && str_contains($csrfHtml,'403'),'Submission CSRF enforced with HTTP 403');
+    $check((int)$db->query("SELECT COUNT(*) FROM recycler_capability_change_requests WHERE recycler_user_id=10 AND category_id=3 AND request_status='PENDING'")->fetchColumn()===0,'Forbidden POST creates no request');
     $_POST=['_csrf_token'=>Csrf::token(),'category_id'=>'3','request_type'=>'ADD','requested_can_handle_high_risk'=>'0','request_reason'=>'New category','recycler_user_id'=>'11'];
     try { $controller->requestCapabilityChange(); } catch (CapabilityRedirect $redirect) { $check($redirect->getCode()===303,'Submission PRG'); }
     $requestId=(int)$db->query("SELECT request_id FROM recycler_capability_change_requests WHERE recycler_user_id=10 AND category_id=3 AND request_status='PENDING'")->fetchColumn();

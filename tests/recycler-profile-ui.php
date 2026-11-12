@@ -7,9 +7,12 @@ $assert = static function (bool $ok, string $message) use (&$checks): void {
     if (!$ok) throw new RuntimeException($message);
     ++$checks;
 };
-$render = static function (?array $profile, ?array $compliance, array $capabilities, array $activities = [], ?array $currentLicense = null, ?array $pendingLicenseUpdate = null, ?array $phoneChange = null, bool $phoneEditorOpen = false): string {
+$render = static function (?array $profile, ?array $compliance, array $capabilities, array $activities = [], ?array $currentLicense = null, ?array $pendingLicenseUpdate = null, ?array $phoneChange = null, bool $phoneEditorOpen = false, array $feedback = [], array $capabilityHistory = []): string {
     $basePath = '/EcoLot-LK';
     $csrfToken = 'profile-test-token';
+    $profileSuccess = $feedback['success'] ?? null;
+    $profileError = $feedback['error'] ?? null;
+    $capabilityRequests = $capabilityHistory;
     $capabilityOptions = ($compliance['verification_status'] ?? '') === 'VERIFIED'
         ? [['category_id' => 1, 'category_name' => 'Owner <Category>', 'actions' => ['UPDATE', 'DEACTIVATE'], 'current_status' => 'APPROVED', 'current_risk' => 0]] : [];
     ob_start();
@@ -59,4 +62,23 @@ foreach (['verify', 'resend', 'cancel'] as $action) $assert($phoneXpath->query('
 $assert(!str_contains($phone, 'name="current_password"') && str_contains($phone, '9477****001'), 'Only masked destination in verification state');
 $error = $render(null, null, [], [], null, null, null, true);
 $assert(str_contains($error, 'class="profile-contact-editor profile-phone-editor" open'), 'Request errors keep editor open');
+$notices = $render(null, null, [], [], null, null, null, false, ['success' => 'Saved <contact>', 'error' => 'Rejected <input>']);
+$noticeDom = new DOMDocument();
+@$noticeDom->loadHTML($notices);
+$noticeXpath = new DOMXPath($noticeDom);
+foreach (['status' => 'profile-notice-success', 'alert' => 'profile-notice-error'] as $role => $class) {
+    $assert($noticeXpath->query('//p[@role="' . $role . '" and contains(@class,"' . $class . '") and @tabindex="-1" and @data-profile-feedback]')->length === 1, 'Distinct accessible feedback ' . $role);
+}
+$assert(str_contains($notices, 'Saved &lt;contact&gt;') && str_contains($notices, 'Rejected &lt;input&gt;'), 'Feedback escaped');
+$assert($noticeXpath->query('//p[contains(@class,"profile-notice-warning")]')->length > 0, 'Informational review warnings distinguished');
+$assert($x->query('//section[contains(@class,"profile-capabilities")]//tbody/tr/td[@data-label]')->length === 6, 'Every capability cell retains its mobile label');
+$assert($x->query('//section[@role="dialog" and @aria-modal="true" and @aria-labelledby="profile-dialog-title" and @aria-describedby="profile-dialog-description"]')->length === 1, 'Capability dialog has an accessible name and description');
+$history = $render(null, null, [], [], null, null, null, false, [], [[
+    'category_name' => 'Category <private>', 'request_type' => 'UPDATE', 'request_status' => 'REJECTED',
+    'previous_capability_status' => 'APPROVED', 'previous_can_handle_high_risk' => 0,
+    'requested_can_handle_high_risk' => 1, 'request_reason' => str_repeat('Long <reason> ', 30),
+    'submitted_at' => '2026-11-12 10:00:00', 'reviewed_at' => '2026-11-12 11:00:00', 'review_note' => 'Rejected <note>',
+]]);
+$assert(str_contains($history, '<details class="profile-request-description"><summary>Request reason</summary>'), 'Long reason accessible through native expandable disclosure');
+$assert(str_contains($history, 'Long &lt;reason&gt;') && str_contains($history, 'Rejected &lt;note&gt;'), 'Full reason and rejection feedback preserved and escaped');
 echo "PASS: $checks Profile view/permissions/escaping assertions (no database access)\n";

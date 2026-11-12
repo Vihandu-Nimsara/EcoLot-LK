@@ -232,7 +232,7 @@ class AdminController extends Controller
                 ? 'CEA license approved successfully.'
                 : 'CEA license rejected successfully.';
         } catch (PDOException $e) {
-            error_log('Recycler license review databse error: ' . $e->getMessage());
+            error_log('Recycler licence review database failure category=' . $e::class);
 
             $_SESSION['error'] = 'License review could not be completed.';
         
@@ -240,7 +240,7 @@ class AdminController extends Controller
             $_SESSION['error'] = $e->getMessage();
         
         } catch (Throwable $e) {
-            error_log('Recycler license review error: '. $e->getMessage());
+            error_log('Recycler licence review failure category=' . $e::class);
 
             $_SESSION['error'] = 'License review could not be completed.';
         }
@@ -335,8 +335,8 @@ class AdminController extends Controller
 
         } catch (PDOException $e) {
             error_log(
-                'Recycler licence update database error: ' .
-                $e->getMessage()
+                'Recycler licence update database failure category=' .
+                $e::class
             );
 
             $_SESSION['error'] =
@@ -347,8 +347,8 @@ class AdminController extends Controller
 
         } catch (Throwable $e) {
             error_log(
-                'Recycler licence update review error: ' .
-                $e->getMessage()
+                'Recycler licence update review failure category=' .
+                $e::class
             );
 
             $_SESSION['error'] =
@@ -549,7 +549,7 @@ class AdminController extends Controller
 
         } catch (PDOException $e) {
             error_log(
-                'Capability review database error: ' . $e->getMessage()
+                'Capability review database failure category=' . $e::class
             );
 
             $_SESSION['error'] =
@@ -560,7 +560,7 @@ class AdminController extends Controller
 
         } catch (Throwable $e) {
             error_log(
-                'Capability review error: ' . $e->getMessage()
+                'Capability review failure category=' . $e::class
             );
 
             $_SESSION['error'] =
@@ -668,8 +668,8 @@ class AdminController extends Controller
 
         } catch (PDOException $e) {
             error_log(
-                'Authorized activity review database error: '
-                . $e->getMessage()
+                'Authorized activity review database failure category='
+                . $e::class
             );
 
             $_SESSION['error'] =
@@ -680,7 +680,7 @@ class AdminController extends Controller
 
         } catch (Throwable $e) {
             error_log(
-                'Authorized activity review error: ' . $e->getMessage()
+                'Authorized activity review failure category=' . $e::class
             );
 
             $_SESSION['error'] =

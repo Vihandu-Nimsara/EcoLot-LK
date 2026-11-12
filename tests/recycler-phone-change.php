@@ -149,6 +149,10 @@ try {
         $insertUser->execute([$id, '9477000000' . $id, $passwordHash]);
         $insertRecycler->execute([$id, 'Test company ' . $id]);
     }
+    $db->exec("INSERT INTO users (user_id, full_name, mobile_number, password_hash, role, account_status)
+        VALUES (99, 'Fixture Admin', '94779999999', 'unused', 'ADMIN', 'ACTIVE')");
+    $db->exec('INSERT INTO administrators VALUES (99)');
+    $db->exec("UPDATE authorized_recyclers SET verification_status='VERIFIED', reviewed_by_admin_user_id=99, reviewed_at=CURRENT_TIMESTAMP");
     $observer = $connect($database);
     $baseline = $db->query('SELECT * FROM users ORDER BY user_id')->fetchAll();
     $reset = static function () use ($db, $limiterFile): void {
@@ -298,6 +302,16 @@ try {
     };
     $lastOtp = static function () use (&$sent): string { return $sent[array_key_last($sent)][1]; };
     $resetFlow();
+    $service->startChange(1, ' PhoneTest123! ', '0779000001');
+    $beforeSuspended = count($sent);
+    $db->exec("UPDATE authorized_recyclers SET verification_status='SUSPENDED',review_note='Synthetic suspension' WHERE user_id=1");
+    $reject(fn() => $service->verifyChange(1, $lastOtp()), DomainException::class);
+    $reject(fn() => $service->resend(1), DomainException::class);
+    $assert(count($sent) === $beforeSuspended && (new User($db))->find(1)['mobile_number'] === '94770000001', 'Verification suspension blocks phone completion/resend without SMS or number change');
+    $db->exec("UPDATE authorized_recyclers SET verification_status='VERIFIED',review_note=NULL WHERE user_id=1");
+    $resetFlow();
+
+    $resetFlow();
     $start();
     $assert($service->pendingChange(1)['masked_mobile'] === '9477****001', 'Only safe pending metadata');
     $service->verifyChange(1, $lastOtp());
@@ -422,9 +436,10 @@ try {
         }
         throw new RuntimeException('Expected profile redirect');
     };
-    $post('requestPhoneChange', ['_csrf_token' => 'invalid', 'current_password' => ' PhoneTest123! ', 'proposed_mobile_number' => '0779000001']);
+    $_POST = ['_csrf_token' => 'invalid', 'current_password' => ' PhoneTest123! ', 'proposed_mobile_number' => '0779000001'];
+    ob_start(); $controller->requestPhoneChange(); $csrfHtml = ob_get_clean();
+    $assert(http_response_code() === 403 && str_contains($csrfHtml, '403'), 'Invalid CSRF rejected with HTTP 403');
     $assert((int) $db->query('SELECT COUNT(*) FROM recycler_phone_change_challenges')->fetchColumn() === 0, 'Invalid CSRF cannot request SMS');
-    $assert(Session::pullFlash('profile_error') === 'Your session expired. Please try again.', 'Sanitized CSRF feedback');
     $post('requestPhoneChange', ['_csrf_token' => Csrf::token(), 'current_password' => ['invalid'], 'proposed_mobile_number' => '0779000001']);
     $assert(Session::pullFlash('profile_error') === 'Your current password is incorrect.', 'Array password safely rejected');
     $post('requestPhoneChange', ['_csrf_token' => Csrf::token(), 'user_id' => 2, 'current_password' => ' PhoneTest123! ', 'proposed_mobile_number' => '0779000001']);

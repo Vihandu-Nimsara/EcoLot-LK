@@ -23,16 +23,16 @@ foreach ($licenceCoverage as $recordedScope) {
             <p>Review your recorded company information, EcoLot verification, CEA license status, and handling capabilities.</p>
         </div>
     </div>
-    <p class="page-notice">Some company and compliance changes require Administrator review.</p>
+    <p class="page-notice profile-notice-warning">Some company and compliance changes require Administrator review.</p>
 
     <?php if (!empty($profileSuccess)): ?>
-        <p class="page-notice" role="status">
+        <p class="page-notice profile-notice-success" role="status" tabindex="-1" data-profile-feedback>
             <?= $escape($profileSuccess) ?>
         </p>
     <?php endif; ?>
 
     <?php if (!empty($profileError)): ?>
-        <p class="page-notice" role="alert">
+        <p class="page-notice profile-notice-error" role="alert" tabindex="-1" data-profile-feedback>
             <?= $escape($profileError) ?>
         </p>
     <?php endif; ?>
@@ -118,7 +118,7 @@ foreach ($licenceCoverage as $recordedScope) {
                             <p class="dialog-helper">Verification code sent to <?= $escape($phoneChange['masked_mobile']) ?>. Your current number remains active until verification succeeds.</p>
                             <p class="dialog-helper">Code expires: <?= $escape($phoneChange['expires_at']) ?> (Asia/Colombo).</p>
                             <?php if (!$phoneChange['can_verify']): ?>
-                                <p class="page-notice">This code cannot currently be used. Resend a code or cancel and start again.</p>
+                                <p class="page-notice profile-notice-warning">This code cannot currently be used. Resend a code or cancel and start again.</p>
                             <?php endif; ?>
                             <form class="profile-contact-form" method="post" action="<?= $escape($basePath) ?>/recycler/profile/phone/verify">
                                 <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken ?? '') ?>">
@@ -177,7 +177,7 @@ foreach ($licenceCoverage as $recordedScope) {
             </tr><?php endforeach; ?></tbody>
         </table></div><?php endif; ?>
         <div class="form-actions"><button class="secondary-workflow-btn" type="button" data-profile-open="capability" <?= !$capabilityOptions ? 'disabled' : '' ?> <?= $capabilityFormInput ? 'data-profile-auto-open' : '' ?>>Request Capability Change</button></div>
-        <p class="page-notice">Requests require Administrator approval. Existing permissions remain unchanged until approval. Permission reductions cannot be approved while this category has unresolved bids or unfinished winning handovers.</p>
+        <p class="page-notice profile-notice-warning">Requests require Administrator approval. Existing permissions remain unchanged until approval. Permission reductions cannot be approved while this category has unresolved bids or unfinished winning handovers.</p>
         <?php if ($capabilityRequests): ?>
             <details class="profile-capability-history" <?= in_array('PENDING', array_column($capabilityRequests, 'request_status'), true) ? 'open' : '' ?>>
                 <summary>Recent Capability Requests</summary>
@@ -187,7 +187,7 @@ foreach ($licenceCoverage as $recordedScope) {
                         <span class="badge <?= $request['request_status'] === 'APPROVED' ? 'badge-completed' : ($request['request_status'] === 'REJECTED' ? 'badge-rejected' : 'badge-pending') ?>"><?= $escape(ucfirst(strtolower($request['request_status']))) ?></span>
                         <p>Previous: <?= $escape($request['previous_capability_status'] ?? 'No capability') ?>; high-risk <?= $request['previous_can_handle_high_risk'] === null ? 'Not applicable' : ((int) $request['previous_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?>.</p>
                         <p>Requested: <?= $request['request_type'] === 'DEACTIVATE' ? 'Inactive' : 'Approved' ?>; high-risk <?= $request['requested_can_handle_high_risk'] === null ? 'Unchanged' : ((int) $request['requested_can_handle_high_risk'] === 1 ? 'Yes' : 'No') ?>.</p>
-                        <p>Reason: <?= $escape($request['request_reason']) ?></p>
+                        <details class="profile-request-description"><summary>Request reason</summary><p><?= $escape($request['request_reason']) ?></p></details>
                         <p>Submitted: <?= $escape($request['submitted_at']) ?></p>
                         <?php if ($request['reviewed_at'] !== null): ?><p>Reviewed: <?= $escape($request['reviewed_at']) ?>. <?= $escape($request['review_note'] ?? 'Approved without additional comments.') ?></p><?php endif; ?>
                     </article>
@@ -333,7 +333,7 @@ foreach ($licenceCoverage as $recordedScope) {
 
                 </div>
 
-                <p class="page-notice">
+                <p class="page-notice profile-notice-warning">
                     Another licence update cannot be submitted
                     until this request has been reviewed.
                 </p>
@@ -413,7 +413,7 @@ foreach ($licenceCoverage as $recordedScope) {
                         </span>
                     </label>
 
-                    <p class="page-notice">
+                    <p class="page-notice profile-notice-warning">
                         Submission does not immediately replace
                         your current approved licence.
                         Administrator approval is required.
@@ -434,7 +434,7 @@ foreach ($licenceCoverage as $recordedScope) {
 
         <?php else: ?>
 
-            <p class="page-notice">
+            <p class="page-notice profile-notice-warning">
                 Licence updates are available to verified recyclers.
             </p>
 
@@ -444,8 +444,8 @@ foreach ($licenceCoverage as $recordedScope) {
 
     <section class="workflow-card profile-compliance">
         <div class="workflow-section-header"><h2>Compliance Overview</h2><p>Recorded verification and approvals. Licence validity does not establish category or activity coverage.</p></div>
-        <?php if (!$hasCurrentCoverage): ?><p class="page-notice">Licence scope verification required. Existing records are preserved, but new bids and expanded authorizations require Administrator verification of current category, activity and high-risk evidence. You do not need to register again.</p><?php endif; ?>
-        <?php if ($licenceConflicts): ?><p class="page-notice">Some existing bids or awards need authorization review. They have not been cancelled or rewritten. Contact the Administrator or Municipal Officer.</p><?php endif; ?>
+        <?php if (!$hasCurrentCoverage): ?><p class="page-notice profile-notice-warning">Licence scope verification required. Existing records are preserved, but new bids and expanded authorizations require Administrator verification of current category, activity and high-risk evidence. You do not need to register again.</p><?php endif; ?>
+        <?php if ($licenceConflicts): ?><p class="page-notice profile-notice-warning">Some existing bids or awards need authorization review. They have not been cancelled or rewritten. Contact the Administrator or Municipal Officer.</p><?php endif; ?>
         <details class="profile-capability-history"><summary>Licence-linked scope and feedback</summary>
             <?php foreach ($licenceCoverage as $scope): ?><article class="profile-capability-request">
                 <h3><?= $escape($scope['category_name']) ?> — <?= $escape(ucfirst(strtolower($scope['activity_type']))) ?></h3>
@@ -493,7 +493,7 @@ foreach ($licenceCoverage as $recordedScope) {
 </section>
 
 <template data-profile-template="capability">
-    <p class="dialog-context-note">Capability changes require Administrator approval and current licence scope verification before affecting eligibility. ADD, UPDATE and reactivation may require supporting licence evidence, not necessarily a new licence. Suspended or rejected capabilities cannot be reactivated here.</p>
+    <p class="dialog-context-note">Administrator approval and current licence coverage are required before eligibility changes. Supporting evidence may be needed. Suspended or rejected capabilities cannot be reactivated here.</p>
     <label class="dialog-field"><span>Waste Category</span><select name="category_id" data-profile-category data-selected="<?= (int) ($capabilityFormInput['category_id'] ?? 0) ?>" required>
         <option value="">Select category</option>
         <?php foreach ($capabilityOptions as $option): ?>

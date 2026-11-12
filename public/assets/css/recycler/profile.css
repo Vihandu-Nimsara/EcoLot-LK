@@ -339,3 +339,61 @@
     outline: 3px solid #2c9c63;
     outline-offset: 3px;
 }
+
+/* Feedback variants are scoped to Profile; other workspaces retain their notices. */
+.recycler-profile-page .page-notice.profile-notice-success {
+    color: #12613a;
+    background: #eaf8ef;
+    border-color: #a7d9b8;
+    border-left: 4px solid #23814c;
+}
+.recycler-profile-page .page-notice.profile-notice-error {
+    color: #922626;
+    background: #fff0f0;
+    border-color: #eab1b1;
+    border-left: 4px solid #b33434;
+}
+.recycler-profile-page .page-notice.profile-notice-warning {
+    color: #795115;
+    background: #fff8e8;
+    border-color: #e8d29b;
+    border-left: 4px solid #a7731d;
+}
+.recycler-profile-page [data-profile-feedback]:focus-visible,
+.recycler-profile-page .profile-request-description summary:focus-visible {
+    outline: 3px solid #168a50;
+    outline-offset: 3px;
+}
+.recycler-profile-page .profile-request-description { margin: 8px 0; }
+.recycler-profile-page .profile-request-description summary { min-height: 32px; }
+.recycler-profile-page .profile-request-description p { margin-top: 8px; white-space: pre-wrap; }
+.recycler-profile-dialog .workspace-dialog-card { min-width: 0; }
+.recycler-profile-dialog .dialog-field :is(select, textarea) { width: 100%; min-width: 0; }
+.recycler-profile-dialog .dialog-field textarea { resize: vertical; }
+
+@media (max-width: 600px) {
+    /* Stack each capability into labelled cells without squeezing three columns. */
+    .recycler-profile-page .profile-capabilities .workflow-table-wrapper { overflow: visible; }
+    .recycler-profile-page .profile-capabilities .workflow-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+    .recycler-profile-page .profile-capabilities .workflow-table :is(tbody, tr, td) { display: block; width: 100%; }
+    .recycler-profile-page .profile-capabilities .workflow-table tr { padding: 12px 0; border-bottom: 1px solid var(--recycler-border); }
+    .recycler-profile-page .profile-capabilities .workflow-table td { padding: 7px 0; border: 0; }
+    .recycler-profile-page .profile-capabilities .workflow-table td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 5px;
+        color: var(--recycler-muted);
+        font-size: .75rem;
+        font-weight: 600;
+    }
+    .recycler-profile-page .profile-capabilities .btn-action { width: 100%; min-height: 44px; }
+    .recycler-profile-page .profile-contact-editor summary { flex-wrap: wrap; }
+    .recycler-profile-dialog .workspace-dialog-header { gap: 12px; }
+    .recycler-profile-dialog .workspace-dialog-header h2 { font-size: 1.25rem; }
+}

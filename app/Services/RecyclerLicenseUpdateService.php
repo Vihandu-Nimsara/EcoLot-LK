@@ -10,7 +10,7 @@ final class RecyclerLicenseUpdateService
         array $input,
         array $file
     ): int {
-        if ($recyclerUserId <= 0) {
+        if ($recyclerUserId <= 0 || Auth::role() !== 'RECYCLER' || (int) Auth::id() !== $recyclerUserId) {
             throw new InvalidArgumentException('Invalid recycler.');
         }
 

@@ -49,7 +49,9 @@ final class AuthorizedRecycler extends Model
                 ON r.user_id = u.user_id
             SET u.full_name = :full_name
             WHERE u.user_id = :owner
-            AND u.role = 'RECYCLER'",
+            AND u.role = 'RECYCLER'
+            AND u.account_status = 'ACTIVE'
+            AND r.verification_status = 'VERIFIED'",
             [
                 'full_name' => $fullName,
                 'owner' => $userId,

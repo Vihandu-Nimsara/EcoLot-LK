@@ -58,7 +58,15 @@ try {
 }
 foreach (['admin', 'collector', 'municipal_officer', 'public_user', 'recycler'] as $role) {
     ob_start();
-    Session::put('auth_user', ['id' => 1, 'name' => 'Test User', 'role' => strtoupper($role)]);
+    $actorId = 1;
+    if (in_array($role, ['admin', 'recycler'], true)) {
+        $sql = $role === 'admin'
+            ? "SELECT u.user_id FROM users u JOIN administrators a ON a.user_id=u.user_id WHERE u.role='ADMIN' AND u.account_status='ACTIVE' LIMIT 1"
+            : "SELECT u.user_id FROM users u JOIN authorized_recyclers r ON r.user_id=u.user_id WHERE u.role='RECYCLER' AND u.account_status='ACTIVE' AND r.verification_status='VERIFIED' LIMIT 1";
+        $actorId = (int) Database::connection()->query($sql)->fetchColumn();
+        check($actorId > 0, 'Smoke dashboard requires an authorized fixture for ' . $role);
+    }
+    Session::put('auth_user', ['id' => $actorId, 'name' => 'Test User', 'role' => strtoupper($role)]);
     $controller = $app['roles'][$role]['controller'];
     (new $controller())->dashboard();
     $html = ob_get_clean();
