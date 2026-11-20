@@ -722,6 +722,239 @@ CREATE TABLE IF NOT EXISTS `handover_records` (
 -- Cross-table business rules
 -- =========================================================
 
+-- Initial Admin review only. No existing rows are changed or granted scope.
+CREATE TABLE IF NOT EXISTS recycler_license_scopes (
+    scope_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    license_id BIGINT UNSIGNED NOT NULL,
+    category_id BIGINT UNSIGNED NOT NULL,
+    activity_type ENUM('COLLECTION','TRANSPORTATION','STORAGE','RECOVERY','RECYCLING','DISPOSAL') NOT NULL,
+    covers_high_risk BOOLEAN NOT NULL DEFAULT FALSE,
+    authorization_basis ENUM('EPL','SWML','EPL_AND_SWML','OTHER') NOT NULL,
+    waste_description VARCHAR(500) NOT NULL,
+    waste_code VARCHAR(120) NULL,
+    evidence_reference VARCHAR(500) NOT NULL,
+    licence_conditions VARCHAR(1000) NOT NULL,
+    license_number VARCHAR(100) NOT NULL,
+    expiry_date DATE NOT NULL,
+    document_path VARCHAR(500) NOT NULL,
+    document_sha256 CHAR(64) NOT NULL,
+    scope_status ENUM('PENDING','VERIFIED','REJECTED') NOT NULL DEFAULT 'PENDING',
+    proposed_by_admin_user_id BIGINT UNSIGNED NOT NULL,
+    proposed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    reviewed_by_admin_user_id BIGINT UNSIGNED NULL,
+    reviewed_at DATETIME NULL,
+    review_note VARCHAR(500) NULL,
+    active_scope TINYINT GENERATED ALWAYS AS (CASE WHEN scope_status IN ('PENDING','VERIFIED') THEN 1 ELSE NULL END) STORED,
+    UNIQUE KEY uq_scope_document (license_id, category_id, activity_type, covers_high_risk, document_sha256, active_scope),
+    KEY idx_scope_lookup (license_id, category_id, activity_type, scope_status),
+    CONSTRAINT fk_scope_license FOREIGN KEY (license_id) REFERENCES recycler_licenses(license_id),
+    CONSTRAINT fk_scope_category FOREIGN KEY (category_id) REFERENCES waste_categories(category_id),
+    CONSTRAINT fk_scope_proposer FOREIGN KEY (proposed_by_admin_user_id) REFERENCES administrators(user_id),
+    CONSTRAINT fk_scope_reviewer FOREIGN KEY (reviewed_by_admin_user_id) REFERENCES administrators(user_id),
+    CONSTRAINT chk_scope_decision CHECK (
+        (scope_status='PENDING' AND reviewed_by_admin_user_id IS NULL AND reviewed_at IS NULL AND review_note IS NULL)
+        OR (scope_status IN ('VERIFIED','REJECTED') AND reviewed_by_admin_user_id IS NOT NULL AND reviewed_at IS NOT NULL AND review_note IS NOT NULL AND CHAR_LENGTH(TRIM(review_note))>0)
+    )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Also support the earlier Phase 1 table definition without changing decision rows.
+-- Existing duplicate active scopes must be reconciled explicitly, never delete history here.
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_scopes' AND COLUMN_NAME='active_scope'), 'DO 0', 'ALTER TABLE recycler_license_scopes ADD COLUMN active_scope TINYINT GENERATED ALWAYS AS (CASE WHEN scope_status IN (''PENDING'',''VERIFIED'') THEN 1 ELSE NULL END) STORED');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_scopes' AND INDEX_NAME='uq_scope_document'), 'DO 0', 'ALTER TABLE recycler_license_scopes ADD UNIQUE INDEX uq_scope_document (license_id, category_id, activity_type, covers_high_risk, document_sha256, active_scope)');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+
+-- Apply after 20261116_recycler_initial_scope.sql. No legacy rows are selected or granted scope.
+-- Pause review writes and compare existing definitions before applying. DDL auto-commits on MySQL and MariaDB.
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_licenses' AND INDEX_NAME='uq_license_owner_identity'), 'DO 0', 'ALTER TABLE recycler_licenses ADD UNIQUE INDEX uq_license_owner_identity (license_id, recycler_user_id)');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='authorized_recyclers' AND COLUMN_NAME='current_license_id'), 'DO 0', 'ALTER TABLE authorized_recyclers ADD COLUMN current_license_id BIGINT UNSIGNED NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='authorized_recyclers' AND INDEX_NAME='idx_recycler_current_license'), 'DO 0', 'ALTER TABLE authorized_recyclers ADD INDEX idx_recycler_current_license (current_license_id, user_id)');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @foundation_ddl = IF(
+    EXISTS (SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA=DATABASE() AND TABLE_NAME='authorized_recyclers' AND CONSTRAINT_NAME='fk_recycler_current_license'),
+    'DO 0',
+    'ALTER TABLE authorized_recyclers ADD CONSTRAINT fk_recycler_current_license FOREIGN KEY (current_license_id, user_id) REFERENCES recycler_licenses (license_id, recycler_user_id) ON DELETE RESTRICT ON UPDATE RESTRICT'
+);
+PREPARE foundation_statement FROM @foundation_ddl;
+EXECUTE foundation_statement;
+DEALLOCATE PREPARE foundation_statement;
+SET @foundation_ddl = IF(
+    EXISTS (SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_scopes' AND CONSTRAINT_NAME='chk_scope_evidence'),
+    'DO 0',
+    'ALTER TABLE recycler_license_scopes ADD CONSTRAINT chk_scope_evidence CHECK (covers_high_risk IN (0,1) AND (covers_high_risk=0 OR authorization_basis<>''EPL'') AND document_sha256 COLLATE utf8mb4_bin REGEXP ''^[0-9a-f]{64}$'' AND CHAR_LENGTH(TRIM(waste_description))>0 AND CHAR_LENGTH(TRIM(evidence_reference))>0 AND CHAR_LENGTH(TRIM(licence_conditions))>0)'
+);
+PREPARE foundation_statement FROM @foundation_ddl;
+EXECUTE foundation_statement;
+DEALLOCATE PREPARE foundation_statement;
+
+
+-- Adopt the compatible legacy phone-change table. Registration OTPs remain separate.
+-- Preflight existing definitions and duplicate active targets. No history is deleted or backfilled.
+CREATE TABLE IF NOT EXISTS `recycler_phone_change_challenges` (
+  `challenge_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `recycler_user_id` bigint(20) unsigned NOT NULL,
+  `original_mobile_number` varchar(20) NOT NULL,
+  `proposed_mobile_number` varchar(20) NOT NULL,
+  `otp_hash` varchar(255) NOT NULL,
+  `session_context_hash` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `password_state_fingerprint` char(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `attempt_count` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `expires_at` datetime NOT NULL,
+  `delivery_status` enum('PENDING','SENT','FAILED') NOT NULL DEFAULT 'PENDING',
+  `sent_at` datetime DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
+  `invalidated_at` datetime DEFAULT NULL,
+  `active_recycler_user_id` bigint(20) unsigned GENERATED ALWAYS AS (case when `verified_at` is null and `invalidated_at` is null then `recycler_user_id` else NULL end) STORED,
+  PRIMARY KEY (`challenge_id`),
+  UNIQUE KEY `uq_phone_change_one_active` (`active_recycler_user_id`),
+  KEY `idx_phone_change_owner_created` (`recycler_user_id`,`created_at`),
+  KEY `idx_phone_change_target_created` (`proposed_mobile_number`,`created_at`),
+  CONSTRAINT `fk_phone_change_recycler_restrict` FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`) ON UPDATE RESTRICT,
+  CONSTRAINT `chk_phone_change_numbers` CHECK (`original_mobile_number` regexp '^947[0-9]{8}$' and `proposed_mobile_number` regexp '^947[0-9]{8}$' and `original_mobile_number` <> `proposed_mobile_number`),
+  CONSTRAINT `chk_phone_change_bindings` CHECK (`session_context_hash` regexp '^[0-9a-f]{64}$' and `password_state_fingerprint` regexp '^[0-9a-f]{64}$'),
+  CONSTRAINT `chk_phone_change_attempts` CHECK (`attempt_count` <= 5),
+  CONSTRAINT `chk_phone_change_expiry` CHECK (`expires_at` > `created_at`),
+  CONSTRAINT `chk_phone_change_delivery` CHECK (`delivery_status` = 'PENDING' and `sent_at` is null or `delivery_status` = 'SENT' and `sent_at` is not null and `sent_at` >= `created_at` or `delivery_status` = 'FAILED' and `sent_at` is null and `invalidated_at` is not null),
+  CONSTRAINT `chk_phone_change_terminal_state` CHECK ((`verified_at` is null or `invalidated_at` is null and `delivery_status` = 'SENT' and `verified_at` >= `sent_at` and `verified_at` <= `expires_at` and `attempt_count` < 5) and (`invalidated_at` is null or `invalidated_at` >= `created_at`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_phone_change_challenges' AND COLUMN_NAME='active_proposed_mobile_number'), 'DO 0', 'ALTER TABLE recycler_phone_change_challenges ADD COLUMN active_proposed_mobile_number VARCHAR(20)
+        GENERATED ALWAYS AS (CASE WHEN verified_at IS NULL AND invalidated_at IS NULL THEN proposed_mobile_number ELSE NULL END) STORED');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_phone_change_challenges' AND INDEX_NAME='uq_phone_change_active_target'), 'DO 0', 'ALTER TABLE recycler_phone_change_challenges ADD UNIQUE INDEX uq_phone_change_active_target (active_proposed_mobile_number)');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+
+
+-- Additive licence renewal storage. No legacy request, document or scope backfill.
+CREATE TABLE IF NOT EXISTS `recycler_license_update_requests` (
+  `request_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `recycler_user_id` bigint(20) unsigned NOT NULL,
+  `current_license_id` bigint(20) unsigned DEFAULT NULL,
+  `requested_license_number` varchar(100) NOT NULL,
+  `requested_expiry_date` date NOT NULL,
+  `document_path` varchar(500) NOT NULL,
+  `request_status` enum('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  `submitted_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `reviewed_by_admin_user_id` bigint(20) unsigned DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `review_note` varchar(500) DEFAULT NULL,
+  `pending_recycler_user_id` bigint(20) unsigned GENERATED ALWAYS AS (case when `request_status` = 'PENDING' then `recycler_user_id` else NULL end) STORED,
+  PRIMARY KEY (`request_id`),
+  UNIQUE KEY `uq_recycler_license_one_pending` (`pending_recycler_user_id`),
+  KEY `idx_license_update_owner` (`recycler_user_id`,`request_status`,`submitted_at`),
+  KEY `idx_license_update_current` (`current_license_id`),
+  KEY `idx_license_update_reviewer` (`reviewed_by_admin_user_id`),
+  CONSTRAINT `fk_license_update_admin_restrict` FOREIGN KEY (`reviewed_by_admin_user_id`) REFERENCES `administrators` (`user_id`) ON UPDATE RESTRICT,
+  CONSTRAINT `fk_license_update_current` FOREIGN KEY (`current_license_id`) REFERENCES `recycler_licenses` (`license_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_license_update_recycler_guarded` FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `chk_license_update_review` CHECK (`request_status` = 'PENDING' and `reviewed_by_admin_user_id` is null and `reviewed_at` is null and `review_note` is null or `request_status` = 'APPROVED' and `reviewed_by_admin_user_id` is not null and `reviewed_at` is not null or `request_status` = 'REJECTED' and `reviewed_by_admin_user_id` is not null and `reviewed_at` is not null and `review_note` is not null)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `recycler_license_revisions` (
+  `revision_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `license_id` bigint(20) unsigned NOT NULL,
+  `update_request_id` bigint(20) unsigned NOT NULL,
+  `previous_license_number` varchar(100) NOT NULL,
+  `previous_expiry_date` date NOT NULL,
+  `previous_document_path` varchar(500) DEFAULT NULL,
+  `previous_license_status` enum('PENDING','VALID','REJECTED','EXPIRED','REVOKED','SUPERSEDED') NOT NULL,
+  `previous_submitted_at` datetime NOT NULL,
+  `previous_reviewed_by_admin_user_id` bigint(20) unsigned DEFAULT NULL,
+  `previous_reviewed_at` datetime DEFAULT NULL,
+  `previous_review_note` varchar(500) DEFAULT NULL,
+  `archived_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `archived_by_admin_user_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`revision_id`),
+  UNIQUE KEY `uq_license_revision_request` (`update_request_id`),
+  KEY `idx_license_revision_history` (`license_id`,`archived_at`),
+  KEY `fk_license_revision_admin` (`archived_by_admin_user_id`),
+  CONSTRAINT `fk_license_revision_admin` FOREIGN KEY (`archived_by_admin_user_id`) REFERENCES `administrators` (`user_id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_license_revision_license` FOREIGN KEY (`license_id`) REFERENCES `recycler_licenses` (`license_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_update_requests' AND COLUMN_NAME='document_sha256'), 'DO 0', 'ALTER TABLE recycler_license_update_requests ADD COLUMN document_sha256 CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_update_requests' AND COLUMN_NAME='current_identity_sha256'), 'DO 0', 'ALTER TABLE recycler_license_update_requests ADD COLUMN current_identity_sha256 CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_update_requests' AND COLUMN_NAME='current_document_sha256'), 'DO 0', 'ALTER TABLE recycler_license_update_requests ADD COLUMN current_document_sha256 CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_update_requests' AND COLUMN_NAME='explanation'), 'DO 0', 'ALTER TABLE recycler_license_update_requests ADD COLUMN explanation VARCHAR(500) NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_revisions' AND COLUMN_NAME='previous_document_sha256'), 'DO 0', 'ALTER TABLE recycler_license_revisions ADD COLUMN previous_document_sha256 CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_license_revisions' AND COLUMN_NAME='previous_document_version'), 'DO 0', 'ALTER TABLE recycler_license_revisions ADD COLUMN previous_document_version BIGINT UNSIGNED NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+
+-- Adopt the established request contract without changing existing decisions.
+ALTER TABLE recycler_capabilities MODIFY COLUMN capability_status ENUM('PENDING','APPROVED','REJECTED','SUSPENDED','INACTIVE') NOT NULL DEFAULT 'PENDING';
+CREATE TABLE IF NOT EXISTS `recycler_capability_change_requests` (
+  `request_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `recycler_user_id` bigint(20) unsigned NOT NULL,
+  `category_id` bigint(20) unsigned NOT NULL,
+  `request_type` enum('ADD','UPDATE','DEACTIVATE') NOT NULL,
+  `previous_capability_status` enum('PENDING','APPROVED','REJECTED','SUSPENDED','INACTIVE') DEFAULT NULL,
+  `previous_can_handle_high_risk` tinyint(1) DEFAULT NULL,
+  `requested_can_handle_high_risk` tinyint(1) DEFAULT NULL,
+  `request_reason` varchar(500) NOT NULL,
+  `request_status` enum('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  `submitted_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `reviewed_by_admin_user_id` bigint(20) unsigned DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `review_note` varchar(500) DEFAULT NULL,
+  `pending_recycler_user_id` bigint(20) unsigned GENERATED ALWAYS AS (case when `request_status` = 'PENDING' then `recycler_user_id` else NULL end) STORED,
+  `pending_category_id` bigint(20) unsigned GENERATED ALWAYS AS (case when `request_status` = 'PENDING' then `category_id` else NULL end) STORED,
+  PRIMARY KEY (`request_id`),
+  UNIQUE KEY `uq_capability_one_pending` (`pending_recycler_user_id`,`pending_category_id`),
+  KEY `idx_capability_request_owner` (`recycler_user_id`,`request_status`,`submitted_at`),
+  KEY `idx_capability_request_category` (`category_id`),
+  KEY `idx_capability_request_reviewer` (`reviewed_by_admin_user_id`),
+  CONSTRAINT `fk_capability_request_admin_restrict` FOREIGN KEY (`reviewed_by_admin_user_id`) REFERENCES `administrators` (`user_id`) ON UPDATE RESTRICT,
+  CONSTRAINT `fk_capability_request_category_restrict` FOREIGN KEY (`category_id`) REFERENCES `waste_categories` (`category_id`) ON UPDATE RESTRICT,
+  CONSTRAINT `fk_capability_request_recycler_restrict` FOREIGN KEY (`recycler_user_id`) REFERENCES `authorized_recyclers` (`user_id`) ON UPDATE RESTRICT,
+  CONSTRAINT `chk_capability_request_reason` CHECK (char_length(trim(`request_reason`)) > 0),
+  CONSTRAINT `chk_capability_request_snapshot` CHECK (`request_type` = 'ADD' and `previous_capability_status` is null and `previous_can_handle_high_risk` is null or `request_type` = 'UPDATE' and `previous_capability_status` is not null and `previous_capability_status` in ('APPROVED','INACTIVE') and `previous_can_handle_high_risk` is not null and (`previous_capability_status` = 'INACTIVE' or `previous_can_handle_high_risk` <> `requested_can_handle_high_risk`) or `request_type` = 'DEACTIVATE' and `previous_capability_status` is not null and `previous_capability_status` = 'APPROVED' and `previous_can_handle_high_risk` is not null),
+  CONSTRAINT `chk_capability_request_risk` CHECK ((`previous_can_handle_high_risk` is null or `previous_can_handle_high_risk` in (0,1)) and (`request_type` = 'DEACTIVATE' and `requested_can_handle_high_risk` is null or `request_type` in ('ADD','UPDATE') and `requested_can_handle_high_risk` is not null and `requested_can_handle_high_risk` in (0,1))),
+  CONSTRAINT `chk_capability_request_review` CHECK (`request_status` = 'PENDING' and `reviewed_by_admin_user_id` is null and `reviewed_at` is null and `review_note` is null or `request_status` = 'APPROVED' and `reviewed_by_admin_user_id` is not null and `reviewed_at` is not null and `reviewed_at` >= `submitted_at` or `request_status` = 'REJECTED' and `reviewed_by_admin_user_id` is not null and `reviewed_at` is not null and `reviewed_at` >= `submitted_at` and `review_note` is not null and char_length(trim(`review_note`)) > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_capability_change_requests' AND COLUMN_NAME='capability_snapshot_json'), 'DO 0', 'ALTER TABLE recycler_capability_change_requests ADD COLUMN capability_snapshot_json LONGTEXT NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_capability_change_requests' AND COLUMN_NAME='license_identity_sha256'), 'DO 0', 'ALTER TABLE recycler_capability_change_requests ADD COLUMN license_identity_sha256 CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+SET @profile_ddl = IF(EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='recycler_capability_change_requests' AND COLUMN_NAME='approved_activity_snapshot_json'), 'DO 0', 'ALTER TABLE recycler_capability_change_requests ADD COLUMN approved_activity_snapshot_json TEXT NULL');
+PREPARE profile_statement FROM @profile_ddl;
+EXECUTE profile_statement;
+DEALLOCATE PREPARE profile_statement;
+
 DELIMITER $$
 
 DROP TRIGGER IF EXISTS `trg_administrators_role_bi`$$
@@ -1321,6 +1554,51 @@ BEGIN
          WHERE rb.`bid_id` = NEW.`winning_bid_id`
            AND rb.`bid_status` = 'WINNING';
     END IF;
+END$$
+
+DROP TRIGGER IF EXISTS trg_recycler_renewal_submission_bu$$
+CREATE TRIGGER trg_recycler_renewal_submission_bu
+BEFORE UPDATE ON recycler_license_update_requests FOR EACH ROW
+BEGIN
+    IF OLD.request_status <> 'PENDING' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='A recorded licence renewal decision is immutable';
+    END IF;
+    IF OLD.document_sha256 IS NOT NULL AND (
+        NOT (NEW.request_id <=> OLD.request_id) OR NOT (NEW.recycler_user_id <=> OLD.recycler_user_id)
+        OR NOT (BINARY NEW.requested_license_number <=> BINARY OLD.requested_license_number)
+        OR NOT (NEW.requested_expiry_date <=> OLD.requested_expiry_date)
+        OR NOT (BINARY NEW.document_path <=> BINARY OLD.document_path)
+        OR NOT (NEW.document_sha256 <=> OLD.document_sha256)
+        OR NOT (NEW.current_identity_sha256 <=> OLD.current_identity_sha256)
+        OR NOT (NEW.current_document_sha256 <=> OLD.current_document_sha256)
+        OR NOT (NEW.submitted_at <=> OLD.submitted_at)
+        OR NOT (BINARY NEW.explanation <=> BINARY OLD.explanation)
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='A submitted licence renewal identity is immutable';
+    END IF;
+END$$
+
+DROP TRIGGER IF EXISTS trg_recycler_capability_request_bu$$
+CREATE TRIGGER trg_recycler_capability_request_bu
+BEFORE UPDATE ON recycler_capability_change_requests FOR EACH ROW
+BEGIN
+ IF OLD.request_status <> 'PENDING' THEN
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='A completed capability decision is immutable';
+ END IF;
+ IF OLD.capability_snapshot_json IS NOT NULL AND (
+  NOT (NEW.recycler_user_id <=> OLD.recycler_user_id) OR NOT (NEW.category_id <=> OLD.category_id)
+  OR NOT (NEW.request_id <=> OLD.request_id) OR NOT (NEW.request_type <=> OLD.request_type)
+  OR NOT (NEW.previous_capability_status <=> OLD.previous_capability_status)
+  OR NOT (NEW.previous_can_handle_high_risk <=> OLD.previous_can_handle_high_risk)
+  OR NOT (NEW.requested_can_handle_high_risk <=> OLD.requested_can_handle_high_risk)
+  OR NOT (BINARY NEW.request_reason <=> BINARY OLD.request_reason)
+  OR NOT (BINARY NEW.capability_snapshot_json <=> BINARY OLD.capability_snapshot_json)
+  OR NOT (NEW.license_identity_sha256 <=> OLD.license_identity_sha256)
+  OR NOT (BINARY NEW.approved_activity_snapshot_json <=> BINARY OLD.approved_activity_snapshot_json)
+  OR NOT (NEW.submitted_at <=> OLD.submitted_at)
+ ) THEN
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Submitted capability request metadata is immutable';
+ END IF;
 END$$
 
 DELIMITER ;

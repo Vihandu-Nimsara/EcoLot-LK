@@ -17,7 +17,7 @@ class AdminController extends Controller
 
     public function recyclerVerification(): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
         $recyclerProfiles = (new AuthorizedRecycler())->verificationList(); 
         $this->view('admin/recycler-verification', 
         ['currentPage' => 'recycler-verification',
@@ -27,7 +27,7 @@ class AdminController extends Controller
 
     public function recyclerDetails(string $id): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
         $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
         if ($recyclerId === false || $recyclerId <= 0) {
             http_response_code(404);
@@ -58,25 +58,54 @@ class AdminController extends Controller
             return;
         }
             
-        $license =$model->latestLicenseForRecycler($recyclerId);
+        $license = in_array($recycler['verification_status'], ['PENDING','REJECTED'], true)
+            ? $model->latestLicenseForRecycler($recyclerId) : $model->selectedLicenseForRecycler($recyclerId);
         $capabilities = $model->capabilitiesForRecycler($recyclerId);
         $activityModel = new RecyclerAuthorizedActivity();
         $activities = $activityModel->forRecycler($recyclerId);
 
+        $scopeAvailable=true; $scopes=[]; $scopeSupport=[]; $scopeReady=true;
+        try { $scopes=$model->initialScopes($recyclerId); }
+        catch (PDOException $error) { if ((int)($error->errorInfo[1]??0)!==1146) throw $error; $scopeAvailable=false; }
+        $scopeService=new RecyclerLicenseReviewService();
+        foreach ($capabilities as $cap) {
+            try { if (!$scopeAvailable) throw new RuntimeException(); $scopeService->requireScope($recyclerId,(int)$cap['category_id'],null,(int)$cap['can_handle_high_risk']); $scopeSupport['category'][$cap['category_id']]=true; }
+            catch (RuntimeException $error) { $scopeSupport['category'][$cap['category_id']]=false; }
+            if ($cap['capability_status']==='APPROVED') {
+                try { if (!$scopeAvailable) throw new RuntimeException(); $scopeService->requireScope($recyclerId,(int)$cap['category_id'],null,(int)$cap['can_handle_high_risk'],true); }
+                catch (RuntimeException $error) { $scopeReady=false; }
+            }
+        }
+        foreach ($activities as $activity) {
+            try { if (!$scopeAvailable) throw new RuntimeException(); $scopeService->requireScope($recyclerId,null,$activity['activity_type'],null); $scopeSupport['activity'][$activity['activity_id']]=true; }
+            catch (RuntimeException $error) { $scopeSupport['activity'][$activity['activity_id']]=false; }
+            if ($activity['activity_status']==='APPROVED') {
+                try { if (!$scopeAvailable) throw new RuntimeException(); $scopeService->requireScope($recyclerId,null,$activity['activity_type'],null,true); }
+                catch (RuntimeException $error) { $scopeReady=false; }
+            }
+        }
+        $documentPath=(new RecyclerLicenseRenewalService())->currentDocument($recyclerId,$license);
         $this->view('admin/recycler-details', [
             'currentPage' => 'recycler-verification',
             'pageStylePage' => 'recycler-details',
             'recycler' => $recycler,
             'license' => $license,
+            'scopeAvailable' => $scopeAvailable, 'scopes' => $scopes, 'scopeSupport' => $scopeSupport,
+            'scopeReady' => $scopeReady && $scopeAvailable,
+            'documentAvailable' => $documentPath !== null,
+            'documentHash' => $documentPath === null ? '' : hash_file('sha256',$documentPath),
             'capabilities' => $capabilities,
             'activities' => $activities,
+            'capabilityRequests' => (new RecyclerCapabilityChangeService())->requests($recyclerId),
+            'renewalRequests' => (new RecyclerLicenseRenewalService())->requests($recyclerId),
+            'renewalScopeReview' => (new RecyclerLicenseRenewalService())->canReviewScope($recyclerId),
             'csrfToken' => Csrf::token(),
         ]);
     }
 
     public function reviewRecycler(string $id): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
 
         $adminId = Auth::id();
 
@@ -99,7 +128,7 @@ class AdminController extends Controller
         }
 
         $decision = strtoupper(
-            trim((string) ($_POST['decision'] ?? ''))
+            $this->postString('decision')
         );
 
         if (!in_array($decision, ['APPROVE', 'REJECT'], true)) {
@@ -107,9 +136,7 @@ class AdminController extends Controller
             return;
         }
 
-        $rejectionReason = trim(
-            (string) ($_POST['rejection_reason'] ?? '')
-        );
+        $rejectionReason = $this->postString('rejection_reason');
 
         if ($decision === 'REJECT' && $rejectionReason === '') {
             http_response_code(422);
@@ -149,7 +176,7 @@ class AdminController extends Controller
 
     public function reviewRecyclerLicense(string $id): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
 
         $adminId = Auth::id();
 
@@ -249,7 +276,7 @@ class AdminController extends Controller
 
     public function reviewRecyclerCapability(string $id): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
 
         $adminId = Auth::id();
 
@@ -368,7 +395,7 @@ class AdminController extends Controller
 
     public function reviewRecyclerAuthorizedActivity(string $id): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
 
         $adminId = Auth::id();
 
@@ -486,9 +513,58 @@ class AdminController extends Controller
         exit;
     }
 
-    public function viewRecyclerLicense(string $id): void
+    public function reviewCapabilityChange(string $id,string $requestId): void
     {
-        Auth::requireRole('ADMIN');
+        $this->requireRecyclerReviewer();
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo '403 Invalid or expired form.'; return; }
+        if (!ctype_digit($id) || !ctype_digit($requestId) || (int)$id<1 || (int)$requestId<1) { http_response_code(404); return; }
+        try {
+            (new RecyclerCapabilityChangeService())->review((int)$id,(int)Auth::id(),(int)$requestId,$this->postString('decision'),$this->postString('review_note'));
+            Session::put('success',$this->postString('decision')==='APPROVE' ? 'Capability change approved.' : 'Capability change rejected. Current permissions are unchanged.');
+        } catch (PDOException $error) { Session::put('error','Capability review is currently unavailable. Reload and try again.'); }
+        catch (DomainException|InvalidArgumentException|RuntimeException $error) { Session::put('error',$error->getMessage()); }
+        catch (Throwable $error) { Session::put('error','This change could not be reviewed. Reload and check the current request and permissions.'); }
+        $this->redirect('/admin/recycler-verification/'.(int)$id.'#capability-changes');
+    }
+
+    public function proposeDocumentScope(string $id): void
+    {
+        $context=$this->postString('capability_request_id');
+        if ($context==='renewal') { $this->mutateRecyclerScope($id,null,true); return; }
+        $request=filter_var($context,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+        if (!$request) { $this->requireRecyclerReviewer(); http_response_code(400); echo 'Select a valid scope review context.'; return; }
+        $this->mutateRecyclerScope($id,null,false,(int)$request);
+    }
+
+    public function reviewCapabilityScope(string $id,string $scopeId): void
+    {
+        $request=filter_var($this->postString('capability_request_id'),FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+        if (!$request) { $this->requireRecyclerReviewer(); http_response_code(400); echo 'Select a valid capability request.'; return; }
+        $this->mutateRecyclerScope($id,$scopeId,false,(int)$request);
+    }
+
+    public function reviewLicenseUpdate(string $id, string $requestId): void
+    {
+        $this->requireRecyclerReviewer();
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo '403 Invalid or expired form.'; return; }
+        if (!ctype_digit($id) || !ctype_digit($requestId) || (int)$id<1 || (int)$requestId<1) { http_response_code(404); return; }
+        try {
+            (new RecyclerLicenseRenewalService())->review((int)$id,(int)Auth::id(),(int)$requestId,$this->postString('decision'),$this->postString('review_note'));
+            Session::put('success',$this->postString('decision')==='APPROVE' ? 'Licence update approved. Scope for this document requires independent verification.' : 'Licence update rejected. The approved licence is unchanged.');
+        } catch (DomainException|InvalidArgumentException $error) {
+            Session::put('error',$error->getMessage());
+        } catch (Throwable $error) {
+            Session::put('error','The review could not be saved. Reload and check for a changed request or conflicting licence number.');
+        }
+        $this->redirect('/admin/recycler-verification/'.(int)$id.'#licence-updates');
+    }
+
+    public function viewLicenseUpdateDocument(string $id, string $requestId): void { $this->viewRecyclerLicense($id,null,$requestId); }
+    public function viewLicensePreviousDocument(string $id, string $requestId): void { $this->viewRecyclerLicense($id,null,$requestId,true); }
+
+    public function viewRecyclerLicense(string $id, ?string $scopeId = null, ?string $requestId = null, bool $previous = false): void
+    {
+        $this->requireRecyclerReviewer();
 
         $recyclerId = filter_var($id, FILTER_VALIDATE_INT);
 
@@ -497,9 +573,19 @@ class AdminController extends Controller
             return;
         }
 
-        $license = (new AuthorizedRecycler())
-            ->latestLicenseForRecycler($recyclerId);
+        if ($scopeId!==null) {
+            $scope=filter_var($scopeId,FILTER_VALIDATE_INT);
+            if (!$scope || $scope<1) { http_response_code(404); return; }
+            $s=Database::connection()->prepare('SELECT s.document_path,s.document_sha256 FROM recycler_license_scopes s JOIN recycler_licenses l ON l.license_id=s.license_id WHERE s.scope_id=? AND l.recycler_user_id=?');
+            $s->execute([$scope,$recyclerId]); $license=$s->fetch(PDO::FETCH_ASSOC) ?: null;
+        } else {
+            $model = new AuthorizedRecycler();
+            $registration = $model->findByUserId($recyclerId);
+            $license = in_array($registration['verification_status'] ?? '', ['PENDING','REJECTED'], true)
+                ? $model->latestLicenseForRecycler($recyclerId) : $model->selectedLicenseForRecycler($recyclerId);
+        }
 
+        if ($requestId !== null) $license = ['document_path'=>null];
         if ($license === null) {
             http_response_code(404);
             return;
@@ -508,11 +594,12 @@ class AdminController extends Controller
         // Reuse the centralized PDF document validator.
         $validator = new RecyclerLicenseDocumentValidator();
 
-        $filePath = $validator->validatedPath(
-            $license['document_path'] ?? null
-        );
+        $renewal = new RecyclerLicenseRenewalService();
+        $filePath = $requestId !== null
+            ? (ctype_digit($requestId) && (int)$requestId>0 ? $renewal->document($recyclerId,(int)$requestId,$previous) : null)
+            : ($scopeId !== null ? $validator->validatedPath($license['document_path'] ?? null) : $renewal->currentDocument($recyclerId,$license));
 
-        if ($filePath === null) {
+        if ($filePath === null || (isset($license['document_sha256']) && !hash_equals($license['document_sha256'],(string)hash_file('sha256',$filePath)))) {
             http_response_code(404);
             return;
         }
@@ -534,6 +621,48 @@ class AdminController extends Controller
 
         readfile($filePath);
         exit;
+    }
+
+    private function requireRecyclerReviewer(): void
+    {
+        Auth::requireRole('ADMIN');
+        $s=Database::connection()->prepare("SELECT a.user_id FROM administrators a JOIN users u ON u.user_id=a.user_id WHERE a.user_id=? AND u.role='ADMIN' AND u.account_status='ACTIVE'");
+        $s->execute([(int) Auth::id()]);
+        if (!$s->fetchColumn()) { http_response_code(403); exit('403 Active Administrator required.'); }
+    }
+
+    public function proposeRenewalScope(string $id): void { $this->mutateRecyclerScope($id,null,true); }
+    public function reviewRenewalScope(string $id, string $scopeId): void { $this->mutateRecyclerScope($id,$scopeId,true); }
+
+    public function proposeRecyclerScope(string $id): void { $this->mutateRecyclerScope($id); }
+    public function reviewRecyclerScope(string $id, string $scopeId): void { $this->mutateRecyclerScope($id,$scopeId); }
+
+    private function mutateRecyclerScope(string $id, ?string $scopeId = null, bool $renewal = false, ?int $capabilityRequest = null): void
+    {
+        $this->requireRecyclerReviewer();
+        $owner=filter_var($id,FILTER_VALIDATE_INT);
+        $scope=$scopeId===null ? null : filter_var($scopeId,FILTER_VALIDATE_INT);
+        if (!$owner || $owner<1 || ($scopeId!==null && (!$scope || $scope<1))) { http_response_code(404); return; }
+        if (!$this->hasValidCsrfToken()) { http_response_code(403); echo '403 Invalid or expired form.'; return; }
+        try {
+            $service=new RecyclerLicenseReviewService();
+            if ($scopeId===null) {
+                $input=[];
+                foreach (['license_id','document_sha256','category_id','activity_type','covers_high_risk','authorization_basis','waste_description','waste_code','evidence_reference','licence_conditions'] as $field) $input[$field]=$this->postString($field);
+                $service->proposeScope((int)$owner,(int)Auth::id(),$input,$renewal,$capabilityRequest);
+                Session::put('success','Scope proposal recorded. Independent verification is still required.');
+            } else {
+                $service->reviewScope((int)$owner,(int)$scope,(int)Auth::id(),$this->postString('decision'),$this->postString('review_note'),$this->postString('evidence_confirmed')==='1',$renewal,$capabilityRequest);
+                Session::put('success','Scope decision recorded. Requested capabilities and activities remain separate reviews.');
+            }
+        } catch (PDOException $error) { Session::put('error','Scope review is unavailable. Please contact the system administrator.'); }
+        catch (InvalidArgumentException|DomainException|RuntimeException $error) { Session::put('error',$error->getMessage()); }
+        $this->redirect('/admin/recycler-verification/'.$owner.'#licence-scope');
+    }
+
+    public function viewRecyclerScopeDocument(string $id, string $scopeId): void
+    {
+        $this->viewRecyclerLicense($id,$scopeId);
     }
 
     public function categoriesAndItems(): void

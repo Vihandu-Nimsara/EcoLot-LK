@@ -62,6 +62,16 @@ return static function (Router $router, array $app): void {
         $router->get('/awarded-e-lots', 'RecyclerController@awardedELots');
         $router->get('/awarded-e-lot/{id}', 'RecyclerController@awardedELotDetails');
         $router->get('/profile', 'RecyclerController@profile');
+        $router->post('/profile/contact', 'RecyclerController@saveContact');
+        $router->post('/profile/phone/request', 'RecyclerController@requestPhone');
+        $router->post('/profile/phone/verify', 'RecyclerController@verifyPhone');
+        $router->post('/profile/phone/resend', 'RecyclerController@resendPhone');
+        $router->post('/profile/phone/cancel', 'RecyclerController@cancelPhone');
+        $router->post('/profile/capability-change', 'RecyclerController@submitCapabilityChange');
+        $router->post('/profile/licence-update', 'RecyclerController@submitLicenseUpdate');
+        $router->get('/profile/licence-update/{requestId}/document', 'RecyclerController@licenseUpdateDocument');
+        $router->get('/profile/licence-update/{requestId}/previous-document', 'RecyclerController@licensePreviousDocument');
+        $router->get('/profile/licence-document', 'RecyclerController@profileLicenseDocument');
         $router->get('/reports', 'RecyclerController@reports');
     });
 
@@ -108,7 +118,18 @@ return static function (Router $router, array $app): void {
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
         $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
+        $router->post('/recycler-verification/{id}/capability-changes/{requestId}/review', 'AdminController@reviewCapabilityChange');
+        $router->post('/recycler-verification/{id}/document-scope', 'AdminController@proposeDocumentScope');
+        $router->post('/recycler-verification/{id}/capability-scope/{scopeId}/review', 'AdminController@reviewCapabilityScope');
+        $router->post('/recycler-verification/{id}/license-updates/{requestId}/review', 'AdminController@reviewLicenseUpdate');
+        $router->get('/recycler-verification/{id}/license-updates/{requestId}/document', 'AdminController@viewLicenseUpdateDocument');
+        $router->get('/recycler-verification/{id}/license-updates/{requestId}/previous-document', 'AdminController@viewLicensePreviousDocument');
+        $router->post('/recycler-verification/{id}/renewal-scope', 'AdminController@proposeRenewalScope');
+        $router->post('/recycler-verification/{id}/renewal-scope/{scopeId}/review', 'AdminController@reviewRenewalScope');
         $router->post('/recycler-verification/{id}/license-review', 'AdminController@reviewRecyclerLicense');
+        $router->post('/recycler-verification/{id}/scope', 'AdminController@proposeRecyclerScope');
+        $router->post('/recycler-verification/{id}/scope/{scopeId}/review', 'AdminController@reviewRecyclerScope');
+        $router->get('/recycler-verification/{id}/scope/{scopeId}/document', 'AdminController@viewRecyclerScopeDocument');
         $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
         $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');
     });

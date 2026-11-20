@@ -50,3 +50,17 @@
     padding: 7px 11px;
     white-space: nowrap;
 }
+
+/* Keep compact identifiers intact; only long company/contact text may wrap. */
+.admin-app .recycler-verification-page .recycler-verification-table { min-width: 1180px; table-layout: auto; }
+.admin-app .recycler-verification-page .recycler-verification-table td { overflow-wrap: normal; word-break: normal; vertical-align: top; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(1) { min-width: 220px; max-width: 300px; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(2) { min-width: 250px; max-width: 320px; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(3) { min-width: 210px; white-space: nowrap; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(4) { min-width: 170px; white-space: nowrap; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(5) { min-width: 160px; white-space: nowrap; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(6) { min-width: 100px; }
+.admin-app .recycler-verification-page .recycler-verification-table :is(th,td):nth-child(7) { min-width: 175px; white-space: nowrap; }
+.admin-app .recycler-verification-page .recycler-verification-table td:nth-child(-n+2) { overflow-wrap: anywhere; }
+.admin-app .recycler-verification-page .recycler-verification-table .action-btn { white-space: nowrap; }
+.admin-app .recycler-verification-page .recycler-verification-table-wrapper:focus-visible { outline: 3px solid var(--admin-green-600); outline-offset: 3px; }

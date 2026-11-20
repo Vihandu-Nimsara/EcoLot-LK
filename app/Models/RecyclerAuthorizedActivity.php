@@ -12,7 +12,7 @@ final class RecyclerAuthorizedActivity extends Model
             "SELECT 
                 activity_id,
                 activity_type,
-                activity_status,
+                activity_status, reviewed_by_admin_user_id, reviewed_at, review_note,
                 created_at
             FROM recycler_authorized_activities
             WHERE recycler_user_id = :recycler_id

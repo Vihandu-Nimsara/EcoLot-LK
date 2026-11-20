@@ -85,6 +85,12 @@ final class SmsGatewayService
         }
     }
 
+    /** Reuse the generic code transport only, not registration challenge/activation state. */
+    public function sendPhoneChangeOtp(string $mobileNumber, string $otp): void
+    {
+        $this->sendRegistrationOtp($mobileNumber, $otp);
+    }
+
     private function assertConfigured(): void
     {
         foreach (['endpoint', 'user_id', 'api_key', 'sender_id'] as $key) {

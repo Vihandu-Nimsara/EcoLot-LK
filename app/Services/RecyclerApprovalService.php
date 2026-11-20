@@ -23,31 +23,11 @@ final class RecyclerApprovalService
         $this->db->beginTransaction();
 
         try {
-            $stmt = $this->db->prepare(
-                "SELECT user_id, verification_status
-                FROM authorized_recyclers
-                WHERE user_id = :recycler_id
-                FOR UPDATE"
-            );
-
-            $stmt->execute(['recycler_id' => $recyclerId,]);
-
-            $recycler = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($recycler === false) {
-                throw new RuntimeException('Recycler not found.');
-            }
-
-            if (
-                strtoupper((string) $recycler['verification_status']) !== 'PENDING'
-            ) {
-                throw new RuntimeException(
-                    'Recycler application has already been reviewed.'
-                );
-
-            }
+            $ownerState=(new AuthorizedRecycler($this->db))->lockPendingReview($recyclerId,$adminId,$decision === 'APPROVE');
 
             if ($decision === 'APPROVE') {
+                if ($ownerState['mobile_verified_at'] === null) throw new RuntimeException('Mobile verification must be completed.');
+
                 $licenseStmt = $this->db->prepare(
                     "SELECT 
                         license_id,
@@ -78,7 +58,7 @@ final class RecyclerApprovalService
                     );
                 }
 
-                if ((string) $license['expiry_date'] < date('Y-m-d')) {
+                if ((string) $license['expiry_date'] < $this->db->query('SELECT CURRENT_DATE')->fetchColumn()) {
                     throw new RuntimeException(
                         'Recycler license has expired.'
                     );
@@ -158,6 +138,23 @@ final class RecyclerApprovalService
                     );
                 }
 
+            }
+
+            if ($decision === 'APPROVE') {
+                $scope=new RecyclerLicenseReviewService($this->db);
+                $pending=$this->db->prepare("SELECT COUNT(*) FROM recycler_license_scopes s JOIN recycler_licenses l ON l.license_id=s.license_id WHERE l.recycler_user_id=? AND s.scope_status='PENDING'");
+                $pending->execute([$recyclerId]);if ((int)$pending->fetchColumn()>0) throw new RuntimeException('Resolve pending scope decisions before final approval.');
+                $caps=$this->db->prepare("SELECT category_id,can_handle_high_risk FROM recycler_capabilities WHERE recycler_user_id=? AND capability_status='APPROVED' FOR UPDATE");
+                $caps->execute([$recyclerId]);
+                foreach ($caps->fetchAll(PDO::FETCH_ASSOC) as $cap) $scope->requireScope($recyclerId,(int)$cap['category_id'],null,(int)$cap['can_handle_high_risk'],true);
+                $acts=$this->db->prepare("SELECT activity_type FROM recycler_authorized_activities WHERE recycler_user_id=? AND activity_status='APPROVED' FOR UPDATE");
+                $acts->execute([$recyclerId]);
+                foreach ($acts->fetchAll(PDO::FETCH_ASSOC) as $act) $scope->requireScope($recyclerId,null,$act['activity_type'],null,true);
+            }
+
+            if ($decision === 'APPROVE') {
+                $selection = $this->db->prepare('UPDATE authorized_recyclers SET current_license_id=? WHERE user_id=?');
+                $selection->execute([$license['license_id'], $recyclerId]);
             }
 
             if ($decision === 'REJECT' && trim($rejectionReason) === '') {

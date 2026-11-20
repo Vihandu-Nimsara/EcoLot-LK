@@ -14,6 +14,30 @@ final class TestDatabase
         self::executeStatements($db, str_replace('DELIMITER ;', '', $triggers), '$$');
     }
 
+    /** Execute reviewed migration files that use mysql-client DELIMITER directives. */
+    public static function applyMigration(PDO $db, string $path): void
+    {
+        $delimiter = ';'; $statement = '';
+        $lines = file($path);
+        if ($lines === false) throw new RuntimeException('Migration file is unavailable: ' . $path);
+        foreach ($lines as $line) {
+            if (preg_match('/^DELIMITER\s+(\S+)\s*$/', trim($line), $match)) {
+                if (trim($statement) !== '') throw new RuntimeException('Unterminated migration statement.');
+                $delimiter = $match[1];
+                continue;
+            }
+            if (str_starts_with(ltrim($line), '--') && trim($statement) === '') continue;
+            $statement .= $line;
+            $trimmed = rtrim($statement);
+            if (str_ends_with($trimmed, $delimiter)) {
+                $sql = substr($trimmed, 0, -strlen($delimiter));
+                if (trim($sql) !== '') $db->exec($sql);
+                $statement = '';
+            }
+        }
+        if (trim($statement) !== '') throw new RuntimeException('Unterminated migration statement.');
+    }
+
     /** Common isolated officer/public fixtures. Returns the campaign month. */
     public static function seedScheduleActors(PDO $db): string
     {

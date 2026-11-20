@@ -51,30 +51,7 @@ final class RecyclerCapabilityReviewService
 
         try {
             // Lock the Recycler record first.
-            $recyclerStmt = $this->db->prepare(
-                "SELECT user_id, verification_status
-                 FROM authorized_recyclers
-                 WHERE user_id = :recycler_id
-                 FOR UPDATE"
-            );
-
-            $recyclerStmt->execute([
-                'recycler_id' => $recyclerId
-            ]);
-
-            $recycler = $recyclerStmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($recycler === false) {
-                throw new RuntimeException(
-                    'Recycler not found.'
-                );
-            }
-
-            if ($recycler['verification_status'] !== 'PENDING') {
-                throw new RuntimeException(
-                    'Recycler application is not pending.'
-                );
-            }
+            (new AuthorizedRecycler($this->db))->lockPendingReview($recyclerId,$adminId,$decision === 'APPROVE');
 
             // Lock the requested capability.
             $capabilityStmt = $this->db->prepare(
@@ -107,6 +84,8 @@ final class RecyclerCapabilityReviewService
                     'Capability has already been reviewed.'
                 );
             }
+
+            if ($decision === 'APPROVE') (new RecyclerLicenseReviewService($this->db))->requireScope($recyclerId,$categoryId,null,(int)$capability['can_handle_high_risk']);
 
             $newStatus = $decision === 'APPROVE'
                 ? 'APPROVED'

@@ -1,8 +1,54 @@
-/* Profile-only additions to the existing Recycler dialog design. */
-.recycler-app .recycler-profile-dialog :disabled {
-    opacity: .65;
-    cursor: not-allowed;
+/* Profile composition; shared Recycler styles continue to own the workspace. */
+.recycler-app .recycler-profile-page .profile-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.recycler-app .recycler-profile-page .profile-column { display: grid; gap: 24px; min-width: 0; }
+.recycler-app .recycler-profile-page .workflow-card { margin: 0; overflow-wrap: anywhere; }
+.recycler-app .recycler-profile-page :is(h2,h3,p,dd) { min-width: 0; }
+.recycler-app .recycler-profile-page h2 { margin: 0; font-size: 1.25rem; color: var(--recycler-green-800); }
+.recycler-app .recycler-profile-page h3 { margin: 0; font-size: .9375rem; font-weight: 600; }
+.recycler-app .recycler-profile-page :is(.profile-facts,.profile-licence-facts,.profile-snapshot) { margin: 0; }
+.recycler-app .recycler-profile-page dt { color: var(--recycler-muted); font-size: .8125rem; }
+.recycler-app .recycler-profile-page dd { margin: 0; font-weight: 600; font-size: .9375rem; }
+.recycler-app .recycler-profile-page .profile-facts > div { display: grid; grid-template-columns: minmax(100px, .65fr) minmax(0, 1.5fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--recycler-border); }
+.recycler-app .recycler-profile-page .profile-facts > div:first-child { padding-top: 0; }
+.recycler-app .recycler-profile-page .profile-facts > div:last-child { border: 0; }
+.recycler-app .recycler-profile-page :is(.profile-licence-facts,.profile-snapshot) { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px; margin: 20px 0; }
+.recycler-app .recycler-profile-page :is(.profile-licence-facts,.profile-snapshot) dt { margin-bottom: 8px; }
+.recycler-app .recycler-profile-page .profile-record-heading { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.recycler-app .recycler-profile-page .badge { flex-shrink: 0; }
+.recycler-app .recycler-profile-page .profile-help { color: var(--recycler-muted); font-size: .8125rem; line-height: 1.6; margin: 12px 0; }
+.recycler-app .recycler-profile-page .profile-permissions { list-style: none; margin: 0; padding: 0; }
+.recycler-app .recycler-profile-page .profile-permissions > li { border-top: 1px solid var(--recycler-border); padding: 16px 0; }
+.recycler-app .recycler-profile-page .profile-permissions > li:first-child { border: 0; padding-top: 0; }
+.recycler-app .recycler-profile-page .profile-permissions > li:last-child { padding-bottom: 0; }
+.recycler-app .recycler-profile-page .profile-history { margin-top: 16px; font-size: .8125rem; line-height: 1.6; }
+.recycler-app .recycler-profile-page .profile-history > summary { color: var(--recycler-green-800); font-weight: 600; cursor: pointer; padding: 6px 0; }
+.recycler-app .recycler-profile-page .profile-history > .profile-permissions { margin-top: 16px; }
+.recycler-app .recycler-profile-page :is(a,summary):focus-visible { outline: 3px solid var(--recycler-green-600); outline-offset: 3px; }
+.recycler-app .recycler-profile-page .profile-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media(max-width:1100px) { .recycler-app .recycler-profile-page .profile-columns { grid-template-columns: minmax(0,1fr); } }
+@media(max-width:480px) {
+    .recycler-app .recycler-profile-page .workflow-card { padding: 18px; }
+    .recycler-app .recycler-profile-page .profile-facts > div { grid-template-columns: minmax(0,1fr); gap: 6px; }
+    .recycler-app .recycler-profile-page .profile-record-heading { flex-wrap: wrap; }
+    .recycler-app .recycler-profile-page .profile-licence-facts { grid-template-columns: minmax(0,1fr); }
 }
-.recycler-app .recycler-profile-dialog .dialog-field input:disabled {
-    background: #F3F6F4;
-}
+
+/* Compact, owner-only contact editing within the existing company card. */
+.recycler-app .recycler-profile-page .profile-editable-value { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.recycler-app .recycler-profile-page .profile-edit-link { font-size:.8125rem; color:var(--recycler-green-800); text-decoration:underline; flex-shrink:0; }
+.recycler-app .recycler-profile-page .profile-edit-panel { grid-column:1 / -1; padding:16px; border:1px solid var(--recycler-border); border-radius:12px; background:var(--recycler-bg, #f7faf8); }
+.recycler-app .recycler-profile-page .profile-edit-panel label { display:block; margin:12px 0 8px; font-size:.8125rem; }
+.recycler-app .recycler-profile-page .profile-edit-panel input:not([type=hidden]) { display:block; box-sizing:border-box; width:100%; min-width:0; padding:11px 12px; border:1px solid var(--recycler-border); border-radius:8px; background:#fff; font:inherit; font-weight:400; }
+.recycler-app .recycler-profile-page :is(input,button):focus-visible { outline:3px solid var(--recycler-green-600); outline-offset:3px; }
+.recycler-app .recycler-profile-page .profile-edit-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+.recycler-app .recycler-profile-page .profile-edit-actions :is(a,button) { white-space:normal; text-align:center; }
+.recycler-app .recycler-profile-page .profile-field-error { color:#a12626; font-size:.8125rem; font-weight:400; }
+.recycler-app .recycler-profile-page .profile-feedback { padding:12px; border-radius:8px; background:#edf8f1; font-size:.875rem; }
+
+.recycler-app .recycler-profile-page .profile-renewal-form { margin-top:16px; }
+.recycler-app .recycler-profile-page .profile-renewal-form textarea { box-sizing:border-box; width:100%; min-width:0; padding:11px 12px; border:1px solid var(--recycler-border); border-radius:8px; font:inherit; resize:vertical; }
+.recycler-app .recycler-profile-page .profile-renewal-pending { margin-top:16px; padding-top:16px; border-top:1px solid var(--recycler-border); }
+
+.recycler-app .recycler-profile-page .profile-capability-form { margin-top:16px; }
+.recycler-app .recycler-profile-page .profile-capability-form :is(select,textarea) { box-sizing:border-box; width:100%; min-width:0; padding:11px 12px; border:1px solid var(--recycler-border); border-radius:8px; background:#fff; font:inherit; font-weight:400; }
+.recycler-app .recycler-profile-page .profile-capability-pending { margin-top:16px; padding-top:16px; border-top:1px solid var(--recycler-border); }
