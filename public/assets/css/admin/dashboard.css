@@ -948,87 +948,7 @@
     }
 }
 
-/* Admin Dashboard — horizontal KPI card refinement */
-.dashboard-top-grid .stats-grid .stat-card {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    min-height: 144px;
-    padding: 22px 24px;
-}
-
-.dashboard-top-grid .stats-grid .stat-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 84px;
-    width: 84px;
-    height: 84px;
-    border-radius: 20px;
-    font-size: 44px;
-    line-height: 1;
-}
-
-.dashboard-top-grid .stats-grid .stat-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 7px;
-    min-width: 0;
-}
-
-.dashboard-top-grid .stats-grid .stat-info > span {
-    font-size: 17px;
-    font-weight: 700;
-    line-height: 1.3;
-    color: #263e38;
-}
-
-.dashboard-top-grid .stats-grid .stat-value {
-    font-size: 42px;
-    font-weight: 800;
-    line-height: 1.1;
-    color: #075b43;
-}
-
-/* Hide supplementary descriptions in KPI cards */
-.dashboard-top-grid .stats-grid .stat-detail {
-    display: none;
-}
-
-@media (max-width: 1100px) {
-    .dashboard-top-grid .stats-grid .stat-card {
-        gap: 14px;
-        padding: 18px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-icon {
-        flex-basis: 66px;
-        width: 66px;
-        height: 66px;
-        font-size: 36px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-info > span {
-        font-size: 15px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-value {
-        font-size: 36px;
-    }
-}
-
-/* Admin Dashboard — final typography refinements */
-
-/* KPI card labels: slightly smaller and less heavy */
-.dashboard-top-grid .stats-grid .stat-info > span {
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.35;
-}
-
+/* Admin Dashboard — System Overview typography */
 /* System Overview heading */
 .dashboard-top-grid .system-overview-panel .dashboard-panel-header h2 {
     font-size: 24px;
@@ -1047,56 +967,6 @@
 .dashboard-top-grid .system-overview-panel .overview-legend li > span,
 .dashboard-top-grid .system-overview-panel .overview-legend li > strong {
     font-size: 16px;
-}
-
-
-/* Admin Dashboard — compact KPI typography and emojis */
-.dashboard-top-grid .stats-grid .stat-card {
-    gap: 16px;
-    min-height: 130px;
-    padding: 20px;
-}
-
-.dashboard-top-grid .stats-grid .stat-icon {
-    flex: 0 0 70px;
-    width: 70px;
-    height: 70px;
-    font-size: 36px;
-    border-radius: 18px;
-}
-
-.dashboard-top-grid .stats-grid .stat-info > span {
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.35;
-}
-
-.dashboard-top-grid .stats-grid .stat-value {
-    font-size: 36px;
-    font-weight: 750;
-    line-height: 1.1;
-}
-
-@media (max-width: 1100px) {
-    .dashboard-top-grid .stats-grid .stat-card {
-        gap: 12px;
-        padding: 16px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-icon {
-        flex-basis: 60px;
-        width: 60px;
-        height: 60px;
-        font-size: 32px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-info > span {
-        font-size: 14px;
-    }
-
-    .dashboard-top-grid .stats-grid .stat-value {
-        font-size: 32px;
-    }
 }
 
 /* Restore original Admin Dashboard horizontal stat cards */
