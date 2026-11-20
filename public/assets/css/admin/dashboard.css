@@ -166,7 +166,9 @@
 .quick-actions-grid {
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Two comfortable tiles when room permits; fall back to one before
+       labels become squeezed by the sidebar and the companion panel. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));
 
     gap: 12px;
 }
@@ -175,7 +177,7 @@
 .quick-action-item {
     display: grid;
 
-    grid-template-columns: 42px minmax(0, 1fr) auto;
+    grid-template-columns: 42px minmax(0, 1fr) 14px;
 
     align-items: center;
 
@@ -494,4 +496,249 @@
         height: 38px;
     }
 
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD — PENDING ACTIONS & ROLE OVERVIEW
+   Reuse the existing shared dashboard cards/palette.
+========================================================= */
+.pending-actions-panel {
+    margin-bottom: 24px;
+}
+
+.pending-actions-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.pending-action-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px;
+    background: #f0faf4;
+    border: 1px solid #d8f2e2;
+    border-radius: 12px;
+}
+
+.pending-action-icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    background: #d0fae4;
+    border-radius: 12px;
+    font-size: 1.3rem;
+}
+
+.pending-action-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pending-action-content strong {
+    color: var(--admin-text);
+    font-size: 0.9375rem;
+}
+
+.pending-action-content span,
+.pending-actions-empty,
+.overview-empty {
+    color: var(--admin-muted);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.pending-action-button {
+    flex-shrink: 0;
+    padding: 10px 13px;
+    color: var(--admin-green-800);
+    background: #fff;
+    border: 1px solid #71ca92;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pending-action-button:hover,
+.pending-action-button:focus-visible {
+    background: #e6f8ed;
+}
+
+/* Main dashboard panels: two readable columns on desktop. */
+.dashboard-secondary-grid {
+    /* Give Quick Actions and Recent Activity readable widths. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.activity-link {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.activity-link:hover,
+.activity-link:focus-visible {
+    background: #f1faf4;
+}
+
+.activity-link:focus-visible {
+    outline: 2px solid var(--admin-green-800);
+    outline-offset: 2px;
+}
+
+.activity-arrow {
+    color: var(--admin-green-800);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.overview-visual {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.overview-donut {
+    display: grid;
+    flex: 0 0 132px;
+    place-items: center;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+}
+
+.overview-donut-empty {
+    background: #e9f0ed;
+}
+
+.overview-donut-core {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 92px;
+    height: 92px;
+    background: var(--admin-surface);
+    border-radius: 50%;
+}
+
+.overview-donut-core strong {
+    color: var(--admin-green-800);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.overview-donut-core span {
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+}
+
+.overview-legend {
+    display: flex;
+    flex: 1 1 135px;
+    flex-direction: column;
+    gap: 11px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.overview-legend li {
+    display: grid;
+    grid-template-columns: 9px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+}
+
+.overview-legend strong {
+    color: var(--admin-text);
+    font-weight: 700;
+}
+
+.overview-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+/* Overview is an intentionally compact full-width section beneath the two
+   frequently used panels, not a cramped third column. */
+.system-overview-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.4fr);
+    align-items: center;
+    column-gap: 32px;
+}
+
+.system-overview-panel .dashboard-panel-header {
+    margin-bottom: 0;
+}
+
+.system-overview-panel .overview-visual {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 28px;
+}
+
+.system-overview-panel .overview-legend {
+    flex: 0 1 260px;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-secondary-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .system-overview-panel {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 850px) {
+    .system-overview-panel {
+        grid-template-columns: 1fr;
+        row-gap: 18px;
+    }
+
+    .system-overview-panel .dashboard-panel-header {
+        margin-bottom: 0;
+    }
+
+    .system-overview-panel .overview-visual {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 650px) {
+    .pending-actions-header,
+    .pending-action-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .pending-all-link,
+    .pending-action-button {
+        align-self: flex-start;
+    }
+
+    .pending-action-icon {
+        flex-basis: 44px;
+        width: 44px;
+    }
 }

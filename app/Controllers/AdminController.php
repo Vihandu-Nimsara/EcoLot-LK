@@ -6,7 +6,27 @@ class AdminController extends Controller
     public function dashboard(): void
     {
         Auth::requireRole('ADMIN');
-        $this->view('admin/dashboard', ['currentPage' => 'dashboard']);
+
+        $dashboardStats = null;
+        $dashboardActivity = [];
+        $dashboardUnavailable = false;
+        try {
+            $dashboard = new AdminDashboardService();
+            $dashboardStats = $dashboard->statistics();
+            $dashboardActivity = $dashboard->recentActivity(5);
+        } catch (Throwable $error) {
+            // Fail closed: show unavailable rather than invented '0' counts or demo events.
+            error_log('Admin dashboard data read failed: ' . $error::class);
+            $dashboardUnavailable = true;
+            http_response_code(503);
+        }
+
+        $this->view('admin/dashboard', [
+            'currentPage' => 'dashboard',
+            'dashboardStats' => $dashboardStats,
+            'dashboardActivity' => $dashboardActivity,
+            'dashboardUnavailable' => $dashboardUnavailable,
+        ]);
     }
     
     public function Users(): void
