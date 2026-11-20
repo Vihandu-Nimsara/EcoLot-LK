@@ -1098,3 +1098,95 @@
         font-size: 32px;
     }
 }
+
+/* Restore original Admin Dashboard horizontal stat cards */
+
+.dashboard-top-grid .stats-grid .stat-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    min-height: 150px;
+    padding: 24px 28px;
+    text-align: left;
+}
+
+/* Emoji container on the LEFT */
+.dashboard-top-grid .stats-grid .stat-icon {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    margin: 0;
+
+    font-size: 32px;
+    line-height: 1;
+    border-radius: 18px;
+}
+
+/* Title and number on the RIGHT */
+.dashboard-top-grid .stats-grid .stat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    gap: 6px;
+
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-top-grid .stats-grid .stat-info > span {
+    max-width: none;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #566d68;
+}
+
+.dashboard-top-grid .stats-grid .stat-value {
+    margin: 0;
+    font-size: 37px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #075b43;
+}
+
+.dashboard-top-grid .stats-grid .stat-detail {
+    display: none;
+}
+
+/* Responsive stat cards */
+@media (max-width: 1100px) {
+    .dashboard-top-grid .stats-grid .stat-card {
+        gap: 14px;
+        padding: 18px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-icon {
+        flex-basis: 56px;
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-info > span {
+        font-size: 14px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-value {
+        font-size: 32px;
+    }
+}
+
