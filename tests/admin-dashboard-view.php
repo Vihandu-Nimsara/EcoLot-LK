@@ -51,7 +51,17 @@ $check(str_contains($html, '/admin/recycler-verification/12'), 'review points to
 $check(!str_contains($html, 'href="javascript:'), 'untrusted activity link denied');
 $check(!str_contains($html, '<script>alert(1)</script>'), 'activity title escaped');
 $check(str_contains($html, '&lt;script&gt;'), 'escaped text is displayed');
-$check(str_contains($html, 'system-overview-panel'), 'overview stays as a distinct full-width section');
+$check(str_contains($html, 'dashboard-top-grid'), 'KPI and role overview share a top-level layout');
+$check(substr_count($html, 'class="stat-card"') === 4, 'only four non-redundant KPI cards remain');
+foreach (['Pending Recyclers', 'Verified Recyclers', 'E-Waste Categories', 'E-Waste Items'] as $label) {
+    $check(str_contains($html, '<span>' . $label . '</span>'), 'KPI ' . $label . ' rendered');
+}
+foreach (['Total Users', 'Municipal Officers', 'Collectors', 'Risk Rules'] as $label) {
+    $check(!str_contains($html, '<span>' . $label . '</span>'), 'removed duplicate/low-priority KPI ' . $label);
+}
+$check(strpos($html, 'dashboard-top-grid') < strpos($html, 'pending-actions-panel'), 'key metrics before pending actions');
+$check(strpos($html, 'system-overview-panel') < strpos($html, 'pending-actions-panel'), 'role chart adjacent to KPIs above pending actions');
+$check(str_contains($html, 'system-overview-panel'), 'overview retains distinct accessible panel');
 $check(str_contains($html, 'quick-actions-panel') && str_contains($html, 'recent-activity-panel'), 'both primary dashboard panels preserved');
 
 $stats['pending_recyclers'] = 0;
