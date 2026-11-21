@@ -24,10 +24,32 @@
                             <label>Vehicle <select name="vehicle" required><option value="">Select vehicle</option><?php foreach ($vehicles as $vehicle): ?><option value="<?= (int) $vehicle['vehicle_id'] ?>"><?= $escape($vehicle['vehicle_number']) ?></option><?php endforeach; ?></select></label>
                             <button type="submit" class="primary-btn">Assign</button>
                         </form></details>
-                    <?php elseif (!$schedule['has_work'] && $schedule['schedule_status'] === 'ASSIGNED' && $schedule['assignment_id']): ?>
-                        <form method="post" action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>" data-confirm="Unassign these resources? The schedule will return to CLOSED.">
-                            <input type="hidden" name="_csrf_token" value="<?= $escape($csrfToken) ?>"><input type="hidden" name="action" value="unassign"><button type="submit" class="secondary-btn">Unassign</button>
-                        </form>
+                    
+                <?php elseif (
+                    !$schedule['has_work']
+                    && $schedule['schedule_status'] === 'ASSIGNED'
+                    && $schedule['assignment_id']
+                ): ?>
+
+                    <form
+                        method="post"
+                        action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>"
+                        data-unassign-form
+                        data-schedule-label="<?= $escape('SCH-' . $schedule['schedule_id'] . ' — ' . $schedule['area_name']) ?>"
+                    >
+                        <input
+                            type="hidden"
+                            name="_csrf_token"
+                            value="<?= $escape($csrfToken) ?>"
+                        >
+
+                        <input type="hidden" name="action" value="unassign">
+
+                        <button type="submit" class="secondary-btn">
+                            Unassign
+                        </button>
+                    </form>
+
                     <?php else: ?>
                         <?= $schedule['has_work'] || !in_array($schedule['schedule_status'], ['CLOSED','ASSIGNED'], true) ? 'Collection workflow is read-only here.' : 'Resolve pending reviews and ensure collectable requests exist.' ?>
                     <?php endif; ?>
@@ -39,3 +61,77 @@
         <p data-assignment-empty <?= $schedules ? 'hidden' : '' ?>>No matching collection schedules.</p>
     </section>
 </section>
+
+
+<dialog
+    id="unassign-confirm-dialog"
+    class="unassign-dialog"
+    aria-labelledby="unassign-dialog-title"
+    aria-describedby="unassign-dialog-description"
+>
+    <div class="officer-dialog-card unassign-dialog-card">
+
+        <div class="officer-dialog-header">
+            <div>
+                <span class="dialog-eyebrow">
+                    COLLECTION ASSIGNMENT
+                </span>
+
+                <h2 id="unassign-dialog-title">
+                    Unassign resources?
+                </h2>
+
+                <p id="unassign-dialog-description">
+                    Are you sure you want to remove the
+                    collector and vehicle from this schedule?
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="officer-dialog-close"
+                data-unassign-close
+                aria-label="Close dialog"
+            >
+                &times;
+            </button>
+        </div>
+
+        <div class="unassign-dialog-content">
+
+            <div class="unassign-warning">
+                <strong>Selected schedule</strong>
+                <span id="unassign-schedule-name"></span>
+            </div>
+
+            <p class="unassign-dialog-note">
+                The schedule will return to CLOSED.
+                Assignment history will be retained.
+            </p>
+
+        </div>
+
+        <div class="officer-dialog-actions">
+
+            <button
+                type="button"
+                class="secondary-btn"
+                data-unassign-close
+                autofocus
+            >
+                Keep assignment
+            </button>
+
+            <button
+                type="button"
+                class="unassign-danger-btn"
+                id="confirm-unassign"
+            >
+                Unassign resources
+            </button>
+
+        </div>
+
+    </div>
+</dialog>
+

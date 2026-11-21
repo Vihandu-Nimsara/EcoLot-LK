@@ -90,3 +90,112 @@
         grid-column: auto;
     }
 }
+
+
+
+/* Unassign Confirmation Dialog */
+
+.unassign-dialog {
+    box-sizing: border-box;
+    width: min(460px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #203329;
+}
+
+.unassign-dialog:not([open]) {
+    display: none;
+}
+
+.unassign-dialog::backdrop {
+    background: rgba(10, 29, 22, 0.60);
+    backdrop-filter: blur(4px);
+}
+
+.unassign-dialog-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-height: calc(100vh - 32px);
+    padding: 26px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 24px 65px rgba(0, 0, 0, 0.20);
+}
+
+.unassign-dialog-content {
+    padding: 22px 0;
+}
+
+.unassign-warning {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    background: #FFF7F2;
+    border: 1px solid #F5DECF;
+    border-radius: 12px;
+}
+
+.unassign-warning strong {
+    font-size: 12px;
+    color: #A45D3F;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.unassign-warning span {
+    font-size: 15px;
+    font-weight: 700;
+    color: #29382F;
+}
+
+.unassign-dialog-note {
+    margin-top: 16px;
+    color: #6B7280;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.officer-app .unassign-danger-btn {
+    min-height: 38px;
+    padding: 9px 17px;
+    border: 1px solid #C63C38;
+    border-radius: 9px;
+    background: #C63C38;
+    color: white;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.officer-app .unassign-danger-btn:hover {
+    background: #A72E2A;
+}
+
+.officer-app .unassign-danger-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+body.unassign-modal-open {
+    overflow: hidden;
+}
+
+@media (max-width: 600px) {
+    .unassign-dialog-card {
+        padding: 20px;
+    }
+
+    .unassign-dialog .officer-dialog-actions {
+        flex-direction: column-reverse;
+    }
+
+    .unassign-dialog .officer-dialog-actions button {
+        width: 100%;
+    }
+}
