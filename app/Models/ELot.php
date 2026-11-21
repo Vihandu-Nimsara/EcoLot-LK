@@ -827,8 +827,7 @@ final class ELot extends Model
         $this->query(
             "UPDATE e_lots
             SET
-                lot_status = 'PENDING_VERIFICATION',
-                submitted_at = CURRENT_TIMESTAMP
+                lot_status = 'PENDING_VERIFICATION'
             WHERE e_lot_id = :lot
             AND created_by_collector_user_id = :collector
             AND lot_status IN ('DRAFT', 'REJECTED')",

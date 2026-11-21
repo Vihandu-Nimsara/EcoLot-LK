@@ -1,0 +1,15 @@
+.module-summary { display:flex;flex-wrap:wrap;gap:10px;margin:18px 0; }
+.module-summary strong { margin-left:10px; }
+.module-summary a[aria-current="page"] { background:#d0fae4;color:#065f46;border-color:#047857; }
+.module-help { color:#66736b;font-size:.8125rem; }
+.module-confirm-dialog { box-sizing:border-box;width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:0;border:0;border-radius:18px;color:#203329; }
+.module-confirm-dialog:not([open]) { display:none; }
+.module-confirm-dialog::backdrop { background:rgba(10,29,22,.6);backdrop-filter:blur(4px); }
+.module-confirm-dialog .officer-dialog-card { box-sizing:border-box;width:100%;padding:26px; }
+.module-confirm-dialog .officer-dialog-actions { margin-top:24px; }
+.module-history { display:grid;gap:12px;margin:16px 0; }
+.module-history article { padding:14px;background:#f5faf7;border:1px solid #dfeae2;border-radius:10px; }
+.module-history p { white-space:pre-wrap;overflow-wrap:anywhere; }
+.module-lock-reason { color:#66736b;font-size:.8125rem;display:block;margin-top:8px; }
+:is(.elots-page,.feedback-page) button:disabled { opacity:.55;cursor:not-allowed; }
+@media(max-width:700px) { .module-summary a { flex:1 1 140px; } .module-pagination { flex-wrap:wrap; } }

@@ -17,8 +17,8 @@ $pageScripts = [
     'flagged-requests' => 'municipal_officer/flagged-requests.js',
     'collection-assignments' => 'municipal_officer/collection-assignments.js',
     'collection-records' => 'municipal_officer/collection-records.js',
-    'e-lots' => 'municipal_officer/elots.js',
-    'feedback' => 'municipal_officer/feedback.js',
+    'e-lots' => 'municipal_officer/module-management.js',
+    'feedback' => 'municipal_officer/module-management.js',
     'reports' => 'municipal_officer/reports.js',
 ];
 $pageStyle = $pageStyles[$currentPage ?? ''] ?? null;
@@ -49,6 +49,9 @@ $themeVersion = Asset::version('css/municipal_officer/theme.css');
         >
     <?php endif; ?>
 
+    <?php if (in_array($currentPage ?? '', ['e-lots','feedback'], true)): ?>
+        <link rel="stylesheet" href="<?= $assetBase ?>/css/municipal_officer/module-management.css?v=<?= Asset::version('css/municipal_officer/module-management.css') ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="<?= $assetBase ?>/css/typography.css">
     <link rel="stylesheet" href="<?= $assetBase ?>/css/municipal_officer/theme.css?v=<?= $themeVersion ?>">
 </head>

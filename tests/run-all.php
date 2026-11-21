@@ -10,6 +10,8 @@ $phpTests = [
     'area-schedules.php',
     'monthly-campaigns.php',
     'officer-dashboard.php',
+    'officer-management.php',
+    'officer-management-concurrency.php',
     'flagged-requests.php',
     'collection-assignments.php',
     'collection-assignment-view.php',
@@ -38,6 +40,7 @@ foreach ($phpTests as $test) {
 $run(['node', __DIR__ . '/escaping.js']);
 if (in_array('--browser', $argv, true)) {
     $run(['node', __DIR__ . '/officer-browser.cjs']);
+    $run(['node', __DIR__ . '/officer-management-browser.cjs']);
     $run(['node', __DIR__ . '/collection-reviews-browser.cjs']);
     $run(['node', __DIR__ . '/pickup-browser.cjs']);
     $run(['node', __DIR__ . '/collector-browser.cjs']);

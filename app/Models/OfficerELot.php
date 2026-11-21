@@ -5,6 +5,8 @@ final class OfficerELot extends Model
 {
     public const STATUSES = ['PENDING_VERIFICATION','REJECTED','OPEN_FOR_BIDDING','AWARDED','COMPLETED','CANCELLED'];
 
+    public const LABELS=['PENDING_VERIFICATION'=>'Awaiting Verification','REJECTED'=>'Rejected','OPEN_FOR_BIDDING'=>'Approved for Bidding','AWARDED'=>'Awaiting Handover','COMPLETED'=>'Completed','CANCELLED'=>'Cancelled'];
+
     private function scope(): string
     {
         // Every source schedule must belong to this Officer. Mixed-owner lots fail closed.
@@ -24,10 +26,11 @@ final class OfficerELot extends Model
 
     private function select(): string
     {
-        return "SELECT l.*, c.category_name, u.full_name AS collector_name, reviewer.full_name AS reviewer_name,
+        return "SELECT l.*, CURRENT_TIMESTAMP AS now, c.category_name, u.full_name AS collector_name, reviewer.full_name AS reviewer_name,
             (SELECT COUNT(*) FROM e_lot_items ei WHERE ei.e_lot_id=l.e_lot_id) AS item_count,
             (SELECT SUM(ci.actual_quantity) FROM e_lot_items ei JOIN collection_record_items ci ON ci.record_item_id=ei.record_item_id WHERE ei.e_lot_id=l.e_lot_id) AS total_quantity,
             (SELECT SUM(ci.actual_weight_kg) FROM e_lot_items ei JOIN collection_record_items ci ON ci.record_item_id=ei.record_item_id WHERE ei.e_lot_id=l.e_lot_id) AS total_weight,
+            EXISTS(SELECT 1 FROM recycler_bids b WHERE b.e_lot_id=l.e_lot_id) AS has_bid_history,
             (SELECT COUNT(*) FROM recycler_bids b WHERE b.e_lot_id=l.e_lot_id AND b.bid_status='SUBMITTED') AS bid_count
             FROM e_lots l JOIN waste_categories c ON c.category_id=l.category_id
             JOIN users u ON u.user_id=l.created_by_collector_user_id
@@ -39,12 +42,35 @@ final class OfficerELot extends Model
         $where = ''; $params=['owner'=>$officer,'other_owner'=>$officer];
         if ($filters['status'] !== '') { $where.=' AND l.lot_status=:status'; $params['status']=$filters['status']; }
         if ($filters['category'] !== '') { $where.=' AND l.category_id=:category'; $params['category']=$filters['category']; }
-        if ($filters['q'] !== '') { $where.=' AND (l.lot_code LIKE :code OR l.title LIKE :title)'; $params['code']=$params['title']='%'.$filters['q'].'%'; }
+        if ($filters['q'] !== '') { $where.=" AND (l.lot_code LIKE :code ESCAPE '!' OR l.title LIKE :title ESCAPE '!')"; $params['code']=$params['title']='%'.str_replace(['!','%','_'],['!!','!%','!_'],$filters['q']).'%'; }
         $total=(int)$this->query('SELECT COUNT(*) FROM e_lots l WHERE '.$this->scope().$where,$params)->fetchColumn();
         $sort=$filters['sort']==='oldest' ? 'ASC' : 'DESC';
-        $offset=($filters['page']-1)*20;
+        $pages=max(1,(int)ceil($total/20)); $page=min($filters['page'],$pages);
+        $offset=($page-1)*20;
         $rows=$this->query($this->select().$where." ORDER BY l.created_at $sort, l.e_lot_id $sort LIMIT 20 OFFSET $offset",$params)->fetchAll();
-        return ['rows'=>$rows,'total'=>$total];
+        return ['rows'=>$rows,'total'=>$total,'page'=>$page,'pages'=>$pages];
+    }
+
+    public function counts(int $officer): array
+    {
+        $counts=array_fill_keys(self::STATUSES,0);
+        foreach ($this->query('SELECT l.lot_status,COUNT(*) AS total FROM e_lots l WHERE '.$this->scope().' GROUP BY l.lot_status',['owner'=>$officer,'other_owner'=>$officer])->fetchAll() as $row) {
+            $counts[$row['lot_status']]=(int)$row['total'];
+        }
+        return $counts;
+    }
+
+    public static function biddingPhase(array $lot): string
+    {
+        if ($lot['lot_status']!=='OPEN_FOR_BIDDING') return 'Not accepting bids';
+        if (!$lot['bidding_open_at'] || !$lot['bidding_close_at']) return 'Invalid bidding window — review required';
+        if ($lot['now']<$lot['bidding_open_at']) return 'Bidding scheduled';
+        return $lot['now']<$lot['bidding_close_at'] ? 'Bidding open' : 'Deadline passed — select an eligible winner';
+    }
+
+    public static function handoverVersion(array $handover): string
+    {
+        return hash('sha256',json_encode([$handover['winning_bid_id'],$handover['handover_status'],$handover['handover_date'],$handover['remarks'],$handover['recorded_by_officer_user_id']],JSON_THROW_ON_ERROR));
     }
 
     public function categories(): array
@@ -66,12 +92,20 @@ final class OfficerELot extends Model
             JOIN users reviewer ON reviewer.user_id=h.recorded_by_officer_user_id
             WHERE b.e_lot_id=:id",['id'=>$id])->fetch() ?: null;
         $lot['now']=(string)$this->query('SELECT CURRENT_TIMESTAMP')->fetchColumn();
+        $lot['source_error']=null;
+        try { $this->validateSources($lot,$officer,false,$lot['items']); }
+        catch (DomainException $error) { $lot['source_error']=$error->getMessage(); }
+        $lot['has_winner']=(bool)array_filter($lot['bids'],static fn(array $bid): bool=>$bid['bid_status']==='WINNING');
+        $lot['can_award']=$lot['lot_status']==='OPEN_FOR_BIDDING' && $lot['verified_at'] && $lot['verified_by_officer_user_id']
+            && $lot['bidding_open_at'] && $lot['bidding_close_at'] && $lot['bidding_close_at']>$lot['bidding_open_at']
+            && $lot['now']>=$lot['bidding_close_at'] && $lot['source_error']===null && !$lot['has_winner'];
+        $lot['history']=OfficerActionAudit::history($this->db,'e_lots',$id);
         return $lot;
     }
 
     private function sources(int $id, bool $lock=false): array
     {
-        return $this->query('SELECT ci.*, ri.request_id, ri.quantity AS requested_quantity, wi.item_name, wi.category_id,
+        return $this->query('SELECT ci.*, ri.request_id, ri.quantity AS requested_quantity, ri.applied_risk_level, wi.item_name, wi.category_id,
             cr.pickup_result, cr.request_id AS recorded_request_id, cr.collection_record_id,
             sc.schedule_collection_id, sc.verification_status, sc.submitted_by_collector_user_id,
             sc.schedule_id, req.schedule_id AS request_schedule_id, s.collection_date, s.created_by_officer_user_id AS source_officer, a.area_name
@@ -86,9 +120,9 @@ final class OfficerELot extends Model
             WHERE ei.e_lot_id=:id ORDER BY ci.record_item_id'.($lock?' FOR UPDATE':''),['id'=>$id])->fetchAll();
     }
 
-    private function validateSources(array $lot, int $officer): void
+    private function validateSources(array $lot, int $officer, bool $lock=true, ?array $items=null): void
     {
-        $items=$this->sources((int)$lot['e_lot_id'],true);
+        $items ??= $this->sources((int)$lot['e_lot_id'],$lock);
         if (!$items) throw new DomainException('An E-Lot needs verified collected items.');
         foreach ($items as $item) {
             if ((int)$item['source_officer']!==$officer || $item['verification_status']!=='VERIFIED' || $item['submitted_by_collector_user_id']!=$lot['created_by_collector_user_id']
@@ -135,7 +169,8 @@ final class OfficerELot extends Model
 
     public function act(int $id, int $officer, array $input): void
     {
-        $note=trim($input['note']);
+        if (!mb_check_encoding($input['note'],'UTF-8')) throw new DomainException('Notes must use valid UTF-8 text.');
+        $note=preg_replace('/^\s+|\s+$/u','',$input['note']);
         if (!mb_check_encoding($note,'UTF-8') || mb_strlen($note)>500) throw new DomainException('Notes must be at most 500 characters.');
         $this->db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
         $this->db->beginTransaction();
@@ -146,13 +181,14 @@ final class OfficerELot extends Model
             $now=(string)$this->query('SELECT CURRENT_TIMESTAMP')->fetchColumn();
             if (in_array($input['action'],['approve','reject'],true)) {
                 if ($this->query('SELECT bid_id FROM recycler_bids WHERE e_lot_id=:id LIMIT 1',['id'=>$id])->fetch()) throw new DomainException('An E-Lot with bids cannot be reviewed again.');
-                if ($lot['lot_status']!=='PENDING_VERIFICATION') throw new DomainException('Only pending E-Lots can be reviewed.');
+                if ($lot['lot_status']!=='PENDING_VERIFICATION') throw new DomainException('Only pending E-Lots can be reviewed. Reload the page.',409);
+                if ($this->query('SELECT 1 FROM handover_records h JOIN recycler_bids b ON b.bid_id=h.winning_bid_id WHERE b.e_lot_id=:id LIMIT 1',['id'=>$id])->fetchColumn()) throw new DomainException('This E-Lot has handover history and cannot be reviewed again.');
                 if ($input['action']==='reject' && $note==='') throw new DomainException('A rejection reason is required.');
                 $open=$close=null;
                 if ($input['action']==='approve') {
                     $this->validateSources($lot,$officer);
                     $open=self::dateTime($input['open']); $close=self::dateTime($input['close']);
-                    if ($open<$now || $close<=$open) throw new DomainException('Bidding must open in the future and close after opening.');
+                    if ($open<$now || $close<=$open) throw new DomainException('Bidding must not open in the past and must close after opening.');
                 }
                 $this->query('UPDATE e_lots SET lot_status=:status, verified_by_officer_user_id=:officer,
                     verified_at=:now, verification_note=:note, bidding_open_at=:open, bidding_close_at=:close WHERE e_lot_id=:id',
@@ -160,7 +196,8 @@ final class OfficerELot extends Model
                     'note'=>$note===''?null:$note,'open'=>$open,'close'=>$close,'id'=>$id]);
             } elseif ($input['action']==='award') {
                 if ($lot['lot_status']!=='OPEN_FOR_BIDDING' || !$lot['verified_at'] || !$lot['verified_by_officer_user_id']
-                    || !$lot['bidding_close_at'] || $now<$lot['bidding_close_at']) throw new DomainException('Award only after verified bidding has closed.');
+                    || !$lot['bidding_open_at'] || !$lot['bidding_close_at'] || $lot['bidding_close_at']<=$lot['bidding_open_at'] || $now<$lot['bidding_close_at']) throw new DomainException('Award only after verified bidding has closed. Reload the page.',409);
+                if ($this->query("SELECT 1 FROM recycler_bids WHERE e_lot_id=:id AND bid_status='WINNING' LIMIT 1",['id'=>$id])->fetchColumn()) throw new DomainException('A winning bid is already recorded for this E-Lot.',409);
                 $bidId=filter_var($input['bid_id'],FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
                 if (!$bidId) throw new DomainException('Select a valid submitted bid.');
                 $bid=$this->query('SELECT * FROM recycler_bids WHERE bid_id=:bid AND e_lot_id=:lot FOR UPDATE',['bid'=>$bidId,'lot'=>$id])->fetch();
@@ -180,6 +217,7 @@ final class OfficerELot extends Model
                 $handover=$this->query("SELECT h.*,b.reviewed_at FROM handover_records h JOIN recycler_bids b ON b.bid_id=h.winning_bid_id
                     WHERE b.e_lot_id=:id AND b.bid_status='WINNING' FOR UPDATE",['id'=>$id])->fetch();
                 if (!$handover || !in_array($handover['handover_status'],['PENDING','SCHEDULED'],true)) throw new DomainException('Handover is unavailable or already final.');
+                if (!hash_equals(self::handoverVersion($handover),$input['expected_handover']??'')) throw new DomainException('The handover has changed. Reload before saving.',409);
                 if (!in_array($input['handover_status'],['SCHEDULED','COMPLETED'],true)) throw new DomainException('Choose Scheduled or Completed.');
                 $date=self::dateTime($input['date']);
                 if (($input['handover_status']==='SCHEDULED' && $date<=$now)
@@ -189,6 +227,16 @@ final class OfficerELot extends Model
                     ['status'=>$input['handover_status'],'date'=>$date,'note'=>$note===''?null:$note,'officer'=>$officer,'bid'=>$handover['winning_bid_id']]);
                 // The existing database trigger completes the E-Lot only on completed handover.
             } else throw new DomainException('Unsupported E-Lot action.');
+            $after=$this->query('SELECT lot_status,verified_by_officer_user_id,verified_at,verification_note,bidding_open_at,bidding_close_at FROM e_lots WHERE e_lot_id=:id',['id'=>$id])->fetch();
+            $before=['status'=>$lot['lot_status'],'action'=>$input['action'],'verification_note'=>$lot['verification_note'],
+                'verified_by_officer_user_id'=>$lot['verified_by_officer_user_id'],'verified_at'=>$lot['verified_at'],
+                'bidding_open_at'=>$lot['bidding_open_at'],'bidding_close_at'=>$lot['bidding_close_at']];
+            if ($input['action']==='handover') {
+                $before['handover']=$handover;
+                $after['handover']=$this->query('SELECT * FROM handover_records WHERE winning_bid_id=:bid',['bid'=>$handover['winning_bid_id']])->fetch();
+            }
+            if ($input['action']==='award') $after['winning_bid_id']=$bidId;
+            OfficerActionAudit::record($this->db,$officer,'e_lots',$id,$before,$after);
             $this->db->commit();
         } catch (Throwable $error) {
             if ($this->db->inTransaction()) $this->db->rollBack();

@@ -34,11 +34,11 @@
 </a>
         <a href="<?= $baseUrl ?>/officer/e-lots"
    class="nav-item <?= ($currentPage ?? '') === 'e-lots' ? 'active' : '' ?>">
-    E-Lots
+    E-Lot Management
 </a>
         <a href="<?= $baseUrl ?>/officer/feedback"
    class="nav-item <?= ($currentPage ?? '') === 'feedback' ? 'active' : '' ?>">
-    Feedback
+    Feedback Management
 </a>
         <a href="<?= $baseUrl ?>/officer/reports"
    class="nav-item <?= ($currentPage ?? '') === 'reports' ? 'active' : '' ?>">
