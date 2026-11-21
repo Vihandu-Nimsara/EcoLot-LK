@@ -1,0 +1,111 @@
+const assert = require('node:assert/strict');
+const {spawn, execFileSync} = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const root = path.resolve(__dirname, '..');
+const php = process.env.PHP_BINARY || 'php';
+const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,...args], {cwd:root,encoding:'utf8'});
+(async () => {
+    const fixture = JSON.parse(run(['tests/collection-reviews.php','--fixture']));
+    const temp = fs.mkdtempSync(path.join(os.tmpdir(),'ecolot-review-browser-'));
+    let server, browser; let output='';
+    try {
+        const listener=require('node:net').createServer();
+        await new Promise(resolve=>listener.listen(0,'127.0.0.1',resolve));
+        const port=listener.address().port; await new Promise(resolve=>listener.close(resolve));
+        const base=`http://127.0.0.1:${port}`;
+        server=spawn(php,['-d',`session.save_path=${temp}`,'-S',`127.0.0.1:${port}`,'-t','public','tests/browser-router.php'],{cwd:root,env:{...process.env,DB_DATABASE:fixture.database,APP_BASE_PATH:'',APP_DEBUG:'true'}});
+        server.stderr.on('data',data=>output+=data);
+        for(let i=0;i<60;i++) {try {if((await fetch(`${base}/login`)).ok) break;} catch {} await new Promise(r=>setTimeout(r,100));}
+        browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+        const errors=[];
+        async function newPage() {
+            const context=await browser.newContext();
+            await context.route('**/*',route=>route.request().url().startsWith(base)?route.continue():route.abort());
+            const page=await context.newPage(); page.on('pageerror',e=>errors.push(e.message));
+            page.on('dialog',async dialog=>{errors.push('Unexpected native dialog: '+dialog.message()); await dialog.dismiss();});
+            return page;
+        }
+        async function login(page,mobile) {
+            await page.goto(`${base}/login`); await page.locator('[name=mobile_number]').fill(mobile);
+            await page.locator('[name=password]').fill('BrowserTest123!');
+            await Promise.all([page.waitForURL('**/dashboard'),page.locator('button[type=submit]').click()]);
+        }
+        const officer=await newPage(); await login(officer,'0771234567');
+        await officer.getByRole('link',{name:'Collection Reviews',exact:true}).click();
+        assert.match(await officer.title(),/Collection Reviews/);
+        assert.equal(await officer.locator('.collection-records-page h1').innerText(),'Collection Reviews');
+        assert.equal(await officer.locator('[data-review-row]').count(),20);
+        await officer.getByRole('link',{name:'Next',exact:true}).click();
+        assert.equal(await officer.locator('[data-review-row]').count(),2);
+        await officer.locator('#review-search').fill('Area One');
+        await officer.locator('#review-sort').selectOption('oldest');
+        await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Apply Filters',exact:true}).click()]);
+        await officer.getByRole('link',{name:'Next',exact:true}).click();
+        assert(new URL(officer.url()).searchParams.get('q')==='Area One');
+        assert(new URL(officer.url()).searchParams.get('sort')==='oldest');
+        await officer.locator('#review-search').fill("%' OR 1=1 --");
+        await Promise.all([officer.waitForNavigation(),officer.getByRole('button',{name:'Apply Filters',exact:true}).click()]);
+        assert.equal(await officer.locator('[data-review-row]').count(),0);
+        assert.match(await officer.locator('.officer-empty-state').innerText(),/No submissions match/);
+        await officer.goto(`${base}/officer/collection-records?submission_id=1`);
+        assert.equal(await officer.locator('[data-review-request]').count(),3);
+        assert.equal(await officer.locator('[data-review-request="1"] tbody tr').count(),2);
+        assert.equal(await officer.locator('[data-total="actual_quantity"]').innerText(),'3');
+        assert.equal(await officer.locator('[data-total="actual_weight_kg"]').innerText(),'3.625');
+        assert.match(await officer.locator('.collection-review-details').innerText(),/<script>alert\("collector"\)<\/script>/);
+        assert.match(await officer.locator('[data-review-request="3"] tbody').innerText(),/Not recorded/);
+        let posts=0;
+        officer.on('request',request=>{if(request.method()==='POST'&&request.url().includes('/review')) posts++;});
+        const verifyTrigger=officer.locator('[data-review-open="VERIFIED"]');
+        await verifyTrigger.click();
+        assert(await officer.locator('#review-verified').evaluate(el=>el.open));
+        await officer.locator('#review-verified [data-review-cancel]').click();
+        assert(await verifyTrigger.evaluate(el=>el===document.activeElement));
+        await verifyTrigger.click(); await officer.keyboard.press('Escape');
+        assert.equal(posts,0);
+        await officer.setViewportSize({width:390,height:844});
+        assert(await officer.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile details overflow');
+        await verifyTrigger.click();
+        await officer.screenshot({path:'/tmp/ecolot-review-verify-mobile.png',fullPage:true});
+        await officer.locator('#note-VERIFIED').fill('Checked every request');
+        await Promise.all([officer.waitForNavigation(),officer.locator('#review-verified button[type=submit]').click()]);
+        assert.equal(posts,1); assert.match(officer.url(),/verification_status=VERIFIED/);
+        await officer.reload();
+        assert.equal(await officer.locator('[data-review-open]').count(),0);
+        assert.match(await officer.locator('.collection-review-details').innerText(),/COMPLETED/);
+        assert.match(await officer.locator('.collection-review-details').innerText(),/Checked every request/);
+        assert.equal((await officer.request.post(`${base}/officer/collection-records/1/review`,{form:{decision:'REJECTED',note:'Forged'}})).status(),403);
+        await officer.setViewportSize({width:1280,height:900});
+        await officer.goto(`${base}/officer/collection-records?submission_id=6`);
+        await officer.locator('[data-review-open="REJECTED"]').click();
+        await officer.locator('#note-REJECTED').fill('   ');
+        await officer.locator('#review-rejected button[type=submit]').click();
+        assert(await officer.locator('#review-rejected').evaluate(el=>el.open));
+        const beforeReject=posts;
+        await officer.locator('#note-REJECTED').fill('Pickup evidence <needs correction>');
+        await Promise.all([officer.waitForNavigation(),officer.locator('#review-rejected button[type=submit]').click()]);
+        assert.equal(posts,beforeReject+1);
+        await officer.reload();
+        assert.match(await officer.locator('.collection-review-details').innerText(),/Pickup evidence <needs correction>/);
+        assert.equal(await officer.locator('[data-review-open]').count(),0);
+        await officer.screenshot({path:'/tmp/ecolot-review-rejected-desktop.png',fullPage:true});
+        const collector=await newPage(); await login(collector,'0771234569');
+        await collector.goto(`${base}/collector/collection-records/8`);
+        assert.match(await collector.locator('body').innerText(),/Pickup evidence <needs correction>/);
+        assert.equal(await collector.getByRole('button',{name:'Save Changes',exact:true}).count(),0);
+        const other=await newPage(); await login(other,'0771234570');
+        assert.equal((await other.goto(`${base}/officer/collection-records?submission_id=1`)).status(),404);
+        await other.goto(`${base}/officer/collection-records`);
+        assert.equal(await other.locator('[data-review-row]').count(),1);
+        assert.equal(errors.length,0,errors.join('\n'));
+        assert(!/PHP (Warning|Fatal)/.test(output),output);
+        console.log('PASS: Chrome scoped queue/search/sort/pagination, grouped details/totals, mobile modal/cancel/Escape/focus, persisted Verify/Reject, CSRF and Collector rejection visibility');
+    } finally {
+        await browser?.close();
+        if(server) {server.kill(); await new Promise(resolve=>server.once('exit',resolve));}
+        run(['tests/collection-reviews.php','--drop',fixture.database]); fs.rmSync(temp,{recursive:true,force:true});
+    }
+})().catch(error=>{console.error(error);process.exitCode=1});

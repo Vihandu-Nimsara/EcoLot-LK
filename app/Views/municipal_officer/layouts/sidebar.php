@@ -30,7 +30,7 @@
 </a>
         <a href="<?= $baseUrl ?>/officer/collection-records"
    class="nav-item <?= ($currentPage ?? '') === 'collection-records' ? 'active' : '' ?>">
-    Collection Records
+    Collection Reviews
 </a>
         <a href="<?= $baseUrl ?>/officer/e-lots"
    class="nav-item <?= ($currentPage ?? '') === 'e-lots' ? 'active' : '' ?>">

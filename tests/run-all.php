@@ -13,6 +13,8 @@ $phpTests = [
     'flagged-requests.php',
     'collection-assignments.php',
     'collection-assignment-view.php',
+    'collection-reviews.php',
+    'collection-review-concurrency.php',
     'collector-crud.php',
     'collection-lifecycle-concurrency.php',
     'public-pickup-crud.php',
@@ -36,6 +38,7 @@ foreach ($phpTests as $test) {
 $run(['node', __DIR__ . '/escaping.js']);
 if (in_array('--browser', $argv, true)) {
     $run(['node', __DIR__ . '/officer-browser.cjs']);
+    $run(['node', __DIR__ . '/collection-reviews-browser.cjs']);
     $run(['node', __DIR__ . '/pickup-browser.cjs']);
     $run(['node', __DIR__ . '/collector-browser.cjs']);
 }

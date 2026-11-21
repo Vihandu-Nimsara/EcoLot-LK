@@ -38,7 +38,7 @@ $themeVersion = Asset::version('css/municipal_officer/theme.css');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><?= htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') ?> - Municipal Officer</title>
+    <title><?= htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') ?> - <?= htmlspecialchars($pageTitle ?? 'Municipal Officer', ENT_QUOTES, 'UTF-8') ?></title>
 
     <?php require dirname(__DIR__, 2) . '/components/workspace-head.php'; ?>
 

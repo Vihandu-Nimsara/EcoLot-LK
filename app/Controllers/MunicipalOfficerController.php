@@ -401,28 +401,47 @@ class MunicipalOfficerController extends Controller
         $this->renderCollectionRecords();
     }
 
+    private function collectionReviewFilters(): array
+    {
+        $filters = ['verification_status' => 'PENDING', 'q' => '', 'sort' => 'newest', 'page' => '1'];
+        foreach ($filters as $key => $default) {
+            if (!array_key_exists($key, $_GET)) continue;
+            if (!is_string($_GET[$key])) throw new InvalidArgumentException('Invalid collection review filters.');
+            $filters[$key] = trim($_GET[$key]);
+        }
+        $filters['page'] = $this->positiveInteger($filters['page'], 1000000);
+        if (($filters['verification_status'] !== '' && !isset(ScheduleCollection::REVIEW_LABELS[$filters['verification_status']]))
+            || !isset(ScheduleCollection::REVIEW_SORTS[$filters['sort']]) || $filters['page'] === null
+            || !mb_check_encoding($filters['q'], 'UTF-8') || mb_strlen($filters['q']) > 100) {
+            throw new InvalidArgumentException('Invalid collection review filters.');
+        }
+        return $filters;
+    }
+
     private function renderCollectionRecords(array $errors = []): void
     {
         $rawId = $_GET['submission_id'] ?? null;
         $id = is_string($rawId) ? $this->positiveInteger($rawId) : null;
-        $status = $_GET['verification_status'] ?? 'PENDING';
-        if (($rawId !== null && $id === null) || !is_string($status)
-            || !in_array($status, ['', 'PENDING','VERIFIED','REJECTED'], true)) {
-            http_response_code(400); echo 'Invalid submission ID or status.'; return;
-        }
+        if ($rawId !== null && $id === null) { http_response_code(400); echo 'Invalid submission ID.'; return; }
         try {
+            $filters = $this->collectionReviewFilters();
             $model = new ScheduleCollection();
             $selected = $id === null ? null : $model->findForOfficer($id, (int) Auth::id());
             if ($id !== null && $selected === null) {
                 http_response_code(404); echo 'Collection submission not found.'; return;
             }
-            $collections = $model->forOfficer((int) Auth::id(), $status);
+            $queue = $model->reviewQueue((int) Auth::id(), $filters);
+            $filters['page'] = $queue['page'];
             $this->view('municipal_officer/collection-records', [
-                'currentPage' => 'collection-records', 'collections' => $collections,
-                'selectedCollection' => $selected, 'statusFilter' => $status,
+                'currentPage' => 'collection-records', 'pageTitle' => 'Collection Reviews',
+                'collections' => $queue['rows'], 'reviewQueue' => $queue, 'reviewFilters' => $filters,
+                'selectedCollection' => $selected, 'statusFilter' => $filters['verification_status'],
                 'errors' => $errors, 'csrfToken' => Csrf::token(),
+                'reviewNote' => $errors ? $this->postString('note', false) : '',
                 'notice' => Session::pullFlash('collection_review_notice'),
             ]);
+        } catch (InvalidArgumentException $error) {
+            http_response_code(400); echo 'Invalid collection review filters.';
         } catch (PDOException $e) {
             error_log('Collection list failed: ' . $e->getCode());
             http_response_code(500); echo 'Collections could not be loaded. Please try again later.';
@@ -443,15 +462,15 @@ class MunicipalOfficerController extends Controller
         } catch (OutOfBoundsException $e) {
             http_response_code(404); echo 'Collection submission not found.'; return;
         } catch (DomainException $e) {
-            http_response_code(422);
+            http_response_code($e->getCode() === 409 ? 409 : 422);
             $_GET['submission_id'] = (string) $number;
             $this->renderCollectionRecords([$e->getMessage()]); return;
         } catch (PDOException $e) {
             error_log('Collection review failed: ' . $e->getCode());
             http_response_code(500); echo 'Review could not be saved. Reload and try again.'; return;
         }
-        Session::flash('collection_review_notice', 'Collection review saved successfully.');
-        $this->redirect('/officer/collection-records?submission_id=' . $number);
+        Session::flash('collection_review_notice', $this->postString('decision') === 'VERIFIED' ? 'Collection verified successfully.' : 'Collection rejected. The reason is available to the Collector.');
+        $this->redirect('/officer/collection-records?' . http_build_query(['submission_id' => $number, 'verification_status' => $this->postString('decision')]) . '#collection-details');
     }
 
     public function eLots(): void
