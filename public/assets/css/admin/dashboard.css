@@ -166,7 +166,9 @@
 .quick-actions-grid {
     display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Two comfortable tiles when room permits; fall back to one before
+       labels become squeezed by the sidebar and the companion panel. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));
 
     gap: 12px;
 }
@@ -175,7 +177,7 @@
 .quick-action-item {
     display: grid;
 
-    grid-template-columns: 42px minmax(0, 1fr) auto;
+    grid-template-columns: 42px minmax(0, 1fr) 14px;
 
     align-items: center;
 
@@ -495,3 +497,566 @@
     }
 
 }
+
+
+/* =========================================================
+   ADMIN DASHBOARD — PENDING ACTIONS & ROLE OVERVIEW
+   Reuse the existing shared dashboard cards/palette.
+========================================================= */
+.pending-actions-panel {
+    margin-bottom: 24px;
+}
+
+.pending-actions-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.pending-action-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px;
+    background: #f0faf4;
+    border: 1px solid #d8f2e2;
+    border-radius: 12px;
+}
+
+.pending-action-icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    background: #d0fae4;
+    border-radius: 12px;
+    font-size: 1.3rem;
+}
+
+.pending-action-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pending-action-content strong {
+    color: var(--admin-text);
+    font-size: 0.9375rem;
+}
+
+.pending-action-content span,
+.pending-actions-empty,
+.overview-empty {
+    color: var(--admin-muted);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+}
+
+.pending-action-button {
+    flex-shrink: 0;
+    padding: 10px 13px;
+    color: var(--admin-green-800);
+    background: #fff;
+    border: 1px solid #71ca92;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pending-action-button:hover,
+.pending-action-button:focus-visible {
+    background: #e6f8ed;
+}
+
+/* Main dashboard panels: two readable columns on desktop. */
+.dashboard-secondary-grid {
+    /* Give Quick Actions and Recent Activity readable widths. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.activity-link {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.activity-link:hover,
+.activity-link:focus-visible {
+    background: #f1faf4;
+}
+
+.activity-link:focus-visible {
+    outline: 2px solid var(--admin-green-800);
+    outline-offset: 2px;
+}
+
+.activity-arrow {
+    color: var(--admin-green-800);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.overview-visual {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.overview-donut {
+    display: grid;
+    flex: 0 0 132px;
+    place-items: center;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+}
+
+.overview-donut-empty {
+    background: #e9f0ed;
+}
+
+.overview-donut-core {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 92px;
+    height: 92px;
+    background: var(--admin-surface);
+    border-radius: 50%;
+}
+
+.overview-donut-core strong {
+    color: var(--admin-green-800);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.overview-donut-core span {
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+}
+
+.overview-legend {
+    display: flex;
+    flex: 1 1 135px;
+    flex-direction: column;
+    gap: 11px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.overview-legend li {
+    display: grid;
+    grid-template-columns: 9px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+}
+
+.overview-legend strong {
+    color: var(--admin-text);
+    font-weight: 700;
+}
+
+.overview-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+/* Overview is an intentionally compact full-width section beneath the two
+   frequently used panels, not a cramped third column. */
+.system-overview-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.4fr);
+    align-items: center;
+    column-gap: 32px;
+}
+
+.system-overview-panel .dashboard-panel-header {
+    margin-bottom: 0;
+}
+
+.system-overview-panel .overview-visual {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 28px;
+}
+
+.system-overview-panel .overview-legend {
+    flex: 0 1 260px;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-secondary-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .system-overview-panel {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 850px) {
+    .system-overview-panel {
+        grid-template-columns: 1fr;
+        row-gap: 18px;
+    }
+
+    .system-overview-panel .dashboard-panel-header {
+        margin-bottom: 0;
+    }
+
+    .system-overview-panel .overview-visual {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 650px) {
+    .pending-actions-header,
+    .pending-action-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .pending-all-link,
+    .pending-action-button {
+        align-self: flex-start;
+    }
+
+    .pending-action-icon {
+        flex-basis: 44px;
+        width: 44px;
+    }
+}
+
+
+/* =========================================================
+   ADMIN DASHBOARD — FOCUSED KPI / ROLE OVERVIEW LAYOUT
+   Only presentation changes. Preserve original EcoLot palette.
+========================================================= */
+.dashboard-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+/* Four non-duplicated operational KPIs in a balanced 2 x 2 grid. */
+.dashboard-top-grid .dashboard-stats-section {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.dashboard-top-grid .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: 100%;
+    align-content: stretch;
+}
+
+.dashboard-top-grid .stat-card {
+    min-width: 0;
+}
+
+/* The user-role chart lives next to the KPIs, rather than below all panels. */
+.dashboard-top-grid .system-overview-panel {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    min-width: 0;
+    gap: 18px;
+}
+
+.dashboard-top-grid .system-overview-panel .dashboard-panel-header {
+    margin-bottom: 0;
+}
+
+.dashboard-top-grid .system-overview-panel .overview-visual {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+.dashboard-top-grid .system-overview-panel .overview-legend {
+    flex: 1 1 145px;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-top-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-top-grid .system-overview-panel {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 700px) {
+    .dashboard-top-grid {
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .dashboard-top-grid .stats-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* =========================================================
+   ADMIN DASHBOARD — KPI AND OVERVIEW PRESENTATION POLISH
+   Scope: top grid only. Keeps the existing icons, palette and data.
+========================================================= */
+.dashboard-top-grid .stat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 148px;
+    padding: 21px 22px;
+    gap: 0;
+}
+
+.dashboard-top-grid .stat-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    /* Intentionally retain the existing icon artwork and background colors. */
+}
+
+.dashboard-top-grid .stat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+}
+
+.dashboard-top-grid .stat-info > span {
+    max-width: calc(100% - 64px);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.dashboard-top-grid .stat-value {
+    margin-top: 13px;
+    font-size: clamp(2rem, 2.3vw, 2.375rem);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-top-grid .stat-detail {
+    display: block;
+    margin-top: 7px;
+    color: var(--admin-muted);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.dashboard-top-grid .system-overview-panel {
+    padding: 25px 28px;
+    gap: 22px;
+}
+
+.dashboard-top-grid .system-overview-panel .dashboard-panel-header h2 {
+    letter-spacing: -0.015em;
+}
+
+.dashboard-top-grid .system-overview-panel .overview-visual {
+    display: grid;
+    grid-template-columns: 154px minmax(0, 1fr);
+    align-items: center;
+    gap: 26px;
+}
+
+.dashboard-top-grid .overview-donut {
+    width: 154px;
+    height: 154px;
+    flex: none;
+}
+
+.dashboard-top-grid .overview-donut-core {
+    width: 110px;
+    height: 110px;
+}
+
+.dashboard-top-grid .overview-donut-core strong {
+    font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-top-grid .overview-legend {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    gap: 0;
+}
+
+.dashboard-top-grid .overview-legend li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--admin-border-soft);
+    font-size: 0.8125rem;
+}
+
+.dashboard-top-grid .overview-legend li:last-child {
+    border-bottom: 0;
+}
+
+.dashboard-top-grid .overview-legend strong {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+@media (max-width: 560px) {
+    .dashboard-top-grid .stat-card {
+        min-height: 130px;
+        padding: 18px;
+    }
+
+    .dashboard-top-grid .stat-icon {
+        top: 18px;
+        right: 18px;
+    }
+
+    .dashboard-top-grid .system-overview-panel {
+        padding: 22px;
+    }
+
+    .dashboard-top-grid .system-overview-panel .overview-visual {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        gap: 16px;
+    }
+}
+
+/* Admin Dashboard — System Overview typography */
+/* System Overview heading */
+.dashboard-top-grid .system-overview-panel .dashboard-panel-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* System Overview supporting text */
+.dashboard-top-grid .system-overview-panel .dashboard-panel-header p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* User-role legend and values */
+.dashboard-top-grid .system-overview-panel .overview-legend,
+.dashboard-top-grid .system-overview-panel .overview-legend .overview-role-label,
+.dashboard-top-grid .system-overview-panel .overview-legend li > span,
+.dashboard-top-grid .system-overview-panel .overview-legend li > strong {
+    font-size: 16px;
+}
+
+/* Restore original Admin Dashboard horizontal stat cards */
+
+.dashboard-top-grid .stats-grid .stat-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    min-height: 150px;
+    padding: 24px 28px;
+    text-align: left;
+}
+
+/* Emoji container on the LEFT */
+.dashboard-top-grid .stats-grid .stat-icon {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    margin: 0;
+
+    font-size: 32px;
+    line-height: 1;
+    border-radius: 18px;
+}
+
+/* Title and number on the RIGHT */
+.dashboard-top-grid .stats-grid .stat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    gap: 6px;
+
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-top-grid .stats-grid .stat-info > span {
+    max-width: none;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #566d68;
+}
+
+.dashboard-top-grid .stats-grid .stat-value {
+    margin: 0;
+    font-size: 37px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #075b43;
+}
+
+.dashboard-top-grid .stats-grid .stat-detail {
+    display: none;
+}
+
+/* Responsive stat cards */
+@media (max-width: 1100px) {
+    .dashboard-top-grid .stats-grid .stat-card {
+        gap: 14px;
+        padding: 18px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-icon {
+        flex-basis: 56px;
+        width: 56px;
+        height: 56px;
+        font-size: 28px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-info > span {
+        font-size: 14px;
+    }
+
+    .dashboard-top-grid .stats-grid .stat-value {
+        font-size: 32px;
+    }
+}
+

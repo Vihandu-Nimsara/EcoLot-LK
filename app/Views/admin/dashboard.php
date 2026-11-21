@@ -9,168 +9,182 @@
             <h1>Welcome Back, Admin</h1>
 
             <p>
-                Here’s what’s happening across EcoLot LK today.
+                System overview and latest administrative activity across EcoLot LK.
             </p>
         </div>
 
     </div>
 
 
+    <?php if (!empty($dashboardUnavailable)): ?>
+        <p role="alert" class="dashboard-data-notice">
+            Dashboard statistics and activity are temporarily unavailable. Please try again later.
+        </p>
+    <?php endif; ?>
+
     <!-- =====================================================
-         SYSTEM STATISTICS
+         KEY METRICS + USER DISTRIBUTION
+         Keep operational KPIs distinct from account role breakdown.
     ====================================================== -->
-    <section
-        class="schedule-form-card dashboard-stats-section"
-        aria-label="System statistics"
-    >
+    <section class="dashboard-top-grid" aria-label="Key statistics and user distribution">
+        <section class="schedule-form-card dashboard-stats-section" aria-label="Key statistics">
+            <div class="stats-grid">
 
-        <div class="stats-grid">
+                <!-- Pending Recyclers -->
+                <article class="stat-card">
 
-            <!-- Total Users -->
-            <article class="stat-card">
+                    <div
+                        class="stat-icon pending"
+                        aria-hidden="true"
+                    >
+                        ⏳
+                    </div>
 
-                <div
-                    class="stat-icon total-users"
-                    aria-hidden="true"
-                >
-                    👥
+                    <div class="stat-info">
+                        <span>Pending Recyclers</span>
+                        <strong class="stat-value"><?= $dashboardStats === null ? "—" : number_format((int) $dashboardStats['pending_recyclers']) ?></strong>
+                    </div>
+
+                </article>
+
+                <!-- Verified Recyclers -->
+                <article class="stat-card">
+
+                    <div
+                        class="stat-icon verified"
+                        aria-hidden="true"
+                    >
+                        ✅
+                    </div>
+
+                    <div class="stat-info">
+                        <span>Verified Recyclers</span>
+                        <strong class="stat-value"><?= $dashboardStats === null ? "—" : number_format((int) $dashboardStats['verified_recyclers']) ?></strong>
+                    </div>
+
+                </article>
+
+                <!-- E-Waste Categories -->
+                <article class="stat-card">
+
+                    <div
+                        class="stat-icon e-waste-categories"
+                        aria-hidden="true"
+                    >
+                        🗂️
+                    </div>
+
+                    <div class="stat-info">
+                        <span>E-Waste Categories</span>
+                        <strong class="stat-value"><?= $dashboardStats === null ? "—" : number_format((int) $dashboardStats['e_waste_categories']) ?></strong>
+                    </div>
+
+                </article>
+
+                <!-- E-Waste Items -->
+                <article class="stat-card">
+
+                    <div
+                        class="stat-icon e-waste-items"
+                        aria-hidden="true"
+                    >
+                        🔌
+                    </div>
+
+                    <div class="stat-info">
+                        <span>E-Waste Items</span>
+                        <strong class="stat-value"><?= $dashboardStats === null ? "—" : number_format((int) $dashboardStats['e_waste_items']) ?></strong>
+                    </div>
+
+                </article>
+
+            </div>
+        </section>
+
+        <article class="dashboard-panel system-overview-panel" aria-labelledby="system-overview-heading">
+            <div class="dashboard-panel-header">
+                <h2 id="system-overview-heading">System Overview</h2>
+                <p>Registered accounts by role, including inactive accounts.</p>
+            </div>
+
+            <?php if ($dashboardStats === null): ?>
+                <p class="overview-empty">User-role breakdown is temporarily unavailable.</p>
+            <?php else: ?>
+                <?php
+                    $overviewRoles = [
+                        ['key' => 'admin_users', 'label' => 'Administrators', 'color' => '#125f44'],
+                        ['key' => 'municipal_officers', 'label' => 'Municipal Officers', 'color' => '#229a68'],
+                        ['key' => 'collectors', 'label' => 'Collectors', 'color' => '#55c58a'],
+                        ['key' => 'recycler_users', 'label' => 'Recyclers', 'color' => '#85deb1'],
+                        ['key' => 'public_users', 'label' => 'Public Users', 'color' => '#c6f1d9'],
+                    ];
+                    $overviewTotal = max(0, (int) $dashboardStats['total_users']);
+                    $overviewSoFar = 0;
+                    $overviewStops = [];
+                    foreach ($overviewRoles as $role) {
+                        $roleCount = max(0, (int) ($dashboardStats[$role['key']] ?? 0));
+                        if ($roleCount > 0 && $overviewTotal > 0) {
+                            $start = number_format($overviewSoFar * 100 / $overviewTotal, 3, '.', '');
+                            $end = number_format(($overviewSoFar + $roleCount) * 100 / $overviewTotal, 3, '.', '');
+                            $overviewStops[] = $role['color'] . ' ' . $start . '% ' . $end . '%';
+                        }
+                        $overviewSoFar += $roleCount;
+                    }
+                    $overviewStyle = $overviewTotal > 0
+                        ? 'background: conic-gradient(' . implode(', ', $overviewStops) . ')'
+                        : '';
+                ?>
+                <div class="overview-visual">
+                    <div class="overview-donut<?= $overviewTotal === 0 ? ' overview-donut-empty' : '' ?>"
+                         style="<?= htmlspecialchars($overviewStyle, ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true">
+                        <div class="overview-donut-core">
+                            <strong><?= number_format($overviewTotal) ?></strong>
+                            <span>Users</span>
+                        </div>
+                    </div>
+                    <ul class="overview-legend" aria-label="User accounts by role">
+                        <?php foreach ($overviewRoles as $role): ?>
+                            <li>
+                                <span class="overview-dot" style="background-color: <?= htmlspecialchars($role['color'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true"></span>
+                                <span class="overview-role-label"><?= htmlspecialchars($role['label'], ENT_QUOTES, 'UTF-8') ?></span>
+                                <strong><?= number_format((int) ($dashboardStats[$role['key']] ?? 0)) ?></strong>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
-
-                <div class="stat-info">
-                    <span>Total Users</span>
-                    <strong class="stat-value">5</strong>
-                </div>
-
-            </article>
-
-
-            <!-- Municipal Officers -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon municipal-officers"
-                    aria-hidden="true"
-                >
-                    🏛️
-                </div>
-
-                <div class="stat-info">
-                    <span>Municipal Officers</span>
-                    <strong class="stat-value">1</strong>
-                </div>
-
-            </article>
+                <?php if ($overviewTotal === 0): ?>
+                    <p class="overview-empty">No user accounts are recorded yet.</p>
+                <?php endif; ?>
+            <?php endif; ?>
+        </article>
+    </section>
 
 
-            <!-- Collectors -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon collectors"
-                    aria-hidden="true"
-                >
-                    🚛
-                </div>
-
-                <div class="stat-info">
-                    <span>Collectors</span>
-                    <strong class="stat-value">1</strong>
-                </div>
-
-            </article>
-
-
-            <!-- Pending Recyclers -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon pending"
-                    aria-hidden="true"
-                >
-                    ⏳
-                </div>
-
-                <div class="stat-info">
-                    <span>Pending Recyclers</span>
-                    <strong class="stat-value">1</strong>
-                </div>
-
-            </article>
-
-
-            <!-- Verified Recyclers -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon verified"
-                    aria-hidden="true"
-                >
-                    ✅
-                </div>
-
-                <div class="stat-info">
-                    <span>Verified Recyclers</span>
-                    <strong class="stat-value">4</strong>
-                </div>
-
-            </article>
-
-
-            <!-- E-Waste Categories -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon e-waste-categories"
-                    aria-hidden="true"
-                >
-                    🗂️
-                </div>
-
-                <div class="stat-info">
-                    <span>E-Waste Categories</span>
-                    <strong class="stat-value">10</strong>
-                </div>
-
-            </article>
-
-
-            <!-- E-Waste Items -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon e-waste-items"
-                    aria-hidden="true"
-                >
-                    🔌
-                </div>
-
-                <div class="stat-info">
-                    <span>E-Waste Items</span>
-                    <strong class="stat-value">16</strong>
-                </div>
-
-            </article>
-
-
-            <!-- Risk Rules -->
-            <article class="stat-card">
-
-                <div
-                    class="stat-icon risk-rules"
-                    aria-hidden="true"
-                >
-                    ⚠️
-                </div>
-
-                <div class="stat-info">
-                    <span>Risk Rules</span>
-                    <strong class="stat-value">5</strong>
-                </div>
-
-            </article>
-
+    <!-- =====================================================
+         PENDING ACTIONS
+    ====================================================== -->
+    <section class="dashboard-panel pending-actions-panel" aria-labelledby="pending-actions-heading">
+        <div class="dashboard-panel-header pending-actions-header">
+            <div>
+                <h2 id="pending-actions-heading">Pending Actions</h2>
+                <p>Recycler registrations requiring follow-up.</p>
+            </div>
         </div>
-
+        <?php if ($dashboardStats === null): ?>
+            <p class="pending-actions-empty">Pending applications are temporarily unavailable.</p>
+        <?php elseif ((int) $dashboardStats['pending_recyclers'] > 0): ?>
+            <?php $pendingCount = (int) $dashboardStats['pending_recyclers']; ?>
+            <div class="pending-action-row">
+                <span class="pending-action-icon" aria-hidden="true">♻️</span>
+                <div class="pending-action-content">
+                    <strong><?= number_format($pendingCount) ?> Recycler <?= $pendingCount === 1 ? 'application is' : 'applications are' ?> pending verification</strong>
+                    <span>Review the pending registration queue and check each application's requirements.</span>
+                </div>
+                <a class="pending-action-button" href="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>/admin/recycler-verification?status=PENDING">Open queue <span aria-hidden="true">→</span></a>
+            </div>
+        <?php else: ?>
+            <p class="pending-actions-empty">No Recycler registrations are currently pending verification.</p>
+        <?php endif; ?>
     </section>
 
 
@@ -365,109 +379,45 @@
 
 
             <div class="activity-list">
-
-                <!-- Activity 01 -->
-                <div class="activity-item">
-
-                    <span
-                        class="activity-icon activity-success"
-                        aria-hidden="true"
-                    >
-                        ✓
-                    </span>
-
-                    <div class="activity-content">
-
-                        <strong>
-                            Recycler “GreenCycle Lanka” verified
-                        </strong>
-
-                        <span>
-                            Recycler Verification
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Activity 02 -->
-                <div class="activity-item">
-
-                    <span
-                        class="activity-icon activity-warning"
-                        aria-hidden="true"
-                    >
-                        ⚠
-                    </span>
-
-                    <div class="activity-content">
-
-                        <strong>
-                            Risk rule #12 updated
-                        </strong>
-
-                        <span>
-                            Risk Rules Management
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Activity 03 -->
-                <div class="activity-item">
-
-                    <span
-                        class="activity-icon activity-info"
-                        aria-hidden="true"
-                    >
-                        +
-                    </span>
-
-                    <div class="activity-content">
-
-                        <strong>
-                            New user account created
-                        </strong>
-
-                        <span>
-                            User Management
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Activity 04 -->
-                <div class="activity-item">
-
-                    <span
-                        class="activity-icon activity-purple"
-                        aria-hidden="true"
-                    >
-                        ↗
-                    </span>
-
-                    <div class="activity-content">
-
-                        <strong>
-                            E-Waste item “Laptop Battery” added
-                        </strong>
-
-                        <span>
-                            Category &amp; Item Management
-                        </span>
-
-                    </div>
-
-                </div>
-
+                <?php if (empty($dashboardActivity)): ?>
+                    <p class="activity-empty">
+                        <?= !empty($dashboardUnavailable)
+                            ? "Recent activity is temporarily unavailable."
+                            : "No recent administrative activity has been recorded." ?>
+                    </p>
+                <?php else: ?>
+                    <?php foreach ($dashboardActivity as $activity): ?>
+                        <?php
+                            $activityHref = $activity['href'] ?? null;
+                            $activityHasLink = is_string($activityHref)
+                                && preg_match('~^/admin/(?:users|recycler-verification(?:/[1-9][0-9]*)?)$~D', $activityHref) === 1;
+                        ?>
+                        <?php if ($activityHasLink): ?>
+                            <a class="activity-item activity-link" href="<?= htmlspecialchars($basePath . $activityHref, ENT_QUOTES, 'UTF-8') ?>">
+                        <?php else: ?>
+                            <div class="activity-item">
+                        <?php endif; ?>
+                            <span class="activity-icon <?= htmlspecialchars($activity['class'], ENT_QUOTES, 'UTF-8') ?>" aria-hidden="true">
+                                <?= htmlspecialchars($activity['icon'], ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                            <div class="activity-content">
+                                <strong><?= htmlspecialchars($activity['title'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                <span>
+                                    <?= htmlspecialchars($activity['group'], ENT_QUOTES, 'UTF-8') ?>
+                                    <?php if ($activity['time'] !== ''): ?>
+                                        · <?= htmlspecialchars($activity['time'], ENT_QUOTES, 'UTF-8') ?>
+                                    <?php endif; ?>
+                                </span>
+                            </div>
+                            <?php if ($activityHasLink): ?><span class="activity-arrow" aria-hidden="true">→</span><?php endif; ?>
+                        <?php if ($activityHasLink): ?></a><?php else: ?></div><?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
 
         </article>
+
+
 
     </section>
 
