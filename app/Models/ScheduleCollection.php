@@ -22,7 +22,9 @@ final class ScheduleCollection extends Model
             throw new DomainException('This schedule is not open for collection changes.');
         }
         $batch = $this->forSchedule($scheduleId);
-        if ($batch && ((int) $batch['submitted_by_collector_user_id'] !== $collectorId || $batch['verification_status'] !== 'DRAFT')) {
+        if ($batch && ((int) $batch['submitted_by_collector_user_id'] !== $collectorId || $batch['verification_status'] !== 'DRAFT'
+            || $batch['submitted_at'] !== null || $batch['verified_at'] !== null
+            || $batch['verified_by_officer_user_id'] !== null || $batch['verification_note'] !== null)) {
             throw new DomainException('This schedule collection is read-only.');
         }
         return $schedule;
@@ -30,11 +32,33 @@ final class ScheduleCollection extends Model
 
     public function draft(int $scheduleId, int $collectorId): int
     {
+        if (!$this->db->inTransaction()) throw new LogicException('Draft creation requires a transaction.');
+        $this->lockAssigned($scheduleId, $collectorId);
         $batch = $this->forSchedule($scheduleId);
         return $batch ? (int) $batch['schedule_collection_id'] : $this->create([
             'schedule_id' => $scheduleId, 'submitted_by_collector_user_id' => $collectorId,
             'verification_status' => 'DRAFT', 'submitted_at' => null,
         ]);
+    }
+
+
+    // Caller holds the schedule lock, shared by save/delete/submit/assign operations.
+    public function removeEmptyDraft(int $scheduleId, int $collectorId): bool
+    {
+        if (!$this->db->inTransaction()) throw new LogicException('Draft cleanup requires a transaction.');
+        $this->lockAssigned($scheduleId, $collectorId);
+        $batch = $this->query('SELECT * FROM schedule_collections WHERE schedule_id = :id FOR UPDATE', ['id' => $scheduleId])->fetch();
+        if (!$batch) return false;
+        $id = (int) $batch['schedule_collection_id'];
+        if ($this->query('SELECT 1 FROM collection_records WHERE schedule_collection_id = :id LIMIT 1', ['id' => $id])->fetchColumn()) return false;
+        // Generic audit references have no FK; retain any container carrying history.
+        if ($this->query("SELECT 1 FROM audit_logs WHERE entity_type = 'schedule_collections' AND entity_id = :id LIMIT 1", ['id' => $id])->fetchColumn()) {
+            throw new DomainException('This empty draft has audit history and requires manual review.');
+        }
+        $this->delete($id);
+        $this->query("UPDATE area_collection_schedules SET schedule_status = 'ASSIGNED'
+            WHERE schedule_id = :id AND schedule_status = 'IN_PROGRESS'", ['id' => $scheduleId]);
+        return true;
     }
 
 

@@ -102,6 +102,12 @@ try {
         verify(Session::pullFlash('collection_error') !== null, 'Missing validation feedback');
     }
     verify((int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn() === 0, 'Failed create left parent');
+    $db->exec("CREATE TRIGGER test_fail_items BEFORE INSERT ON collection_record_items FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Injected item failure'");
+    try { $model->saveDraft(1,3,$valid); throw new RuntimeException('Injected save failure was ignored'); }
+    catch (PDOException $expected) {}
+    $db->exec('DROP TRIGGER test_fail_items');
+    verify($schedules->find(1)['schedule_status'] === 'ASSIGNED' && $model->all() === [], 'Failed save did not roll back');
+    verify((int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn() === 0, 'Failed save retained parent');
     $invoke('storeRecord',array_replace($valid,['pickup_result'=>'NOT_COLLECTED'])+['collector_user_id'=>4,'verification_status'=>'VERIFIED']);
     verify($schedules->find(1)['schedule_status'] === 'IN_PROGRESS', 'Work did not start schedule');
     verify($model->all()[0]['pickup_result'] === 'COLLECTED', 'Browser result was trusted');
@@ -124,14 +130,33 @@ try {
     verify($model->find($recordId)['pickup_result']==='PARTIAL','Draft update failed');
     verify((int)$model->find($recordId)['request_id']===1,'Forged request ID changed parent');
     $invoke('submitSchedule',[],'1'); verify(Session::pullFlash('collection_error')!==null,'Incomplete schedule submitted');
+    $batchId = (int)$db->query('SELECT schedule_collection_id FROM schedule_collections WHERE schedule_id=1')->fetchColumn();
+    $db->prepare("INSERT INTO audit_logs (entity_type,entity_id,action_type) VALUES ('schedule_collections',?,'TEST_HISTORY')")->execute([$batchId]);
+    try { $model->deleteDraft($recordId,3); throw new RuntimeException('Audited draft was removed'); }
+    catch (DomainException $expected) {}
+    verify($model->find($recordId) !== null, 'Audit protection failed to roll back child deletion');
+    $db->exec("DELETE FROM audit_logs WHERE action_type='TEST_HISTORY'");
+    $db->exec("CREATE TRIGGER test_fail_parent_delete BEFORE DELETE ON schedule_collections FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Injected cleanup failure'");
+    try { $model->deleteDraft($recordId,3); throw new RuntimeException('Injected delete failure was ignored'); }
+    catch (PDOException $expected) {}
+    $db->exec('DROP TRIGGER test_fail_parent_delete');
+    verify($model->find($recordId) !== null && $schedules->find(1)['schedule_status'] === 'IN_PROGRESS', 'Failed deletion did not roll back');
     $invoke('deleteRecord',[],(string)$recordId);
     verify($model->find($recordId)===null && (int)$db->query('SELECT COUNT(*) FROM collection_record_items')->fetchColumn()===0,'Draft delete did not cascade');
+    verify($schedules->find(1)['schedule_status'] === 'ASSIGNED', 'Last draft deletion did not restore ASSIGNED');
+    verify((int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn() === 0, 'Last draft left an empty container');
+    verify((int)$db->query('SELECT COUNT(*) FROM schedule_assignments WHERE unassigned_at IS NULL AND schedule_id=1')->fetchColumn() === 1, 'Draft cleanup unassigned resources');
     $invoke('storeRecord',$valid);
     $recordId = (int)$model->all()[0]['collection_record_id'];
     $second = ['request_id'=>'2','pickup_result'=>'NOT_COLLECTED','items'=>[2=>['actual_quantity'=>'0','actual_weight_kg'=>'','actual_condition'=>'DAMAGED','notes'=>'Nobody home']]];
     $invoke('storeRecord',$second);
     verify($model->assignedRequest(2,3)['items'][0]['actual_condition'] === null, 'Uncollected condition was not normalized');
     verify(count($model->all())===2 && (int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn()===1,'One parent per schedule violated');
+    $secondId = (int)$model->assignedRequest(2,3)['collection_record_id'];
+    $model->deleteDraft($secondId,3);
+    verify($schedules->find(1)['schedule_status'] === 'IN_PROGRESS', 'Non-final deletion reset schedule');
+    verify((int)$db->query('SELECT COUNT(*) FROM schedule_collections')->fetchColumn() === 1, 'Nonempty parent removed');
+    $invoke('storeRecord',$second);
     $controller->showSchedule('1'); verify($controller->data['canSubmit'], 'Complete schedule not ready');
     $db->exec("UPDATE e_waste_requests SET risk_review_status='PENDING' WHERE request_id=2");
     $invoke('submitSchedule',[],'1'); verify(Session::pullFlash('collection_error')!==null, 'Pending review submitted');
@@ -152,6 +177,9 @@ try {
     $invoke('submitSchedule',[],'1'); verify(Session::pullFlash('collection_error')!==null,'Duplicate submission accepted');
     verify($model->find($recordId)!==null && $snapshot===$db->query('SELECT * FROM collection_record_items ORDER BY record_item_id')->fetchAll(),'Read-only data changed');
     verify($before===$db->query('SELECT * FROM e_waste_requests ORDER BY request_id')->fetchAll(),'Original request modified');
+    $batchId = (int)$db->query('SELECT schedule_collection_id FROM schedule_collections WHERE schedule_id=1')->fetchColumn();
+    (new ScheduleCollection($db))->decide($batchId,1,'VERIFIED','Checked in lifecycle regression');
+    verify($schedules->find(1)['schedule_status'] === 'COMPLETED', 'Officer verification did not complete schedule');
     foreach (['VERIFIED', 'REJECTED'] as $state) {
         $db->prepare('UPDATE schedule_collections SET verification_status=?, verified_by_officer_user_id=1, verified_at=NOW(), verification_note=? WHERE schedule_id=1')->execute([$state, 'Existing officer outcome']);
         $controller->showRecord((string)$recordId);

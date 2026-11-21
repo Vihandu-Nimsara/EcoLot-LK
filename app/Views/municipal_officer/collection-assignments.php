@@ -68,7 +68,8 @@ $assignmentStatusLabels = [
 
                         <input type="hidden" name="action" value="unassign">
 
-                        <button type="submit" class="secondary-btn">
+                        <noscript>Enable JavaScript to confirm unassignment.</noscript>
+                        <button type="submit" class="secondary-btn" data-unassign-trigger disabled>
                             Unassign
                         </button>
                     </form>
@@ -79,14 +80,34 @@ $assignmentStatusLabels = [
                 ): ?>
 
                     <span class="assignment-lock-reason">
-                        Collector draft exists
-                        (<?= (int) $schedule['saved_record_count'] ?> saved records).
-                        Unassign is locked.
+                        <?php $recordCount = (int) $schedule['saved_record_count']; ?>
+                        <?php if ($recordCount === 0): ?>
+                            Empty collector draft exists; safe reconciliation is required before unassignment.
+                        <?php else: ?>
+                            Collector draft exists (<?= $recordCount ?> saved <?= $recordCount === 1 ? 'record' : 'records' ?>).
+                            Unassignment is locked to protect collection data.
+                        <?php endif; ?>
+                        <?php if (($recordCount > 0 && $schedule['schedule_status'] !== 'IN_PROGRESS')
+                            || !in_array($schedule['schedule_status'], ['ASSIGNED', 'IN_PROGRESS'], true)): ?>
+                            Schedule and draft status are inconsistent; review required.
+                        <?php endif; ?>
                     </span>
 
                     <?php else: ?>
 
-                        <?php if ($schedule['schedule_status'] === 'IN_PROGRESS'): ?>
+                        <?php if (($schedule['collection_status'] ?? null) === 'REJECTED'): ?>
+
+                            <span>Collection rejected — assignment locked; Officer follow-up required.</span>
+
+                        <?php elseif (($schedule['collection_status'] ?? null) === 'VERIFIED'): ?>
+
+                            <span>Collection verified — assignment locked.</span>
+
+                        <?php elseif (($schedule['collection_status'] ?? null) === 'PENDING'): ?>
+
+                            <span>Awaiting Officer verification — assignment locked.</span>
+
+                        <?php elseif ($schedule['schedule_status'] === 'IN_PROGRESS'): ?>
 
                             <span>Collection started — assignment locked.</span>
 
@@ -182,7 +203,7 @@ $assignmentStatusLabels = [
             </div>
 
             <p class="unassign-dialog-note">
-                The schedule will return to CLOSED.
+                The schedule will return to Unassigned.
                 Assignment history will be retained.
             </p>
 

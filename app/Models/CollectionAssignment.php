@@ -8,6 +8,7 @@ final class CollectionAssignment extends Model
         return $this->query("SELECT s.*, c.campaign_name, p.area_name, a.assignment_id, a.collector_user_id, a.vehicle_id, a.assigned_at,
             u.full_name AS collector_name, v.vehicle_number,
             EXISTS(SELECT 1 FROM schedule_collections sc WHERE sc.schedule_id = s.schedule_id) AS has_work,
+            (SELECT sc.submitted_at FROM schedule_collections sc WHERE sc.schedule_id = s.schedule_id) AS collection_submitted_at,
             (SELECT sc.verification_status
              FROM schedule_collections sc
              WHERE sc.schedule_id = s.schedule_id
@@ -17,8 +18,8 @@ final class CollectionAssignment extends Model
              JOIN schedule_collections sc ON sc.schedule_collection_id = cr.schedule_collection_id
              WHERE sc.schedule_id = s.schedule_id
             ) AS saved_record_count,
-            (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND r.request_status IN ('SUBMITTED','APPROVED')) AS ready_requests,
-            (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND r.request_status = 'PENDING_REVIEW') AS pending_reviews
+            (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND r.request_status IN ('SUBMITTED','APPROVED') AND r.risk_review_status IN ('NOT_REQUIRED','APPROVED')) AS ready_requests,
+            (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND (r.request_status = 'PENDING_REVIEW' OR r.risk_review_status = 'PENDING')) AS pending_reviews
             FROM area_collection_schedules s JOIN monthly_campaigns c ON c.campaign_id = s.campaign_id
             JOIN postal_code_areas p ON p.postal_area_id = s.postal_area_id
             LEFT JOIN schedule_assignments a ON a.schedule_id = s.schedule_id AND a.unassigned_at IS NULL
@@ -45,6 +46,7 @@ final class CollectionAssignment extends Model
         try {
             $model = new AreaCollectionSchedule($this->db);
             $schedule = $model->lockSchedule($scheduleId);
+            if ($schedule && (int) $schedule['created_by_officer_user_id'] !== $officer) throw new DomainException('You cannot change assignments for this schedule.');
             if (!$schedule || !in_array($schedule['schedule_status'], ['CLOSED','ASSIGNED'], true) || $model->hasCollectionSubmission($scheduleId)) throw new DomainException('Assignment changes require a closed or assigned schedule with no collection work.');
             $active = $this->query('SELECT * FROM schedule_assignments WHERE schedule_id = :id AND unassigned_at IS NULL FOR UPDATE', ['id' => $scheduleId])->fetch();
             if ($action === 'unassign') {
@@ -57,8 +59,8 @@ final class CollectionAssignment extends Model
                 $user = $this->query("SELECT u.* FROM users u JOIN collectors c ON c.user_id = u.user_id WHERE u.user_id = :id FOR UPDATE", ['id' => $collector])->fetch();
                 $truck = $this->query('SELECT * FROM vehicles WHERE vehicle_id = :id FOR UPDATE', ['id' => $vehicle])->fetch();
                 if (!$user || $user['account_status'] !== 'ACTIVE' || $user['role'] !== 'COLLECTOR' || !$truck || $truck['availability_status'] !== 'AVAILABLE') throw new DomainException('Collector or vehicle is unavailable.');
-                if ($this->query("SELECT 1 FROM e_waste_requests WHERE schedule_id = :id AND request_status = 'PENDING_REVIEW' LIMIT 1", ['id' => $scheduleId])->fetchColumn()) throw new DomainException('Resolve all pending risk reviews before assignment.');
-                if (!$this->query("SELECT 1 FROM e_waste_requests WHERE schedule_id = :id AND request_status IN ('SUBMITTED','APPROVED') LIMIT 1", ['id' => $scheduleId])->fetchColumn()) throw new DomainException('No collectable requests remain.');
+                if ($this->query("SELECT 1 FROM e_waste_requests WHERE schedule_id = :id AND (request_status = 'PENDING_REVIEW' OR risk_review_status = 'PENDING') LIMIT 1", ['id' => $scheduleId])->fetchColumn()) throw new DomainException('Resolve all pending risk reviews before assignment.');
+                if (!$this->query("SELECT 1 FROM e_waste_requests WHERE schedule_id = :id AND request_status IN ('SUBMITTED','APPROVED') AND risk_review_status IN ('NOT_REQUIRED','APPROVED') LIMIT 1", ['id' => $scheduleId])->fetchColumn()) throw new DomainException('No collectable requests remain.');
                 $conflict = $this->query("SELECT 1 FROM schedule_assignments a JOIN area_collection_schedules s ON s.schedule_id = a.schedule_id WHERE a.unassigned_at IS NULL AND ((s.collection_date = :date AND (a.collector_user_id = :collector OR a.vehicle_id = :vehicle)) OR (s.schedule_status = 'IN_PROGRESS' AND (a.collector_user_id = :busy_collector OR a.vehicle_id = :busy_vehicle))) LIMIT 1", ['date' => $schedule['collection_date'], 'collector' => $collector, 'vehicle' => $vehicle, 'busy_collector' => $collector, 'busy_vehicle' => $vehicle])->fetchColumn();
                 if ($conflict) throw new DomainException('Collector or vehicle has a conflicting assignment or ongoing collection.');
                 $this->query('INSERT INTO schedule_assignments (schedule_id,collector_user_id,vehicle_id,assigned_by_officer_user_id) VALUES (:schedule,:collector,:vehicle,:officer)', ['schedule' => $scheduleId, 'collector' => $collector, 'vehicle' => $vehicle, 'officer' => $officer]);

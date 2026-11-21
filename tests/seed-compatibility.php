@@ -25,6 +25,7 @@ try {
     };
     $runSeed();
     $runSeed();
+    verify((int)$db->query("SELECT COUNT(*) FROM schedule_collections sc JOIN area_collection_schedules s ON s.schedule_id=sc.schedule_id WHERE sc.verification_status='DRAFT' AND s.schedule_status <> 'IN_PROGRESS' AND EXISTS (SELECT 1 FROM collection_records cr WHERE cr.schedule_collection_id=sc.schedule_collection_id)")->fetchColumn() === 0, 'Seed contains saved drafts outside IN_PROGRESS');
     $row = $db->query('SELECT * FROM authorized_recyclers')->fetch();
     verify($row['verification_status'] === 'VERIFIED' && $row['reviewed_by_admin_user_id'] !== null && $row['reviewed_at'] !== null, 'Current schema recycler audit failed');
     verify((int) $db->query('SELECT COUNT(*) FROM e_waste_items')->fetchColumn() === 51, 'Catalogue incomplete');

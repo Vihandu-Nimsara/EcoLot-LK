@@ -25,13 +25,21 @@
 
     let pendingForm = null;
     let approvedForm = null;
+    let submitting = false;
+    let opener = null;
 
     document.querySelectorAll('form[data-unassign-form]').forEach(form => {
+        const trigger = form.querySelector('[data-unassign-trigger]');
+        if (trigger && dialog && scheduleName && confirmButton && typeof dialog.showModal === 'function'
+            && typeof form.requestSubmit === 'function') trigger.disabled = false;
         form.addEventListener('submit', event => {
+            if (submitting) { event.preventDefault(); return; }
 
             // Allow submission only after confirmation
             if (approvedForm === form) {
                 approvedForm = null;
+                submitting = true;
+                if (trigger) trigger.disabled = true;
                 return;
             }
 
@@ -41,7 +49,10 @@
                 return;
             }
 
+            if (dialog.open) return;
             pendingForm = form;
+            opener = trigger;
+            confirmButton.disabled = false;
 
             scheduleName.textContent =
                 form.dataset.scheduleLabel || 'Selected schedule';
@@ -62,6 +73,7 @@
     dialog?.addEventListener('close', () => {
         document.body.classList.remove('unassign-modal-open');
         pendingForm = null;
+        opener?.focus();
     });
 
     // Confirm unassignment

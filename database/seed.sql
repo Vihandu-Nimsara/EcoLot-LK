@@ -647,7 +647,7 @@ SET @campaign_nov_id = (
 --   12 Sep Wellawatte  COMPLETED             -> verified collection source
 --   19 Sep Rajagiriya  COMPLETED             -> verified collection source
 --   24 Sep Narahenpita COLLECTION_SUBMITTED  -> Officer verification queue
---   26 Sep Wellawatte  ASSIGNED              -> Collector draft CRUD (1/2 done)
+--   26 Sep Wellawatte  IN_PROGRESS              -> Collector draft CRUD (1/2 done)
 --   03 Oct Wellawatte  ASSIGNED              -> upcoming Collector assignment
 --   10 Oct Rajagiriya  ASSIGNED              -> another Collector assignment
 --   17 Oct Borella     PLANNED               -> Officer schedule CRUD
@@ -1300,7 +1300,7 @@ UPDATE `area_collection_schedules`
 SET `collection_date` = '2026-09-26',
     `request_cutoff_at` = '2026-09-23 18:00:00',
     `request_capacity` = 6,
-    `schedule_status` = 'ASSIGNED'
+    `schedule_status` = 'IN_PROGRESS'
 WHERE `schedule_id` = @sched_sep_wel_26_id;
 
 UPDATE `area_collection_schedules`

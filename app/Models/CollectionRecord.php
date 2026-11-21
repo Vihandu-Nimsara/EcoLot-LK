@@ -10,6 +10,7 @@ final class CollectionRecord extends Model
     {
         return "SELECT r.*, s.collection_date, s.schedule_status, pa.area_name, u.full_name,
             cr.collection_record_id, cr.pickup_result, cr.pickup_attempted_at, cr.collector_note,
+            cr.schedule_collection_id AS record_schedule_collection_id, sc.schedule_collection_id,
             sc.verification_status, sc.submitted_at AS collection_submitted_at, sc.verification_note,
             sc.submitted_by_collector_user_id,
             (SELECT COUNT(*) FROM request_items ri WHERE ri.request_id = r.request_id) AS item_count
@@ -87,7 +88,9 @@ final class CollectionRecord extends Model
         return in_array($request['schedule_status'], ['ASSIGNED', 'IN_PROGRESS'], true)
             && in_array($request['verification_status'], [null, 'DRAFT'], true)
             && in_array($request['request_status'], ['SUBMITTED', 'APPROVED'], true)
-            && in_array($request['risk_review_status'], ['NOT_REQUIRED', 'APPROVED'], true);
+            && in_array($request['risk_review_status'], ['NOT_REQUIRED', 'APPROVED'], true)
+            && (!$request['collection_record_id'] || (isset($request['schedule_collection_id'])
+                && $request['record_schedule_collection_id'] == $request['schedule_collection_id']));
     }
 
     public static function label(?string $status): string
@@ -173,6 +176,7 @@ final class CollectionRecord extends Model
             if ((int) $request['collection_record_id'] !== $recordId) throw new DomainException('Collection record not found.');
             // The existing FK cascades deletion to collection_record_items.
             $this->delete($recordId);
+            (new ScheduleCollection($this->db))->removeEmptyDraft((int) $request['schedule_id'], $collectorId);
         });
     }
 
