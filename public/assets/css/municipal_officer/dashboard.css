@@ -25,16 +25,6 @@
     background: #E0F2FE;
 }
 
-.status.open {
-    color: #047857;
-    background: #D0FAE4;
-}
-
-.status.full {
-    color: #B45309;
-    background: #FFEDD5;
-}
-
 .dashboard-schedule-link {
     display: inline-flex;
     margin-left: auto;

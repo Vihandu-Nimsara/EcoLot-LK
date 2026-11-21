@@ -78,13 +78,6 @@ final class ScheduleCollection extends Model
             WHERE s.created_by_officer_user_id = :officer AND sc.verification_status <> 'DRAFT'";
     }
 
-    public function forOfficer(int $officer, string $status = 'PENDING'): array
-    {
-        return $this->query($this->officerSelect() . ($status === '' ? '' : ' AND sc.verification_status = :status') .
-            ' ORDER BY sc.submitted_at DESC, sc.schedule_collection_id DESC',
-            ['officer' => $officer] + ($status === '' ? [] : ['status' => $status]))->fetchAll();
-    }
-
     public const REVIEW_LABELS = ['PENDING' => 'Pending Review', 'VERIFIED' => 'Verified', 'REJECTED' => 'Rejected'];
     public const REVIEW_SORTS = [
         'newest' => 'sc.submitted_at DESC, sc.schedule_collection_id DESC',
@@ -125,17 +118,6 @@ final class ScheduleCollection extends Model
         $offset = ($page - 1) * 20;
         $rows = $this->query($this->officerSelect() . $where . " ORDER BY $sort LIMIT 20 OFFSET $offset", $params)->fetchAll();
         return ['rows' => $rows, 'total' => $total, 'counts' => $counts, 'page' => $page, 'pages' => $pages];
-    }
-
-    public function pendingForOfficer(): array
-    {
-        return $this->forOfficer((int) Auth::id());
-    }
-
-    public function findPendingForOfficer(int $submissionId): ?array
-    {
-        $row = $this->findForOfficer($submissionId, (int) Auth::id());
-        return $row && $row['verification_status'] === 'PENDING' ? $row : null;
     }
 
     public function findForOfficer(int $id, int $officer): ?array

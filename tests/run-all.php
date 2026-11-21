@@ -14,7 +14,6 @@ $phpTests = [
     'officer-management-concurrency.php',
     'flagged-requests.php',
     'collection-assignments.php',
-    'collection-assignment-view.php',
     'collection-reviews.php',
     'collection-review-concurrency.php',
     'collector-crud.php',

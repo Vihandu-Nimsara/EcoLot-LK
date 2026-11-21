@@ -1,7 +1,3 @@
-.form-group.full-width {
-    margin-bottom: 20px;
-}
-
 .scheduled-areas-header {
     display: flex;
     align-items: flex-end;
@@ -58,17 +54,6 @@
     gap: 18px;
 }
 
-.schedule-status-field {
-    grid-column: 1 / -1;
-}
-
-.schedule-status-field small {
-    margin-top: 6px;
-    color: #66736B;
-    font-size: 0.8125rem;
-    line-height: 1.45;
-}
-
 @media (max-width: 900px) {
     .scheduled-areas-header {
         align-items: stretch;
@@ -84,10 +69,6 @@
 
     .schedule-form-grid {
         grid-template-columns: 1fr;
-    }
-
-    .schedule-status-field {
-        grid-column: auto;
     }
 }
 
