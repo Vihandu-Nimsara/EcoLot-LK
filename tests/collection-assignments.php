@@ -43,9 +43,13 @@ try {
     $model->change(1,'unassign',null,null,1);
     verify($db->query('SELECT unassigned_at FROM schedule_assignments WHERE schedule_id = 1')->fetchColumn() !== null, 'Unassignment history lost');
     $model->change(2,'assign',3,1,1);
-    $db->exec('INSERT INTO schedule_collections (schedule_id,submitted_by_collector_user_id) VALUES (2,3)');
+    $db->exec("INSERT INTO schedule_collections (schedule_id,submitted_by_collector_user_id,verification_status,submitted_at) VALUES (2,3,'DRAFT',NULL)");
+    $db->exec("INSERT INTO collection_records (schedule_collection_id,request_id,pickup_result,pickup_attempted_at) VALUES (1,2,'COLLECTED',CURRENT_TIMESTAMP)");
     $reject(fn () => $model->change(2,'unassign',null,null,1));
-    verify(count($model->listing()) === 2 && count($model->collectors()) === 1 && count($model->vehicles()) === 2, 'Live listing incorrect');
+    $listing = $model->listing();
+    $draftSchedule = array_values(array_filter($listing, static fn (array $schedule): bool => (int) $schedule['schedule_id'] === 2))[0];
+    verify($draftSchedule['collection_status'] === 'DRAFT' && (int) $draftSchedule['saved_record_count'] === 1, 'Draft collection details missing from assignment listing');
+    verify(count($listing) === 2 && count($model->collectors()) === 1 && count($model->vehicles()) === 2, 'Live listing incorrect');
     echo "PASS: readiness, availability, duplicate/conflict protection, unassignment audit and collection lock\n";
 } finally {
     $db->exec("USE `$original`");

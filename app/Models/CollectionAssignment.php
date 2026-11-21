@@ -8,6 +8,15 @@ final class CollectionAssignment extends Model
         return $this->query("SELECT s.*, c.campaign_name, p.area_name, a.assignment_id, a.collector_user_id, a.vehicle_id, a.assigned_at,
             u.full_name AS collector_name, v.vehicle_number,
             EXISTS(SELECT 1 FROM schedule_collections sc WHERE sc.schedule_id = s.schedule_id) AS has_work,
+            (SELECT sc.verification_status
+             FROM schedule_collections sc
+             WHERE sc.schedule_id = s.schedule_id
+            ) AS collection_status,
+            (SELECT COUNT(*)
+             FROM collection_records cr
+             JOIN schedule_collections sc ON sc.schedule_collection_id = cr.schedule_collection_id
+             WHERE sc.schedule_id = s.schedule_id
+            ) AS saved_record_count,
             (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND r.request_status IN ('SUBMITTED','APPROVED')) AS ready_requests,
             (SELECT COUNT(*) FROM e_waste_requests r WHERE r.schedule_id = s.schedule_id AND r.request_status = 'PENDING_REVIEW') AS pending_reviews
             FROM area_collection_schedules s JOIN monthly_campaigns c ON c.campaign_id = s.campaign_id

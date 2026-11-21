@@ -73,9 +73,63 @@ $assignmentStatusLabels = [
                         </button>
                     </form>
 
+                <?php elseif (
+                    $schedule['has_work']
+                    && ($schedule['collection_status'] ?? null) === 'DRAFT'
+                ): ?>
+
+                    <span class="assignment-lock-reason">
+                        Collector draft exists
+                        (<?= (int) $schedule['saved_record_count'] ?> saved records).
+                        Unassign is locked.
+                    </span>
+
                     <?php else: ?>
-                        <?= $schedule['has_work'] || !in_array($schedule['schedule_status'], ['CLOSED','ASSIGNED'], true) ? 'Collection workflow is read-only here.' : 'Resolve pending reviews and ensure collectable requests exist.' ?>
+
+                        <?php if ($schedule['schedule_status'] === 'IN_PROGRESS'): ?>
+
+                            <span>Collection started — assignment locked.</span>
+
+                        <?php elseif ($schedule['schedule_status'] === 'COLLECTION_SUBMITTED'): ?>
+
+                            <span>Submitted for review — assignment locked.</span>
+
+                        <?php elseif ($schedule['schedule_status'] === 'COMPLETED'): ?>
+
+                            <span>Collection completed — no changes allowed.</span>
+
+                        <?php elseif ($schedule['has_work']): ?>
+
+                            <span>Collection data exists — assignment locked.</span>
+
+                        <?php elseif ($schedule['schedule_status'] === 'CLOSED'): ?>
+
+                            <?php if ((int) $schedule['pending_reviews'] > 0): ?>
+
+                                <span>Resolve pending risk reviews first.</span>
+
+                            <?php elseif ((int) $schedule['ready_requests'] === 0): ?>
+
+                                <span>No collectable requests available.</span>
+
+                            <?php else: ?>
+
+                                <span>Assignment unavailable — check schedule.</span>
+
+                            <?php endif; ?>
+
+                        <?php elseif ($schedule['schedule_status'] === 'ASSIGNED'): ?>
+
+                            <span>Active assignment unavailable — check schedule.</span>
+
+                        <?php else: ?>
+
+                            <span>No assignment action available.</span>
+
+                        <?php endif; ?>
+
                     <?php endif; ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>
