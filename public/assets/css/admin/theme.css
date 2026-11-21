@@ -1341,12 +1341,20 @@
 
 
     .admin-app .top-header {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 12px;
         width: calc(100% - 24px);
 
         margin: 12px auto;
         padding: 14px 16px;
     }
 
+
+    .admin-app .header-left { min-width: 0; }
+    .admin-app .header-right { grid-column: 2; min-width: 0; max-width: 100%; }
+    .admin-app .profile { min-width: 0; max-width: 100%; }
+    .admin-app .avatar { flex-shrink: 0; }
 
     .admin-app .page-content {
         padding: 20px 12px 32px;

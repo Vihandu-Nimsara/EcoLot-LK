@@ -501,10 +501,7 @@ SELECT
     'VALID', NULL, '2026-09-01 09:20:00'
 WHERE @recycler_1_id IS NOT NULL
 ON DUPLICATE KEY UPDATE
-    `recycler_user_id` = VALUES(`recycler_user_id`),
-    `expiry_date` = VALUES(`expiry_date`),
-    `license_status` = 'VALID',
-    `document_path` = VALUES(`document_path`);
+    `license_id` = `license_id`;
 
 INSERT INTO `recycler_licenses` (
     `recycler_user_id`, `license_number`, `expiry_date`,
@@ -515,7 +512,7 @@ SELECT
     'PENDING', NULL, '2026-09-24 15:25:00'
 WHERE @recycler_2_id IS NOT NULL
 ON DUPLICATE KEY UPDATE
-    `recycler_user_id` = VALUES(`recycler_user_id`);
+    `license_id` = `license_id`;
 
 INSERT INTO `recycler_capabilities` (
     `recycler_user_id`, `category_id`, `can_handle_high_risk`, `capability_status`
