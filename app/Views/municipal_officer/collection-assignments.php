@@ -1,4 +1,16 @@
-<?php $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+<?php
+$escape = static fn ($value) =>
+    htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+$assignmentStatusLabels = [
+    'CLOSED' => 'Unassigned',
+    'ASSIGNED' => 'Assigned',
+    'IN_PROGRESS' => 'In Progress',
+    'COLLECTION_SUBMITTED' => 'Submitted for Review',
+    'COMPLETED' => 'Completed',
+];
+?>
+
 <section class="routes-page">
     <div class="page-toolbar"><div><h1>Collection Assignments</h1><p>Assign one active collector and available vehicle after intake closes and all risk reviews are resolved.</p></div></div>
     <?php if ($notice): ?><p role="status"><?= $escape($notice) ?></p><?php endif; ?>
@@ -14,8 +26,19 @@
                     <td><a href="<?= $escape($basePath) ?>/officer/area-schedules/<?= (int) $schedule['schedule_id'] ?>">SCH-<?= (int) $schedule['schedule_id'] ?></a><br><?= $escape($schedule['campaign_name']) ?></td>
                     <td><?= $escape($schedule['area_name']) ?><br><?= $escape($schedule['collection_date']) ?></td>
                     <td><?= (int) $schedule['ready_requests'] ?> collectable<br><?= (int) $schedule['pending_reviews'] ?> awaiting review</td>
-                    <td><?= $escape($schedule['collector_name'] ?? 'Not assigned') ?><br><?= $escape($schedule['vehicle_number'] ?? 'No vehicle') ?><br><?= $escape($schedule['assigned_at']) ?></td>
-                    <td><span class="table-status" data-status="<?= $escape($schedule['schedule_status']) ?>"><?= $escape(str_replace('_', ' ', $schedule['schedule_status'])) ?></span></td>
+                    <td><?= $escape($schedule['collector_name'] ?? 'Not assigned') ?><br><?= $escape($schedule['vehicle_number'] ?? 'No vehicle') ?><br><?= $escape($schedule['assigned_at']) ?></td>              
+                    <td>
+                        <span
+                            class="table-status"
+                            data-status="<?= $escape($schedule['schedule_status']) ?>"
+                        >
+                            <?= $escape(
+                                $assignmentStatusLabels[$schedule['schedule_status']]
+                                ?? $schedule['schedule_status']
+                            ) ?>
+                        </span>
+                    </td>
+
                     <td>
                     <?php if (!$schedule['has_work'] && $schedule['schedule_status'] === 'CLOSED' && !$schedule['assignment_id'] && $schedule['ready_requests'] > 0 && !$schedule['pending_reviews']): ?>
                         <details class="table-action-panel"><summary>Assign resources</summary><form method="post" action="<?= $escape($basePath) ?>/officer/collection-assignments/<?= (int) $schedule['schedule_id'] ?>">
