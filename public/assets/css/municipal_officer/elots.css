@@ -48,8 +48,12 @@
 
 .elot-summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+}
+
+.elot-summary-grid.has-bid-count {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .elot-summary-grid > div {
@@ -74,12 +78,107 @@
 }
 
 @media (max-width: 700px) {
-    .elot-form-grid,
-    .elot-summary-grid {
+    .elot-form-grid {
         grid-template-columns: 1fr;
     }
 }
 
-.officer-app .elots-table { min-width: 1050px; }
-.officer-app .elots-table :is(th, td):first-child { min-width: 150px; }
+.officer-app .elots-table { min-width: 570px; }
+
 .officer-app .elots-table td { vertical-align: top; }
+
+
+.officer-elot-results,
+.officer-elot-details > .elots-list-card + .elots-list-card {
+    margin-top: 16px;
+}
+
+.officer-elot-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap-reverse;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.officer-elot-back {
+    margin-inline-start: auto;
+    white-space: nowrap;
+}
+
+.officer-elot-results .module-pagination {
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.elot-secondary-text {
+    display: block;
+    color: #52645a;
+    margin-top: 4px;
+}
+
+.officer-elot-details .elot-summary-grid,
+.officer-elot-details .elots-table-wrapper {
+    margin-top: 12px;
+}
+
+.officer-elot-details .elots-table :is(th, td):last-child {
+    width: auto;
+    text-align: left;
+}
+
+.elot-source-details {
+    margin-top: 6px;
+}
+
+.elot-source-details summary {
+    color: #065f46;
+    cursor: pointer;
+    font-weight: 650;
+}
+
+.elot-source-details dl {
+    margin-top: 6px;
+    font-size: .8125rem;
+}
+
+.elot-source-details dt {
+    font-weight: 650;
+}
+
+.elot-source-details dd {
+    margin: 0 0 4px;
+}
+
+.elot-action-card {
+    border-top: 3px solid #159342;
+}
+
+.elot-action-card .elot-review-form {
+    margin-top: 14px;
+}
+
+.elot-bidding-window {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-top: 12px;
+    color: #52645a;
+}
+
+.elot-bidding-window strong {
+    color: #203329;
+}
+
+.elot-supporting-card > summary {
+    color: #203329;
+    cursor: pointer;
+    font-weight: 650;
+}
+
+.elot-supporting-card > summary small {
+    margin-inline-start: 6px;
+    color: #52645a;
+    font-weight: 400;
+}

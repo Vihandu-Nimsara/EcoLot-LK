@@ -65,7 +65,26 @@ final class OfficerELot extends Model
         if ($lot['lot_status']!=='OPEN_FOR_BIDDING') return 'Not accepting bids';
         if (!$lot['bidding_open_at'] || !$lot['bidding_close_at']) return 'Invalid bidding window — review required';
         if ($lot['now']<$lot['bidding_open_at']) return 'Bidding scheduled';
-        return $lot['now']<$lot['bidding_close_at'] ? 'Bidding open' : 'Deadline passed — select an eligible winner';
+        return $lot['now']<$lot['bidding_close_at'] ? 'Bidding open' : 'Bidding closed';
+    }
+
+    private static function hasClosedBiddingWindow(array $lot, string $now): bool
+    {
+        return $lot['lot_status'] === 'OPEN_FOR_BIDDING'
+            && $lot['verified_at'] && $lot['verified_by_officer_user_id']
+            && $lot['bidding_open_at'] && $lot['bidding_close_at']
+            && $lot['bidding_close_at'] > $lot['bidding_open_at']
+            && $now >= $lot['bidding_close_at'];
+    }
+
+    private static function readBiddingWindow(array $input, string $now): array
+    {
+        $open = self::dateTime($input['open']);
+        $close = self::dateTime($input['close']);
+        if ($open < $now || $close <= $open) {
+            throw new DomainException('Bidding must not open in the past and must close after opening.');
+        }
+        return [$open, $close];
     }
 
     public static function handoverVersion(array $handover): string
@@ -96,9 +115,9 @@ final class OfficerELot extends Model
         try { $this->validateSources($lot,$officer,false,$lot['items']); }
         catch (DomainException $error) { $lot['source_error']=$error->getMessage(); }
         $lot['has_winner']=(bool)array_filter($lot['bids'],static fn(array $bid): bool=>$bid['bid_status']==='WINNING');
-        $lot['can_award']=$lot['lot_status']==='OPEN_FOR_BIDDING' && $lot['verified_at'] && $lot['verified_by_officer_user_id']
-            && $lot['bidding_open_at'] && $lot['bidding_close_at'] && $lot['bidding_close_at']>$lot['bidding_open_at']
-            && $lot['now']>=$lot['bidding_close_at'] && $lot['source_error']===null && !$lot['has_winner'];
+        $closed = self::hasClosedBiddingWindow($lot, $lot['now']);
+        $lot['can_award'] = $closed && $lot['source_error'] === null && !$lot['has_winner'];
+        $lot['can_reopen'] = $lot['can_award'] && !$lot['handover'] && (int) $lot['bid_count'] === 0;
         $lot['history']=OfficerActionAudit::history($this->db,'e_lots',$id);
         return $lot;
     }
@@ -187,16 +206,32 @@ final class OfficerELot extends Model
                 $open=$close=null;
                 if ($input['action']==='approve') {
                     $this->validateSources($lot,$officer);
-                    $open=self::dateTime($input['open']); $close=self::dateTime($input['close']);
-                    if ($open<$now || $close<=$open) throw new DomainException('Bidding must not open in the past and must close after opening.');
+                    [$open, $close] = self::readBiddingWindow($input, $now);
                 }
                 $this->query('UPDATE e_lots SET lot_status=:status, verified_by_officer_user_id=:officer,
                     verified_at=:now, verification_note=:note, bidding_open_at=:open, bidding_close_at=:close WHERE e_lot_id=:id',
                     ['status'=>$input['action']==='approve'?'OPEN_FOR_BIDDING':'REJECTED','officer'=>$officer,'now'=>$now,
                     'note'=>$note===''?null:$note,'open'=>$open,'close'=>$close,'id'=>$id]);
+            } elseif ($input['action'] === 'reopen') {
+                // Bid placement, withdrawal and award all take this same lot lock first.
+                if (!self::hasClosedBiddingWindow($lot, $now)) {
+                    throw new DomainException('Only verified E-Lots with a closed bidding window can be reopened. Reload the page.', 409);
+                }
+                $hasActiveBid = $this->query("SELECT 1 FROM recycler_bids
+                    WHERE e_lot_id=:id AND bid_status IN ('SUBMITTED','WINNING') LIMIT 1", ['id'=>$id])->fetchColumn();
+                $hasHandover = $this->query('SELECT 1 FROM handover_records h
+                    JOIN recycler_bids b ON b.bid_id=h.winning_bid_id WHERE b.e_lot_id=:id LIMIT 1', ['id'=>$id])->fetchColumn();
+                if ($hasActiveBid || $hasHandover) {
+                    throw new DomainException('Bidding can be reopened only when there are no submitted bids, winner or handover.', 409);
+                }
+                [$open, $close] = self::readBiddingWindow($input, $now);
+                $this->validateSources($lot, $officer);
+                $this->query('UPDATE e_lots SET bidding_open_at=:open, bidding_close_at=:close WHERE e_lot_id=:id',
+                    ['open'=>$open,'close'=>$close,'id'=>$id]);
             } elseif ($input['action']==='award') {
-                if ($lot['lot_status']!=='OPEN_FOR_BIDDING' || !$lot['verified_at'] || !$lot['verified_by_officer_user_id']
-                    || !$lot['bidding_open_at'] || !$lot['bidding_close_at'] || $lot['bidding_close_at']<=$lot['bidding_open_at'] || $now<$lot['bidding_close_at']) throw new DomainException('Award only after verified bidding has closed. Reload the page.',409);
+                if (!self::hasClosedBiddingWindow($lot, $now)) {
+                    throw new DomainException('Award only after verified bidding has closed. Reload the page.', 409);
+                }
                 if ($this->query("SELECT 1 FROM recycler_bids WHERE e_lot_id=:id AND bid_status='WINNING' LIMIT 1",['id'=>$id])->fetchColumn()) throw new DomainException('A winning bid is already recorded for this E-Lot.',409);
                 $bidId=filter_var($input['bid_id'],FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
                 if (!$bidId) throw new DomainException('Select a valid submitted bid.');
@@ -236,6 +271,7 @@ final class OfficerELot extends Model
                 $after['handover']=$this->query('SELECT * FROM handover_records WHERE winning_bid_id=:bid',['bid'=>$handover['winning_bid_id']])->fetch();
             }
             if ($input['action']==='award') $after['winning_bid_id']=$bidId;
+            if ($input['action']==='reopen' && $note!=='') $after['reopen_note']=$note;
             OfficerActionAudit::record($this->db,$officer,'e_lots',$id,$before,$after);
             $this->db->commit();
         } catch (Throwable $error) {

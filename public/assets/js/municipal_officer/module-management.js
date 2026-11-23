@@ -6,7 +6,7 @@
     let approved = null;
     let submitting = false;
     let opener = null;
-    const titles = {approve:'Verify E-Lot and Schedule Bidding', reject:'Reject E-Lot', award:'Select Winning Recycler', handover:'Save Handover'};
+    const titles = {approve:'Verify E-Lot and Schedule Bidding', reject:'Reject E-Lot', reopen:'Reopen Bidding', award:'Select Winning Recycler', handover:'Save Handover'};
     document.querySelectorAll('form[data-officer-confirm]').forEach(form => {
         if (!dialog || !confirm || typeof dialog.showModal !== 'function' || typeof form.requestSubmit !== 'function') return;
         form.querySelectorAll('[data-confirm-trigger]').forEach(button => {

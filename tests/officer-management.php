@@ -31,7 +31,10 @@ try {
         $bid=(new RecyclerBidService($db))->placeBid(6,$ready,'100.00');
         (new RecyclerBidService($db))->placeBid(7,$ready,'200.00');
         $db->prepare('UPDATE e_lots SET bidding_close_at=NOW()-INTERVAL 1 SECOND WHERE e_lot_id=?')->execute([$ready]);
-        $keep=true; echo json_encode(['database'=>$name,'ready'=>$ready,'bid'=>$bid]+$fixture); exit;
+        $reopenLot=$fixture['lots'][7];
+        (new OfficerELot($db))->act($reopenLot,1,['action'=>'approve','note'=>'Browser reopen fixture','open'=>$now->modify('+1 hour')->format('Y-m-d\TH:i:s'),'close'=>$now->modify('+2 hours')->format('Y-m-d\TH:i:s')]);
+        $db->prepare('UPDATE e_lots SET bidding_open_at=NOW()-INTERVAL 1 HOUR,bidding_close_at=NOW()-INTERVAL 1 SECOND WHERE e_lot_id=?')->execute([$reopenLot]);
+        $keep=true; echo json_encode(['database'=>$name,'ready'=>$ready,'bid'=>$bid,'reopenLot'=>$reopenLot]+$fixture); exit;
     }
     $lots=new OfficerELot($db); $feedback=new OfficerFeedback($db);
     $filters=['q'=>'','status'=>'','category'=>'','type'=>'','sort'=>'newest','page'=>1];
@@ -88,9 +91,38 @@ try {
     $reject(fn()=> $lots->act($id,1,array_replace($input,['action'=>'award','bid_id'=>(string)$bid1])));
     $db->exec('UPDATE recycler_capabilities SET can_handle_high_risk=1 WHERE recycler_user_id=6');
     $db->prepare("UPDATE collection_record_items ci JOIN e_lot_items ei USING(record_item_id) SET ci.actual_risk_level='LOW' WHERE ei.e_lot_id=?")->execute([$id]);
+    $reopenLot=$fixture['lots'][7];
+    $reopen=array_replace($input,['action'=>'reopen','note'=>'Second bidding window']);
+    $reject(fn()=> $lots->act($id,1,$reopen)); // A closed window still has two submitted bids.
+    $reject(fn()=> $lots->act($reopenLot,1,$reopen)); // Pending verification.
+    $lots->act($reopenLot,1,$input);
+    $reject(fn()=> $lots->act($reopenLot,1,$reopen)); // Currently scheduled.
+    $db->prepare('UPDATE e_lots SET bidding_open_at=NOW()-INTERVAL 1 HOUR,bidding_close_at=NOW()+INTERVAL 1 HOUR WHERE e_lot_id=?')->execute([$reopenLot]);
+    $withdrawn=$bids->placeBid(6,$reopenLot,'120.00');
+    $bids->withdrawBid(6,$withdrawn);
+    $db->prepare('UPDATE e_lots SET bidding_close_at=NOW()-INTERVAL 1 SECOND WHERE e_lot_id=?')->execute([$reopenLot]);
+    $originalWindow=$lots->details($reopenLot,1);
+    verify($originalWindow['can_reopen'] && !$lots->details($id,1)['can_reopen'],'Reopen availability disagrees with bid state');
+    $reject(fn()=> $lots->act($reopenLot,1,array_replace($reopen,['close'=>$reopen['open']])));
+    $lots->act($reopenLot,1,$reopen);
+    $reopened=$lots->details($reopenLot,1);
+    verify($reopened['bidding_open_at']===OfficerELot::dateTime($reopen['open']) && $reopened['bidding_close_at']===OfficerELot::dateTime($reopen['close']),'New window was not saved');
+    verify($reopened['verified_at']===$originalWindow['verified_at'] && $reopened['verification_note']===$originalWindow['verification_note'] && $reopened['bids']===$originalWindow['bids'] && $reopened['items']===$originalWindow['items'],'Reopening changed verification, inventory or bid history');
+    $event=$reopened['history'][array_key_last($reopened['history'])]['change'];
+    verify($event['before']['action']==='reopen' && $event['before']['bidding_close_at']===$originalWindow['bidding_close_at']
+        && $event['after']['bidding_close_at']===$reopened['bidding_close_at'] && $event['after']['reopen_note']===$reopen['note'],'Reopen audit incorrect');
+    $reject(fn()=> $lots->act($reopenLot,1,$reopen)); // Duplicate or stale submission.
+    $reject(fn()=> $bids->placeBid(7,$reopenLot,'130.00')); // New window has not started.
+    $db->exec('SET timestamp='.($now->getTimestamp()+5400));
+    try {
+        verify($bids->placeBid(7,$reopenLot,'130.00')>0,'Fresh bid rejected during the reopened window');
+    } finally {
+        $db->exec('SET timestamp=0');
+    }
     $before=$db->query('SELECT * FROM collection_record_items ORDER BY record_item_id')->fetchAll();
     $lots->act($id,1,array_replace($input,['action'=>'award','bid_id'=>(string)$bid1]));
     $awarded=$lots->details($id,1);
+    $reject(fn()=> $lots->act($id,1,$reopen));
     verify($awarded['lot_status']==='AWARDED' && (int)$awarded['handover']['winning_bid_id']===$bid1,'Officer-selected winner not persisted');
     verify($db->query('SELECT bid_status FROM recycler_bids WHERE bid_id='.$bid2)->fetchColumn()==='REJECTED','Other submitted bids not resolved');
     $reject(fn()=> $lots->act($id,1,array_replace($input,['action'=>'award','bid_id'=>(string)$bid2])));
