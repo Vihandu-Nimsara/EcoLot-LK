@@ -458,7 +458,16 @@ class MunicipalOfficerController extends Controller
             http_response_code(422); echo 'Decision and note must be text.'; return;
         }
         try {
-            (new ScheduleCollection())->decide($number, (int) Auth::id(), $this->postString('decision'), $this->postString('note'));
+            $filters = $this->collectionReviewFilters();
+        } catch (InvalidArgumentException $e) {
+            http_response_code(400); echo 'Invalid collection review filters.'; return;
+        }
+        $decision = $this->postString('decision');
+        try {
+            if ($decision === 'VERIFIED' && ($_POST['review_acknowledged'] ?? null) !== '1') {
+                throw new DomainException('Confirm that you reviewed all pickup requests and items.');
+            }
+            (new ScheduleCollection())->decide($number, (int) Auth::id(), $decision, $this->postString('note'));
         } catch (OutOfBoundsException $e) {
             http_response_code(404); echo 'Collection submission not found.'; return;
         } catch (DomainException $e) {
@@ -469,8 +478,8 @@ class MunicipalOfficerController extends Controller
             error_log('Collection review failed: ' . $e->getCode());
             http_response_code(500); echo 'Review could not be saved. Reload and try again.'; return;
         }
-        Session::flash('collection_review_notice', $this->postString('decision') === 'VERIFIED' ? 'Collection verified successfully.' : 'Collection rejected. The reason is available to the Collector.');
-        $this->redirect('/officer/collection-records?' . http_build_query(['submission_id' => $number, 'verification_status' => $this->postString('decision')]) . '#collection-details');
+        Session::flash('collection_review_notice', $decision === 'VERIFIED' ? 'Collection verified successfully.' : 'Collection rejected. The reason is available to the Collector.');
+        $this->redirect('/officer/collection-records?' . http_build_query(['submission_id' => $number] + $filters) . '#collection-details');
     }
 
     public function eLots(): void

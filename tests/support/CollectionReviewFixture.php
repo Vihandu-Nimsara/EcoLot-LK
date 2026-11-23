@@ -17,7 +17,7 @@ final class CollectionReviewFixture
             $sid = $schedules->create(['campaign_id'=>1,'postal_area_id'=>1,'created_by_officer_user_id'=>$i===5?4:1,
                 'collection_date'=>sprintf('%s-%02d',$month,$i),'request_cutoff_at'=>$cutoff,'request_capacity'=>10,'schedule_status'=>'OPEN']);
             $requests=[];
-            for ($j=0; $j<($i===1?3:1); $j++) {
+            for ($j=0; $j<($i===1?3:($i===26?5:1)); $j++) {
                 $rid = (new EWasteRequest($db))->create(['public_user_id'=>2,'schedule_id'=>$sid,'pickup_address'=>'Review address','request_status'=>'APPROVED']);
                 $items=[];
                 for ($k=0; $k<($i===1 && $j===0?2:1); $k++) {

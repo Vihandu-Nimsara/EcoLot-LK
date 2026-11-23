@@ -50,6 +50,9 @@ try {
         verify(count($result['rows'])===1 && $result['rows'][0]['schedule_collection_id']===$id,'History filtering failed');
     }
     verify($model->findForOfficer(4,1)===null && $model->findForOfficer(5,1)===null,'Draft/foreign detail leak');
+    $fiveRequests=$model->reviewQueue(1,array_replace($filters,['q'=>'SCH-26']));
+    verify(count($fiveRequests['rows'])===1 && (int)$fiveRequests['rows'][0]['record_count']===5,'Five-request fixture missing from review queue');
+    verify(count($model->findForOfficer(26,1)['records'])===5,'Five-request fixture details incomplete');
     $details=$model->findForOfficer(1,1);
     verify(count($details['records'])===3 && count($details['records'][0]['items'])===2,'Multi-request/item grouping failed');
     verify($details['overview']['actual_quantity']===3 && $details['overview']['actual_weight_kg']==='3.625','Overview totals incorrect');
@@ -61,8 +64,8 @@ try {
     $get=static function (array $query=[]) use ($controller): array {
         $_GET=$query; http_response_code(200); $controller->data=[]; ob_start(); $controller->collectionRecords(); $output=ob_get_clean(); return [http_response_code(),$output];
     };
-    $post=static function (int $id,array $input) use ($controller,$token): array {
-        $_GET=[]; $_POST=$input+['_csrf_token'=>$token]; http_response_code(200); $controller->data=[]; ob_start();
+    $post=static function (int $id,array $input,array $query = []) use ($controller,$token): array {
+        $_GET=$query; $_POST=$input+['_csrf_token'=>$token,'review_acknowledged'=>'1']; http_response_code(200); $controller->data=[]; ob_start();
         try { $controller->reviewCollection((string)$id); } catch (ReviewTestRedirect $redirect) { ob_end_clean(); return [$redirect->getCode(),$redirect->getMessage()]; }
         return [http_response_code(),ob_get_clean()];
     };
@@ -72,6 +75,7 @@ try {
     foreach (['', '   ', "\u{00a0}", str_repeat('x',501), "\xFF"] as $note) verify($post(1,['decision'=>'REJECTED','note'=>$note])[0]===422,'Invalid note accepted');
     verify($post(1,['decision'=>['VERIFIED'],'note'=>'x'])[0]===422,'Array decision accepted');
     verify($post(5,['decision'=>'VERIFIED'])[0]===404,'Foreign decision accepted');
+    verify($post(1,['decision'=>'VERIFIED','review_acknowledged'=>''])[0]===422,'Verification without acknowledgement accepted');
     $before=$db->query('SELECT * FROM collection_record_items ORDER BY record_item_id')->fetchAll();
     $beforeRecords=$db->query('SELECT * FROM collection_records ORDER BY collection_record_id')->fetchAll();
     $beforeRequests=$db->query('SELECT * FROM e_waste_requests ORDER BY request_id')->fetchAll();
@@ -79,8 +83,8 @@ try {
     verify($post(1,['decision'=>'VERIFIED'])[0]===500,'Injected review failure ignored');
     $db->exec('DROP TRIGGER test_review_rollback');
     verify($model->find(1)['verification_status']==='PENDING' && $model->find(1)['verified_at']===null,'Review failure did not roll back');
-    $response=$post(1,['decision'=>'VERIFIED','note'=>'  Checked <note>  ','verified_by_officer_user_id'=>4]);
-    verify($response[0]===303 && str_contains($response[1],'verification_status=VERIFIED'),'PRG failed');
+    $response=$post(1,['decision'=>'VERIFIED','note'=>'  Checked <note>  ','verified_by_officer_user_id'=>4], ['verification_status'=>'PENDING','q'=>'Area One','page'=>'2']);
+    verify($response[0]===303 && str_contains($response[1],'verification_status=PENDING') && str_contains($response[1],'q=Area+One') && str_contains($response[1],'page=2'),'PRG failed');
     $saved=$model->find(1);
     verify($saved['verification_status']==='VERIFIED' && (int)$saved['verified_by_officer_user_id']===1 && $saved['verified_at']!==null && $saved['verification_note']==='Checked <note>','Verification audit incorrect');
     verify((new AreaCollectionSchedule($db))->find(1)['schedule_status']==='COMPLETED','Verification schedule transition failed');

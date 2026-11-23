@@ -33,8 +33,9 @@ $assignmentStatusLabels = [
                             data-status="<?= $escape($schedule['schedule_status']) ?>"
                         >
                             <?= $escape(
-                                $assignmentStatusLabels[$schedule['schedule_status']]
-                                ?? $schedule['schedule_status']
+                                ($schedule['collection_status'] ?? null) === 'REJECTED'
+                                    ? 'Collection rejected'
+                                    : ($assignmentStatusLabels[$schedule['schedule_status']] ?? $schedule['schedule_status'])
                             ) ?>
                         </span>
                     </td>

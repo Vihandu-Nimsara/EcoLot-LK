@@ -25,3 +25,7 @@ ECOLOT_BID_TEST=1 DB_DATABASE=ecolot_test_bids /opt/lampp/bin/php tests/recycler
 ```
 
 This test commits uniquely named fixture rows and requires `proc_open` and permission to observe its connections with `SHOW PROCESSLIST`. It verifies that a revision waits for a locked lot and re-reads a withdrawal committed while waiting. It does not create, drop, or rebuild databases.
+
+## Collection review with five requests
+
+Run `php tests/collection-reviews.php --fixture` with your local MySQL settings and a user that can create databases. It creates a disposable database and prints its name as JSON. Start the app with `DB_DATABASE` set to that name, then sign in as the Municipal Officer with mobile `0771234567` and password `BrowserTest123!`. Open **Collection Reviews** and search for **SCH-26**. The pending submission has five pickup requests.
