@@ -1,5 +1,15 @@
 (() => {
     'use strict';
+    const feedbackDialog = document.querySelector('[data-feedback-dialog]');
+    if (feedbackDialog && typeof feedbackDialog.showModal === 'function') {
+        const dismiss = feedbackDialog.querySelector('[data-feedback-dismiss]');
+        feedbackDialog.removeAttribute('open');
+        feedbackDialog.showModal();
+        feedbackDialog.addEventListener('cancel', event => {
+            event.preventDefault();
+            window.location.assign(dismiss.href);
+        });
+    }
     const dialog = document.querySelector('#officer-management-confirm');
     const confirm = dialog?.querySelector('[data-management-confirm]');
     let pending = null;

@@ -528,7 +528,7 @@ class MunicipalOfficerController extends Controller
             if ($listing !== null) $filters['page'] = $listing['page'];
             $this->view('municipal_officer/'.$module, [
                 'currentPage'=>$module==='elots'?'e-lots':'feedback', 'pageTitle'=>$module==='elots'?'E-Lot Management':'Feedback Management',
-                'listing'=>$listing, 'counts'=>$module==='feedback'?$model->counts((int)Auth::id()):[], 'formInput'=>$errors?$_POST:[],
+                'listing'=>$listing, 'formInput'=>$errors?$_POST:[],
                 'filters'=>$filters, 'selected'=>$selected, 'categories'=>$module==='elots' && $showListing?$model->categories():[],
                 'errors'=>$errors, 'notice'=>Session::pullFlash('officer_module_notice'), 'csrfToken'=>Csrf::token(),
             ]);
@@ -545,13 +545,10 @@ class MunicipalOfficerController extends Controller
         if (!$this->hasValidCsrfToken()) { http_response_code(403); echo 'Session expired. Reload and try again.'; return; }
         $number=$this->positiveInteger($id);
         if ($number===null) { http_response_code(400); echo 'Invalid record ID.'; return; }
-        $filters = [];
-        if ($module === 'elots') {
-            try {
-                $filters = $this->moduleFilters($module);
-            } catch (InvalidArgumentException $e) {
-                http_response_code(400); echo $e->getMessage(); return;
-            }
+        try {
+            $filters = $this->moduleFilters($module);
+        } catch (InvalidArgumentException $e) {
+            http_response_code(400); echo $e->getMessage(); return;
         }
         $input=[];
         foreach (['action','note','open','close','bid_id','handover_status','date','expected','status','response','expected_handover'] as $key) {
