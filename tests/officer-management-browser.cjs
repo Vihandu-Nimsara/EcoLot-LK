@@ -35,15 +35,13 @@ const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,.
         assert.match(await page.title(),/E-Lot Management/);
         assert.equal(await page.locator('.elots-table tbody tr').count(),20);
         await page.getByRole('link',{name:'Next',exact:true}).click(); assert.equal(await page.locator('.elots-table tbody tr').count(),3);
-        await page.locator('#module-search').fill("%' OR 1=1 --");
-        await Promise.all([page.waitForNavigation(),page.getByRole('button',{name:'Apply Filters',exact:true}).click()]); assert.equal(await page.locator('.elots-table tbody tr').count(),0);
         await page.getByRole('link',{name:'Clear',exact:true}).click();
-        assert.equal(await page.locator('.module-summary, #module-sort').count(),0);
-        await page.locator('#module-search').fill('Officer lot 1');
+        assert.equal(await page.locator('.module-summary, #module-sort, #module-search').count(),0);
         await page.locator('#module-status').selectOption('PENDING_VERIFICATION');
         const category = await page.locator('#module-category option').nth(1).getAttribute('value');
         await page.locator('#module-category').selectOption(category);
         await page.getByRole('button',{name:'Apply Filters',exact:true}).click();
+        await page.getByRole('link',{name:'Next',exact:true}).click();
         const primaryLink = page.locator(`a[href$="&id=${fixture.primary}"]`).filter({hasText:'Review E-Lot'});
         await primaryLink.click();
         assert.equal(await page.locator('#module-search, .officer-elot-results').count(),0);
@@ -55,7 +53,6 @@ const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,.
         await page.getByRole('link',{name:'Back to E-Lots'}).click();
         assert.equal(await page.locator('#module-status').inputValue(),'PENDING_VERIFICATION');
         assert.equal(await page.locator('#module-category').inputValue(),category);
-        assert.equal(await page.locator('#module-search').inputValue(),'Officer lot 1');
         await primaryLink.click();
         assert.match(await page.locator('#module-details').innerText(),/3.625/);
         assert.equal(await page.locator('#module-details .elots-table').first().locator('tbody tr').count(),2);

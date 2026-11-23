@@ -13,7 +13,6 @@ $formValue = static fn (string $key, string $fallback = ''): string =>
 <div class="page-toolbar"><div><h1>E-Lot Management</h1></div></div>
 <section class="elots-list-card compact-filter-card">
     <form method="get" action="<?= $escape($url) ?>" class="officer-module-filters">
-        <div class="form-group"><label for="module-search">Search</label><input type="search" id="module-search" name="q" value="<?= $escape($filters['q']) ?>" maxlength="100" placeholder="E-Lot code or title"></div>
         <div class="form-group"><label for="module-status">Status</label><select id="module-status" name="status">
             <option value="">All statuses</option>
             <?php foreach (OfficerELot::LABELS as $status => $label): ?><option value="<?= $escape($status) ?>" <?= $filters['status'] === $status ? 'selected' : '' ?>><?= $escape($label) ?></option><?php endforeach; ?>
