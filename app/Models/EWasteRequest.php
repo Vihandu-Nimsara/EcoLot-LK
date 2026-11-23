@@ -101,11 +101,15 @@ final class EWasteRequest extends Model
                     s.`collection_date`, s.schedule_status, s.request_cutoff_at,
                     EXISTS(SELECT 1 FROM schedule_assignments sa WHERE sa.schedule_id = s.schedule_id AND sa.unassigned_at IS NULL) AS has_assignment,
                     EXISTS(SELECT 1 FROM schedule_collections sc WHERE sc.schedule_id = s.schedule_id) AS has_collection,
+                    sc.verification_status AS collection_verification_status,
+                    cr.pickup_result,
                     pa.`postal_code`,
                     pa.`area_name`
                 FROM `e_waste_requests` r
                 JOIN `area_collection_schedules` s ON s.`schedule_id` = r.`schedule_id`
                 JOIN `postal_code_areas` pa ON pa.`postal_area_id` = s.`postal_area_id`
+                LEFT JOIN collection_records cr ON cr.request_id = r.request_id
+                LEFT JOIN schedule_collections sc ON sc.schedule_collection_id = cr.schedule_collection_id AND sc.schedule_id = r.schedule_id
                 WHERE r.`public_user_id` = :public_user_id
                 ORDER BY r.`submitted_at` DESC';
 
@@ -153,38 +157,41 @@ final class EWasteRequest extends Model
     }
 
     /**
-     * Dashboard summary counters for a public user: total requests,
-     * completed pickups, requests still pending review, and total
-     * estimated weight (kg) across completed pickups.
+     * Resident dashboard totals based on verified pickup outcomes and measured weight.
      *
-     * @return array{total_requests: int, completed_requests: int, pending_requests: int, recycled_weight_kg: float}
+     * @return array{total_requests: int, completed_requests: int, pending_requests: int, collected_weight_kg: float}
      */
     public function summaryForPublicUser(int $publicUserId): array
     {
         $counts = $this->query(
-            "SELECT
-                COUNT(*) AS total_requests,
-                SUM(r.`request_status` = 'COMPLETED') AS completed_requests,
-                SUM(r.`request_status` IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')) AS pending_requests
-             FROM `e_waste_requests` r
-             WHERE r.`public_user_id` = :public_user_id",
+            "SELECT COUNT(*) AS total_requests,
+                SUM(CASE WHEN sc.verification_status = 'VERIFIED' THEN cr.pickup_result = 'COLLECTED'
+                    ELSE r.request_status = 'COMPLETED' END) AS completed_requests,
+                SUM(r.request_status IN ('SUBMITTED', 'PENDING_REVIEW', 'APPROVED')
+                    AND COALESCE(sc.verification_status, '') NOT IN ('VERIFIED', 'REJECTED')) AS pending_requests
+             FROM e_waste_requests r
+             LEFT JOIN collection_records cr ON cr.request_id = r.request_id
+             LEFT JOIN schedule_collections sc ON sc.schedule_collection_id = cr.schedule_collection_id AND sc.schedule_id = r.schedule_id
+             WHERE r.public_user_id = :public_user_id",
             ['public_user_id' => $publicUserId]
         )->fetch();
 
         $weight = $this->query(
-            "SELECT COALESCE(SUM(ri.`estimated_weight_kg`), 0) AS recycled_weight_kg
-             FROM `request_items` ri
-             JOIN `e_waste_requests` r ON r.`request_id` = ri.`request_id`
-             WHERE r.`public_user_id` = :public_user_id
-               AND r.`request_status` = 'COMPLETED'",
+            "SELECT COALESCE(SUM(ci.actual_weight_kg), 0)
+             FROM e_waste_requests r
+             JOIN collection_records cr ON cr.request_id = r.request_id
+             JOIN schedule_collections sc ON sc.schedule_collection_id = cr.schedule_collection_id AND sc.schedule_id = r.schedule_id
+             JOIN collection_record_items ci ON ci.collection_record_id = cr.collection_record_id
+             WHERE r.public_user_id = :public_user_id AND sc.verification_status = 'VERIFIED'
+               AND ci.actual_quantity > 0",
             ['public_user_id' => $publicUserId]
-        )->fetch();
+        )->fetchColumn();
 
         return [
             'total_requests' => (int) ($counts['total_requests'] ?? 0),
             'completed_requests' => (int) ($counts['completed_requests'] ?? 0),
             'pending_requests' => (int) ($counts['pending_requests'] ?? 0),
-            'recycled_weight_kg' => (float) ($weight['recycled_weight_kg'] ?? 0),
+            'collected_weight_kg' => (float) $weight,
         ];
     }
 

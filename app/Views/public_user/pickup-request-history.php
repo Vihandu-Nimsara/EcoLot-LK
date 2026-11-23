@@ -14,7 +14,7 @@
         <div class="tabs">
             <button type="button" class="tab active">All</button>
             <button type="button" class="tab">Pending</button>
-            <button type="button" class="tab">Completed</button>
+            <button type="button" class="tab">Pickup outcomes</button>
             <button type="button" class="tab">Cancelled</button>
             <button type="button" class="tab">Rejected</button>
         </div>
@@ -46,6 +46,7 @@
                             data-schedule-id="<?= (int) $request['schedule_id'] ?>"
                             data-editable="<?= $request['is_editable'] ? '1' : '0' ?>"
                             data-status="<?= htmlspecialchars($request['status_label'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-status-class="<?= htmlspecialchars($request['history_badge_class'], ENT_QUOTES, 'UTF-8') ?>"
                             data-submitted-date="<?= htmlspecialchars($request['submitted_date'], ENT_QUOTES, 'UTF-8') ?>"
                             data-collection-date="<?= htmlspecialchars($request['collection_date_iso'], ENT_QUOTES, 'UTF-8') ?>"
                             data-collection-date-label="<?= htmlspecialchars($request['collection_date'], ENT_QUOTES, 'UTF-8') ?>"

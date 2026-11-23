@@ -61,11 +61,9 @@ function openViewModal(triggerEl) {
     document.getElementById('viewAddress').textContent        = row.dataset.address       || '';
 
     const status = row.dataset.status || 'Pending';
-    const badgeClass = status === 'Completed' ? 'badge-completed'
-                     : status === 'Cancelled' ? 'badge-cancelled'
-                     : 'badge-pending';
+    const badgeClass = row.dataset.statusClass || 'badge-pending';
     document.getElementById('viewStatus').innerHTML =
-        `<span class="badge ${badgeClass}"><span class="dot"></span>${esc(status)}</span>`;
+        `<span class="badge ${esc(badgeClass)}"><span class="dot"></span>${esc(status)}</span>`;
 
     const tbody = document.getElementById('viewItemsBody');
     tbody.innerHTML = '';
@@ -246,9 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.tabs .tab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.tabs .tab').forEach(other => other.classList.toggle('active', other === tab));
+            const filter = tab.textContent.trim();
+            const filterStatuses = {
+                Pending: ['Submitted', 'Pending Review', 'Approved', 'Awaiting pickup verification'],
+                'Pickup outcomes': ['Completed', 'Partially collected', 'Not collected', 'Pickup unverified'],
+            };
+            const statuses = filterStatuses[filter] || [filter];
             document.querySelectorAll('tr[data-status]').forEach(row => {
-                const filter = tab.textContent.trim();
-                row.hidden = filter !== 'All' && (filter === 'Pending' ? !['Submitted', 'Pending Review', 'Approved'].includes(row.dataset.status) : row.dataset.status !== filter);
+                row.hidden = filter !== 'All' && !statuses.includes(row.dataset.status);
             });
             const rows = [...document.querySelectorAll('tr[data-status]')];
             document.querySelector('[data-request-count]').textContent = `Showing ${rows.filter(row => !row.hidden).length} of ${rows.length} requests`;

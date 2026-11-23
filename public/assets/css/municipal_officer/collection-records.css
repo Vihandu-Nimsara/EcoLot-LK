@@ -158,3 +158,9 @@
 .officer-app .record-submissions-table tbody td {
     vertical-align: top;
 }
+
+@media (min-width: 701px) {
+    .collection-review-details .record-summary-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

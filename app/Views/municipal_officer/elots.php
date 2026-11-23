@@ -30,18 +30,18 @@ $formValue = static fn (string $key, string $fallback = ''): string =>
     <?php if (!$listing['rows']): ?>
         <p class="officer-empty-state">No accessible E-Lots match these filters.</p>
     <?php else: ?>
-        <div class="elots-table-wrapper"><table class="elots-table">
-            <thead><tr><th scope="col">E-Lot</th><th scope="col">Collector / Category</th><th scope="col">Inventory</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
-            <tbody>
+        <div class="elots-table-wrapper officer-scan-wrapper"><table class="elots-table officer-scan-table" role="table">
+            <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">E-Lot</th><th role="columnheader" scope="col">Collector / Category</th><th role="columnheader" scope="col">Inventory</th><th role="columnheader" scope="col">Status</th><th role="columnheader" scope="col">Action</th></tr></thead>
+            <tbody role="rowgroup">
             <?php foreach ($listing['rows'] as $lot): ?>
-                <tr>
-                    <td><strong><?= $escape($lot['title']) ?></strong><small class="elot-secondary-text"><?= $escape($lot['lot_code']) ?></small></td>
-                    <td><?= $escape($lot['collector_name']) ?><small class="elot-secondary-text"><?= $escape($lot['category_name']) ?></small></td>
-                    <td><?= $escape($lot['total_quantity']) ?> units · <?= $escape($lot['total_weight']) ?> kg<small class="elot-secondary-text"><?= (int) $lot['item_count'] ?> source items</small></td>
-                    <td><span data-status="<?= $escape($lot['lot_status']) ?>" class="elot-status <?= $escape(strtolower(str_replace('_', '-', $lot['lot_status']))) ?>"><?= $escape(OfficerELot::LABELS[$lot['lot_status']]) ?></span>
+                <tr role="row">
+                    <td role="cell" class="scan-primary"><strong><?= $escape($lot['title']) ?></strong><small class="elot-secondary-text"><?= $escape($lot['lot_code']) ?></small></td>
+                    <td role="cell"><?= $escape($lot['collector_name']) ?><small class="elot-secondary-text"><?= $escape($lot['category_name']) ?></small></td>
+                    <td role="cell"><?= $escape($lot['total_quantity']) ?> units · <?= $escape($lot['total_weight']) ?> kg<small class="elot-secondary-text"><?= (int) $lot['item_count'] ?> source items</small></td>
+                    <td role="cell" class="scan-status"><span data-status="<?= $escape($lot['lot_status']) ?>" class="elot-status <?= $escape(strtolower(str_replace('_', '-', $lot['lot_status']))) ?>"><?= $escape(OfficerELot::LABELS[$lot['lot_status']]) ?></span>
                         <?php if ($lot['bidding_open_at'] !== null): ?><small class="elot-secondary-text"><?= $escape(OfficerELot::biddingPhase($lot)) ?> · <?= (int) $lot['bid_count'] ?> bids</small><?php endif; ?>
                     </td>
-                    <td><a class="secondary-btn" href="<?= $escape($link(['id' => $lot['e_lot_id']])) ?>"><?= $lot['lot_status'] === 'PENDING_VERIFICATION' ? 'Review E-Lot' : 'View Details' ?></a></td>
+                    <td role="cell" class="scan-action"><a class="secondary-btn" href="<?= $escape($link(['id' => $lot['e_lot_id']])) ?>"><?= $lot['lot_status'] === 'PENDING_VERIFICATION' ? 'Review E-Lot' : 'View Details' ?></a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

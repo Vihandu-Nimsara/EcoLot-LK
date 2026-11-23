@@ -17,6 +17,18 @@ final class PickupRequestPresenter
         [$statusLabel, $historyBadgeClass, $dashboardBadgeClass] =
             $statusMap[$request['request_status']] ?? ['Pending', 'badge-pending', 'status-badge pending'];
 
+        [$statusLabel, $historyBadgeClass, $dashboardBadgeClass] = match ($request['collection_verification_status'] ?? null) {
+            'VERIFIED' => match ($request['pickup_result'] ?? null) {
+                'COLLECTED' => $statusMap['COMPLETED'],
+                'PARTIAL' => ['Partially collected', 'badge-pending', 'status-badge pending'],
+                'NOT_COLLECTED' => ['Not collected', 'badge-cancelled', 'status-badge cancelled'],
+                default => [$statusLabel, $historyBadgeClass, $dashboardBadgeClass],
+            },
+            'PENDING' => ['Awaiting pickup verification', 'badge-pending', 'status-badge pending'],
+            'REJECTED' => ['Pickup unverified', 'badge-cancelled', 'status-badge cancelled'],
+            default => [$statusLabel, $historyBadgeClass, $dashboardBadgeClass],
+        };
+
         $isEditable = EWasteRequest::canModify($request);
 
         $items = $request['items'] ?? [];

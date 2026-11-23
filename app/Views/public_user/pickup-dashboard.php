@@ -77,14 +77,14 @@
             <div class="public-summary-icon review"><?= (int) $summary['pending_requests'] ?></div>
             <div>
                 <strong><?= (int) $summary['pending_requests'] ?></strong>
-                <span>Pending Reviews</span>
+                <span>Pending Requests</span>
             </div>
         </article>
         <article class="public-summary-card">
             <div class="public-summary-icon weight">kg</div>
             <div>
-                <strong><?= number_format((float) $summary['recycled_weight_kg'], 1) ?> kg</strong>
-                <span>Estimated Weight of Completed Pickups</span>
+                <strong><?= number_format((float) $summary['collected_weight_kg'], 1) ?> kg</strong>
+                <span>Verified Collected Weight</span>
             </div>
         </article>
     </div>

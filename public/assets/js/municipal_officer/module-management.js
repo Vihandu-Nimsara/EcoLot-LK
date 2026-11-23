@@ -5,10 +5,13 @@
         const dismiss = feedbackDialog.querySelector('[data-feedback-dismiss]');
         feedbackDialog.removeAttribute('open');
         feedbackDialog.showModal();
-        feedbackDialog.addEventListener('cancel', event => {
+        dismiss.focus({preventScroll: true});
+        const returnToList = event => {
             event.preventDefault();
-            window.location.assign(dismiss.href);
-        });
+            window.location.replace(dismiss.href);
+        };
+        dismiss.addEventListener('click', returnToList);
+        feedbackDialog.addEventListener('cancel', returnToList);
     }
     const dialog = document.querySelector('#officer-management-confirm');
     const confirm = dialog?.querySelector('[data-management-confirm]');

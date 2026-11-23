@@ -1265,3 +1265,68 @@
     .officer-app .profile-info .name { overflow-wrap: anywhere; white-space: normal; }
     .officer-app .page-content > section { min-width: 0; max-width: 100%; }
 }
+
+.officer-app .scan-mobile-label {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .officer-app .officer-scan-wrapper {
+        border: 0;
+        overflow: visible;
+    }
+
+    .officer-app .page-content .officer-scan-table,
+    .officer-app .officer-scan-table tbody {
+        display: block;
+        min-width: 0;
+    }
+
+    .officer-app .officer-scan-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .officer-app .officer-scan-table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px 12px;
+        margin-bottom: 10px;
+        padding: 12px;
+        border: 1px solid var(--officer-border);
+        border-radius: 10px;
+        background: #fff;
+    }
+
+    .officer-app .officer-scan-table tbody td {
+        grid-column: 1 / -1;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        text-align: start;
+        overflow-wrap: anywhere;
+    }
+
+    .officer-app .officer-scan-table .scan-primary {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .officer-app .officer-scan-table .scan-status {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: end;
+    }
+
+    .officer-app .officer-scan-table .scan-action {
+        padding-top: 4px;
+    }
+
+    .officer-app .scan-mobile-label {
+        display: inline;
+    }
+}

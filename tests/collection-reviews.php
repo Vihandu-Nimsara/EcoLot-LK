@@ -50,6 +50,10 @@ try {
         verify(count($result['rows'])===1 && $result['rows'][0]['schedule_collection_id']===$id,'History filtering failed');
     }
     verify($model->findForOfficer(4,1)===null && $model->findForOfficer(5,1)===null,'Draft/foreign detail leak');
+    foreach (['sch-2', '#2'] as $identifier) {
+        $exact=$model->reviewQueue(1,array_replace($filters,['q'=>$identifier]));
+        verify($exact['total']===1 && $exact['rows'][0]['schedule_collection_id']===2,'Complete identifier matched other submissions');
+    }
     $fiveRequests=$model->reviewQueue(1,array_replace($filters,['q'=>'SCH-26']));
     verify(count($fiveRequests['rows'])===1 && (int)$fiveRequests['rows'][0]['record_count']===5,'Five-request fixture missing from review queue');
     verify(count($model->findForOfficer(26,1)['records'])===5,'Five-request fixture details incomplete');
@@ -78,6 +82,18 @@ try {
     verify($post(1,['decision'=>'VERIFIED','review_acknowledged'=>''])[0]===422,'Verification without acknowledgement accepted');
     $before=$db->query('SELECT * FROM collection_record_items ORDER BY record_item_id')->fetchAll();
     $beforeRecords=$db->query('SELECT * FROM collection_records ORDER BY collection_record_id')->fetchAll();
+    $publicRequests = new EWasteRequest($db);
+    $residentOutcome = static function (int $requestId) use ($publicRequests): string {
+        foreach ($publicRequests->forPublicUser(2) as $request) {
+            if ((int) $request['request_id'] === $requestId) {
+                return PickupRequestPresenter::present($request)['status_label'];
+            }
+        }
+        throw new RuntimeException('Resident pickup missing.');
+    };
+    $beforeSummary = $publicRequests->summaryForPublicUser(2);
+    verify($residentOutcome(1)==='Awaiting pickup verification','Resident sees a final result before verification');
+    verify($residentOutcome(5)==='Pickup unverified','A rejected collection looks like an approved pickup');
     $beforeRequests=$db->query('SELECT * FROM e_waste_requests ORDER BY request_id')->fetchAll();
     $db->exec("CREATE TRIGGER test_review_rollback BEFORE UPDATE ON area_collection_schedules FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Injected schedule update failure'");
     verify($post(1,['decision'=>'VERIFIED'])[0]===500,'Injected review failure ignored');
@@ -87,6 +103,13 @@ try {
     verify($response[0]===303 && str_contains($response[1],'verification_status=PENDING') && str_contains($response[1],'q=Area+One') && str_contains($response[1],'page=2'),'PRG failed');
     $saved=$model->find(1);
     verify($saved['verification_status']==='VERIFIED' && (int)$saved['verified_by_officer_user_id']===1 && $saved['verified_at']!==null && $saved['verification_note']==='Checked <note>','Verification audit incorrect');
+    verify($residentOutcome(1)==='Partially collected' && $residentOutcome(2)==='Completed'
+        && $residentOutcome(3)==='Not collected','Resident pickup outcomes disagree with the verified submission');
+    $afterSummary = $publicRequests->summaryForPublicUser(2);
+    verify($afterSummary['completed_requests']===$beforeSummary['completed_requests']+1
+        && $afterSummary['pending_requests']===$beforeSummary['pending_requests']-3
+        && abs($afterSummary['collected_weight_kg']-$beforeSummary['collected_weight_kg']-3.625)<0.00001,
+        'Resident totals should count verified pickups and measured weight');
     verify((new AreaCollectionSchedule($db))->find(1)['schedule_status']==='COMPLETED','Verification schedule transition failed');
     verify($post(1,['decision'=>'REJECTED','note'=>'Stale'])[0]===409,'Stale decision did not conflict');
     verify($post(3,['decision'=>'VERIFIED'])[0]===409,'Rejected submission verified directly');

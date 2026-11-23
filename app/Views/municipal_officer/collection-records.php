@@ -13,7 +13,7 @@ $emptyMessages = ['PENDING' => 'No collections are awaiting review.', 'VERIFIED'
     <section class="records-filter-card compact-filter-card">
         <form class="records-filter-form" method="get" action="<?= $escape($reviewUrl) ?>">
             <div class="records-filter-grid">
-                <div class="form-group"><label for="review-search">Search</label><input type="search" id="review-search" name="q" placeholder="Area, Collector, SCH-ID or submission #ID" maxlength="100" value="<?= htmlspecialchars($reviewFilters['q'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"></div>
+                <div class="form-group"><label for="review-search">Search</label><input type="search" id="review-search" name="q" placeholder="Area, Collector, SCH-10, #5" maxlength="100" value="<?= htmlspecialchars($reviewFilters['q'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"></div>
                 <div class="form-group"><label for="review-status">Status</label><select id="review-status" name="verification_status">
                     <?php foreach (['' => 'All statuses'] + $labels as $value => $label): ?>
                         <option value="<?= $value ?>" <?= $statusFilter === $value ? 'selected' : '' ?>><?= $escape($label) ?></option>
@@ -26,21 +26,30 @@ $emptyMessages = ['PENDING' => 'No collections are awaiting review.', 'VERIFIED'
     <section class="records-list-card">
         <div class="records-list-heading"><div><h2>Collection Submissions</h2><span class="record-result-count officer-result-count"><?= count($collections) ?> shown · <?= (int) $reviewQueue['total'] ?> matching submissions</span></div></div>
         <?php if (!$collections): ?><p class="officer-empty-state"><?= $escape($reviewFilters['q'] === '' ? $emptyMessages[$statusFilter] : 'No submissions match your search. Try another area, Collector or identifier.') ?></p><?php else: ?>
-        <div class="records-table-wrapper"><table class="records-table"><thead><tr><th>Submission / Schedule</th><th>Area / Collection Date</th><th>Collector</th><th>Submitted At</th><th>Requests</th><th>Review Status</th><th>Action</th></tr></thead><tbody>
-        <?php foreach ($collections as $collection): ?>
-            <tr data-review-row><td><strong>SCH-<?= (int) $collection['schedule_id'] ?></strong><small class="review-table-secondary">Submission #<?= (int) $collection['schedule_collection_id'] ?></small></td>
-                <td><strong><?= $escape($collection['area_name']) ?></strong><small class="review-table-secondary"><?= $escape($collection['collection_date']) ?></small></td>
-                <td><?= $escape($collection['collector_name']) ?></td><td><?= $escape($collection['submitted_at']) ?></td><td><?= (int) $collection['record_count'] ?></td>
-                <td><span class="verification-status <?= $escape(strtolower($collection['verification_status'])) ?>" data-status="<?= $escape($collection['verification_status']) ?>"><?= $escape($labels[$collection['verification_status']]) ?></span>
-                    <?php if ($collection['verification_status'] !== 'PENDING'): ?><small class="review-metadata"><?= $escape($collection['reviewer_name']) ?><br><?= $escape($collection['verified_at']) ?></small><?php endif; ?></td>
-                <td><a class="record-action-btn secondary-btn" href="<?= $escape($link(['submission_id' => $collection['schedule_collection_id']])) ?>#collection-details"><?= $collection['verification_status'] === 'PENDING' ? 'Review Submission' : 'View Details' ?></a></td></tr>
-        <?php endforeach; ?>
-        </tbody></table></div><?php endif; ?>
-        <nav class="review-pagination" aria-label="Submission pages">
-            <?php if ($reviewQueue['page'] > 1): ?><a class="secondary-btn" href="<?= $escape($link(['page' => $reviewQueue['page'] - 1])) ?>">Previous</a><?php endif; ?>
-            <span>Page <?= (int) $reviewQueue['page'] ?> of <?= (int) $reviewQueue['pages'] ?></span>
-            <?php if ($reviewQueue['page'] < $reviewQueue['pages']): ?><a class="secondary-btn" href="<?= $escape($link(['page' => $reviewQueue['page'] + 1])) ?>">Next</a><?php endif; ?>
-        </nav>
+        <div class="records-table-wrapper officer-scan-wrapper"><table class="records-table officer-scan-table" role="table">
+            <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Schedule</th><th role="columnheader" scope="col">Area</th><th role="columnheader" scope="col">Collector</th><th role="columnheader" scope="col">Requests</th><th role="columnheader" scope="col">Review Status</th><th role="columnheader" scope="col">Action</th></tr></thead>
+            <tbody role="rowgroup">
+            <?php foreach ($collections as $collection): ?>
+                <tr role="row" data-review-row>
+                    <td role="cell" class="scan-primary"><strong>SCH-<?= (int) $collection['schedule_id'] ?></strong><small class="review-table-secondary">Submission #<?= (int) $collection['schedule_collection_id'] ?></small></td>
+                    <td role="cell"><strong><?= $escape($collection['area_name']) ?></strong><small class="review-table-secondary">Pickup <?= $escape($collection['collection_date']) ?></small></td>
+                    <td role="cell"><?= $escape($collection['collector_name']) ?><small class="review-table-secondary">Submitted <?= $escape($collection['submitted_at']) ?></small></td>
+                    <td role="cell"><?= (int) $collection['record_count'] ?> <span class="scan-mobile-label"><?= (int) $collection['record_count'] === 1 ? 'request' : 'requests' ?></span></td>
+                    <td role="cell" class="scan-status">
+                        <span class="verification-status <?= $escape(strtolower($collection['verification_status'])) ?>" data-status="<?= $escape($collection['verification_status']) ?>"><?= $escape($labels[$collection['verification_status']]) ?></span>
+                    </td>
+                    <td role="cell" class="scan-action"><a class="record-action-btn secondary-btn" href="<?= $escape($link(['submission_id' => $collection['schedule_collection_id']])) ?>#collection-details"><?= $collection['verification_status'] === 'PENDING' ? 'Review Submission' : 'View Details' ?></a></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table></div><?php endif; ?>
+        <?php if ($reviewQueue['pages'] > 1): ?>
+            <nav class="review-pagination" aria-label="Submission pages">
+                <?php if ($reviewQueue['page'] > 1): ?><a class="secondary-btn" href="<?= $escape($link(['page' => $reviewQueue['page'] - 1])) ?>">Previous</a><?php endif; ?>
+                <span>Page <?= (int) $reviewQueue['page'] ?> of <?= (int) $reviewQueue['pages'] ?></span>
+                <?php if ($reviewQueue['page'] < $reviewQueue['pages']): ?><a class="secondary-btn" href="<?= $escape($link(['page' => $reviewQueue['page'] + 1])) ?>">Next</a><?php endif; ?>
+            </nav>
+        <?php endif; ?>
     </section>
     <?php else: $selected = $selectedCollection; $overview = $selected['overview']; ?>
     <section class="records-list-card collection-review-details" id="collection-details" aria-labelledby="review-details-title">
@@ -66,14 +75,14 @@ $emptyMessages = ['PENDING' => 'No collections are awaiting review.', 'VERIFIED'
         <?php if ($selected['verification_status'] === 'PENDING' && $selected['schedule_status'] !== 'COLLECTION_SUBMITTED'): ?><p class="officer-form-error" role="alert">The schedule and submission statuses are inconsistent. Review decisions are unavailable until this is investigated.</p><?php endif; ?>
         <h2 class="review-section-title">Collection Overview</h2>
         <div class="record-summary-grid" data-review-overview>
-            <?php foreach (['requests'=>'Saved request records','COLLECTED'=>'Collected requests','PARTIAL'=>'Partially collected requests','NOT_COLLECTED'=>'Not-collected requests','actual_quantity'=>'Actual collected quantity','actual_weight_kg'=>'Recorded collected weight (kg)'] as $key=>$label): ?><div><span><?= $escape($label) ?></span><strong data-total="<?= $escape($key) ?>"><?= $escape($overview[$key]) ?></strong></div><?php endforeach; ?>
+            <?php foreach (['requests'=>'Total requests','COLLECTED'=>'Collected','PARTIAL'=>'Partially collected','NOT_COLLECTED'=>'Not collected','actual_quantity'=>'Units collected','actual_weight_kg'=>'Weight collected (kg)'] as $key=>$label): ?><div><span><?= $escape($label) ?></span><strong data-total="<?= $escape($key) ?>"><?= $escape($overview[$key]) ?></strong></div><?php endforeach; ?>
         </div>
         <?php if ($overview['missing_weights']): ?><p role="alert">Recorded weight is incomplete: <?= (int) $overview['missing_weights'] ?> collected item entries have no measured weight.</p><?php endif; ?>
         <?php if (!$selected['records']): ?><p class="officer-form-error">No collection records were saved. This submission cannot be verified.</p><?php endif; ?>
         <h2 class="review-section-title">Pickup Requests</h2>
         <?php foreach ($selected['records'] as $record): ?>
             <details class="record-submissions-section" data-review-request="<?= (int) $record['request_id'] ?>">
-                <summary>Request #<?= (int) $record['request_id'] ?> · <?= $escape($record['resident_name']) ?> · <?= $escape($record['pickup_result']) ?></summary>
+                <summary>Request #<?= (int) $record['request_id'] ?> · <?= $escape($record['resident_name']) ?> · <?= $escape(ucfirst(strtolower(str_replace('_', ' ', $record['pickup_result'])))) ?></summary>
                 <div class="review-request-content">
                 <p><?= $escape($record['pickup_address']) ?></p>
                 <p>Attempted: <?= $escape($record['pickup_attempted_at']) ?></p>

@@ -415,6 +415,7 @@ class MunicipalOfficerController extends Controller
             || !mb_check_encoding($filters['q'], 'UTF-8') || mb_strlen($filters['q']) > 100) {
             throw new InvalidArgumentException('Invalid collection review filters.');
         }
+        $filters['sort'] = 'newest';
         return $filters;
     }
 
@@ -509,6 +510,8 @@ class MunicipalOfficerController extends Controller
             || ($filters['type']!=='' && !in_array($filters['type'],OfficerFeedback::TYPES,true))
             || ($filters['category']!=='' && $this->positiveInteger($filters['category'])===null)
             || !mb_check_encoding($filters['q'],'UTF-8') || mb_strlen($filters['q'])>100) throw new InvalidArgumentException('Invalid filters.');
+        $filters['q'] = '';
+        $filters['sort'] = 'newest';
         return $filters;
     }
 

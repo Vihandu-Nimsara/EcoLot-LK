@@ -8,17 +8,17 @@
         <?php if (!$listing['rows']): ?>
             <p class="officer-empty-state">No feedback matches these filters.</p>
         <?php else: ?>
-            <div class="feedback-table-wrapper"><table class="feedback-table">
-                <thead><tr><th scope="col">Feedback</th><th scope="col">Submitted by</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
-                <tbody>
+            <div class="feedback-table-wrapper officer-scan-wrapper"><table class="feedback-table officer-scan-table" role="table">
+                <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Feedback</th><th role="columnheader" scope="col">Submitted by</th><th role="columnheader" scope="col">Status</th><th role="columnheader" scope="col">Action</th></tr></thead>
+                <tbody role="rowgroup">
                 <?php foreach ($listing['rows'] as $feedback): ?>
-                    <tr>
-                        <td><strong><?= $escape(ucfirst(strtolower($feedback['feedback_type']))) ?> #<?= (int) $feedback['feedback_id'] ?></strong>
+                    <tr role="row">
+                        <td role="cell" class="scan-primary"><strong><?= $escape(ucfirst(strtolower($feedback['feedback_type']))) ?> #<?= (int) $feedback['feedback_id'] ?></strong>
                             <small class="feedback-secondary-text"><?= $escape(mb_strimwidth($feedback['message'], 0, 100, '…', 'UTF-8')) ?></small>
                         </td>
-                        <td><?= $escape($feedback['public_name']) ?><small class="feedback-secondary-text"><?= $escape($feedback['submitted_at']) ?></small></td>
-                        <td><span class="feedback-status <?= $escape(strtolower(str_replace('_', '-', $feedback['feedback_status']))) ?>" data-status="<?= $escape($feedback['feedback_status']) ?>"><?= $escape(OfficerFeedback::LABELS[$feedback['feedback_status']]) ?></span></td>
-                        <td><a class="secondary-btn" href="<?= $escape($link(['id' => $feedback['feedback_id']])) ?>#module-details"><?= $feedback['feedback_status'] === 'CLOSED' ? 'View Details' : 'Review Feedback' ?></a></td>
+                        <td role="cell"><?= $escape($feedback['public_name']) ?><small class="feedback-secondary-text"><?= $escape($feedback['submitted_at']) ?></small></td>
+                        <td role="cell" class="scan-status"><span class="feedback-status <?= $escape(strtolower(str_replace('_', '-', $feedback['feedback_status']))) ?>" data-status="<?= $escape($feedback['feedback_status']) ?>"><?= $escape(OfficerFeedback::LABELS[$feedback['feedback_status']]) ?></span></td>
+                        <td role="cell" class="scan-action"><a class="secondary-btn" href="<?= $escape($link(['id' => $feedback['feedback_id']])) ?>#module-details"><?= $feedback['feedback_status'] === 'CLOSED' ? 'View Details' : 'Review Feedback' ?></a></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

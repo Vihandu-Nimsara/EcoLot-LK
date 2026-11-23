@@ -38,6 +38,13 @@ const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,.
         assert.match(await officer.title(),/Collection Reviews/);
         assert.equal(await officer.locator('.collection-records-page h1').innerText(),'Collection Reviews');
         assert.equal(await officer.locator('[data-review-row]').count(),20);
+        await officer.screenshot({path:'/tmp/ecolot-collection-list-desktop.png'});
+        await officer.setViewportSize({width:390,height:844});
+        const firstReview = officer.getByRole('link',{name:'Review Submission',exact:true}).first();
+        assert(await firstReview.evaluate(el=>el.getBoundingClientRect().right<=innerWidth),'Collection action is off screen on mobile');
+        assert(await officer.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Collection queue overflows');
+        await officer.screenshot({path:'/tmp/ecolot-collection-list-mobile.png'});
+        await officer.setViewportSize({width:1280,height:900});
         await officer.getByRole('link',{name:'Next',exact:true}).click();
         assert.equal(await officer.locator('[data-review-row]').count(),2);
         await officer.locator('#review-status').selectOption('VERIFIED');
@@ -47,7 +54,7 @@ const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,.
         await officer.locator('#review-search').fill('SCH-26');
         await officer.getByRole('button',{name:'Apply Filters',exact:true}).click();
         const fiveRequestRow = officer.locator('[data-review-row]').filter({hasText:'SCH-26'});
-        assert.equal(await fiveRequestRow.locator('td').nth(4).innerText(),'5');
+        assert.equal(await fiveRequestRow.locator('td').nth(3).innerText(),'5');
         await fiveRequestRow.getByRole('link',{name:'Review Submission'}).click();
         assert.equal(await officer.locator('[data-review-row]').count(),0);
         assert.equal(await officer.locator('[data-review-request]').count(),5);
@@ -117,6 +124,16 @@ const run = args => execFileSync(php, ['-d',`session.save_path=${os.tmpdir()}`,.
         await collector.goto(`${base}/collector/collection-records/8`);
         assert.match(await collector.locator('body').innerText(),/Pickup evidence <needs correction>/);
         assert.equal(await collector.getByRole('button',{name:'Save Changes',exact:true}).count(),0);
+        const resident=await newPage(); await login(resident,'0771234568');
+        await resident.goto(`${base}/user/my-requests`);
+        for (const [id, outcome] of [[1,'Partially collected'],[2,'Completed'],[3,'Not collected'],[8,'Pickup unverified']]) {
+            assert.equal(await resident.locator(`[data-request-pk="${id}"]`).getAttribute('data-status'),outcome);
+        }
+        await resident.getByRole('button',{name:'Pickup outcomes',exact:true}).click();
+        assert(await resident.locator('[data-request-pk="1"]').isVisible());
+        assert(!(await resident.locator('[data-request-pk="6"]').isVisible()),'An unverified draft appeared in pickup outcomes');
+        await resident.goto(`${base}/user/dashboard`);
+        assert.match(await resident.locator('.public-summary-card').filter({hasText:'Verified Collected Weight'}).innerText(),/4.6 kg/);
         const other=await newPage(); await login(other,'0771234570');
         assert.equal((await other.goto(`${base}/officer/collection-records?submission_id=1`)).status(),404);
         await other.goto(`${base}/officer/collection-records`);

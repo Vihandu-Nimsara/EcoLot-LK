@@ -105,12 +105,17 @@ final class ScheduleCollection extends Model
         }
         $where = ''; $params = ['officer' => $officer];
         if ($status !== '') { $where .= ' AND sc.verification_status=:status'; $params['status'] = $status; }
-        if ($filters['q'] !== '') {
-            $pattern = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $filters['q']) . '%';
+        $search = $filters['q'];
+        if (preg_match('/^(SCH-|#)[0-9]+$/iD', $search, $match)) {
+            $field = $match[1] === '#' ? "CONCAT('#',sc.schedule_collection_id)" : "CONCAT('SCH-',sc.schedule_id)";
+            $where .= " AND $field = :identifier";
+            $params['identifier'] = strtoupper($search);
+        } elseif ($search !== '') {
+            $pattern = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search) . '%';
             $where .= " AND (pa.area_name LIKE :area ESCAPE '!' OR collector.full_name LIKE :collector ESCAPE '!'
                 OR CONCAT('SCH-',sc.schedule_id) LIKE :schedule ESCAPE '!'
                 OR CONCAT('#',sc.schedule_collection_id) LIKE :submission ESCAPE '!')";
-            foreach (['area','collector','schedule','submission'] as $key) $params[$key] = $pattern;
+            foreach (['area', 'collector', 'schedule', 'submission'] as $key) $params[$key] = $pattern;
         }
         $total = (int) $this->query('SELECT COUNT(*) FROM (' . $this->officerSelect() . $where . ') matches', $params)->fetchColumn();
         $pages = max(1, (int) ceil($total / 20));
