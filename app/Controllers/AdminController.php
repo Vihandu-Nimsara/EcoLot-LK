@@ -687,8 +687,7 @@ class AdminController extends Controller
 
     public function categoriesAndItems(): void
     {
-        Auth::requireRole('ADMIN');
-        $this->view('admin/categories-items', ['currentPage' => 'categories-items']);
+        (new AdminCatalogueController())->index();
 
     }
 
