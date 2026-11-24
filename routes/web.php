@@ -114,7 +114,9 @@ return static function (Router $router, array $app): void {
         $router->get('/recycler-verification', 'AdminController@recyclerVerification');
         $router->get('/recycler-verification/{id}', 'AdminController@recyclerDetails');
         $router->post('/recycler-verification/{id}/review', 'AdminController@reviewRecycler');
-        $router->get('/categories-items', 'AdminController@categoriesAndItems');
+        $router->get('/categories-items', 'AdminCatalogueController@index');
+        $router->post('/categories-items/items', 'AdminCatalogueController@createItem');
+        $router->post('/categories-items/items/{id}', 'AdminCatalogueController@updateItem');
         $router->get('/risk-rules', 'AdminController@riskRules');
         $router->get('/reports', 'AdminController@reports');
         $router->get('/recycler-verification/{id}/license-document', 'AdminController@viewRecyclerLicense');
