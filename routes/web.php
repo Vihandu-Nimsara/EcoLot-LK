@@ -132,5 +132,6 @@ return static function (Router $router, array $app): void {
         $router->get('/recycler-verification/{id}/scope/{scopeId}/document', 'AdminController@viewRecyclerScopeDocument');
         $router->post('/recycler-verification/{id}/capability-review', 'AdminController@reviewRecyclerCapability');
         $router->post('/recycler-verification/{id}/activity-review', 'AdminController@reviewRecyclerAuthorizedActivity');
+        $router->post('/risk-rules/{id}/{condition}', 'AdminRiskRuleController@save');
     });
 };

@@ -1,0 +1,70 @@
+<?php
+declare(strict_types=1);
+// Creates and drops only a randomly named disposable database.
+require_once __DIR__.'/support/bootstrap.php';
+$db=Database::connection();
+$original=(string)$db->query('SELECT DATABASE()')->fetchColumn();
+$name='ecolot_risk_test_'.bin2hex(random_bytes(6));
+$count=0;
+$check=static function(bool $ok,string $message) use (&$count):void {verify($ok,$message);$count++;};
+$reject=static function(callable $fn,string $message) use ($check):void {try {$fn();}catch(DomainException $e){$check(true,$message);return;}throw new RuntimeException($message);};
+$db->exec("CREATE DATABASE `$name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+try {
+    $db->exec("USE `$name`"); TestDatabase::loadSchema($db); $month=TestDatabase::seedScheduleActors($db);
+    $db->exec("INSERT INTO users (user_id,full_name,mobile_number,password_hash,role) VALUES (4,'Admin QA','0771234570','unused','ADMIN')");
+    $db->exec('INSERT INTO administrators VALUES (4)');
+    $db->exec("INSERT INTO waste_categories (category_id,category_name) VALUES (1,'Domestic E-Waste')");
+    $db->exec("INSERT INTO e_waste_items (waste_item_id,category_id,item_name,collection_status,default_risk_level,item_status) VALUES (1,1,'QA device','ACCEPTED','LOW','ACTIVE'),(2,1,'Excluded','DO_NOT_COLLECT','HIGH','ACTIVE'),(3,1,'Inactive','ACCEPTED','LOW','INACTIVE'),(4,1,'Review device','REVIEW_REQUIRED','LOW','ACTIVE')");
+    $service=new AdminRiskRuleService($db); $catalogue=new EWasteItem($db);
+    $profile=static function(int $id) use ($service):array {foreach($service->profiles() as $p) if((int)$p['waste_item_id']===$id)return $p;throw new RuntimeException('Profile missing');};
+    $input=static function(int $id,string $condition,string $risk,string $status='ACTIVE',bool $confirm=false) use ($profile):array {$p=$profile($id);return ['condition_type'=>$condition,'risk_level'=>$risk,'action_note'=>'QA guidance only','rule_status'=>$status,'revision'=>AdminRiskRuleService::revision($p,$p['rules'][$condition]??null)]+($confirm?['confirm_reduction'=>'1']:[]);};
+    $raw=static fn(string $condition='DAMAGED',string $item='QA device'):array=>[['category'=>'Domestic E-Waste','item'=>$item,'quantity'=>'1','weight'=>'1.000','condition'=>$condition,'note'=>'']];
+    $risk=static fn(string $condition='DAMAGED',string $item='QA device'):array=>$catalogue->validatePickupItems($raw($condition,$item))[0];
+    $check(count($service->profiles())===4,'All items including no rules');
+    $check($risk()['applied_risk_level']==='LOW','Default risk before rule');
+    $first=$input(1,'DAMAGED','HIGH');$service->save(4,1,$first);
+    $check($risk()['applied_risk_level']==='HIGH' && $risk()['requires_review'],'Active rule in public evaluator');
+    $check($risk('WORKING')['applied_risk_level']==='LOW','Other condition unaffected');
+    $reject(fn()=>$service->save(4,1,$first),'Stale create cannot overwrite');
+    $check(count($profile(1)['rules'])===1,'One rule per item condition');
+    $check((int)$db->query("SELECT COUNT(*) FROM audit_logs WHERE action_type='RISK_RULE_CREATED' AND actor_user_id=4")->fetchColumn()===1,'Create audit');
+    $schedule=(new AreaCollectionSchedule($db))->create(['campaign_id'=>1,'postal_area_id'=>1,'created_by_officer_user_id'=>1,'collection_date'=>"$month-10",'request_cutoff_at'=>"$month-08 23:59:59",'request_capacity'=>10,'schedule_status'=>'OPEN']);
+    $requestModel=new EWasteRequest($db);$rid=$requestModel->createWithItems(['public_user_id'=>2,'schedule_id'=>$schedule],$raw());
+    $check($requestModel->find($rid)['request_status']==='PENDING_REVIEW','Real pickup routed to review');
+    $check($requestModel->find($rid)['risk_review_status']==='PENDING','Review flag stored');
+    $requestItem=(int)$db->query("SELECT request_item_id FROM request_items WHERE request_id=$rid")->fetchColumn();
+    $actual=static fn()=> (new CollectionRecordItem($db))->validated($rid,[$requestItem=>['actual_quantity'=>'1','actual_weight_kg'=>'1.000','actual_condition'=>'DAMAGED','notes'=>'']])[0]['actual_risk_level'];
+    $check($actual()==='HIGH','Collector actual-condition evaluation');
+    $reject(fn()=>$service->save(4,1,$input(1,'DAMAGED','HIGH','INACTIVE')),'Deactivation lowering risk requires confirmation');
+    $service->save(4,1,$input(1,'DAMAGED','HIGH','INACTIVE',true));
+    $check($risk()['applied_risk_level']==='LOW','Inactive rule fallback');
+    $check($actual()==='LOW','Collector fallback');
+    $check($db->query("SELECT applied_risk_level FROM request_items WHERE request_item_id=$requestItem")->fetchColumn()==='HIGH','Historical risk not rewritten');
+    $check($requestModel->find($rid)['request_status']==='PENDING_REVIEW','Historical request state not rewritten');
+    $service->save(4,1,$input(1,'DAMAGED','MEDIUM'));
+    $check($risk()['applied_risk_level']==='MEDIUM','Reactivate same rule');
+    $db->exec("UPDATE e_waste_items SET default_risk_level='HIGH' WHERE waste_item_id=1");
+    $check($risk()['applied_risk_level']==='HIGH' && $risk()['requires_review'],'Raised catalogue default is floor');
+    $check($actual()==='HIGH','Collector floor after default changes');
+    $reject(fn()=>$service->save(4,1,$input(1,'DAMAGED','LOW')),'Rule below default rejected');
+    $reject(fn()=>$service->save(4,2,$input(2,'WORKING','HIGH')),'Excluded item cannot configure');
+    $reject(fn()=>$service->save(4,3,$input(3,'WORKING','HIGH')),'Inactive item cannot configure');
+    $reject(fn()=>$risk('WORKING','Excluded'),'Excluded pickup rejected');
+    $check($risk('WORKING','Review device')['requires_review'],'Review policy always wins');
+    $service->save(4,1,$input(1,'UNKNOWN','HIGH'));
+    $check(count($profile(1)['rules'])===2,'Second condition independent');
+    $before=(int)$db->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn();
+    $service->save(4,1,$input(1,'UNKNOWN','HIGH'));
+    $check((int)$db->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn()===$before,'No-op does not duplicate audit');
+    try {$service->save(999999,1,$input(1,'WORKING','HIGH'));throw new RuntimeException('Missing actor accepted');}catch(PDOException $expected){}
+    $check(!isset($profile(1)['rules']['WORKING']),'Failed audit rolls back rule');
+    $check((int)$db->query('SELECT COUNT(*) FROM audit_logs')->fetchColumn()===$before,'Failed audit leaves no entry');
+    $check((int)$db->query("SELECT COUNT(*) FROM audit_logs WHERE action_type='RISK_RULE_UPDATED'")->fetchColumn()===2,'Updates audited');
+    $db->exec("UPDATE waste_categories SET category_status='INACTIVE' WHERE category_id=1");
+    $reject(fn()=>$service->save(4,1,$input(1,'WORKING','HIGH')),'Inactive category rejected');
+    echo "PASS: $count risk rule integration checks\n";
+} finally {
+    if ($db->inTransaction()) $db->rollBack();
+    $db->exec('USE `'.str_replace('`','``',$original).'`');
+    $db->exec("DROP DATABASE `$name`");
+}

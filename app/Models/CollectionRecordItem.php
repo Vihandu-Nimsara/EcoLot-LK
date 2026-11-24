@@ -49,9 +49,9 @@ final class CollectionRecordItem extends Model
             }
             $risk = null;
             if ($qty > 0) {
-                $risk = $this->query("SELECT COALESCE((SELECT risk_level FROM risk_rules WHERE waste_item_id = wi.waste_item_id
-                    AND condition_type = :condition AND rule_status = 'ACTIVE'), wi.default_risk_level)
-                    FROM e_waste_items wi WHERE wi.waste_item_id = :id", ['condition' => $condition, 'id' => $item['waste_item_id']])->fetchColumn();
+                $risk = $this->query("SELECT CASE WHEN FIELD(r.risk_level, 'LOW', 'MEDIUM', 'HIGH') > FIELD(wi.default_risk_level, 'LOW', 'MEDIUM', 'HIGH') THEN r.risk_level ELSE wi.default_risk_level END
+                    FROM e_waste_items wi LEFT JOIN risk_rules r ON r.waste_item_id = wi.waste_item_id
+                    AND r.condition_type = :condition AND r.rule_status = 'ACTIVE' WHERE wi.waste_item_id = :id", ['condition' => $condition, 'id' => $item['waste_item_id']])->fetchColumn();
             }
             $rows[] = ['request_item_id' => $id, 'actual_quantity' => $qty, 'actual_weight_kg' => $weight === '' ? null : $weight,
                 'actual_condition' => $qty ? $condition : null, 'notes' => trim((string) $notes) ?: null,
