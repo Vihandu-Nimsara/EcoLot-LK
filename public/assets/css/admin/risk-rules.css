@@ -1,54 +1,36 @@
-.risk-rules-page,
-.risk-rule-form {
-    width: 100%;
-    min-width: 0;
-}
-
-.risk-table {
-    min-width: 1180px;
-    table-layout: fixed;
-}
-
-.risk-table :is(th, td):nth-child(1) {
-    width: 7%;
-}
-
-.risk-table :is(th, td):nth-child(2) {
-    width: 13%;
-}
-
-.risk-table :is(th, td):nth-child(3) {
-    width: 18%;
-}
-
-.risk-table :is(th, td):nth-child(4) {
-    width: 9%;
-}
-
-.risk-table :is(th, td):nth-child(5) {
-    width: 27%;
-}
-
-.risk-table :is(th, td):nth-child(6) {
-    width: 9%;
-}
-
-.risk-table :is(th, td):nth-child(7) {
-    width: 17%;
-}
-
-.risk-table :is(td):nth-child(1) {
-    white-space: nowrap;
-}
-
-.rule-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-@media (max-width: 700px) {
-    .rules-list-card {
-        margin-top: 20px;
-    }
-}
+.admin-app .risk-rules-page {width:100%;min-width:0;}
+.admin-app .rr-metrics {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 20px;}
+.admin-app .rr-metric {padding:18px;background:#fff;border:1px solid #dce8e1;border-radius:12px;display:grid;gap:8px;}
+.admin-app .rr-metric span,.admin-app .rr-muted {color:#52685c;font-size:.85rem;}
+.admin-app .rr-metric strong {font-size:1.8rem;color:#187249;line-height:1;}
+.admin-app .rr-layout {display:grid;grid-template-columns:minmax(230px, .85fr) minmax(0,1.65fr);gap:18px;align-items:start;}
+.admin-app .rr-layout .risk-card {margin:0;min-width:0;}
+.admin-app .rr-filters,.admin-app .rr-form {display:grid;gap:8px;}
+.admin-app .rr-filters label,.admin-app .rr-form label {font-size:.86rem;font-weight:600;color:#294c37;}
+.admin-app .rr-filters :is(input,select),.admin-app .rr-form :is(select,textarea) {width:100%;box-sizing:border-box;border:1px solid #cbdad1;border-radius:8px;padding:10px;background:#fff;font:inherit;color:#233a2b;margin-bottom:6px;}
+.admin-app .rr-item-list {max-height:570px;overflow-y:auto;display:grid;gap:7px;padding-right:4px;}
+.admin-app .rr-item {display:grid;gap:4px;padding:12px;border:1px solid #e2ebe5;border-radius:8px;text-decoration:none;color:#244534;overflow-wrap:anywhere;}
+.admin-app .rr-item span {font-size:.8rem;color:#52685c;}
+.admin-app .rr-item:hover,.admin-app .rr-selected {border-color:#319565;background:#eef9f2;}
+.admin-app .rr-item[hidden],.admin-app [data-rr-empty][hidden] {display:none!important;}
+.admin-app .rr-default {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:24px;}
+.admin-app .rr-default div {background:#f3f8f4;padding:12px;border-radius:8px;display:grid;gap:5px;overflow-wrap:anywhere;}
+.admin-app .rr-default span {font-size:.8rem;color:#52685c;}
+.admin-app .rr-default strong {font-size:.88rem;}
+.admin-app .rr-condition {border:1px solid #dce8e1;border-radius:10px;padding:14px;margin:12px 0;}
+.admin-app .rr-condition-top {display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.admin-app .rr-condition-top>div {flex:1;min-width:110px;}
+.admin-app .rr-condition h3 {margin:0 0 4px;font-size:1rem;}
+.admin-app .rr-outcome {font-size:.88rem;color:#294c37;margin:10px 0 0;}
+.admin-app .rr-guidance {font-size:.85rem;overflow-wrap:anywhere;margin:10px 0 0;white-space:pre-wrap;}
+.admin-app .rr-notice,.admin-app .rr-preview {padding:12px;border:1px solid #cce6d3;background:#eef9f2;border-radius:8px;margin:12px 0;}
+.admin-app .rr-error {border-color:#eab4b4;background:#fff1f1;color:#921e1e;}
+.admin-app .rr-drawer {box-sizing:border-box;position:fixed;inset:0 0 0 auto;margin:0;width:min(100%,470px);max-width:100%;height:100%;max-height:100%;border:0;border-left:1px solid #dce8e1;padding:24px;background:white;color:#233a2b;overflow:auto;box-shadow:-10px 0 36px #0002;}
+.admin-app .rr-drawer::backdrop {background:#13251c75;}
+.admin-app .rr-dialog-header,.admin-app .rr-dialog-actions {display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.admin-app .rr-dialog-header h2 {font-size:1.2rem;margin:0;}
+.admin-app .rr-confirm {display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.admin-app .rr-confirm input {margin-top:4px;flex-shrink:0;}
+.admin-app .rr-dialog-actions {justify-content:flex-end;margin-top:18px;}
+@media(max-width:1000px){.admin-app .rr-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}.admin-app .rr-layout{grid-template-columns:1fr;}.admin-app .rr-item-list{max-height:300px;}}
+@media(max-width:480px){.admin-app .rr-default{grid-template-columns:1fr;}.admin-app .rr-metric{padding:12px;}.admin-app .rr-drawer{padding:16px;}}

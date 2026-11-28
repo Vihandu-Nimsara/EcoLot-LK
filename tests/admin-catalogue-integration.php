@@ -37,7 +37,7 @@ try {
     $check($validated[0]['applied_risk_level']==='HIGH' && $validated[0]['requires_review']===true,'Default pickup policy applied');
     $db->prepare("INSERT INTO risk_rules(waste_item_id,condition_type,risk_level,action_note) VALUES (?,'WORKING','MEDIUM','Test')")->execute([$iid]);
     $validated=$model->validatePickupItems($raw);
-    $check($validated[0]['applied_risk_level']==='MEDIUM' && $validated[0]['requires_review']===true,'Active rule overrides default, review policy remains');
+    $check($validated[0]['applied_risk_level']==='HIGH' && $validated[0]['requires_review']===true,'Active rule cannot lower default risk, review policy remains');
     $reject(fn()=>$svc->saveItem(4,$iid,array_replace($i,['item_name'=>'Different device'])));
     $check((int)$svc->items()[0]['name_locked']===1,'Rule-linked item locked in read model');
     $schedule=(new AreaCollectionSchedule($db))->create(['campaign_id'=>1,'postal_area_id'=>1,'created_by_officer_user_id'=>1,'collection_date'=>"$month-10",'request_cutoff_at'=>"$month-08 23:59:59",'request_capacity'=>2,'schedule_status'=>'OPEN']);

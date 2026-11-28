@@ -39,7 +39,7 @@ final class EWasteItem extends Model
                 || mb_strlen($note) > 500) {
                 throw new DomainException('Each item needs a positive whole quantity, a positive total weight (up to 3 decimal places), a valid condition and a note of at most 500 characters.');
             }
-            $item = $this->query("SELECT i.*, COALESCE(r.risk_level, i.default_risk_level) AS applied_risk
+            $item = $this->query("SELECT i.*, CASE WHEN FIELD(r.risk_level, 'LOW', 'MEDIUM', 'HIGH') > FIELD(i.default_risk_level, 'LOW', 'MEDIUM', 'HIGH') THEN r.risk_level ELSE i.default_risk_level END AS applied_risk
                 FROM e_waste_items i JOIN waste_categories c ON c.category_id = i.category_id
                 LEFT JOIN risk_rules r ON r.waste_item_id = i.waste_item_id
                     AND r.condition_type = :condition AND r.rule_status = 'ACTIVE'

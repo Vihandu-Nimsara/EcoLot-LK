@@ -693,8 +693,7 @@ class AdminController extends Controller
 
     public function riskRules(): void
     {
-        Auth::requireRole('ADMIN');
-        $this->view('admin/risk-rules', ['currentPage' => 'risk-rules']);
+        (new AdminRiskRuleController())->index();
     }
 
     public function reports(): void
